@@ -1,0 +1,17 @@
+div.re_checkbox {
+  float: right;
+}
+
+div.re_checkbox > input:[type='checkbox'] {
+    position: relative;
+    top: 6px;
+    cursor: pointer;
+}
+
+div.re_checkbox > label {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 7px;
+    margin-left: 5px;
+    margin-right: 15px;
+}
