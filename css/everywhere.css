@@ -15,3 +15,117 @@ div.re_checkbox > label {
     margin-left: 5px;
     margin-right: 15px;
 }
+
+div.re_container {
+margin-top: 10px;
+display: flex;
+flex-direction: column;
+}
+
+div.re_head {
+border-bottom: none;
+border-radius: 5px 5px 5px 5px;
+padding: 6px 10px;
+background-color: rgb(202, 185, 0);
+background-image: linear-gradient(90deg, transparent 50%, rgba(0, 0, 0, 0.07) 0px);
+background-size: 4px;
+cursor: pointer;
+}
+
+div.re_head.expanded {
+border-bottom: none;
+border-radius: 5px 5px 0px 0px;
+}
+
+span.re_title {
+color: #ffffff;
+font-size: 13px;
+letter-spacing: 1px;
+text-shadow: rgba(0, 0, 0, 0.65) 1px 1px 2px;
+font-weight: 700;
+line-height: 16px;
+}
+
+.re_content {
+background-color: #F2F2F2;
+border: 1px solid rgba(0, 0, 0, .5);
+border-radius: 0px 0px 5px 5px;
+border-top: none;
+}
+
+.re_row {
+display: flex;
+margin: 0.75em;
+justify-content: space-between;
+}
+
+.re_col {
+margin-left: 20px;
+margin-right: 20px;
+}
+
+div.re_icon_wrap {
+align-items: center;
+justify-content: center;
+width: 16px;
+float: right;
+}
+
+span.re_icon svg {
+display: block;
+height: 16px;
+fill: white;
+cursor: pointer;
+margin-left: auto;
+margin-right: auto;
+}
+
+span.re_icon.arrow_right svg path {
+d: path('M4 6l-4 4 6 6-6 6 4 4 10-10L4 6z');
+}
+
+span.re_icon.arrow_down svg path {
+d: path('M16 10l-6 6-6-6-4 4 10 10 10-10-4-4z');
+}
+
+/* Torn Styled Button */
+.re_torn_button {
+    background: transparent linear-gradient(180deg ,#CCCCCC 0%,#999999 60%,#666666 100%) 0 0 no-repeat;
+    border-radius: 5px;
+    font-family: Arial,sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0;
+    color: #333;
+    text-shadow: 0 1px 0 #ffffff66;
+    text-decoration: none;
+    text-transform: uppercase;
+    margin: 0;
+    border: none;
+    outline: none;
+    overflow: visible;
+    box-sizing: border-box;
+    line-height: 16px;
+    padding: 4px 8px;
+    height: auto;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.re_torn_button:hover, .re_torn_button:focus {
+    background: transparent linear-gradient(180deg,#E5E5E5 0%,#BBBBBB 60%,#999999 100%) 0 0 no-repeat;
+    color: #333
+}
+
+.re_torn_button.disabled,.re_torn_button:disabled,.re_torn_button:hover.disabled,.re_torn_button:hover:disabled {
+    color: #777;
+    color: var(--btn-disabled-color);
+    box-shadow: 0 1px 0 #ffffffa6;
+    box-shadow: var(--btn-disabled-box-shadow);
+    text-shadow: 0 -1px 0 #ffffff66;
+    text-shadow: var(--btn-disabled-text-shadow);
+    background: transparent linear-gradient(180deg,#999999 0%,#CCCCCC 100%) 0 0 no-repeat;
+    background: var(--btn-disabled-background);
+    cursor: default
+}

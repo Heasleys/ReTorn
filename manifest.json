@@ -6,7 +6,9 @@
     "permissions": [
       "declarativeNetRequest",
       "declarativeNetRequestFeedback",
-      "https://api.torn.com/*"
+      "https://api.torn.com/*",
+      "https://code.highcharts.com/*",
+      "https://beta.tornstats.com/*"
     ],
     "content_scripts": [
       {
@@ -17,24 +19,28 @@
                 "https://www.torn.com/api.html*",
                 "https://wiki.torn.com/*"
             ],
-        "js": [
-          "js/everywhere/mini-profiles.js"
-        ],
+        "js": ["js/lib/jquery-3.4.1.min.js","js/everywhere/mini-profiles.js"],
+        "css": ["css/everywhere.css"],
         "run_at": "document_start"
       },
       {
         "matches": ["https://www.torn.com/stockexchange.php?step=portfolio"],
-        "js": ["js/lib/jquery-3.4.1.min.js","js/stockexchange/portfolio.js"],
+        "js": ["js/stockexchange/portfolio.js"],
         "run_at": "document_end"
       },
       {
         "matches": ["https://www.torn.com/stockexchange.php"],
-        "js": ["js/lib/jquery-3.4.1.min.js","js/stockexchange/stockexchange.js"],
+        "js": ["js/stockexchange/stockexchange.js"],
         "run_at": "document_end"
       },
       {
         "matches": ["https://www.torn.com/index.php"],
-        "js": ["js/lib/jquery-3.4.1.min.js","js/home/index.js"],
+        "js": ["js/home/index.js"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/gym.php"],
+        "js": ["js/gym/gym.js", "js/lib/highcharts.js", "js/lib/highchart_theme.js"],
         "run_at": "document_end"
       }
     ]
