@@ -2,14 +2,31 @@
     "name": "ReTorn",
     "version": "1.0.0",
     "description": "Its the return of a great Torn extension",
-    "manifest_version": 2,
+    "manifest_version": 3,
+    "action": {
+      "default_title": "ReTorn",
+      "default_popup": "pages/popup_start.html",
+      "default_title": "ReTorn: Torn Browser Extension"
+    },
     "permissions": [
-      "declarativeNetRequest",
-      "declarativeNetRequestFeedback",
+      "notifications",
+      "storage",
+      "background",
+      "alarms"
+    ],
+    "host_permissions": [
+      "https://www.torn.com/*",
       "https://api.torn.com/*",
-      "https://code.highcharts.com/*",
       "https://beta.tornstats.com/*"
     ],
+    "options_ui": {
+  		"page": "/pages/options.html",
+  		"open_in_tab": true
+  	},
+    "options_page": "/pages/options.html",
+    "background": {
+    	"service_worker": "background.js"
+  	},
     "content_scripts": [
       {
         "matches": [
@@ -40,7 +57,12 @@
       },
       {
         "matches": ["https://www.torn.com/gym.php"],
-        "js": ["js/gym/gym.js", "js/lib/highcharts.js", "js/lib/highchart_theme.js"],
+        "js": ["js/lib/highcharts.src.js", "js/gym/gym.js"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/preferences.php*"],
+        "js": ["js/preferences/preferences.js"],
         "run_at": "document_end"
       }
     ]
