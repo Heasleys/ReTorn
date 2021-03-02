@@ -59,6 +59,10 @@ margin: 0.75em;
 justify-content: space-between;
 }
 
+div.re_row[hidden] {
+  margin: 0px !important;
+}
+
 .re_col {
 margin-left: 20px;
 margin-right: 20px;
@@ -86,6 +90,10 @@ d: path('M4 6l-4 4 6 6-6 6 4 4 10-10L4 6z');
 
 span.re_icon.arrow_down svg path {
 d: path('M16 10l-6 6-6-6-4 4 10 10 10-10-4-4z');
+}
+
+div.re_button_wrap > button {
+  margin-bottom: 5px;
 }
 
 /* Torn Styled Button */

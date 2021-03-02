@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" lang="en">
+<html lang="en" lang="en" class="dark">
   <head>
-    <title>ReTorn: Settings</title>
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <title>Options - ReTorn</title>
+    <link rel="icon" href="/images/ReTorn@Default.png">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -12,8 +12,52 @@
   </head>
 
   <body>
-    <div>test</div>
-    <button id="test">Test</button>
+    <div class="container">
+    <div class="sidenav">
+      <span class="title"><span class="yellow">Re</span>Torn</span>
+      <ul class="tabs">
+        <li class="active" data-tab="profile">Profile</li>
+        <li data-tab="test">Test</li>
+        <li data-tab="settings">Settings</li>
+        <li data-tab="attributions">Attributions</li>
+      </ul>
+    </div>
+
+    <div class="mainview">
+      <div class="tab_groups">
+        <div class="tab_container show" id="profile">
+          <h3>Profile</h3>
+
+        </div>
+
+        <div class="tab_container" id="test">
+          <h3>Test</h3>
+          <button id="test">Test Notification</button>
+        </div>
+
+
+        <div class="tab_container" id="settings">
+          <h3>Extension Settings</h3>
+          <div class="switch_wrap">
+            <div class="switch_label">
+              Darkmode:
+            </div>
+            <div><input type="checkbox" id="darkmode"></div>
+          </div>
+        </div>
+
+
+        <div class="tab_container" id="attributions">
+          <h3>Credits and Attributions</h3>
+          <ul class='credits'>
+            <li><span>ReTorn was made by me: <a href="https://www.torn.com/profiles.php?XID=1468764" target="_blank">Heasleys4hemp [1468764]</a>. I am epic.</span></li>
+            <li><span>Thank you to <a href="https://www.torn.com/profiles.php?XID=776"  target="_blank">IceBlueFire [776]</a> for his wonderful integration with <a href="https://www.tornstats.com/"  target="_blank">TornStats</a>.</span></li>
+            <li><span><a href="https://www.flaticon.com/free-icon/rifle_2062174"  target="_blank">Rifle Icon</a> made by <a href="https://www.freepik.com" title="Freepik"  target="_blank">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"  target="_blank">www.flaticon.com</a></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
   </body>
 
 <script src="js/options.js"></script>

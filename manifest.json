@@ -3,6 +3,14 @@
     "version": "1.0.0",
     "description": "Its the return of a great Torn extension",
     "manifest_version": 3,
+    "icons": {
+      "16": "images/ReTorn@16px.png",
+      "32": "images/ReTorn@32px.png",
+      "48": "images/ReTorn@48px.png",
+      "64": "images/ReTorn@64px.png",
+      "96": "images/ReTorn@96px.png",
+      "128": "images/ReTorn@128px.png"
+    },
     "action": {
       "default_title": "ReTorn",
       "default_popup": "pages/popup_start.html",

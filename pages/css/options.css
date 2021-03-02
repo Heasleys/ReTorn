@@ -1,0 +1,151 @@
+body {
+  margin: 0;
+}
+
+ul {
+  list-style-type: none;
+  margin-block-start: 0;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 0px;
+}
+
+h3 {
+  letter-spacing: 0.4px;
+}
+
+html.light .sidenav {
+  color: #aaa;
+  background-color: #303030;
+}
+html.dark .sidenav {
+  color: #666;
+  background-color: #181818;
+}
+
+html.light .mainview {
+    background-color: #eaeaea;
+    color: #121212;
+}
+html.dark .mainview {
+    background-color: #121212;
+    color: #f4f4f4;
+}
+
+html.dark a {
+  color: #4974a5;
+}
+html.dark a:hover {
+  color: #62b4fd;
+}
+
+html.light a {
+  color: #62b4fd;
+}
+html.light a:hover {
+  color: #4974a5;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 100vh;
+}
+
+.sidenav {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  flex-basis: 15%;
+  padding: 1em;
+}
+
+.title {
+  font-size: 28px;
+  font-family: "impact";
+  letter-spacing: 0.5px;
+  font-weight: normal;
+  color: #fff;
+}
+
+.yellow {
+  color: #cab900;
+}
+
+.sidenav ul {
+  border-top: 1px solid white;
+}
+
+ul.credits {
+  list-style-type: "\2764";
+}
+.credits > li {
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.credits > li span {
+  position: relative;
+  left: 8px;
+}
+
+.sidenav li {
+  text-decoration: none;
+  font-size: 1.5em;
+  color: inherit;
+  padding: 3px;
+  padding-left: 5px;
+  border: 1px solid transparent;
+  border-radius: 0px 11px 11px 0px;
+  margin-top: 4px;
+}
+
+.sidenav li.active {
+  color: #f4f4f4;
+  font-weight: 400;
+}
+
+.sidenav li:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+.sidenav li:active {
+  border-color: #cab900;
+}
+
+
+li.disabled,li:disabled,li:hover.disabled,li:hover:disabled {
+  color: #eee;
+  border-color: transparent;
+  cursor: not-allowed;
+}
+
+.mainview {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  will-change: transform;
+  flex-grow: 1;
+  padding-left: 20px;
+}
+
+.tab_container {
+  display: none;
+}
+
+.tab_container.show {
+  display: block;
+}
+
+.switch_wrap {
+  display: flex;
+  flex-direction: row;
+}
+
+.switch_label {
+  margin-right: 8px;
+}
