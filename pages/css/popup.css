@@ -1,65 +1,9 @@
-html.light {
-  background-color: #eaeaea;
-  color: #111;
-}
-html.dark {
-  color: #eee;
-  background-color: #303030;
-  -moz-box-shadow:    inset 0 0 24em #040303;
-  -webkit-box-shadow: inset 0 0 24em #040303;
-  box-shadow:         inset 0 0 24em #040303;
-}
-
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  width: 24em;
-  min-width: 24em;
-  height: 18em;
-}
-
-body > div {
-  margin: 0.5em;
-}
-
-body > div > p#re_message {
-  color: red;
-  margin: 0px;
-}
-
-body > div > h1,h2,h3,h4,h5,h6 {
-  text-align: center;
-}
-
-body > input {
-  border-radius: 5px;
-}
-
-div.buttons {
-  position: absolute;
-  bottom: 0;
-}
-
-div.buttons > button {
-  margin-right: 5px;
-}
-
-.title {
-  font-family: "impact";
-  letter-spacing: 0.5px;
-  font-weight: normal;
-}
-
-.yellow {
-  color: #cab900;
+  height: auto;
 }
 
 a.to_torn {
-  color: #62b4fd;
   text-decoration: none;
-}
-
-a.to_torn:hover {
-  color: #4974a5;
 }
 
 div.progress_bars {
@@ -67,7 +11,10 @@ div.progress_bars {
   flex-direction: column;
   justify-content: space-between;
   align-items: stretch;
+}
 
+div.re_messages {
+  margin-bottom: 10px;
 }
 
 .progressbar {
@@ -121,4 +68,17 @@ html.light div.progressbar > span#life {
 }
 html.dark div.progressbar > span#life {
   background-color: #3f43cf !important;
+}
+
+button#re_logout {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.countdown {
+  float: right;
+}
+
+.last_update {
+  float: right;
 }

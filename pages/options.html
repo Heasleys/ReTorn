@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" href="css/options.css">
+    <link rel="stylesheet" href="css/tooltip.css">
     <script src="../js/lib/jquery-3.4.1.min.js"></script>
 
   </head>
@@ -16,7 +17,7 @@
     <div class="sidenav">
       <span class="title"><span class="yellow">Re</span>Torn</span>
       <ul class="tabs">
-        <li class="active" data-tab="profile">Profile</li>
+        <li class="active" data-tab="notifications">Notifications</li>
         <li data-tab="test">Test</li>
         <li data-tab="settings">Settings</li>
         <li data-tab="attributions">Attributions</li>
@@ -25,9 +26,35 @@
 
     <div class="mainview">
       <div class="tab_groups">
-        <div class="tab_container show" id="profile">
-          <h3>Profile</h3>
-
+        <div class="tab_container show" id="notifications">
+          <h3>Notifications</h3>
+          <div class="switch_wrap">
+            <label tooltip="Toggle all notifications">Notifications:</label>
+            <input type="checkbox" id="notifications" checked>
+          </div>
+          <div id="general_notifications">
+            <h4>General Notifications</h4>
+            <div class="input_wrap">
+              <input type="checkbox" id="notification_energy" checked>
+              <input type="text" id="energy_value" value="100%">
+              <label tooltip="Notify when energy reaches value">Energy</label>
+            </div>
+            <div class="input_wrap">
+              <input type="checkbox" id="notification_nerve" checked>
+              <input type="text" id="nerve_value" value="100%">
+              <label tooltip="Notify when nerve reaches value">Nerve</label>
+            </div>
+            <div class="input_wrap">
+              <input type="checkbox" id="notification_happy" checked>
+              <input type="text" id="happy_value" value="100%">
+              <label tooltip="Notify when happy reaches value">Happy</label>
+            </div>
+            <div class="input_wrap">
+              <input type="checkbox" id="notification_life" checked>
+              <input type="text" id="life_value" value="<100%">
+              <label tooltip="Notify when life reaches value">Life</label>
+            </div>
+          </div>
         </div>
 
         <div class="tab_container" id="test">
@@ -37,12 +64,16 @@
 
 
         <div class="tab_container" id="settings">
-          <h3>Extension Settings</h3>
+          <h3 class="menu_title">Extension Settings</h3>
           <div class="switch_wrap">
-            <div class="switch_label">
-              Darkmode:
-            </div>
-            <div><input type="checkbox" id="darkmode"></div>
+            <label>Darkmode:</label>
+            <input type="checkbox" id="darkmode">
+          </div>
+          <h3 class="submenu">Account Integration</h3>
+          <div>
+            <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>:</b>
+            <p>Account Status: <b><span id="ts_status"></span></b></p>
+            <button id="tornstats">Link Account</button><span class="re_message" id="ts_message" hidden></span>
           </div>
         </div>
 
@@ -51,7 +82,7 @@
           <h3>Credits and Attributions</h3>
           <ul class='credits'>
             <li><span>ReTorn was made by me: <a href="https://www.torn.com/profiles.php?XID=1468764" target="_blank">Heasleys4hemp [1468764]</a>. I am epic.</span></li>
-            <li><span>Thank you to <a href="https://www.torn.com/profiles.php?XID=776"  target="_blank">IceBlueFire [776]</a> for his wonderful integration with <a href="https://www.tornstats.com/"  target="_blank">TornStats</a>.</span></li>
+            <li><span>Thank you to <a href="https://www.torn.com/profiles.php?XID=776"  target="_blank">IceBlueFire [776]</a> for his wonderful integration with <a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>.</span></li>
             <li><span><a href="https://www.flaticon.com/free-icon/rifle_2062174"  target="_blank">Rifle Icon</a> made by <a href="https://www.freepik.com" title="Freepik"  target="_blank">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"  target="_blank">www.flaticon.com</a></span></li>
           </ul>
         </div>

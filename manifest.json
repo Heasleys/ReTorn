@@ -17,6 +17,7 @@
       "default_title": "ReTorn: Torn Browser Extension"
     },
     "permissions": [
+      "management",
       "notifications",
       "storage",
       "background",
@@ -65,7 +66,7 @@
       },
       {
         "matches": ["https://www.torn.com/gym.php"],
-        "js": ["js/lib/highcharts.src.js", "js/gym/gym.js"],
+        "js": ["js/lib/highcharts.js", "js/gym/gym.js"],
         "run_at": "document_end"
       },
       {

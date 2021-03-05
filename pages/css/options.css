@@ -11,8 +11,16 @@ ul {
   padding-inline-start: 0px;
 }
 
-h3 {
+a {
+  text-decoration: none;
+}
+
+.menu_title,.submenu {
   letter-spacing: 0.4px;
+}
+
+.submenu {
+  text-decoration: underline;
 }
 
 html.light .sidenav {
@@ -25,12 +33,12 @@ html.dark .sidenav {
 }
 
 html.light .mainview {
-    background-color: #eaeaea;
-    color: #121212;
+  background-color: #eaeaea;
+  color: #121212;
 }
 html.dark .mainview {
-    background-color: #121212;
-    color: #f4f4f4;
+  background-color: #121212;
+  color: #f4f4f4;
 }
 
 html.dark a {
@@ -48,10 +56,10 @@ html.light a:hover {
 }
 
 .container {
-    display: flex;
-    flex-direction: row;
-    width: 100vw;
-    height: 100vh;
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
 }
 
 .sidenav {
@@ -98,13 +106,26 @@ ul.credits {
   padding: 3px;
   padding-left: 5px;
   border: 1px solid transparent;
-  border-radius: 0px 11px 11px 0px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
   margin-top: 4px;
+  cursor: pointer;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 
 .sidenav li.active {
   color: #f4f4f4;
   font-weight: 400;
+  border-left-color: #f4f4f4;
+  border-left-width: 3px;
+  border-top-left-radius: 1px;
+  border-bottom-left-radius: 1px;
 }
 
 .sidenav li:hover {
@@ -133,6 +154,10 @@ li.disabled,li:disabled,li:hover.disabled,li:hover:disabled {
   padding-left: 20px;
 }
 
+.tab_groups {
+  margin-left: 10px;
+}
+
 .tab_container {
   display: none;
 }
@@ -146,6 +171,39 @@ li.disabled,li:disabled,li:hover.disabled,li:hover:disabled {
   flex-direction: row;
 }
 
-.switch_label {
+.switch_wrap label {
   margin-right: 8px;
+}
+
+.re_message {
+  margin-left: 10px;
+}
+
+.re_message.success {
+  color: #6cad2b;
+}
+
+.re_message.error {
+  color: #d55640;
+}
+
+div.input_wrap {
+  display: flex;
+  align-items: center;
+}
+
+div.input_wrap input[type=text] {
+  width: 5em;
+  margin-right: 10px;
+  text-align: right;
+  display:inline-block;
+  vertical-align:middle;
+}
+
+div.input_wrap input[type=checkbox] {
+  margin-right: 8px;
+}
+
+div#general_notifications div {
+  margin-bottom: 10px;
 }
