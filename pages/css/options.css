@@ -175,6 +175,10 @@ li.disabled,li:disabled,li:hover.disabled,li:hover:disabled {
   margin-right: 8px;
 }
 
+.switch_wrap input[type=checkbox] {
+  margin-right: 8px;
+}
+
 .re_message {
   margin-left: 10px;
 }

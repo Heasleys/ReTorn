@@ -315,6 +315,42 @@ function getValue(value, type) {
   });
 }
 
+function delValue(value, key, type) {
+  if (type == undefined) {
+    type = "sync";
+  }
+  return new Promise((resolve, reject) => {
+    if (type == "sync") {
+      chrome.storage.sync.get([value], (response) => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError.message);
+          reject({status: false, message: chrome.runtime.lastError.message});
+        } else {
+          if (Object.keys(response).length === 0 && response.constructor === Object) {
+            reject({status: false, message: "Could not find value in storage.", value: value});
+          }
+          var order = response.re_qcrimes.crimes[key].order;
+          delete response.re_qcrimes.crimes[key];
+          Object.keys(response.re_qcrimes.crimes).forEach(function(k) {
+            if (response.re_qcrimes.crimes[k].order > order) {
+              response.re_qcrimes.crimes[k].order--;
+            }
+          });
+
+          chrome.storage.sync.set(response, () => {
+            if (chrome.runtime.lastError) {
+              console.error(chrome.runtime.lastError.message);
+              reject({status: false, message: chrome.runtime.lastError.message});
+            } else {
+              resolve({status: true, message: "Value: " + key + " has been deleted."});
+            }
+          });
+        }
+      });
+    }
+  });
+}
+
 function newInstall() {
   getValue("re_settings").then((response) => {
 
@@ -325,7 +361,9 @@ function newInstall() {
         darkmode: false,
         tornstats: false,
         notifications: {
-          enabled: true,
+          notifications: {
+            enabled: true
+          },
           energy: {
             enabled: true,
             value: "100%"
@@ -426,6 +464,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       return true;
     break;
 
+    case "del_value":
+      if (msg.value != undefined && msg.key != undefined) {
+        delValue(msg.value, msg.key, msg.type).then((response) => {
+          console.log(response);
+          sendResponse({status: true, value: response});
+        })
+        .catch((error) => {
+          sendResponse(error);
+        })
+      }
+      return true;
+    break;
+
 
     case "set_value":
       if (msg.value_name != undefined && msg.value != undefined) {
@@ -472,109 +523,148 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
   console.log({changes: changes, areaName: areaName});
-  getValue("re_settings").then((response) => {
-    var notifications = response.re_settings.notifications;
-    if (changes.re_user_data != undefined && notifications != undefined && notifications.enabled == true) {
-      let newValue = changes.re_user_data.newValue;
-      let oldValue = changes.re_user_data.oldValue;
-      if (newValue != undefined && oldValue != undefined) {
+  if (changes.re_user_data != undefined) {
+    getValue("re_settings").then((response) => {
+      var notifications = response.re_settings.notifications;
+      if (notifications != undefined && notifications.notifications.enabled == true) {
+        let newValue = changes.re_user_data.newValue;
+        let oldValue = changes.re_user_data.oldValue;
+        if (newValue != undefined && oldValue != undefined) {
 
-        // MESSAGES
-        if (newValue.notifications.messages != oldValue.notifications.messages && newValue.notifications.messages != 0 && notifications.messages.enabled == true) {
-          createNotification("new_message", "ReTorn: New Message", "You have " + newValue.notifications.messages + " new messages.", "", "View Messages", "https://www.torn.com/messages.php")
-        }
+          // MESSAGES
+          if (newValue.notifications.messages != oldValue.notifications.messages && newValue.notifications.messages != 0 && notifications.messages.enabled == true) {
+            createNotification("new_message", "ReTorn: New Message", "You have " + newValue.notifications.messages + " new messages.", "", "View Messages", "https://www.torn.com/messages.php");
+          }
 
-        // EVENTS
-        if (newValue.notifications.events != oldValue.notifications.events && newValue.notifications.events != 0 && notifications.events.enabled == true) {
-          createNotification("new_event", "ReTorn: New Event", "You have " + newValue.notifications.events + " new events.", "", "View Events", "https://www.torn.com/events.php")
-        }
+          // EVENTS
+          if (newValue.notifications.events != oldValue.notifications.events && newValue.notifications.events != 0 && notifications.events.enabled == true) {
+            createNotification("new_event", "ReTorn: New Event", "You have " + newValue.notifications.events + " new events.", "", "View Events", "https://www.torn.com/events.php");
+          }
 
-        // COOLDOWNS - DRUGS
-        if (oldValue.cooldowns.drug != 0 && newValue.cooldowns.drug == 0 && notifications.drugs.enabled == true) {
-          createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", "", "View Items", "https://www.torn.com/item.php#drugs-items")
-        }
+          // COOLDOWNS - DRUGS
+          if (oldValue.cooldowns.drug != 0 && newValue.cooldowns.drug == 0 && notifications.drugs.enabled == true) {
+            createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", "", "View Items", "https://www.torn.com/item.php#drugs-items");
+          }
 
-        // COOLDOWNS - BOOSTERS
-        if (oldValue.cooldowns.booster != 0 && newValue.cooldowns.booster == 0 && notifications.boosters.enabled == true) {
-          createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", "", "View Items", "https://www.torn.com/item.phphttps://www.torn.com/item.php#boosters-items")
-        }
+          // COOLDOWNS - BOOSTERS
+          if (oldValue.cooldowns.booster != 0 && newValue.cooldowns.booster == 0 && notifications.boosters.enabled == true) {
+            createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", "", "View Items", "https://www.torn.com/item.phphttps://www.torn.com/item.php#boosters-items");
+          }
 
-        // COOLDOWNS - MEDICAL
-        if (oldValue.cooldowns.medical != 0 && newValue.cooldowns.medical == 0 && notifications.medical.enabled == true) {
-          createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", "", "View Items", "https://www.torn.com/item.php#medical-items")
-        }
+          // COOLDOWNS - MEDICAL
+          if (oldValue.cooldowns.medical != 0 && newValue.cooldowns.medical == 0 && notifications.medical.enabled == true) {
+            createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", "", "View Items", "https://www.torn.com/item.php#medical-items");
+          }
 
-        // ENERGY
-        if (notifications.energy.enabled == true && newValue.energy.current != oldValue.energy.current) {
-          let notify = false;
-          var message = "Your energy has reached it's value.";
-
-            var value = notifications.energy.value;
-            var num = parseFloat(value.replace(/\D/g, ""));
-            let perc = Math.floor(parseFloat(num) * 100) / 100;
-            let eperc = Math.floor((newValue.energy.current/newValue.energy.maximum) * 100);
-
-
-            // LESS THAN
-            if (value.includes("<")) {
-              if (value.includes("%")) {
-                if (eperc < perc) {
-                  notify = true;
-                  message = "Your energy is less than " + perc + "%.";
-                }
-              } else {
-                if (newValue.energy.current < num) {
-                  notify = true;
-                  message = "Your energy is less than " + num + ".";
-                }
-              }
+          // ENERGY
+          if (notifications.energy.enabled == true && newValue.energy.current != oldValue.energy.current) {
+            let data = checkNotifyBars('energy', notifications, newValue, oldValue);
+            if (data.notify == true) {
+              createNotification("energy", "ReTorn: Energy", data.message, "", "Visit Gym", "https://www.torn.com/gym.php");
             }
+          }
 
-            // GREATER THAN
-            if (value.includes(">")) {
-              if (value.includes("%")) {
-                if (eperc > perc) {
-                  notify = true;
-                  message = "Your energy is greater than " + perc + "%.";
-                }
-              } else {
-                if (newValue.energy.current > num) {
-                  notify = true;
-                  message = "Your energy is greater than " + num + ".";
-                }
-              }
+          // NERVE
+          if (notifications.nerve.enabled == true && newValue.nerve.current != oldValue.nerve.current) {
+            let data = checkNotifyBars('nerve', notifications, newValue, oldValue);
+            if (data.notify == true) {
+              createNotification("nerve", "ReTorn: Nerve", data.message, "", "Commit Crimes", "https://www.torn.com/crimes.php");
             }
+          }
 
-            // BASE VALUE
-            if (!value.includes(">") && !value.includes("<")) {
-              if (value.includes("%")) {
-                if (eperc == perc) {
-                  notify = true;
-                  if (perc == 100) {
-                    message = "Your energy is full.";
-                  } else {
-                    message = "Your energy has reached " + perc + "%.";
-                  }
-                }
-              } else {
-                if (newValue.energy.current == num) {
-                  notify = true;
-                  message = "Your energy has reached " + num + ".";
-                }
-              }
+          // ENERGY
+          if (notifications.happy.enabled == true && newValue.happy.current != oldValue.happy.current) {
+            let data = checkNotifyBars('happy', notifications, newValue, oldValue);
+            if (data.notify == true) {
+              createNotification("happy", "ReTorn: Happy", data.message, "", "Get Happy", "https://www.torn.com/items.php#candy-items");
             }
+          }
 
-
-            if (notify == true) {
-              createNotification("energy", "ReTorn: Energy", message, "", "Visit Gym", "https://www.torn.com/gym.php")
+          // ENERGY
+          if (notifications.life.enabled == true && newValue.life.current != oldValue.life.current) {
+            let data = checkNotifyBars('life', notifications, newValue, oldValue);
+            if (data.notify == true) {
+              createNotification("life", "ReTorn: Life", data.message, "", "Get a Life", "https://www.torn.com/items.php#medical-items");
             }
+          }
+
         }
+      }
 
+    }).catch((error) => {console.log(error);});
+  }
+});
+
+function checkNotifyBars(type, notifications, newValue, oldValue) {
+  let notify = false;
+  let message = "Your "+type+" has reached it's value.";
+
+  var value = notifications[type].value;
+  var num = parseFloat(value.replace(/\D/g, ""));
+
+  let perc = Math.floor(parseFloat(num) * 100) / 100;
+  let eperc = Math.floor((newValue[type].current/newValue[type].maximum) * 100);
+  let epercOld = Math.floor((oldValue[type].current/oldValue[type].maximum) * 100);
+
+  console.log(eperc, perc, num, value);
+
+  // LESS THAN
+  if (value.includes("<")) {
+    if (value.includes("%")) {
+      if (eperc < perc && epercOld >= perc) {
+        notify = true;
+        message = "Your "+type+" has dropped below " + perc + "%.";
+      }
+    } else {
+      if (newValue[type].current < num && oldValue[type].current >= num) {
+        notify = true;
+        message = "Your "+type+" has dropped below " + num + ".";
       }
     }
+  }
 
-  }).catch((error) => {console.log(error);});
-});
+  // GREATER THAN
+  if (value.includes(">")) {
+    if (value.includes("%")) {
+      if (eperc > perc && epercOld <= perc) {
+        notify = true;
+        message = "Your "+type+" has increased above " + perc + "%.";
+      }
+    } else {
+      if (newValue[type].current > num && oldValue[type].current <= num) {
+        notify = true;
+        message = "Your "+type+" has increased above " + num + ".";
+      }
+    }
+  }
+
+  // BASE VALUE
+  if (!value.includes(">") && !value.includes("<")) {
+    if (value.includes("%")) {
+      if (num == 100) {
+        if (eperc >= perc && epercOld < perc) {
+          notify = true;
+          message = "Your "+type+" is full.";
+        }
+      } else {
+        if (eperc == perc) {
+          notify = true;
+          message = "Your "+type+" has reached " + perc + "%.";
+        }
+      }
+    } else {
+      if (newValue[type].current == num) {
+        notify = true;
+        message = "Your "+type+" has reached " + num + ".";
+      }
+    }
+  }
+
+
+
+  let data = {notify: notify, message: message}
+  return data;
+}
 
 function createNotificationLATER(name, title, message, contextMessage, buttonTitle) {
   var image = chrome.runtime.getURL('ReTorn.png');
@@ -612,12 +702,12 @@ function createNotificationLATER(name, title, message, contextMessage, buttonTit
 function createNotification(name, title, message, contextMessage, buttonTitle, openURL) {
   registration.showNotification(title, {
     body: message,
-    data: name,
+    data: {name: name, url: openURL},
     icon: '/images/ReTorn@Default.png',
     badge: '/images/ReTorn@96px.png',
     message,
     actions: [
-      { action: 'Open', title: buttonTitle},
+      { action: 'Open', title: buttonTitle, url: openURL},
       { action: 'Close', title: 'Close' }
     ]
   })
@@ -625,7 +715,7 @@ function createNotification(name, title, message, contextMessage, buttonTitle, o
 
 self.addEventListener('notificationclick', function (event) {
   if (event.action === 'Open') {
-    chrome.tabs.create({'url': openURL});
+    chrome.tabs.create({'url': event.notification.data.url});
   }
-  event.notification.close()
+  event.notification.close();
 });

@@ -20,7 +20,7 @@ if ($('div.captcha').length == 0) {
       <div class="re_content" style="display: none;">
         <div class="re_row" id="graph">
 
-                  <p>You do not currently have your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account linked. Link your Torn Stats account on the options page under Extension Settings.</p>
+
 
         </div>
         <div class="re_row" id="buttons" style="display: none;">
@@ -58,6 +58,10 @@ if ($('div.captcha').length == 0) {
               errorMessage({status: false, message: "Unknown error."});
             }
           });
+        } else {
+
+          $('div#graph').html(`<p>You do not currently have your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account linked. Link your Torn Stats account on the options page under Extension Settings.</p>`);
+
         }
       } else {
         errorMessage({status: false, message: "Unknown error."});

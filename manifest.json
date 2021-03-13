@@ -45,9 +45,14 @@
                 "https://www.torn.com/api.html*",
                 "https://wiki.torn.com/*"
             ],
-        "js": ["js/lib/jquery-3.4.1.min.js","js/everywhere/mini-profiles.js"],
+        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/mini-profiles.js"],
         "css": ["css/everywhere.css"],
         "run_at": "document_start"
+      },
+      {
+        "matches": ["https://www.torn.com/api.html*"],
+        "js": ["js/lib/jquery-3.6.0.min.js","js/api/api.js"],
+        "run_at": "document_end"
       },
       {
         "matches": ["https://www.torn.com/stockexchange.php?step=portfolio"],
@@ -67,6 +72,12 @@
       {
         "matches": ["https://www.torn.com/gym.php"],
         "js": ["js/lib/highcharts.js", "js/gym/gym.js"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/crimes.php*"],
+        "js": ["js/crimes/crimes.js"],
+        "css": ["css/crimes/crimes.css"],
         "run_at": "document_end"
       },
       {

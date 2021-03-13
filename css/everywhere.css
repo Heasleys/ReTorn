@@ -137,3 +137,17 @@ div.re_button_wrap > button {
     background: var(--btn-disabled-background);
     cursor: default
 }
+
+.re_container::after {
+    display: block;
+    content: "";
+    border-right-width: initial;
+    border-left-width: initial;
+    border-right-color: initial;
+    border-left-color: initial;
+    margin: 10px 0px;
+    border-style: solid none;
+    border-image: initial;
+    border-top: 1px solid rgb(153, 153, 153);
+    border-bottom: 1px solid rgb(235, 235, 235);
+}
