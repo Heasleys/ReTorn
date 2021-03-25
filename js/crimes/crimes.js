@@ -5,51 +5,15 @@ if ($('div.captcha').length == 0) {
   var timeToCrime;
   var n = 1;
   insertHeader();
-
-  function insertHeader() {
-    if ($('div.re_container').length == 0) {
-      $("div.content-title").after(`
-      <div class="re_container">
-        <div class="re_head expanded">
-          <span class="re_title">ReTorn: Quick Crimes</span>
-            <div class="re_icon_wrap">
-              <span class="re_icon arrow_down">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>
-              </span>
-            </div>
-        </div>
-
-        <div class="re_content">
-
-            <p>Click on a crime's image to add it to this quick crimes list.</p>
-
-          <div class="re_row" id="re_quick_crimes">
+  reloadCrimes();
+  var re_container = $('div.re_container');
 
 
-          </div>
-        </div>
-      </div>
-      `);
-
-      $(".re_head").click(function() {
-          $(this).toggleClass("expanded");
-          $("div.re_content").slideToggle("fast");
-
-          $("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
-      });
-
-      $("#re_quick_crimes > div").click(function() {
-        $(this).find('form').submit();
-      });
-
-      reloadCrimes();
-    }
-  }
 
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-        insertHeader();
+        if ($('div.re_container').length == 0) {$("div.content-title").after(re_container);};
         for (var i = 0; i < mutation.addedNodes.length; i++) {
           if (mutation.addedNodes[i].classList && mutation.addedNodes[i].classList[0] == "specials-cont-wrap") {
             if ($('div.specials-cont-wrap > form[name="crimes"]:not([action="crimes.php?step=docrime"])').length > 0) {
@@ -104,6 +68,7 @@ var crimesContentWrapper = $('.content-wrapper');
 var loadingPlaceholderContent = '<div class="content-title m-bottom10"><h4 class="left">Crimes</h4>\n' + '    <div class="clear"></div>\n' + '    <hr class="page-head-delimiter">\n' + '</div> <img class="ajax-placeholder" src="/images/v2/main/ajax-loader.gif"/>';
 crimesContentWrapper.off("submit");
 crimesContentWrapper.on('submit', 'form', function(event) {
+
     var formElement = this;
     var $form = $(formElement);
     if (formElement.isSubmitting) {return;}
@@ -148,6 +113,44 @@ crimesContentWrapper.on('submit', 'form', function(event) {
 
 });
 
+}//if captcha
+
+function insertHeader() {
+  if ($('div.re_container').length == 0) {
+    $("div.content-title").after(`
+    <div class="re_container after">
+      <div class="re_head expanded">
+        <span class="re_title">ReTorn: Quick Crimes</span>
+          <div class="re_icon_wrap">
+            <span class="re_icon arrow_down">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>
+            </span>
+          </div>
+      </div>
+
+      <div class="re_content">
+
+          <p>Click on a crime's image to add it to this quick crimes list.</p>
+
+        <div class="re_row" id="re_quick_crimes">
+
+
+        </div>
+      </div>
+    </div>
+    `);
+
+    $(".re_head").click(function() {
+        $(this).toggleClass("expanded");
+        $("div.re_content").slideToggle("fast");
+
+        $("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
+    });
+
+    $("#re_quick_crimes > div").click(function() {
+      $(this).find('form').submit();
+    });
+  }
 }
 
 function reloadCrimes() {
@@ -190,6 +193,7 @@ function reloadCrimes() {
             });
 
           });
+          re_container = $('div.re_container').clone(true, true);
           n = x;
           n++;
       }

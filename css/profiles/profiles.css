@@ -1,0 +1,5 @@
+#re_spy table, #re_spy th, #re_spy td {
+  border: 1px solid black;
+  color: black;
+  padding: 5px;
+}

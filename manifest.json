@@ -45,7 +45,7 @@
                 "https://www.torn.com/api.html*",
                 "https://wiki.torn.com/*"
             ],
-        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/mini-profiles.js"],
+        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/mini-profiles.js","js/everywhere/easteregg.js"],
         "css": ["css/everywhere.css"],
         "run_at": "document_start"
       },
@@ -62,6 +62,11 @@
       {
         "matches": ["https://www.torn.com/stockexchange.php"],
         "js": ["js/stockexchange/stockexchange.js"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/page.php?sid=stocks"],
+        "js": ["js/stockexchange/stocks.js"],
         "run_at": "document_end"
       },
       {
@@ -83,6 +88,18 @@
       {
         "matches": ["https://www.torn.com/preferences.php*"],
         "js": ["js/preferences/preferences.js"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/city.php*"],
+        "js": ["js/city/city.js"],
+        "css": ["css/city/city.css"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/profiles.php*"],
+        "js": ["js/profiles/profiles.js"],
+        "css": ["css/profiles/profiles.css"],
         "run_at": "document_end"
       }
     ]

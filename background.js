@@ -212,6 +212,15 @@ function checkLogin() {
       console.log(error);
     });
     pullRequiredAPI(response.re_api_key);
+    getValue("re_item_data", "local").then((res) => {
+      if ((Math.floor(Date.now() / 1000) - parseInt(res.re_item_data.timestamp)) > 86400) { //has items been updated in 1 day?
+        getItemsAPI();
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      getItemsAPI();
+    });
   })
   .catch((error) => {
     console.log(error);
@@ -413,6 +422,17 @@ function merge(a, b) {
             : v;
         return o;
     }, a);
+}
+
+function getItemsAPI() {
+  getValue("re_api_key").then((response) => {
+    fetchAPI(response.re_api_key, 'torn', 'items,timestamp&comment=ReTorn').then((data) => {
+      setValue({"re_item_data": data}, "local");
+    })
+    .catch((error) => {
+
+    });
+  });
 }
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
