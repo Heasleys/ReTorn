@@ -1,5 +1,48 @@
-#re_spy table, #re_spy th, #re_spy td {
-  border: 1px solid black;
-  color: black;
-  padding: 5px;
+.re_row table {
+  border: 2px solid #CBCBCB;
+}
+
+.re_row th, .re_row td {
+  border: 1px solid #dcdcdc !important;
+  padding: 5px !important;
+}
+
+#re_spy {
+  margin-bottom: 10px;
+}
+
+.re_row table {
+  background-color: #FFFFFF;
+  border-radius: 5px 5px 0px 0px;
+}
+.re_row > div {
+  flex: 1;
+  margin: 5px;
+}
+
+.re_row table {
+  width: 100%;
+}
+
+.re_row {
+  flex-wrap: wrap;
+}
+
+.re_row th {
+  font-weight: bolder !important;
+  font-size: 13px;
+}
+
+td.red {
+  font-weight: bold !important;
+  color: #d83500;
+}
+
+td.green {
+  font-weight: bold !important;
+  color: #678c00;
+}
+
+#re_attacks td, td[colspan] {
+  text-align: center;
 }

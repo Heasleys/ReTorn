@@ -1,4 +1,4 @@
-.re_city_finds .leaflet-marker-pane img[src*="torn.com/images/items/"]:hover {
+.re_city_finds .leaflet-marker-pane img[src*="torn.com/images/items/"]:hover, .re_city_finds .leaflet-marker-pane img[src*="torn.com/images/items/"].hovered {
   background-color: rgb(0, 0, 0);
     width: 150px !important;
     height: 150px !important;
@@ -10,7 +10,7 @@
 
 .re_city_finds .leaflet-marker-pane img[src*="torn.com/images/items/"] {
     box-sizing: border-box;
-    background-color: rgba(202, 185, 0, 0.6);
+    background-color: rgba(138, 190, 239, 0.7);
     display: block !important;
     width: 40px !important;
     height: 40px !important;

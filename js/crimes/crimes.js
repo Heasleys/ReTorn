@@ -63,56 +63,6 @@ if ($('div.captcha').length == 0) {
 var target = document.querySelector('div.content-wrapper');
 observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
 
-
-var crimesContentWrapper = $('.content-wrapper');
-var loadingPlaceholderContent = '<div class="content-title m-bottom10"><h4 class="left">Crimes</h4>\n' + '    <div class="clear"></div>\n' + '    <hr class="page-head-delimiter">\n' + '</div> <img class="ajax-placeholder" src="/images/v2/main/ajax-loader.gif"/>';
-crimesContentWrapper.off("submit");
-crimesContentWrapper.on('submit', 'form', function(event) {
-
-    var formElement = this;
-    var $form = $(formElement);
-    if (formElement.isSubmitting) {return;}
-    formElement.isSubmitting = true;
-    event.preventDefault();
-    var data = $form.serializeArray();
-    window.location.hash = "#";
-    crimesContentWrapper.html(loadingPlaceholderContent);
-
-    var action = $form.attr('action');
-    action = action[0] == '/' ? action.substr(1) : action;
-    var urlParamsDelimier = action.indexOf('?') > -1 ? '&' : '?'
-    action += urlParamsDelimier + 'timestamp=' + Date.now();
-
-      $.ajax({
-        url: action,
-        method: 'POST',
-        data: data
-      })
-      .done(function(resp) {
-        formElement.isSubmitting = false;
-        const REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-        var sc = resp.match(REGEX);
-
-        var noScripts = resp.replace(REGEX, '');
-        crimesContentWrapper.html(noScripts);
-
-        if (sc && sc.length != 0) {
-          var num = sc[0].match(/\d+/g);
-          clearInterval(timeToCrime);
-          timeToCrime = setInterval(function() {
-            timeDisplay = secondsToDhms(num);
-            if (timeDisplay == "") {timeDisplay = "0s"}
-            $("#defaultCountdown").html(timeDisplay);
-            num--;
-          }, 1000);
-        }
-      })
-      .fail(function(ee) {
-        console.error(ee)
-      })
-
-});
-
 }//if captcha
 
 function insertHeader() {
@@ -164,16 +114,18 @@ function reloadCrimes() {
           $.each(crimes, (index, crime) => {
             x++;
             $('#re_quick_crimes').prepend(`
-              <div style="order: `+crime.order+`"><form action="`+crime.action+`" method="post" name="crimes">
-                <input name="nervetake" type="hidden" value="`+crime.nerve+`">
-                <input name="crime" type="hidden" value="`+crime.crime+`">
+              <form action="`+crime.action+`" method="post" name="crimes" style="order: `+crime.order+`">
+                <div id="do_crimes">
+                  <input name="nervetake" type="hidden" value="`+crime.nerve+`">
+                  <input name="crime" type="hidden" value="`+crime.crime+`">
                   <span>
-                  <button class="re_del_qcrime" data-cval="`+crime.crime+`">
-                    <img width="30" height="30" src="`+crime.img+`">
-                  </button>
-                    `+crime.text+` (-`+crime.nerve+` Nerve)
+                    <button class="re_del_qcrime" data-cval="`+crime.crime+`">
+                      <img width="30" height="30" src="`+crime.img+`">
+                    </button>
+                      `+crime.text+` (-`+crime.nerve+` Nerve)
                   </span>
-              </form></div>
+                </div>
+              </form>
             `);
             $("#re_quick_crimes > div").click(function() {
               $(this).find('form').submit();
@@ -202,20 +154,4 @@ function reloadCrimes() {
 
 
   });
-}
-
-function secondsToDhms(seconds) {
-  seconds = Number(seconds);
-  var d = Math.floor(seconds / (3600*24));
-  var h = Math.floor(seconds % (3600*24) / 3600);
-  var m = Math.floor(seconds % 3600 / 60);
-  var s = Math.floor(seconds % 60);
-
-  var dDisplay = d > 0 ? d + (d == 1 ? "d " : "d ") : "";
-  var hDisplay = h > 0 ? h + (h == 1 ? "h " : "h ") : "";
-  var mDisplay = m > 0 ? m + (m == 1 ? "m " : "m ") : "";
-  var sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
-
-  let display = dDisplay + hDisplay + mDisplay + sDisplay;
-  return display;
 }

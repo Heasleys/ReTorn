@@ -28,7 +28,12 @@ function insertHeader() {
       <div class="re_content">
         <div class="re_row">
 
-          <div id="re_spy"></div>
+          <div id="re_compare" style="display: none;"></div>
+
+          <div>
+            <div id="re_spy" style="display: none;"></div>
+            <div id="re_attacks" style="display: none;"></div>
+          </div>
 
         </div>
       </div>
@@ -73,17 +78,91 @@ function tornstatsSync(apikey) {
         console.log(data);
         if (data.status == true) {
           if (data.spy.status == true) {
-            let spy_table = "<table><tr><th>Battle Stat</th><th>"+data.spy.player_name+"</th><th>You</th><th>Difference</th></tr>";
-            spy_table += "<tr><td>Strength:</td><td>"+data.spy.strength.toLocaleString()+"</td><td>"+(data.spy.strength + data.spy.deltaStrength).toLocaleString()+"</td><td>"+data.spy.deltaStrength.toLocaleString()+"</td></tr>";
-            spy_table += "<tr><td>Defense:</td><td>"+data.spy.defense.toLocaleString()+"</td><td>"+(data.spy.defense + data.spy.deltaDefense).toLocaleString()+"</td><td>"+data.spy.deltaDefense.toLocaleString()+"</td></tr>";
-            spy_table += "<tr><td>Speed:</td><td>"+data.spy.speed.toLocaleString()+"</td><td>"+(data.spy.speed + data.spy.deltaSpeed).toLocaleString()+"</td><td>"+data.spy.deltaSpeed.toLocaleString()+"</td></tr>";
-            spy_table += "<tr><td>Dexterity:</td><td>"+data.spy.dexterity.toLocaleString()+"</td><td>"+(data.spy.dexterity + data.spy.deltaDexterity).toLocaleString()+"</td><td>"+data.spy.deltaDexterity.toLocaleString()+"</td></tr>";
-            spy_table += "<tr><td>Total:</td><td>"+data.spy.total.toLocaleString()+"</td><td>"+(data.spy.total + data.spy.deltaTotal).toLocaleString()+"</td><td>"+data.spy.deltaTotal.toLocaleString()+"</td></tr>";
+            let strCol = "";
+            let defCol = "";
+            let speCol = "";
+            let dexCol = "";
+            let totCol = "";
+            if (data.spy.deltaStrength < 0) {
+              strCol = " class='red'";
+            }
+            if (data.spy.deltaStrength > 0) {
+              strCol = " class='green'";
+            }
 
+            if (data.spy.deltaDefense < 0) {
+              defCol = " class='red'";
+            }
+            if (data.spy.deltaDefense > 0) {
+              defCol = " class='green'";
+            }
+
+            if (data.spy.deltaSpeed < 0) {
+              speCol = " class='red'";
+            }
+            if (data.spy.deltaSpeed > 0) {
+              speCol = " class='green'";
+            }
+
+            if (data.spy.deltaDexterity < 0) {
+              dexCol = " class='red'";
+            }
+            if (data.spy.deltaDexterity > 0) {
+              dexCol = " class='green'";
+            }
+
+            if (data.spy.deltaTotal < 0) {
+              totCol = " class='red'";
+            }
+            if (data.spy.deltaTotal > 0) {
+              totCol = " class='green'";
+            }
+
+            let spy_table = "<table><tr><th>Battle Stat</th><th>"+data.spy.player_name+"</th><th>You</th><th>Difference</th></tr>";
+            spy_table += "<tr><td>Strength:</td><td>"+data.spy.strength.toLocaleString()+"</td><td>"+(data.spy.strength + data.spy.deltaStrength).toLocaleString()+"</td><td"+strCol+">"+data.spy.deltaStrength.toLocaleString()+"</td></tr>";
+            spy_table += "<tr><td>Defense:</td><td>"+data.spy.defense.toLocaleString()+"</td><td>"+(data.spy.defense + data.spy.deltaDefense).toLocaleString()+"</td><td"+defCol+">"+data.spy.deltaDefense.toLocaleString()+"</td></tr>";
+            spy_table += "<tr><td>Speed:</td><td>"+data.spy.speed.toLocaleString()+"</td><td>"+(data.spy.speed + data.spy.deltaSpeed).toLocaleString()+"</td><td"+speCol+">"+data.spy.deltaSpeed.toLocaleString()+"</td></tr>";
+            spy_table += "<tr><td>Dexterity:</td><td>"+data.spy.dexterity.toLocaleString()+"</td><td>"+(data.spy.dexterity + data.spy.deltaDexterity).toLocaleString()+"</td><td"+dexCol+">"+data.spy.deltaDexterity.toLocaleString()+"</td></tr>";
+            spy_table += "<tr><td>Total:</td><td>"+data.spy.total.toLocaleString()+"</td><td>"+(data.spy.total + data.spy.deltaTotal).toLocaleString()+"</td><td"+totCol+">"+data.spy.deltaTotal.toLocaleString()+"</td></tr>";
+            spy_table += "<td colspan='4'>Last Spy: <b>"+data.spy.difference+"</b></td>";
 
             spy_table += "</table>";
 
             $('#re_spy').html(spy_table);
+            $('#re_spy').show();
+          }
+
+          if (data.compare.status == true) {
+            let compare_table = "<table><tr><th>Personal Stat</th><th>Them</th><th>You</th><th>Difference</th></tr>";
+
+            Object.entries(data.compare.data).forEach(([key, value]) => {
+              let color = "";
+              if (value.difference < 0) {
+                color = " class='red'";
+              }
+              if (value.difference > 0) {
+                color = " class='green'";
+              }
+                compare_table += "<tr><td>"+key+"</td><td>"+value.amount.toLocaleString()+"</td><td>"+(value.amount + value.difference).toLocaleString()+"</td><td"+color+">"+value.difference.toLocaleString()+"</td></tr>";
+            });
+
+            compare_table += "</table>";
+
+            $('#re_compare').html(compare_table);
+            $('#re_compare').show();
+          }
+
+          if (data.attacks.status == true) {
+            let attacks_table = "<table><tr><th>Attack History</th></tr>";
+
+            Object.entries(data.attacks.data).forEach(([key, value]) => {
+              attacks_table += "<tr><td>"+value+"</td></tr>";
+            });
+
+            attacks_table += "</table>";
+
+            $('#re_attacks').html(attacks_table);
+            $('#re_attacks').show();
           }
         }
       }
