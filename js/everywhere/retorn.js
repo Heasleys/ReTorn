@@ -6,14 +6,12 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
   if (response.status == true) {
     if (response.value.re_settings) {
       settings = response.value.re_settings;
-    } else{
-      if (settings.header_color) {
+      if (settings.header_color != undefined) {
         let color = settings.header_color;
         let root = document.documentElement;
         root.style.setProperty('--re-header-color', color);
       }
     }
-
   }
 });
 
