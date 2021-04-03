@@ -1,20 +1,7 @@
-.re_row table {
-  border: 2px solid #CBCBCB;
-}
-
 .re_row th, .re_row td {
-  border: 1px solid #dcdcdc !important;
   padding: 5px !important;
 }
 
-#re_spy {
-  margin-bottom: 10px;
-}
-
-.re_row table {
-  background-color: #FFFFFF;
-  border-radius: 5px 5px 0px 0px;
-}
 .re_row > div {
   flex: 1;
   margin: 5px;
@@ -26,6 +13,7 @@
 
 .re_row {
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .re_row th {
@@ -33,16 +21,50 @@
   font-size: 13px;
 }
 
-td.red {
-  font-weight: bold !important;
-  color: #d83500;
+#re_compare {
+  max-width: 500px;
 }
 
-td.green {
-  font-weight: bold !important;
-  color: #678c00;
+#re_spy {
+  margin-bottom: 10px;
 }
 
 #re_attacks td, td[colspan] {
   text-align: center;
+}
+
+
+/* Color CSS */
+.re_row th, .re_row td {
+  border: 1px solid #dcdcdc !important;
+}
+body.dark-mode .re_row th, body.dark-mode .re_row td {
+  border: 1px solid #222222 !important;
+  color: #DDD;
+}
+
+.re_row table {
+  border: 2px solid #CBCBCB;
+  background-color: #FFFFFF;
+}
+body.dark-mode .re_row table {
+  border: 2px solid #191919;
+  background-color: #333;
+}
+
+td.red {
+  font-weight: bold !important;
+  color: #d83500;
+}
+td.green {
+  font-weight: bold !important;
+  color: #678c00;
+}
+body.dark-mode td.red {
+  font-weight: bold !important;
+  color: #b96a6a;
+}
+body.dark-mode td.green {
+  font-weight: bold !important;
+  color: #4ea87b;
 }

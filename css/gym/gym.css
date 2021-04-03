@@ -1,0 +1,27 @@
+body.dark-mode div#stats text {
+  color: #DDD !important;
+  fill: #DDD !important;
+}
+
+body.dark-mode div#stats g.highcharts-legend-item-hidden text {
+  color: #808080 !important;
+  fill: #808080 !important;
+}
+body.dark-mode div#stats g.highcharts-legend-item-hidden text:hover {
+  color: #CCC !important;
+  fill: #CCC !important;
+}
+
+body.dark-mode div#stats g.highcharts-legend-item text:hover {
+  color: #EEE !important;
+  fill: #EEE !important;
+}
+
+body.dark-mode g.highcharts-label.highcharts-tooltip text {
+  color: #DDD !important;
+  fill: #DDD !important;
+}
+
+body.dark-mode g.highcharts-label.highcharts-tooltip path.highcharts-label-box {
+  fill: rgba(51, 51, 51, 0.85) !important;
+}

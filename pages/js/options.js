@@ -52,6 +52,10 @@ $(document).ready(function() {
           $('button#tornstats').val(0);
         }
 
+        if (settings.header_color != undefined) {
+          $('#header_color').val(settings.header_color);
+        }
+
         notifications.forEach((notif, i) => {
           var checkbox = $('div#general_notifications input#' + notif);
 
@@ -152,7 +156,14 @@ $(document).ready(function() {
             $("html").addClass('dark');
           }
       });
+  });
+
+  $('#header_color').change(function() {
+    let color = $(this).val();
+    chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"header_color": color}}, (response) => {
+      console.log(response);
     });
+  });
 
   $("button#tornstats").click(function() {
       if ($(this).val() == 0) {

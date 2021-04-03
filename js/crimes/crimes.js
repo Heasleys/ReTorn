@@ -4,9 +4,21 @@
 if ($('div.captcha').length == 0) {
   var timeToCrime;
   var n = 1;
-  insertHeader();
+  insertHeader($("div.content-title"), 'after');
+  $("#re_quick_crimes > div").click(function() {
+    $(this).find('form').submit();
+  });
+  $('#re_title').text("Quick Crimes");
+  $('.re_content').html(`
+    <p>Click on a crime's image to add it to this quick crimes list.</p>
+    <div class="re_row" id="re_quick_crimes">
+    `);
   reloadCrimes();
   var re_container = $('div.re_container');
+  $(".re_head").click(function() {
+    re_container = $('div.re_container');
+  });
+
 
 
 
@@ -64,44 +76,6 @@ var target = document.querySelector('div.content-wrapper');
 observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
 
 }//if captcha
-
-function insertHeader() {
-  if ($('div.re_container').length == 0) {
-    $("div.content-title").after(`
-    <div class="re_container after">
-      <div class="re_head expanded">
-        <span class="re_title">ReTorn: Quick Crimes</span>
-          <div class="re_icon_wrap">
-            <span class="re_icon arrow_down">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>
-            </span>
-          </div>
-      </div>
-
-      <div class="re_content">
-
-          <p>Click on a crime's image to add it to this quick crimes list.</p>
-
-        <div class="re_row" id="re_quick_crimes">
-
-
-        </div>
-      </div>
-    </div>
-    `);
-
-    $(".re_head").click(function() {
-        $(this).toggleClass("expanded");
-        $("div.re_content").slideToggle("fast");
-
-        $("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
-    });
-
-    $("#re_quick_crimes > div").click(function() {
-      $(this).find('form').submit();
-    });
-  }
-}
 
 function reloadCrimes() {
   chrome.runtime.sendMessage({name: "get_value", value: "re_qcrimes"}, (response) => {

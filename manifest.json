@@ -45,8 +45,8 @@
                 "https://www.torn.com/api.html*",
                 "https://wiki.torn.com/*"
             ],
-        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/mini-profiles.js","js/everywhere/easteregg.js"],
         "css": ["css/everywhere.css"],
+        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/retorn.js","js/everywhere/mini-profiles.js","js/everywhere/easteregg.js","js/everywhere/chat.js"],
         "run_at": "document_start"
       },
       {
@@ -77,6 +77,7 @@
       {
         "matches": ["https://www.torn.com/gym.php"],
         "js": ["js/lib/highcharts.js", "js/gym/gym.js"],
+        "css": ["css/gym/gym.css"],
         "run_at": "document_end"
       },
       {

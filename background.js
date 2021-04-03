@@ -80,7 +80,7 @@ function validateAPIKEY(apikey) {
     fetchAPI(apikey, 'user', 'basic,timestamp&comment=ReTorn').then((response) => {
       setValue({"re_user": {"name": response.name, "player_id": response.player_id}}, "sync");
       pullRequiredAPI(apikey);
-      createAPIAlarm();
+      checkLogin();
       resolve();
     })
     .catch((error) => {
@@ -212,19 +212,20 @@ function checkLogin() {
       console.log(error);
     });
     pullRequiredAPI(response.re_api_key);
-    getValue("re_item_data", "local").then((res) => {
-      if ((Math.floor(Date.now() / 1000) - parseInt(res.re_item_data.timestamp)) > 86400) { //has items been updated in 1 day?
-        getItemsAPI();
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      getItemsAPI();
-    });
   })
   .catch((error) => {
     console.log(error);
+  });
+
+  getValue("re_item_data", "local").then((res) => {
+    if ((Math.floor(Date.now() / 1000) - parseInt(res.re_item_data.timestamp)) > 86400) { //has items been updated in 1 day?
+      getItemsAPI();
+    }
   })
+  .catch((error) => {
+    console.log(error);
+    getItemsAPI();
+  });
 }
 
 function integrateTornStats() {
@@ -369,6 +370,7 @@ function newInstall() {
       re_settings: {
         darkmode: false,
         tornstats: false,
+        header_color: "#e0ce00",
         notifications: {
           notifications: {
             enabled: true
@@ -426,12 +428,13 @@ function merge(a, b) {
 
 function getItemsAPI() {
   getValue("re_api_key").then((response) => {
-    fetchAPI(response.re_api_key, 'torn', 'items,timestamp&comment=ReTorn').then((data) => {
+    fetchAPI(response.re_api_key, 'torn', 'items,timestamp&comment=ReTorn').then((data) => { //API key is available, so get a fresh new list of Torn items from the API
       setValue({"re_item_data": data}, "local");
-    })
-    .catch((error) => {
-
     });
+  })
+  .catch((error) => {
+    const url = chrome.runtime.getURL('/files/items.json'); //API key hasn't been set yet, so get old list of Torn items from file
+    fetch(url).then((response) => response.json()).then((json) => setValue({"re_item_data": json}, "local"));
   });
 }
 

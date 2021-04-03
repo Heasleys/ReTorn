@@ -3,46 +3,23 @@
 // @author       Heasleys4hemp [1468764]
 
 if ($('div.captcha').length == 0) {
-  insertHeader();
-
-  function insertHeader() {
-    $("div.content-wrapper").append(`
-    <div class="re_container">
-      <div class="re_head">
-        <span class="re_title">ReTorn: Torn Stats</span>
-          <div class="re_icon_wrap">
-            <span class="re_icon arrow_right">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>
-            </span>
-          </div>
-      </div>
-
-      <div class="re_content" style="display: none;">
-        <div class="re_row" id="graph">
-
-
-
-        </div>
-        <div class="re_row" id="buttons" style="display: none;">
-
-        </div>
-        <div class="re_row" hidden>
-          <p id="re_message" hidden></p>
-        </div>
-      </div>
+  insertHeader($("div.content-wrapper"), 'append');
+  $('#re_title').text("Torn Stats");
+  $('.re_content').html(`
+    <div class="re_row" id="graph">
+    </div>
+    <div class="re_row" id="buttons" style="display: none;">
+    </div>
+    <div class="re_row" hidden>
+      <p id="re_message" hidden></p>
     </div>
     `);
 
-    $(".re_head").click(function() {
-        if ($('div#stats.loaded').length == 0) {
-          loadTS();
-        }
-        $(this).toggleClass("expanded");
-        $("div.re_content").slideToggle("fast");
-
-        $("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
-    });
-  }
+  $(".re_head").click(function() {
+    if ($('div#stats.loaded').length == 0) {
+      loadTS();
+    }
+  });
 
   function loadTS() {
     chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
@@ -215,7 +192,7 @@ if ($('div.captcha').length == 0) {
           }
       },
           chart: {
-              backgroundColor: '#F2F2F2'
+              backgroundColor: 'transparent'
           },
           series : [{
                   name: 'Strength',

@@ -34,6 +34,16 @@ p#re_city_finds a {
   text-decoration: none;
 }
 
-p#re_city_finds a:visited {
-  color: blue;
+
+
+/* Color CSS */
+p#re_city_finds a, p#re_city_finds a:visited {
+  color: #069;
+}
+p#re_city_finds a:hover {
+  color: #62b4fd !important;
+}
+
+body.dark-mode p#re_city_finds a, body.dark-mode p#re_city_finds a:visited {
+  color: #4974a5;
 }

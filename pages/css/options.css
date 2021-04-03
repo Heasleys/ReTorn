@@ -79,7 +79,7 @@ html.light a:hover {
 }
 
 .yellow {
-  color: #cab900;
+  color: #e0ce00;
 }
 
 .sidenav ul {
@@ -134,7 +134,7 @@ ul.credits {
 }
 
 .sidenav li:active {
-  border-color: #cab900;
+  border-color: #e0ce00;
 }
 
 
@@ -169,10 +169,21 @@ li.disabled,li:disabled,li:hover.disabled,li:hover:disabled {
 .switch_wrap {
   display: flex;
   flex-direction: row;
+  margin-bottom: 3px;
 }
 
 .switch_wrap label {
   margin-right: 8px;
+}
+
+.switch_wrap input + label {
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.switch_wrap label code {
+  font-size: 12px;
 }
 
 .switch_wrap input[type=checkbox] {

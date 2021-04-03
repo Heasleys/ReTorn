@@ -1,7 +1,23 @@
 // @version      1.0.0
 // @description  Add Sync button to preferences page for syncing APIKEY with extension
 // @author       Heasleys4hemp [1468764]
-insertHeader();
+insertHeader($("div.content-wrapper"), 'append');
+$('#re_title').text("Sync");
+$('.re_content').html(`
+  <div class="re_row">
+    <p id="re_signin_message">You are not signed into ReTorn. Please click below to sync apikey.</p>
+  </div>
+  <div class="re_row">
+    <div class="re_button_wrap">
+      <button class="re_torn_button" id="re_sync">Sync</button>
+      <button class="re_torn_button" id="re_options">Options</button>
+    </div>
+  </div>
+  <div class="re_row" hidden>
+    <p id="re_message" hidden></p>
+  </div>
+  `);
+
 
 chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) => {
   if (response.status != undefined) {
@@ -16,43 +32,6 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) 
   }
 });
 
-
-function insertHeader() {
-  $("div.content-wrapper").append(`
-  <div class="re_container">
-    <div class="re_head">
-      <span class="re_title">ReTorn</span>
-        <div class="re_icon_wrap">
-          <span class="re_icon arrow_right">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>
-          </span>
-        </div>
-    </div>
-
-    <div class="re_content" style="display: none;">
-      <div class="re_row">
-
-      <p id="re_signin_message">You are not signed into ReTorn. Please click below to sync apikey.</p>
-
-      </div>
-      <div class="re_row">
-        <div class="re_button_wrap">
-          <button class="re_torn_button" id="re_sync">Sync</button>
-          <button class="re_torn_button" id="re_options">Options</button>
-        </div>
-      </div>
-      <div class="re_row" hidden>
-        <p id="re_message" hidden></p>
-      </div>
-    </div>
-  </div>
-  `);
-
-  $(".re_head").click(() => {
-      $(this).toggleClass("expanded");
-      $("div.re_content").slideToggle("fast");
-      $("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
-  });
 
   $("button#re_sync").click(() => {
     let key = $("div#api > div > form > input#newapi").val();
@@ -73,7 +52,7 @@ function insertHeader() {
   $("button#re_options").click(() => {
     chrome.runtime.sendMessage({name: "open_options"});
   });
-}
+
 
 function synced(response) {
   if (response.message != undefined) {

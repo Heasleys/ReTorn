@@ -7,8 +7,6 @@ button.re_add_qcrime, button.re_del_qcrime {
     cursor: pointer;
 }
 
-
-
 button.re_add_qcrime img:hover, button.re_del_qcrime img:hover {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -36,7 +34,6 @@ button.re_del_qcrime img:hover {
 }
 
 #re_quick_crimes div {
-  border: 1px #999 solid;
   border-radius: 5px;
   margin: 5px;
   padding: 3px;
@@ -50,7 +47,6 @@ button.re_del_qcrime img:hover {
 
 #re_quick_crimes div:hover {
   cursor: pointer;
-  background-color: #fff;
 }
 
 #re_quick_crimes button > img {
@@ -74,4 +70,22 @@ div.re_content > p {
   text-align: center;
   margin: 10px;
   margin-bottom: 5px;
+}
+
+
+
+/* Color CSS */
+#re_quick_crimes div {
+  border: 1px #999 solid;
+}
+
+body.dark-mode #re_quick_crimes div {
+  border: 1px #222 solid;
+}
+
+#re_quick_crimes div:hover {
+  background-color: #fff;
+}
+body.dark-mode #re_quick_crimes div:hover {
+  background-color: #444;
 }

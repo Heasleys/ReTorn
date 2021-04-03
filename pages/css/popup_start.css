@@ -3,7 +3,7 @@ html.light {
   color: #111;
 }
 html.dark {
-  color: #eee;
+  color: #f4f4f4;
   background-color: #121212;
 }
 
@@ -50,13 +50,18 @@ div.buttons > button {
 }
 
 .title {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.logo {
   font-family: "impact";
   letter-spacing: 0.5px;
   font-weight: normal;
 }
 
 .yellow {
-  color: #cab900;
+  color: #e0ce00;
 }
 
 .to_torn {

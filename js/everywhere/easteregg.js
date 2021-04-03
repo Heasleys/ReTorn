@@ -68,12 +68,13 @@ var observer = new MutationObserver(function(mutations) {
 
     alert(`Easter Egg found. Look closely at the ${mes} of ${view}!`);
     console.log(`ReTorn: Easter Egg found. Look closely at the ${mes} of ${view}!`);
+    clearTimeout(egg);
     observer.disconnect();
   }
 
 });
 
-setTimeout(function (){
+var egg = setTimeout(function (){
 
   observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
 

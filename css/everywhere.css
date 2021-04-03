@@ -1,3 +1,10 @@
+:root {
+  --re-header-color: #e0ce00;
+  --re-title-color: #FFF;
+  --re-dm-title-color: #DDD;
+  /* --re-header-color: #cab900; */
+}
+
 div.re_checkbox {
   float: right;
 }
@@ -23,15 +30,11 @@ flex-direction: column;
 }
 
 div.re_head {
-border-bottom: none;
-border-radius: 5px 5px 5px 5px;
-padding: 6px 10px;
-/* background-color: #cab900;  */
-/* background-color: #FFC107; */
-background-color: #e0ce00;
-background-image: linear-gradient(90deg, transparent 50%, rgba(0, 0, 0, 0.07) 0px);
-background-size: 4px;
-cursor: pointer;
+  border-bottom: none;
+  border-radius: 5px 5px 5px 5px;
+  padding: 6px 10px;
+  background-size: 4px;
+  cursor: pointer;
 }
 
 div.re_head.expanded {
@@ -40,19 +43,14 @@ border-radius: 5px 5px 0px 0px;
 }
 
 span.re_title {
-color: #ffffff;
-font-size: 13px;
-letter-spacing: 1px;
-text-shadow: rgba(0, 0, 0, 0.65) 1px 1px 2px;
-font-weight: 700;
-line-height: 16px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  line-height: 16px;
 }
 
 .re_content {
-background-color: #F2F2F2;
-border: 1px solid rgba(0, 0, 0, .5);
-border-radius: 0px 0px 5px 5px;
-border-top: none;
+  border-radius: 0px 0px 5px 5px;
 }
 
 .re_row {
@@ -80,7 +78,6 @@ float: right;
 span.re_icon svg {
 display: block;
 height: 16px;
-fill: white;
 cursor: pointer;
 margin-left: auto;
 margin-right: auto;
@@ -97,6 +94,35 @@ d: path('M16 10l-6 6-6-6-4 4 10 10 10-10-4-4z');
 div.re_button_wrap > button {
   margin-bottom: 5px;
 }
+
+.re_container.after::after {
+    display: block;
+    content: "";
+    border-right-width: initial;
+    border-left-width: initial;
+    border-right-color: initial;
+    border-left-color: initial;
+    margin: 10px 0px;
+    border-style: solid none;
+    border-image: initial;
+    border-top: 1px solid rgb(153, 153, 153);
+    border-bottom: 1px solid rgb(235, 235, 235);
+}
+
+input.re_chat_search {
+  margin-left: 5px;
+  padding-left: 3px;
+  border-radius: 3px;
+  height: 18px;
+  width: 40%;
+  display: none;
+}
+
+div[class*="chat-active"] > div > div > input.re_chat_search {
+  display: inline;
+}
+
+
 
 /* Torn Styled Button */
 .re_torn_button {
@@ -140,19 +166,68 @@ div.re_button_wrap > button {
     cursor: default
 }
 
-.re_container.after::after {
-    display: block;
-    content: "";
-    border-right-width: initial;
-    border-left-width: initial;
-    border-right-color: initial;
-    border-left-color: initial;
-    margin: 10px 0px;
-    border-style: solid none;
-    border-image: initial;
-    border-top: 1px solid rgb(153, 153, 153);
-    border-bottom: 1px solid rgb(235, 235, 235);
+/* Color Related CSS */
+div.re_head {
+  background-color: var(--re-header-color);
+  background-image: linear-gradient(90deg, transparent 50%, rgba(0, 0, 0, 0.07) 0px);
 }
+body.dark-mode div.re_head {
+  box-shadow: inset 0 0 0 1000px rgb(0 0 0 / 25%);
+}
+
+span.re_icon svg {
+  fill: #FFF;
+}
+body.dark-mode span.re_icon svg {
+  fill: #DDD;
+}
+
+span.re_title {
+  color: var(--re-title-color);
+  text-shadow: rgba(0, 0, 0, 0.65) 1px 1px 2px;
+}
+
+body.dark-mode span.re_title {
+  color: var(--re-dm-title-color);
+  text-shadow: rgba(0, 0, 0, 0.65) 1px 1px 2px;
+}
+
+.re_content {
+  background-color: #F2F2F2;
+  border: 1px solid rgba(0, 0, 0, .5);
+  border-top: none;
+}
+
+body.dark-mode .re_content {
+  background-color: #333333;
+  border: 1px solid #3B3B3B;
+  border-top: none;
+}
+
+body.dark-mode .re_container.after::after {
+  border-color: #333333 !important;
+}
+
+.re_container a, .re_container a:visited {
+  color: #069;
+}
+.re_container a:hover {
+  color: #62b4fd;
+}
+.re_container a:active {
+  color: #a71d2a;
+}
+
+body.dark-mode .re_container a, body.dark-mode .re_container a:visited {
+  color: #62b4fd;
+}
+body.dark-mode .re_container a:hover {
+  color: #74c0fc;
+}
+body.dark-mode .re_container a:active {
+  color: #a71d2a;
+}
+
 
 
 /* Easter Egg Glow */
