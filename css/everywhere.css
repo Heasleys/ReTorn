@@ -227,19 +227,3 @@ body.dark-mode .re_container a:hover {
 body.dark-mode .re_container a:active {
   color: #a71d2a;
 }
-
-
-
-/* Easter Egg Glow */
-
-img[src*="step=eggImage"] {
-  border-radius: 50%;
-  box-shadow: 0px 0px 90px 40px #FFC107;
-  animation: glow 1.5s ease-out infinite alternate;
-}
-
-@keyframes glow{
-  to {
-    box-shadow: 0px 0px 30px 20px #FFC107;
-  }
-}

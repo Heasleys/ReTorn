@@ -1,0 +1,134 @@
+@media screen and (max-width: 1000px) {
+  #ts .plans-list .item>li.nnb, #ts .plan-list-scrollbar .title>li.nnb {
+    width: 45px !important;
+  }
+
+  #ts .plans-list .item>li.level, #ts .plan-list-scrollbar .title>li.level {
+    width: 25px !important;
+  }
+
+  #ts .plans-list .item>li.offences, #ts .plan-list-scrollbar .title>li.offences {
+    width: 60px !important;
+  }
+}
+
+#ts .plans-list .item>li.nnb, #ts .plan-list-scrollbar .title>li.nnb {
+  width: 60px;
+}
+
+#ts .plans-list .item>li.level, #ts .plan-list-scrollbar .title>li.level {
+  width: 30px;
+}
+
+#ts .plans-list .item>li.stat, #ts .plan-list-scrollbar .title>li.stat {
+  width: 100px;
+}
+
+#ts .plans-list .item>li.offences, #ts .plan-list-scrollbar .title>li.offences {
+  width: 142px;
+}
+
+
+#ts-roster {
+  cursor: pointer;
+}
+
+
+
+
+#tornstats-roster th, #tornstats-roster td {
+  padding: 5px !important;
+}
+
+#tornstats-roster > div {
+  flex: 1;
+  margin: 5px;
+}
+
+#tornstats-roster table {
+  width: 100%;
+}
+
+#tornstats-roster th {
+  font-weight: bolder !important;
+  font-size: 13px;
+}
+
+#tornstats-roster td.member, #tornstats-roster td.verified {
+  text-align: center;
+}
+#tornstats-roster td.stats, #tornstats-roster td.rank {
+  text-align: right;
+}
+
+#tornstats-roster a {
+  text-decoration: none;
+}
+
+@media screen and (max-width: 600px) {
+  #tornstats-roster th.rank, #tornstats-roster td.rank, #tornstats-roster td a span.userid {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  #tornstats-roster th.rank, #tornstats-roster td.rank {
+    display: none;
+  }
+}
+
+
+/* Color CSS */
+#tornstats-roster th, #tornstats-roster td {
+  border: 1px solid #dcdcdc !important;
+}
+body.dark-mode #tornstats-roster th, body.dark-mode #tornstats-roster td {
+  border: 1px solid #222222 !important;
+  color: #DDD;
+}
+
+#tornstats-roster table {
+  border: 2px solid #CBCBCB;
+  background-color: #FFFFFF;
+}
+body.dark-mode #tornstats-roster table {
+  border: 2px solid #191919;
+  background-color: #333;
+}
+
+#tornstats-roster a, #tornstats-roster a:visited {
+  color: #069;
+}
+#tornstats-roster a:hover {
+  color: #62b4fd;
+}
+#tornstats-roster a:active {
+  color: #a71d2a;
+}
+
+body.dark-mode #tornstats-roster a, body.dark-mode #tornstats-roster a:visited {
+  color: #62b4fd;
+}
+body.dark-mode #tornstats-roster a:hover {
+  color: #74c0fc;
+}
+body.dark-mode #tornstats-roster a:active {
+  color: #a71d2a;
+}
+
+td.red {
+  font-weight: bold !important;
+  color: #d83500;
+}
+td.green {
+  font-weight: bold !important;
+  color: #678c00;
+}
+body.dark-mode td.red {
+  font-weight: bold !important;
+  color: #b96a6a  !important;
+}
+body.dark-mode td.green {
+  font-weight: bold !important;
+  color: #4ea87b  !important;
+}

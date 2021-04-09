@@ -388,7 +388,7 @@ function newInstall() {
             value: "100%"
           },
           life: {
-            enabled: true,
+            enabled: false,
             value: "<100%"
           },
           drugs: {
@@ -408,6 +408,11 @@ function newInstall() {
           },
           events: {
             enabled: true
+          }
+        },
+        events: {
+          eastereggs: {
+            enabled: false
           }
         }
       }
@@ -742,3 +747,19 @@ self.addEventListener('notificationclick', function (event) {
   }
   event.notification.close();
 });
+
+
+chrome.webRequest.onBeforeRequest.addListener(
+  function(details) {
+      getValue("re_settings", "sync").then((response) => {
+        if (response.re_settings != undefined) {
+          var settings = response.re_settings;
+          if (settings.events.eastereggs && settings.events.eastereggs.enabled && settings.events.eastereggs.enabled == true) {
+            console.log(details);
+            createNotification("egg", "ReTorn: Egg Alert", "Egg detected on the page, look around. It could be fake!", "", "Egg?", "https://www.torn.com/competition.php");
+          }
+        }
+      });
+  },
+  {urls: ["https://www.torn.com/competition.php*"], types: ["image"]}
+);

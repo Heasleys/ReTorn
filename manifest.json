@@ -21,7 +21,8 @@
       "notifications",
       "storage",
       "background",
-      "alarms"
+      "alarms",
+      "webRequest"
     ],
     "host_permissions": [
       "https://www.torn.com/*",
@@ -46,7 +47,7 @@
                 "https://wiki.torn.com/*"
             ],
         "css": ["css/everywhere.css"],
-        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/retorn.js","js/everywhere/mini-profiles.js","js/everywhere/easteregg.js","js/everywhere/chat.js"],
+        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/retorn.js","js/everywhere/chat.js"],
         "run_at": "document_start"
       },
       {
@@ -55,18 +56,8 @@
         "run_at": "document_end"
       },
       {
-        "matches": ["https://www.torn.com/stockexchange.php?step=portfolio"],
-        "js": ["js/stockexchange/portfolio.js"],
-        "run_at": "document_end"
-      },
-      {
-        "matches": ["https://www.torn.com/stockexchange.php"],
-        "js": ["js/stockexchange/stockexchange.js"],
-        "run_at": "document_end"
-      },
-      {
         "matches": ["https://www.torn.com/page.php?sid=stocks"],
-        "js": ["js/stockexchange/stocks.js"],
+        "js": ["js/stocks/stocks.js"],
         "run_at": "document_end"
       },
       {
@@ -111,6 +102,12 @@
       {
         "matches": ["https://www.torn.com/profiles.php?XID=1468764"],
         "js": ["js/profiles/heasleys4hemp.js"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/factions.php?step=your*"],
+        "js": ["js/factions/factions.js"],
+        "css": ["css/factions/factions.css"],
         "run_at": "document_end"
       }
     ]

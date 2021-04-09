@@ -26,8 +26,8 @@ if ($('div.captcha').length == 0) {
     mutations.forEach(function(mutation) {
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         if ($('div.re_container').length == 0) {$("div.content-title").after(re_container);};
-        for (var i = 0; i < mutation.addedNodes.length; i++) {
-          if (mutation.addedNodes[i].classList && mutation.addedNodes[i].classList[0] == "specials-cont-wrap") {
+        for (const element of mutation.addedNodes) {
+          if (element.classList && element.classList[0] == "specials-cont-wrap") {
             if ($('div.specials-cont-wrap > form[name="crimes"]:not([action="crimes.php?step=docrime"])').length > 0) {
               var form = $('div.specials-cont-wrap > form[name="crimes"]:not([action="crimes.php?step=docrime"]):not([action="crimes.php?step=docrime3"])');
               var nval = form.find('input[name="nervetake"]').val();
@@ -67,7 +67,7 @@ if ($('div.captcha').length == 0) {
               });
             }
           }
-        }
+        }//for
       }
     })
   });
