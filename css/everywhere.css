@@ -39,7 +39,14 @@ div.re_head {
 
 div.re_head.expanded {
 border-bottom: none;
-border-radius: 5px 5px 0px 0px;
+border-bottom-left-radius: 0px;
+border-bottom-right-radius: 0px;
+}
+
+div.re_head.flat-top {
+border-top: none;
+border-top-left-radius: 0px;
+border-top-right-radius: 0px;
 }
 
 span.re_title {
