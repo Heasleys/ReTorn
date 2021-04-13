@@ -63,6 +63,7 @@
       {
         "matches": ["https://www.torn.com/index.php"],
         "js": ["js/home/index.js"],
+        "css": ["css/home/index.css"],
         "run_at": "document_end"
       },
       {
