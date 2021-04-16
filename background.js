@@ -4,7 +4,8 @@ chrome.runtime.onStartup.addListener(() => {
 
 chrome.runtime.onInstalled.addListener((details) => {
   console.log(details);
-  if (details.reason != "install") {
+  if (details.reason == "update") {
+    checkUpdate();
     checkLogin();
   }
   if (details.reason == "install") {
@@ -225,6 +226,25 @@ function checkLogin() {
   .catch((error) => {
     console.log(error);
     getItemsAPI();
+  });
+}
+
+function checkUpdate() {
+  getValue("re_settings", "sync").then((response) => {
+    let i = 0;
+    let update_settings = {re_settings: {}}
+
+    if (response.npclist == undefined) {
+      update_settings.re_settings.npclist = true;
+      i++;
+    }
+    
+    if (i > 0) {
+      setValue(update_settings, "sync").catch((error) => {console.log(error);});
+    }
+  })
+  .catch((error) => {
+    console.log(error);
   });
 }
 
