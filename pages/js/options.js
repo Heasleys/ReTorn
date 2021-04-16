@@ -1,27 +1,5 @@
 var notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education"];
 
-$("button#test").click(function() {
-  chrome.notifications.create(
-      "test-notification",
-      {
-        type: "basic",
-        iconUrl: "/images/ReTorn@Default.png",
-        title: "ReTorn: This is a notification",
-        message: "hello there!",
-        contextMessage: "Woah there...",
-        buttons: [
-          {
-          title: "Test Button"
-          },
-          {
-          title: "Epic Button"
-          }]
-      },
-      function (id) {console.log(id)}
-    );
-});
-
-
 
 $(document).ready(function() {
   $('ul.tabs > li').first().addClass('active');
@@ -50,6 +28,12 @@ $(document).ready(function() {
           $('#ts_status').text("Disabled");
           $('button#tornstats').html("Link account");
           $('button#tornstats').val(0);
+        }
+
+        if (settings.npclist != undefined && settings.npclist == true) {
+          $('#npclist').prop("checked", true);
+        } else {
+          $('#npclist').prop("checked", false);
         }
 
         if (settings.header_color != undefined) {
@@ -169,6 +153,14 @@ $(document).ready(function() {
             $("html").removeClass('light');
             $("html").addClass('dark');
           }
+      });
+  });
+
+  $('#npclist').change(function() {
+     let v = $(this).is(":checked");
+     console.log(v);
+     chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"npclist": v}}, (response) => {
+       console.log(response);
       });
   });
 

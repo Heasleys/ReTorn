@@ -18,7 +18,7 @@
       <span class="title"><span class="yellow">Re</span>Torn</span>
       <ul class="tabs">
         <li data-tab="notifications_tab">Notifications</li>
-        <li data-tab="test">Test</li>
+        <li data-tab="features">Features</li>
         <li data-tab="other">Other</li>
         <li data-tab="settings">Settings</li>
         <li data-tab="attributions">Attributions</li>
@@ -83,9 +83,12 @@
           </div>
         </div>
 
-        <div class="tab_container" id="test">
-          <h3>Test</h3>
-          <button id="test">Test Notification</button>
+        <div class="tab_container" id="features">
+          <h3>Features</h3>
+          <div class="switch_wrap">
+            <label class="tsblue" tooltip="Requires TornStats">NPC Sidebar List:</label>
+            <input type="checkbox" id="npclist">
+          </div>
         </div>
 
         <div class="tab_container" id="other">
@@ -103,14 +106,20 @@
         <div class="tab_container" id="settings">
           <h3 class="menu_title">Extension Settings</h3>
           <div class="switch_wrap">
-            <label>Darkmode:</label>
+            <label tooltip="Within ReTorn">Darkmode:</label>
             <input type="checkbox" id="darkmode">
           </div>
+
+          <br>
+
           <h4>Header Color</h4>
           <div class="switch_wrap">
               <input type="color" id="header_color" value="#e0ce00">
-              <label><code><b>Default: <span style="color: #E0CE00;">#E0CE00</span> | DocTorn: <span style="color: #663399;">#663399</span> | TornTools: <span style="color: #627E0D;">#627E0D</span> | TornStats: <span style="color: #8ABEEF;">#8ABEEF</span></b></code></label>
+              <label><code><b>ReTorn: <span style="color: #E0CE00;">#E0CE00</span> | DocTorn: <span style="color: #663399;">#663399</span> | TornTools: <span style="color: #627E0D;">#627E0D</span> | TornStats: <span style="color: #8ABEEF;">#8ABEEF</span></b></code></label>
           </div>
+
+          <br>
+
           <h3 class="submenu">Account Integration</h3>
           <div>
             <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>:</b>

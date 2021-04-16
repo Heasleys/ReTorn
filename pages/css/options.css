@@ -222,3 +222,11 @@ div.input_wrap input[type=checkbox] {
 div#general_notifications div {
   margin-bottom: 10px;
 }
+
+.tsblue {
+  color: #8ABEEF;
+}
+
+label.tsblue {
+  font-weight: bold;
+}
