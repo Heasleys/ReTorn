@@ -1,6 +1,9 @@
 // @version      1.0.0
 // @description  Adds NNB from TornStats to crime list, adds TornStats roster in controls tab
 // @author       Heasleys4hemp [1468764]
+
+(function() {
+
 var url = location.hash;
 var target = document.querySelector('.content-wrapper');
 var obsOptions = {attributes: false, childList: true, characterData: false, subtree:true};
@@ -163,3 +166,5 @@ function tornstatsSync(type) {
     }
   });
 }
+
+})();
