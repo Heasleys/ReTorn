@@ -245,10 +245,10 @@ body.dark-mode ul.npc_list li:hover a {
   color: #a5d8ff !important;
 }
 
-li.highlight {
+ul.npc_list li.highlight {
   background-color: #CADFAF;
 }
-body.dark-mode li.highlight {
+body.dark-mode ul.npc_list li.highlight {
   background-color: #4b5738;
 }
 
