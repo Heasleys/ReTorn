@@ -2,6 +2,7 @@ var notifications = ["notifications", "energy", "nerve", "happy", "life", "event
 
 
 $(document).ready(function() {
+  initChatUserHighlights();
   $('ul.tabs > li').first().addClass('active');
   $('.tab_container').first().addClass('show');
 
@@ -34,6 +35,14 @@ $(document).ready(function() {
           $('#npclist').prop("checked", true);
         } else {
           $('#npclist').prop("checked", false);
+        }
+
+        if (settings.chatuserhighlight != undefined && settings.chatuserhighlight == true) {
+          $('#chatuserhighlight').prop("checked", true);
+          $('#highlightUsers').show();
+        } else {
+          $('#chatuserhighlight').prop("checked", false);
+          $('#highlightUsers').hide();
         }
 
         if (settings.header_color != undefined) {
@@ -125,7 +134,6 @@ $(document).ready(function() {
 
 
 
-
   $('ul.tabs li:not(.disabled,:disabled)').click(function(){
       var t = $(this).data('tab');
 
@@ -163,6 +171,7 @@ $(document).ready(function() {
        console.log(response);
       });
   });
+
 
   $('#header_color').change(function() {
     let color = $(this).val();
@@ -224,4 +233,110 @@ function message(response, me, status) {
     $(".re_message#"+me).text(response.message);
   }
   $(".re_message#"+me).attr('hidden', false);
+}
+
+
+function chatUserHighlight(parent) {
+    let v = parent.find('input[type="checkbox"]').is(":checked");
+    var value = parent.find('input[type="text"]:disabled').val();
+    let c = parent.find('input[type="color"]').val();
+
+    if (value && c && v != undefined) {
+      chrome.runtime.sendMessage({name: "set_value", value_name: "re_chatuserhighlight", value: {[value]: {enabled: v, color: c}}}, (response) => {
+        console.log(response);
+        initChatUserHighlights();
+      });
+    }
+}
+
+function initChatUserHighlights() {
+  chrome.runtime.sendMessage({name: "get_value", value: "re_chatuserhighlight"}, (response) => {
+    console.log(response);
+    if (response.status && response.status == true && response.value) {
+      if (response.value.re_chatuserhighlight && !jQuery.isEmptyObject(response.value.re_chatuserhighlight)) {
+        var userHighlights = response.value.re_chatuserhighlight;
+        $('#highlightUsers').empty();
+        Object.keys(userHighlights).forEach(userid => {
+          console.log(userid, userHighlights[userid]);
+          $('#highlightUsers').append(`<div data-id="`+userid+`">
+            <input type="checkbox">
+            <input type="text" class="numOnly" value="`+userid+`" disabled>
+            <input type="color" value="`+userHighlights[userid].color+`">
+            <input type="button" class="delChatUserHighlight" value="-">
+            </div>`);
+            $('#highlightUsers > div[data-id='+userid+'] > input[type=checkbox]').prop("checked", userHighlights[userid].enabled);
+        });
+        $('#highlightUsers').append(`<div>
+          <input type="checkbox">
+          <input type="text" class="numOnly" value="">
+          <input type="color" value="#E0CE00">
+          <input type="button" class="addChatUserHighlight" value="+">
+          </div>`);
+      } else {
+        $('#highlightUsers').html(`<div>
+          <input type="checkbox">
+          <input type="text" class="numOnly" value="">
+          <input type="color" value="#E0CE00">
+          <input type="button" class="addChatUserHighlight" value="+">
+          </div>`);
+      }
+
+      $('input#chatuserhighlight[type=checkbox]').change(function() {
+         let v = $(this).is(":checked");
+         console.log(v);
+         chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"chatuserhighlight": v}}, (response) => {
+
+         });
+
+         if (v == true) {
+           initChatUserHighlights();
+           $('#highlightUsers').show();
+         } else {
+           $('#highlightUsers').hide();
+         }
+      });
+
+
+      $('input.numOnly[type="text"]').change(function() {
+        var value = $(this).val();
+        let id = $(this).attr('id');
+        if (!/^[0-9]*$/.test(value)) {
+          $(this).val($(this).data('prev'));
+        }
+      });
+
+      $('input.numOnly[type="text"]').focus(function() {
+        $(this).select();
+        $(this).data('prev', $(this).val());
+      });
+
+      $('#highlightUsers input[type="checkbox"], #highlightUsers input[type="color"]').change(function() {
+          var parent = $(this).parent();
+          chatUserHighlight(parent);
+      });
+
+      $('#highlightUsers input.delChatUserHighlight[type="button"]').click(function() {
+          var parent = $(this).parent();
+          let uid = parent.data('id');
+          chrome.runtime.sendMessage({name: "del_value", value: "re_chatuserhighlight", key: [uid]}, (response) => {
+            initChatUserHighlights();
+          });
+      });
+
+      $('#highlightUsers input.addChatUserHighlight[type="button"]').click(function() {
+          var parent = $(this).parent();
+          if (!parent.find('input[type="text"]').val()) {
+            parent.find('input[type="text"]').addClass('alerts-border');
+            setTimeout(
+                function() { parent.find('input[type="text"]').removeClass('alerts-border'); },
+                3000
+            );
+          } else {
+            parent.find('input[type="text"]').prop('disabled', true);
+            chatUserHighlight(parent);
+          }
+      });
+    }
+  });
+
 }

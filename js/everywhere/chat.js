@@ -1,5 +1,4 @@
 (function() {
-
   function insertChatSearch() {
     $('div[class^="chat-box-head"] > div[class^="chat-box-title"][title="Trade"]').append(`
     <input type="text" class="re_chat_search" title="Filter Chat">
@@ -28,13 +27,15 @@
     });
   }
 
-  //Trade Chat Filter - Add Filter Textbox
+  //Start Chat Functions - Add Filter Textbox/Check Highlights
   const observer = new MutationObserver(function(mutations) {
-    if ($('div[class^="chat-box"][class*="trade"]').length != 0 && $('input.re_chat_search').length == 0) {
+    if ($('div[class^="chat-box"][class*="trade"]').length != 0 && $('input.re_chat_search').length == 0 && $('#chatRoot').length == 1) {
       insertChatSearch();
-      var chatRoot = document.getElementById("chatRoot");
+      let chatRoot = document.getElementById("chatRoot");
       chatobserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
-      observer.disconnect();
+    }
+    if ($('#chatRoot').length == 1) {
+      nameHighlight();
     }
   });
 
@@ -67,6 +68,68 @@
     }
   });
 
+
+  const nameHighlightObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      console.log(mutation);
+      //new messages
+      if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+        if (mutation.addedNodes[0] && mutation.addedNodes[0].className) {
+          if (mutation.addedNodes[0].className.includes('message')) {
+            highlightAllNames();
+          }
+        }
+      }
+      //opening chatboxes
+      if (mutation.target && mutation.target.className) {
+        if (mutation.target.className.includes('chat-active')) {
+          highlightAllNames();
+        }
+      }
+    });
+  });
+
+
   observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+
+
+ function nameHighlight() {
+   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
+     if (res.status && res.status == true) {
+       if (res.value.re_settings) {
+         let settings = res.value.re_settings;
+         if (settings && settings.chatuserhighlight != undefined && settings.chatuserhighlight == true) {
+           var chatRoot = document.getElementById("chatRoot");
+           highlightAllNames();
+           nameHighlightObserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
+         } else {
+           removeHighlights();
+         }
+       }
+     }
+   });
+ }
+
+ function highlightAllNames() {
+   chrome.runtime.sendMessage({name: "get_value", value: "re_chatuserhighlight"}, (response) => {
+     console.log(response);
+     if (response.status && response.status == true && response.value) {
+       if (response.value.re_chatuserhighlight && !jQuery.isEmptyObject(response.value.re_chatuserhighlight)) {
+         var userHighlights = response.value.re_chatuserhighlight;
+         Object.keys(userHighlights).forEach(userid => {
+           if (userHighlights[userid].enabled) {
+              $('#chatRoot div[class^="message"] > a[href="/profiles.php?XID='+userid+'"]').css("color", userHighlights[userid].color);
+           } else {
+             $('#chatRoot div[class^="message"] > a[href="/profiles.php?XID='+userid+'"]').css("color", "");
+           }
+         });
+       }
+     }
+   });
+  }
+
+ function removeHighlights() {
+   $('#chatRoot div[class^="message"] > a').css("color", "");
+ }
 
 })();

@@ -234,17 +234,29 @@ function checkUpdate() {
     let i = 0;
     let update_settings = {re_settings: {}}
 
-    if (response.npclist == undefined) {
+    if (response.value.npclist == undefined) {
       update_settings.re_settings.npclist = true;
       i++;
     }
-    
+
+    if (response.value.chatuserhighlight == undefined) {
+      update_settings.re_settings.chatuserhighlight = false;
+      i++;
+    }
+
     if (i > 0) {
       setValue(update_settings, "sync").catch((error) => {console.log(error);});
     }
   })
   .catch((error) => {
     console.log(error);
+  });
+
+  getValue("re_chatuserhighlight", "sync").then((response) => {
+
+  })
+  .catch((error) => {
+      setValue({re_chatuserhighlight: {}}, "sync").catch((error) => {console.log(error);});
   });
 }
 
@@ -359,13 +371,21 @@ function delValue(value, key, type) {
           if (Object.keys(response).length === 0 && response.constructor === Object) {
             reject({status: false, message: "Could not find value in storage.", value: value});
           }
-          var order = response.re_qcrimes.crimes[key].order;
-          delete response.re_qcrimes.crimes[key];
-          Object.keys(response.re_qcrimes.crimes).forEach(function(k) {
-            if (response.re_qcrimes.crimes[k].order > order) {
-              response.re_qcrimes.crimes[k].order--;
-            }
-          });
+          console.log("Delete Value: ", value);
+          console.log(response);
+          if (value == "re_qcrimes") {
+            var order = response.re_qcrimes.crimes[key].order;
+            delete response.re_qcrimes.crimes[key];
+            Object.keys(response.re_qcrimes.crimes).forEach(function(k) {
+              if (response.re_qcrimes.crimes[k].order > order) {
+                response.re_qcrimes.crimes[k].order--;
+              }
+            });
+          }
+
+          if (value == "re_chatuserhighlight") {
+            delete response.re_chatuserhighlight[key];
+          }
 
           chrome.storage.sync.set(response, () => {
             if (chrome.runtime.lastError) {
@@ -464,8 +484,6 @@ function getItemsAPI() {
 }
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  console.log(msg); //debugging
-
 
   switch (msg.name) {
     case "open_options":
@@ -502,7 +520,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     case "get_value":
       if (msg.value != undefined) {
         getValue(msg.value, msg.type).then((response) => {
-          console.log(response);
           sendResponse({status: true, value: response});
         })
         .catch((error) => {

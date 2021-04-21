@@ -176,6 +176,10 @@ li.disabled,li:disabled,li:hover.disabled,li:hover:disabled {
   margin-right: 8px;
 }
 
+label + .switch_wrap {
+  margin-top: 5px;
+}
+
 .switch_wrap input + label {
   margin-left: 8px;
   display: flex;
@@ -205,22 +209,34 @@ li.disabled,li:disabled,li:hover.disabled,li:hover:disabled {
 div.input_wrap {
   display: flex;
   align-items: center;
+  flex-direction: column;
+}
+
+div.input_wrap div {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  margin-bottom: 2px;
 }
 
 div.input_wrap input[type=text] {
+  height: 16px;
   width: 5em;
-  margin-right: 10px;
   text-align: right;
   display:inline-block;
   vertical-align:middle;
 }
 
-div.input_wrap input[type=checkbox] {
-  margin-right: 8px;
+div.input_wrap input {
+  margin-right: 6px;
 }
 
-div#general_notifications div {
-  margin-bottom: 10px;
+div.input_wrap input[type=text] + input[type=color] {
+  height: 18px;
+}
+
+div.input_wrap input[type=text] + input[type=color] + input[type=button] {
+  width: 24px;
 }
 
 .tsblue {
@@ -230,3 +246,59 @@ div#general_notifications div {
 label.tsblue {
   font-weight: bold;
 }
+
+
+
+.card-container {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  margin-right: 30px;
+}
+
+.card {
+  margin: 10px;
+  flex: 1 1 0px;
+	border: 1px solid white;
+  border-radius: 5px;
+}
+
+.card-content {
+  padding: 5px;
+}
+
+.card-content h4 {
+  margin-top: 0px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid white;
+  max-width: 90px;
+}
+
+@media screen and (max-width: 750px) {
+  .card-container {
+    flex-flow: column wrap;
+  }
+  .card {
+    min-width: 250px;
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  .card {
+    max-width: 400px;
+  }
+  .card:only-child {
+    max-width: 824px;
+  }
+}
+
+
+.alerts-border {
+    border-color: #ff0000;
+
+    animation: blink 0.5s;
+    animation-iteration-count: 3;
+}
+
+@keyframes blink { 50% { border-color: rgb(133, 133, 133); }  }
