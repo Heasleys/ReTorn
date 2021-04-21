@@ -1,5 +1,10 @@
 var notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education"];
-
+var user;
+chrome.runtime.sendMessage({name: "get_value", value: "re_user"}, (response) => {
+  if (response.status == true) {
+    user = response.value.re_user;
+  }
+});
 
 $(document).ready(function() {
   initChatUserHighlights();
@@ -10,7 +15,7 @@ $(document).ready(function() {
   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
     console.log(response);
       if (response.status == true && response.value.re_settings != undefined) {
-        var settings = response.value.re_settings;
+        settings = response.value.re_settings;
         if (settings.darkmode != undefined && settings.darkmode == true) {
           $("html").removeClass('light');
           $("html").addClass('dark');
@@ -273,9 +278,15 @@ function initChatUserHighlights() {
           <input type="button" class="addChatUserHighlight" value="+">
           </div>`);
       } else {
+        console.log(user);
+        if (user.player_id) {
+          var u = user.player_id;
+        } else {
+          var u = "";
+        }
         $('#highlightUsers').html(`<div>
           <input type="checkbox">
-          <input type="text" class="numOnly" value="">
+          <input type="text" class="numOnly" value="`+u+`">
           <input type="color" value="#E0CE00">
           <input type="button" class="addChatUserHighlight" value="+">
           </div>`);

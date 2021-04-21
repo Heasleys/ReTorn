@@ -15,12 +15,8 @@ a {
   text-decoration: none;
 }
 
-.menu_title,.submenu {
+.menu_title {
   letter-spacing: 0.4px;
-}
-
-.submenu {
-  text-decoration: underline;
 }
 
 html.light .sidenav {
@@ -194,15 +190,11 @@ label + .switch_wrap {
   margin-right: 8px;
 }
 
-.re_message {
-  margin-left: 10px;
-}
-
-.re_message.success {
+.success {
   color: #6cad2b;
 }
 
-.re_message.error {
+.error {
   color: #d55640;
 }
 
@@ -247,6 +239,11 @@ label.tsblue {
   font-weight: bold;
 }
 
+div#tornstats label + button {
+  display: block;
+  margin-top: 5px;
+}
+
 
 
 .card-container {
@@ -254,7 +251,6 @@ label.tsblue {
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: stretch;
-  margin-right: 30px;
 }
 
 .card {
@@ -271,11 +267,13 @@ label.tsblue {
 .card-content h4 {
   margin-top: 0px;
   margin-bottom: 8px;
-  border-bottom: 1px solid white;
-  max-width: 90px;
+  text-decoration: underline;
 }
 
 @media screen and (max-width: 750px) {
+  .mainview {
+    padding-left: 0px;
+  }
   .card-container {
     flex-flow: column wrap;
   }

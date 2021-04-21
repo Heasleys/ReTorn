@@ -132,7 +132,7 @@
 
             </section>
 
-            <section class="card-container">
+            <section class="card-container" style="display: none;">
 
               <article class="card">
                 <div class="card-content">
@@ -176,27 +176,38 @@
 
         <div class="tab_container" id="settings">
           <h3 class="menu_title">Extension Settings</h3>
-          <div class="switch_wrap">
-            <label tooltip="Within ReTorn">Darkmode:</label>
-            <input type="checkbox" id="darkmode">
-          </div>
 
-          <br>
+          <section class="card-container">
 
-          <label tooltip="Change the default header color" flow="right"><b>Header Color:</b></label>
-          <div class="switch_wrap">
-              <input type="color" id="header_color" value="#e0ce00">
-              <label><code><b>ReTorn: <span style="color: #E0CE00;">#E0CE00</span> | DocTorn: <span style="color: #663399;">#663399</span> | TornTools: <span style="color: #627E0D;">#627E0D</span> | TornStats: <span style="color: #8ABEEF;">#8ABEEF</span></b></code></label>
-          </div>
+            <article class="card">
+              <div class="card-content">
+                <h4>Settings:</h4>
+                <label tooltip="Change the default header color" flow="right"><b>Header Color:</b></label>
+                <div class="switch_wrap">
+                    <input type="color" id="header_color" value="#e0ce00">
+                    <label><code><b>ReTorn: <span style="color: #E0CE00;">#E0CE00</span> DocTorn: <span style="color: #663399;">#663399</span><br>TornTools: <span style="color: #627E0D;">#627E0D</span> TornStats: <span style="color: #8ABEEF;">#8ABEEF</span></b></code></label>
+                </div>
 
-          <br>
+                <div class="switch_wrap">
+                  <label tooltip="Within ReTorn">Darkmode:</label>
+                  <input type="checkbox" id="darkmode">
+                </div>
+              </div>
+            </article>
 
-          <h3 class="submenu">Account Integration</h3>
-          <div>
-            <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>:</b>
-            <p>Account Status: <b><span id="ts_status"></span></b></p>
-            <button id="tornstats">Link Account</button><span class="re_message" id="ts_message" hidden></span>
-          </div>
+            <article class="card">
+              <div class="card-content">
+                <h4>External Accounts:</h4>
+                <div id="tornstats">
+                  <label><b><a href="https://beta.tornstats.com/"  target="_blank">Torn Stats</a>: </b><b><span id="ts_status"></span></b></label>
+                  <button id="tornstats">Link Account</button>
+                  <span class="re_message" id="ts_message" hidden></span>
+                </div>
+
+              </div>
+            </article>
+
+          </section>
         </div><!-- end of tab container -->
 
 
@@ -209,7 +220,7 @@
           </ul>
           <p><a href='https://www.retorn.rocks/privacy' target='_blank'>Privacy Policy</a></p>
         </div><!-- end of tab container -->
-        
+
       </div>
     </div>
   </div>
