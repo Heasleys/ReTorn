@@ -11,6 +11,7 @@ $('.re_content').html(`
     <div class="re_button_wrap">
       <button class="re_torn_button" id="re_sync">Sync</button>
       <button class="re_torn_button" id="re_options">Options</button>
+      <button class="re_torn_button" id="re_logout" hidden>Logout</button>
     </div>
   </div>
   <div class="re_row" hidden>
@@ -26,6 +27,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) 
     } else {
       $("#re_sync").text("Sync");
       $("#re_sync").attr("disabled", false);
+      $("#re_logout").attr("hidden", true);
     }
   } else {
     errorMessage({status: false, message: "Unknown error."});
@@ -49,6 +51,25 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) 
     });
   });
 
+  $("button#re_logout").click(function() {
+  chrome.runtime.sendMessage({name: "logout"}, (response) => {
+    console.log(response);
+    if (response.status != undefined) {
+      if (response.status == true) {
+        $("#re_sync").text("Sync");
+        $("#re_sync").attr("disabled", false);
+        $("#re_logout").attr("hidden", true);
+        $("p#re_signin_message").text(`You are not signed into ReTorn. Please click below to sync apikey.`);
+        errorMessage({message: "You have been logged out."});
+      } else {
+        errorMessage(response);
+      }
+    } else {
+      errorMessage({status: false, message: "Unknown error."});
+    }
+  });
+});
+
   $("button#re_options").click(() => {
     chrome.runtime.sendMessage({name: "open_options"});
   });
@@ -63,6 +84,7 @@ function synced(response) {
   $("#re_sync").text("Synced!");
   $("#re_sync").attr("disabled", true);
   $("#re_sync").attr("hidden", false);
+  $("#re_logout").attr("hidden", false);
   chrome.runtime.sendMessage({name: "get_value", value: "re_user"}, (response) => {
     console.log(response);
     if (response.status == true && response.value.re_user.name != undefined) {

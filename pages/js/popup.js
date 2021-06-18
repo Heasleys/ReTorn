@@ -15,6 +15,9 @@ $( document ).ready(function() {
         console.log(response);
         if (response.status == true && response.value.re_user.name != undefined) {
           $('#re_user').text(`${response.value.re_user.name}`);
+        } else {
+          chrome.action.setPopup({popup: "pages/popup_start.html"});
+          window.location.href="/pages/popup_start.html";
         }
       });
     }
@@ -32,8 +35,8 @@ $( document ).ready(function() {
         console.log(response);
         if (response.status != undefined) {
           if (response.status == true) {
-            chrome.action.setPopup({popup: "pages/popup.html"});
-            window.location.href="/pages/popup.html";
+            chrome.action.setPopup({popup: "pages/popup_start.html"});
+            window.location.href="/pages/popup_start.html";
           } else {
             errorMessage(response);
           }

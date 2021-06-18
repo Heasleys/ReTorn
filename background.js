@@ -140,7 +140,7 @@ function fetchTSAPI(apikey, selection) {
       reject({status: false, message: "No selection given."});
     }
 
-    fetch('https://beta.tornstats.com/api/v1/' + apikey + '/' + selection)
+    fetch('https://www.tornstats.com/api/v1/' + apikey + '/' + selection)
 
     .then((response) => {
       if (response.status !== 200) {
@@ -373,6 +373,8 @@ function delValue(value, key, type) {
           }
           console.log("Delete Value: ", value);
           console.log(response);
+
+          // Deleting Quick Crime Storage
           if (value == "re_qcrimes") {
             var order = response.re_qcrimes.crimes[key].order;
             delete response.re_qcrimes.crimes[key];
@@ -383,6 +385,7 @@ function delValue(value, key, type) {
             });
           }
 
+          // Deleting Chat Highlight Storage
           if (value == "re_chatuserhighlight") {
             delete response.re_chatuserhighlight[key];
           }
@@ -398,8 +401,38 @@ function delValue(value, key, type) {
         }
       });
     }
+
   });
 }
+
+function removeValue(value, type) {
+  return new Promise((resolve, reject) => {
+
+    if (type == "sync") {
+      chrome.storage.sync.remove(value, () => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError.message);
+          reject({status: false, message: chrome.runtime.lastError.message});
+        } else {
+          resolve({status: true, message: "Sync Value: " + value + " has been removed."});
+        }
+      });
+    }
+
+    if (type == "local") {
+      chrome.storage.local.remove(value, () => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError.message);
+          reject({status: false, message: chrome.runtime.lastError.message});
+        } else {
+          resolve({status: true, message: "Local Value: " + value + " has been removed."});
+        }
+      });
+    }
+
+  });
+}
+
 
 function newInstall() {
   getValue("re_settings").then((response) => {
@@ -557,7 +590,22 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 
     case "logout":
-      sendResponse({status: false, message: "Sorry, can't logout yet."});
+
+      removeValue("re_api_key", "sync").then((response) => {
+        console.log(response);
+      })
+      removeValue("re_user", "sync").then((response) => {
+        console.log(response);
+      })
+      removeValue("re_user_data", "local").then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        sendResponse({status: false, message: "Failed to delete apikey."});
+      });
+
+
+      sendResponse({status: true, value: "Logout success."});
       return true;
     break;
 
