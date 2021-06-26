@@ -5,15 +5,6 @@ var items;
 
 if ($('div.captcha').length == 0) {
 
-  chrome.runtime.sendMessage({name: "get_value", value: "re_item_data", type: "local"}, (res) => {
-    if (res.status != undefined && res.status == true) {
-      items = res.value.re_item_data.items;
-    }
-  });
-
-
-
-
   var observer = new MutationObserver(function(mutations) {
     if ($('div.leaflet-map-pane[style="transform: translate3d(0px, 0px, 0px);"]').length != 0) {
       cityHeader();
@@ -27,6 +18,7 @@ if ($('div.captcha').length == 0) {
         let itemID = src.replace(/\D/g, "");
         $(this).attr("data-cfid", i);
         $(this).attr("title", items[itemID].name);
+        console.log(items[itemID].name, items[itemID].market_value);
         if (items[itemID].market_value >= 10000000) {
           itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"'><b>" + items[itemID].name + "</b></a>, ";
         } else {
@@ -58,10 +50,19 @@ if ($('div.captcha').length == 0) {
     }
 
   });
-}
+  }
 
-var target = document.getElementById('map');
-observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+  chrome.runtime.sendMessage({name: "get_value", value: "re_item_data", type: "local"}, (res) => {
+    if (res.status != undefined && res.status == true) {
+      items = res.value.re_item_data.items;
+      var target = document.getElementById('map');
+      observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+    } else {
+        cityHeader();
+        $('#re_city_finds').text("There was an error loading item data. Please restart ReTorn.");
+    }
+  });
+
 
 
 function cityHeader() {
