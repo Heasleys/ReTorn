@@ -1,3 +1,7 @@
+.sortable-box .re_head {
+  cursor: default;
+}
+
 div.re_stats_list ul {
   list-style: none;
 }
@@ -49,4 +53,11 @@ div.re_stats_list ul li span.re_divider, div.re_stats_list ul li .stats {
 }
 body.dark-mode div.re_stats_list ul li span.re_divider, body.dark-mode div.re_stats_list ul li .stats {
   border-right-color: #222 !important;
+}
+
+.red {
+  color: #d83500;
+}
+.green {
+  color: #678c00;
 }
