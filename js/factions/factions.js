@@ -137,7 +137,7 @@ function tornstatsSync(type) {
           if (response.status != undefined && response.status == true) {
               $.ajax({
                 method: "GET",
-                url: "https://beta.tornstats.com/api/v1/"+response.value.re_api_key+"/faction/"+type
+                url: "https://www.tornstats.com/api/v1/"+response.value.re_api_key+"/faction/"+type
               })
               .done(function( data ) {
                 if (data) {

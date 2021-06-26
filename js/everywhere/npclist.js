@@ -77,7 +77,7 @@
         if (response.status != undefined && response.status == true) {
             $.ajax({
               method: "GET",
-              url: "https://beta.tornstats.com/api/v1/"+response.value.re_api_key+"/loot"
+              url: "https://www.tornstats.com/api/v1/"+response.value.re_api_key+"/loot"
             })
             .done(function( data ) {
               if (data) {
@@ -104,7 +104,6 @@
         if (response.value.re_npcs) {
           let re_npcs = response.value.re_npcs;
           if (re_npcs) {
-            console.log(((Math.floor(Date.now() / 1000)) - re_npcs.timestamp));
             if (((Math.floor(Date.now() / 1000)) - re_npcs.timestamp) < (10*60)) { //only pull from tornstats if cached response is older than 10 minutes
               let npc_list = ``;
               let i = 0;

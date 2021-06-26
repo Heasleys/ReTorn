@@ -64,7 +64,7 @@ if ($('div.captcha').length == 0) {
     $("button#re_tornstats_stats").click(function() {
       $.ajax({
         method: "GET",
-        url: "https://beta.tornstats.com/api/v1/"+apikey+"/battlestats/record"
+        url: "https://www.tornstats.com/api/v1/"+apikey+"/battlestats/record"
       })
       .done(function( data ) {
         if (data) {
@@ -82,7 +82,7 @@ if ($('div.captcha').length == 0) {
       let num = $(this).val();
       $.ajax({
         method: "GET",
-        url: "https://beta.tornstats.com/api/v1/"+apikey+"/hof/" + num
+        url: "https://www.tornstats.com/api/v1/"+apikey+"/hof/" + num
       })
       .done(function( data ) {
         if (data) {
@@ -105,7 +105,7 @@ if ($('div.captcha').length == 0) {
 
     $.ajax({
       method: "GET",
-      url: "https://beta.tornstats.com/api/v1/" + apikey + "/battlestats/graph"
+      url: "https://www.tornstats.com/api/v1/" + apikey + "/battlestats/graph"
     })
 
     .done(function( data ) {
