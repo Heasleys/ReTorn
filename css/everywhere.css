@@ -19,7 +19,7 @@ div.re_checkbox > label {
     display: inline-block;
     vertical-align: top;
     margin-top: 7px;
-    margin-left: 5px;
+    margin-left: 2px;
     margin-right: 15px;
 }
 
@@ -61,19 +61,51 @@ span.re_title {
 }
 
 .re_row {
-display: flex;
-margin: 0.75em;
-justify-content: space-between;
+  display: flex;
+  margin: 0.75em;
+  justify-content: space-between;
 }
 
-div.re_row[hidden] {
+.re_row[hidden] {
   margin: 0px !important;
+}
+
+.re_row > div > p.title {
+  font-weight: 700;
+  font-size: 16px;
+  border-bottom: 1px solid;
+  margin-bottom: 3px;
+  padding-bottom: 2px;
+  cursor: default;
 }
 
 .re_col {
 margin-left: 20px;
 margin-right: 20px;
 }
+
+div.re_input_wrap {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+div.re_input_wrap input[type='number'] {
+  margin: 2px 0px;
+  display: inline-block;
+}
+
+.switch_wrap {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3px;
+}
+
+.switch_wrap div {
+  display: flex;
+  align-items: flex-end;
+}
+
 
 div.re_icon_wrap {
 align-items: center;
@@ -98,8 +130,13 @@ span.re_icon.arrow_down svg path {
 d: path('M16 10l-6 6-6-6-4 4 10 10 10-10-4-4z');
 }
 
+div.re_button_wrap {
+  display: flex;
+}
+
 div.re_button_wrap > button {
   margin-bottom: 5px;
+  margin-right: 5px;
 }
 
 .re_container.after::after {
@@ -129,6 +166,78 @@ div[class*="chat-active"] > div > div > input.re_chat_search {
   display: inline;
 }
 
+
+
+.alert_popup {
+  position: relative;
+  padding: .75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  z-index: 99999;
+  position: fixed;
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: 50%;
+}
+
+.alert_popup.green {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.alert_popup.red {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert_popup .datetime {
+  font-size: 10px;
+}
+
+.alert_popup a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.alert_popup a:hover {
+  color: #000;
+  opacity: .5;
+}
+
+.alert_popup button.close {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: .75rem 1.25rem;
+    color: inherit;
+    background-color: transparent;
+    border: 0;
+    -webkit-appearance: none;
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    text-transform: none;
+    overflow: visible;
+    margin: 0;
+    border-radius: 0;
+    top: -10%;
+}
+
+button.close:hover {
+  color: #000;
+  text-decoration: none;
+  opacity: .75;
+}
 
 
 /* Torn Styled Button */
@@ -172,6 +281,22 @@ div[class*="chat-active"] > div > div > input.re_chat_search {
     background: var(--btn-disabled-background);
     cursor: default
 }
+
+
+
+/* No Select */
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+
+
 
 /* Color Related CSS */
 div.re_head {
@@ -233,4 +358,28 @@ body.dark-mode .re_container a:hover {
 }
 body.dark-mode .re_container a:active {
   color: #a71d2a;
+}
+
+input[type="number"] {
+  color: #000;
+  border: 1px solid #ccc;
+}
+
+body.dark-mode input[type="number"] {
+  border: 1px solid #ccc;
+  background-color: #000;
+  color: #fff;
+}
+
+input[type="number"]:focus {
+  border-color: #1864ab80;
+  box-shadow: rgba(28, 126, 214, 0.65) 0px 0px 2px 0px
+}
+
+.re_row > div > p.title {
+  border-color: #363636;
+}
+
+body.dark-mode .re_row > div > p.title {
+  border-color: #ddd;
 }
