@@ -35,6 +35,9 @@ function insertHeader(element, where) {
       case 'append':
         element.append(header);
       break;
+      case 'prepend':
+        element.prepend(header);
+      break;
       case 'after':
         element.after(header);
       break;

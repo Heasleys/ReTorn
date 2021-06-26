@@ -4,10 +4,12 @@
 if ($('div.captcha').length == 0) {
   var timeToCrime;
   var n = 1;
+  var url = window.location.href;
   insertHeader($("div.content-title"), 'after');
-  $("#re_quick_crimes > div").click(function() {
-    $(this).find('form').submit();
-  });
+  if (url.includes("?step=docrime")) {
+    insertHeader($("div.content-wrapper"), 'prepend');
+  }
+
   $('#re_title').text("Quick Crimes");
   $('.re_content').html(`
     <p>Click on a crime's image to add it to this quick crimes list.</p>
@@ -101,9 +103,6 @@ function reloadCrimes() {
                 </div>
               </form>
             `);
-            $("#re_quick_crimes > div").click(function() {
-              $(this).find('form').submit();
-            });
 
             $(".re_del_qcrime").off('click').click(function (event) {
               event.stopPropagation();
