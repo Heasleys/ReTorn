@@ -11,6 +11,7 @@ if ($('div.captcha').length == 0) {
 
       var itemList = "";
       var i = 0;
+      var value = 0;
 
       $('.leaflet-marker-pane img[src*="torn.com/images/items/"]').each(function() {
         i++;
@@ -18,22 +19,22 @@ if ($('div.captcha').length == 0) {
         let itemID = src.replace(/\D/g, "");
         $(this).attr("data-cfid", i);
         $(this).attr("title", items[itemID].name);
-        console.log(items[itemID].name, items[itemID].market_value);
+        value += items[itemID].market_value;
         if (items[itemID].market_value >= 10000000) {
-          itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"'><b>" + items[itemID].name + "</b></a>, ";
+          itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: $"+items[itemID].market_value.toLocaleString('en-US')+"'><b>" + items[itemID].name + "</b></a>, ";
         } else {
-          itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"'>" + items[itemID].name + "</a>, ";
+          itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: $"+items[itemID].market_value.toLocaleString('en-US')+"'>" + items[itemID].name + "</a>, ";
         }
       });
 
       if (i > 0) {
         itemList = itemList.replace(/,\s*$/, ".");
-        itemList = itemList.replace(/,(?=[^,]*$)/, ' and');
+        itemList = itemList.replace(/,\s(?![\s\S]*,\s)/, ', and ');
         let intro;
         if (i == 1) {
-          intro = "Woah! There is <b>" + i + "</b> item around the city: ";
+          intro = "Woah! There is <b>" + i + "</b> item worth <b>$" + value.toLocaleString() + "</b> in the city: ";
         } else {
-          intro = "Woah! There are <b>" + i + "</b> items around the city: ";
+          intro = "Woah! There are <b>" + i + "</b> items worth a total of <b>$"+ value.toLocaleString() +"</b> around the city: ";
         }
         $('#re_city_finds').html(intro + itemList);
       }
