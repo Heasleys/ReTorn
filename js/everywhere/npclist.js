@@ -9,12 +9,13 @@
     }
   });
 
-
+  // check ReTorn sync storage settings for Torn Stats integration and NPC list enabled
   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
     if (res.status && res.status == true) {
       if (res.value.re_settings) {
         settings = res.value.re_settings;
         if (settings && settings.tornstats != undefined && settings.tornstats == true && settings.npclist != undefined && settings.npclist == true) {
+          //if npc list is enabled and tornstats integration is enabled, start observer
           observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
         }
       }
@@ -22,7 +23,9 @@
   });
 
 
+  // function to insert NPC list underneath enemy/friends list
   function insertNPCList() {
+    // find enemy/friend/staff lists and insert NPCs list at bottom of list of lists
     $('h2[class^="header"]:contains("Lists")').siblings('div[class^="toggle-content"]').append(`
     <div class="list_parent" id="nav-npcs">
       <div class="list_header noshow">
@@ -51,16 +54,18 @@
     </div>
     `);
 
+    // When NPC button is clicked, expand it for viewing
     $('.re_npcButton').click(function() {
       let expanded = !$('.npc_area').is(':visible');
       $('.npc_area').slideToggle("fast");
       $('.list_header').toggleClass('noshow');
 
+      // Save that the NPC is either expanded or not in ReTorn settings
       chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {headers: {npclist: {expanded: expanded}}}});
 
     });
 
-
+    // check settings to see if NPC lists was last expanded, if so, set list to expanded
     if (settings && settings.headers && settings.headers.npclist && settings.headers.npclist.expanded == true) {
       $('.npc_area').show();
       $('.list_header').toggleClass('noshow');
@@ -72,7 +77,9 @@
 
   function tornstatsSync() {
 
+    //check ReTorn settings for Torn Stats integration, if so, continue
     if (settings && settings.tornstats != undefined && settings.tornstats == true) {
+      // get apikey from ReTorn settings
       chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) => {
         if (response.status != undefined && response.status == true) {
             $.ajax({
@@ -98,6 +105,7 @@
   }
 
 
+  //
   function setNPCs() {
     chrome.runtime.sendMessage({name: "get_value", value: "re_npcs", type: "local"}, (response) => {
       if (response.status == true) {
