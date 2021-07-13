@@ -33,7 +33,7 @@ function tornstatsSync(apikey) {
   if (uid) {
     $.ajax({
       method: "GET",
-      url: "https://beta.tornstats.com/api/v1/"+apikey+"/spy/"+uid
+      url: "https://www.tornstats.com/api/v1/"+apikey+"/spy/"+uid
     })
     .done(function( data ) {
       if (data) {
@@ -92,11 +92,11 @@ function tornstatsSync(apikey) {
             }
 
             let spy_table = "<table><tr><th>Battle Stats</th><th>"+data.spy.player_name+"</th><th>You</th><th>Difference</th></tr>";
-            spy_table += "<tr><td>Strength:</td><td>"+data.spy.strength.toLocaleString()+"</td><td>"+(data.spy.strength + data.spy.deltaStrength).toLocaleString()+"</td><td"+strCol+">"+strSign+data.spy.deltaStrength.toLocaleString()+"</td></tr>";
-            spy_table += "<tr><td>Defense:</td><td>"+data.spy.defense.toLocaleString()+"</td><td>"+(data.spy.defense + data.spy.deltaDefense).toLocaleString()+"</td><td"+defCol+">"+defSign+data.spy.deltaDefense.toLocaleString()+"</td></tr>";
-            spy_table += "<tr><td>Speed:</td><td>"+data.spy.speed.toLocaleString()+"</td><td>"+(data.spy.speed + data.spy.deltaSpeed).toLocaleString()+"</td><td"+speCol+">"+speSign+data.spy.deltaSpeed.toLocaleString()+"</td></tr>";
-            spy_table += "<tr><td>Dexterity:</td><td>"+data.spy.dexterity.toLocaleString()+"</td><td>"+(data.spy.dexterity + data.spy.deltaDexterity).toLocaleString()+"</td><td"+dexCol+">"+dexSign+data.spy.deltaDexterity.toLocaleString()+"</td></tr>";
-            spy_table += "<tr><td>Total:</td><td>"+data.spy.total.toLocaleString()+"</td><td>"+(data.spy.total + data.spy.deltaTotal).toLocaleString()+"</td><td"+totCol+">"+totSign+data.spy.deltaTotal.toLocaleString()+"</td></tr>";
+            spy_table += "<tr><td>Strength:</td><td>"+data.spy.strength.toLocaleString()+"</td><td>"+Math.trunc((data.spy.strength + data.spy.deltaStrength)).toLocaleString()+"</td><td"+strCol+">"+Math.trunc(strSign+data.spy.deltaStrength).toLocaleString()+"</td></tr>";
+            spy_table += "<tr><td>Defense:</td><td>"+data.spy.defense.toLocaleString()+"</td><td>"+Math.trunc((data.spy.defense + data.spy.deltaDefense)).toLocaleString()+"</td><td"+defCol+">"+Math.trunc(defSign+data.spy.deltaDefense).toLocaleString()+"</td></tr>";
+            spy_table += "<tr><td>Speed:</td><td>"+data.spy.speed.toLocaleString()+"</td><td>"+Math.trunc((data.spy.speed + data.spy.deltaSpeed)).toLocaleString()+"</td><td"+speCol+">"+Math.trunc(speSign+data.spy.deltaSpeed).toLocaleString()+"</td></tr>";
+            spy_table += "<tr><td>Dexterity:</td><td>"+data.spy.dexterity.toLocaleString()+"</td><td>"+Math.trunc((data.spy.dexterity + data.spy.deltaDexterity)).toLocaleString()+"</td><td"+dexCol+">"+Math.trunc(dexSign+data.spy.deltaDexterity).toLocaleString()+"</td></tr>";
+            spy_table += "<tr><td>Total:</td><td>"+data.spy.total.toLocaleString()+"</td><td>"+Math.trunc((data.spy.total + data.spy.deltaTotal)).toLocaleString()+"</td><td"+totCol+">"+Math.trunc(totSign+data.spy.deltaTotal).toLocaleString()+"</td></tr>";
             spy_table += "<tr><td>Last Spy: </td><td><b>"+data.spy.difference+"</b></td><td colspan='2'>Fair Fight Bonus: <b>x"+data.spy.fair_fight_bonus.toFixed(2)+"</b></td></tr>";
 
             spy_table += "</table>";
@@ -121,7 +121,7 @@ function tornstatsSync(apikey) {
               }
                 compare_table += "<tr><td>"+key+"</td><td>"+value.amount.toLocaleString()+"</td><td"+color+">"+sign+value.difference.toLocaleString()+"</td></tr>";
             });
-            compare_table += "<tr><td colspan='3'><a href='https://beta.tornstats.com/settings/script' target='_blank'>Change your script settings here</a></td></tr>";
+            compare_table += "<tr><td colspan='3'><a href='https://www.tornstats.com/settings/script' target='_blank'>Change your script settings here</a></td></tr>";
             compare_table += "</table>";
 
             $('#re_compare').html(compare_table);
