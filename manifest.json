@@ -27,7 +27,7 @@
     "host_permissions": [
       "https://www.torn.com/*",
       "https://api.torn.com/*",
-      "https://beta.tornstats.com/*"
+      "https://www.tornstats.com/*"
     ],
     "options_ui": {
   		"page": "/pages/options.html",
@@ -47,7 +47,7 @@
                 "https://wiki.torn.com/*"
             ],
         "css": ["css/everywhere.css", "css/everywhere/npclist.css"],
-        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/npclist.js"],
+        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/npclist.js", "js/everywhere/tornstats.js"],
         "run_at": "document_start"
       },
       {
@@ -79,8 +79,15 @@
         "run_at": "document_end"
       },
       {
+        "matches": ["https://www.torn.com/item.php*"],
+        "js": ["js/item/item.js"],
+        "css": ["css/item/item.css"],
+        "run_at": "document_end"
+      },
+      {
         "matches": ["https://www.torn.com/jailview.php*"],
         "js": ["js/jail/jail.js"],
+        "css": ["css/jail/jail.css"],
         "run_at": "document_end"
       },
       {
@@ -101,7 +108,7 @@
         "run_at": "document_end"
       },
       {
-        "matches": ["https://www.torn.com/profiles.php?XID=1468764"],
+        "matches": ["https://www.torn.com/profiles.php?XID=1468764", "https://www.torn.com/profiles.php?NID=Heasleys4hemp"],
         "js": ["js/profiles/heasleys4hemp.js"],
         "run_at": "document_end"
       },
