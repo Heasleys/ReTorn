@@ -60,6 +60,12 @@ span.re_title {
   border-radius: 0px 0px 5px 5px;
 }
 
+.re_content > p {
+  text-align: center;
+  margin: 10px;
+  margin-bottom: 5px;
+}
+
 .re_row {
   display: flex;
   margin: 0.75em;
