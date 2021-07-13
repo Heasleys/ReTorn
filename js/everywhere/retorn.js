@@ -15,12 +15,12 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
   }
 });
 
-function insertHeader(element, where) {
+function insertHeader(element, where, classes) {
   if ($('div.re_container').length == 0) {
     var header = `
-    <div class="re_container">
+    <div class="re_container `+classes+`">
       <div class="re_head">
-        <span class="re_title">ReTorn: <span id="re_title"></span></span>
+        <span class="re_title noselect">ReTorn: <span id="re_title"></span></span>
           <div class="re_icon_wrap">
             <span class="re_icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>
