@@ -689,7 +689,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
           if (notifications.happy.enabled == true && newValue.happy.current != oldValue.happy.current) {
             let data = checkNotifyBars('happy', notifications, newValue, oldValue);
             if (data.notify == true) {
-              createNotification("happy", "ReTorn: Happy", data.message, "", "Get Happy", "https://www.torn.com/items.php#candy-items");
+              createNotification("happy", "ReTorn: Happy", data.message, "", "Get Happy", "https://www.torn.com/item.php#candy-items");
             }
           }
 
@@ -697,7 +697,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
           if (notifications.life.enabled == true && newValue.life.current != oldValue.life.current) {
             let data = checkNotifyBars('life', notifications, newValue, oldValue);
             if (data.notify == true) {
-              createNotification("life", "ReTorn: Life", data.message, "", "Get a Life", "https://www.torn.com/items.php#medical-items");
+              createNotification("life", "ReTorn: Life", data.message, "", "Get a Life", "https://www.torn.com/item.php#medical-items");
             }
           }
 
