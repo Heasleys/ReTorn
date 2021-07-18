@@ -46,7 +46,7 @@
                 "https://www.torn.com/api.html*",
                 "https://wiki.torn.com/*"
             ],
-        "css": ["css/everywhere.css", "css/everywhere/npclist.css"],
+        "css": ["css/everywhere/everywhere.css", "css/everywhere/npclist.css"],
         "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/npclist.js", "js/everywhere/tornstats.js"],
         "run_at": "document_start"
       },
