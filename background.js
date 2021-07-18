@@ -390,6 +390,17 @@ function delValue(value, key, type) {
             delete response.re_chatuserhighlight[key];
           }
 
+          // Deleting Quick Items Storage
+          if (value == "re_qitems") {
+            var order = response.re_qitems.items[key].order;
+            delete response.re_qitems.items[key];
+            Object.keys(response.re_qitems.items).forEach(function(k) {
+              if (response.re_qitems.items[k].order > order) {
+                response.re_qitems.items[k].order--;
+              }
+            });
+          }
+
           chrome.storage.sync.set(response, () => {
             if (chrome.runtime.lastError) {
               console.error(chrome.runtime.lastError.message);
@@ -600,6 +611,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       removeValue("re_user_data", "local").then((response) => {
         console.log(response);
       })
+      //setValue() Set value of TornStats integration to off
+
       .catch((error) => {
         sendResponse({status: false, message: "Failed to delete apikey."});
       });
