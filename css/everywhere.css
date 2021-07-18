@@ -1,8 +1,7 @@
 :root {
   --re-header-color: #e0ce00;
   --re-title-color: #FFF;
-  --re-dm-title-color: #DDD;
-  /* --re-header-color: #cab900; */
+  --re-dm-title-color: #CCC;
 }
 
 div.re_checkbox {
@@ -159,6 +158,21 @@ div.re_button_wrap > button {
     border-bottom: 1px solid rgb(235, 235, 235);
 }
 
+.re_row .re_button {
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.re_row .re_button:active {
+  position:relative;
+	top:1px;
+}
+
+.re_row .re_button:hover, .re_button > button:hover {
+  cursor: pointer;
+}
+
+/* chat css */
 input.re_chat_search {
   margin-left: 5px;
   padding-left: 3px;
@@ -173,7 +187,7 @@ div[class*="chat-active"] > div > div > input.re_chat_search {
 }
 
 
-
+/* Bootstrap styled popup for TornStats events */
 .alert_popup {
   position: relative;
   padding: .75rem 1.25rem;
@@ -239,7 +253,7 @@ div[class*="chat-active"] > div > div > input.re_chat_search {
     top: -10%;
 }
 
-button.close:hover {
+.alert_popup button.close:hover {
   color: #000;
   text-decoration: none;
   opacity: .75;
@@ -317,7 +331,7 @@ span.re_icon svg {
   fill: #FFF;
 }
 body.dark-mode span.re_icon svg {
-  fill: #DDD;
+  fill: #CCC;
 }
 
 span.re_title {
@@ -340,6 +354,13 @@ body.dark-mode .re_content {
   background-color: #333333;
   border: 1px solid #3B3B3B;
   border-top: none;
+}
+
+.re_content * {
+  color: #333;
+}
+body.dark-mode .re_content * {
+  color: #DDD;
 }
 
 body.dark-mode .re_container.after::after {
@@ -366,18 +387,18 @@ body.dark-mode .re_container a:active {
   color: #a71d2a;
 }
 
-input[type="number"] {
+input[type="number"], input[type="text"] {
   color: #000;
   border: 1px solid #ccc;
 }
 
-body.dark-mode input[type="number"] {
-  border: 1px solid #ccc;
-  background-color: #000;
-  color: #fff;
+body.dark-mode input[type="number"], body.dark-mode input[type="text"] {
+  border: 1px solid #222;
+  background-color: #333;
+  color: #ccc;
 }
 
-input[type="number"]:focus {
+input[type="number"]:focus, input[type="text"]:focus {
   border-color: #1864ab80;
   box-shadow: rgba(28, 126, 214, 0.65) 0px 0px 2px 0px
 }
@@ -388,4 +409,33 @@ input[type="number"]:focus {
 
 body.dark-mode .re_row > div > p.title {
   border-color: #ddd;
+}
+
+
+.re_row .re_button {
+  border: 1px #999 solid;
+}
+body.dark-mode .re_row .re_button {
+  border: 1px #222 solid;
+}
+
+.re_row .re_button:hover {
+  background-color: #fff;
+}
+body.dark-mode .re_row .re_button:hover {
+  background-color: #444;
+}
+
+.re_button button .close {
+  color: #000;
+}
+.re_button button .close:hover {
+  color: #999;
+}
+
+body.dark-mode .re_button button .close {
+  color: #111;
+}
+body.dark-mode .re_button button .close:hover {
+  color: #999;
 }

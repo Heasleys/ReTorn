@@ -1,5 +1,5 @@
 button.re_add_qitem:hover {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAeCAYAAABwmH1PAAAC90lEQVRYhbWZDY7bIBCF8U/cK/UYe5weocfpMXqmNYTVVkZ6/fTGxomNhBwnYPj8hmGYDKmjfPz9FTWatjqb6yy/f9fvsUa5tvJMKVW5Fql5q8Vci5vQn5+/d4HmHuAO2L3a2o1S0wZeBbrVIoCtT97aUyALfQdwm4iCPuT6gOozgHXiFcBNVX1RDrZK31uBB2O+D1NngBOAwE3ZeQNeAcs+1Xy+BbhNmubcoBfAcz0rRDXAGUvAgWq/aetzC/AosJNReBHgJYCOnJY6KapLYF0CdWvbZdrvAlPdVn8YpWnWCqzmvBp1qSrrLcC6pUTeWVVeApUjk87wzIRVL06vPvRCnwFW2BHgk1GZ0O2FjEbh56YsnRoVbVZQMIdytcKDCRy4jp15O+jIpKcN2sEWwNIB0mouBR6DtRytaQLPBjjvKKtb1Wy8+HgHcMLbHM39EfxigpAGpWZesUW5aC2ax2HkdVbhSGmauG5Xau6LAAwC12DbC3jAdF14SmVdNPYWcMJDI/ghcGyquAITlg4pGiOa0yXA7gVoAOHUP1rzuo08AyinYtqJrw/LeKLt8MZnTnIUaL68q8az5QxwfeNzkjBQAw1+d+V4trxq0pykC/1cGFiwDNQjsy2fpaeiJ+67Sy+wO4pFsW0FAA/zbcIKnJHd0L7RGNGcdssZ4KMAvqBmhIsKy304o67p/1ROZAVU/zLgZMyM9wwWsgkXNdDQ5+qxcA1yWSUYV+8Py1mFI1UVMu8c8biOk3zX+n0KeA+8M/OwvALMDIWuwWkHtnSclo6gaebMeF5q0go6QRmCRsoW7L3uPLwG0CtU5vn48m1JMwv0vAzs3amHmUh9rqq2AvrTqEyPfvka1snpOmSGIoItODT05LQilWnaz17YK4Ab9F6yrZgj3lHWMhulFdhtVbcAJ8khFagaJdeLMee9vLR6bII7cz7178MrwFUGiZSluq/881AAzICkXU+Fl6/G0i00ZALcwdLBMZZuz3N7+149Zcr/SkrpC0y+KUWPNfnTAAAAAElFTkSuQmCC');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAeCAYAAABwmH1PAAADJklEQVRYhZ2ZAY7jIAxFnYS5/B5qr7QHmAZWlcLIefm26SBZpG0Af/9vB9Ltz99/Zmabme1mdlx9u659H5n/3Y853Jxz/tmzdTMbrj+v6/Oyl+t5rYxj5ly9XQvTIW9HYV8iKAdA727+abMNZ/2y43KQ48z1o7D3uEff4ATBRuAJrgE4g6RAE3B3dorgcIwaT3894LdtBOyZPhZYbg6sCkIk6wjwlPPh5KjGqHEdwN9zzOs+5/CSJsNbIeUqz+d3O4JHxw0M3xxM5J8B9sCHn7MFcvOfmduK4aygUdaVpHdImoGJ0iDyt7vPgwxHecyqW0lcgf4EsFIC2WPOH2KOR7FsbmLmWFSxowqeSZu5rACfkHKVryf8IFDieP9uLQCq8jkCn4FWz2WyN4SUFdhxzcHClvn5wESGI8vAknkl8UjWlLNi38t0MnkUoCMzn8MGdtV1xvxKRV8BTFaZqxWTke+mctg3fyMroGJ9dZcWSfoU+VrNT2A7iCMei6p0Je8s36sCtzvHTDCbFaJo7WV/m+XtJgfB/spiUSCmpBXYT0AY/FPs/jTmMAGxRVJhYFYD0CHrsNiIz7/ytWXRyAYWY7LxG2Q9kntX5q58vbWGBVUb4p5qDO/l6WYy28Vvn86drfVo7cOBEXj/fXZOVY+e7oBHptb5la9V0SIQfl85yj3vJubiPSsB6AIQAyNbw02rICpgfpPQxXO2Ox/8c5jjVwLxkb8+hzOp8KypQEanmA3MZjut09nK/ATVhe83BTCHVVQYwciJbE/rwa4CVhaBjxil9B8Mr+biKTbwB4Bz+0jAlLQH/ArYPoN+Nfd/Hkv+dUjFpAK9BS/eCGrlPOxB85XrKUBnfj6II8OZfDuYJJuvBOxwBSwCrFiuQGcFTsk8rNJRxd1xzZNMxGwX+VsBVqCz3FaBeIBviPqOxVkBCT46XCggKn+jPO4L/zAotpW/Nz/IcHcBmHm1CRaj0wzBUsoVw8zl6C8WJXGazOcG53wBm2B7Arxi9RCvYSpJq8fTBPe9IHE/R7jx8ItOkLOnI9E5dDqvakL0bM7qR5bLStoqd+8Mm43/K1vuzLF5yPUAAAAASUVORK5CYII=');
 }
 
 button.re_add_qitem {
@@ -18,8 +18,6 @@ button.re_add_qitem {
 }
 
 #re_quick_items div {
-  border-radius: 5px;
-  margin: 5px;
   padding: 0px;
   align-self: stretch;
   flex: 0 0 26%;
@@ -28,12 +26,7 @@ button.re_add_qitem {
   max-width: 100px;
 }
 
-#re_quick_items div:active {
-  position:relative;
-	top:1px;
-}
-
-#re_quick_items div:hover, #re_quick_items button:hover, #re_quick_items div img:hover {
+#re_quick_items div img:hover {
   cursor: pointer;
 }
 
@@ -66,33 +59,9 @@ button.re_add_qitem {
 
 
 /* Color CSS */
-#re_quick_items div {
-  border: 1px #999 solid;
-}
-
 #re_quick_items button {
   color: #000;
 }
-
 body.dark-mode #re_quick_items button {
   color: #DDD;
-}
-
-body.dark-mode #re_quick_items div {
-  border: 1px #222 solid;
-}
-
-#re_quick_items div:hover {
-  background-color: #fff;
-}
-body.dark-mode #re_quick_items div:hover {
-  background-color: #444;
-}
-
-.close {
-  color: #333;
-}
-
-.close:hover {
-  color: #999;
 }

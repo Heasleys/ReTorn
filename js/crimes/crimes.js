@@ -91,7 +91,7 @@ function reloadCrimes() {
             x++;
             $('#re_quick_crimes').prepend(`
               <form action="`+crime.action+`" method="post" name="crimes" style="order: `+crime.order+`">
-                <div id="do_crimes">
+                <div class="re_button" id="do_crimes">
                   <input name="nervetake" type="hidden" value="`+crime.nerve+`">
                   <input name="crime" type="hidden" value="`+crime.crime+`">
                   <span>
