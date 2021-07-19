@@ -21,7 +21,7 @@ if ($('div.captcha').length == 0) {
         $(this).attr("title", items[itemID].name);
         value += items[itemID].market_value;
         if (items[itemID].market_value >= 10000000) {
-          itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: $"+items[itemID].market_value.toLocaleString('en-US')+"'><b>" + items[itemID].name + "</b></a>, ";
+          itemList += "<b><a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: $"+items[itemID].market_value.toLocaleString('en-US')+"'>" + items[itemID].name + "</a></b>, ";
         } else {
           itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: $"+items[itemID].market_value.toLocaleString('en-US')+"'>" + items[itemID].name + "</a>, ";
         }
@@ -39,7 +39,7 @@ if ($('div.captcha').length == 0) {
         $('#re_city_finds').html(intro + itemList);
       }
 
-      $('#re_city_finds > a').hover(function() {
+      $('#re_city_finds a').hover(function() {
         let id = $(this).data('cfid');
         let item = $('.leaflet-marker-pane img[src*="torn.com/images/items/"][data-cfid="'+id+'"]');
         item.toggleClass("hovered");
