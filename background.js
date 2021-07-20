@@ -235,7 +235,7 @@ function checkUpdate() {
     let update_settings = {re_settings: {}}
 
     if (response.value.npclist == undefined) {
-      update_settings.re_settings.npclist = true;
+      update_settings.re_settings.npclist = false;
       i++;
     }
 
@@ -454,6 +454,8 @@ function newInstall() {
       re_settings: {
         darkmode: false,
         tornstats: false,
+        npclist: false,
+        chatuserhighlight: false,
         header_color: "#e0ce00",
         notifications: {
           notifications: {
@@ -833,6 +835,7 @@ self.addEventListener('notificationclick', function (event) {
 });
 
 
+/* Watch for Easter Egg Competition images being loaded */
 chrome.webRequest.onBeforeRequest.addListener(
   function(details) {
       getValue("re_settings", "sync").then((response) => {
