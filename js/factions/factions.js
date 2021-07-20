@@ -68,7 +68,7 @@ function crimesTab() {
                 wrap += ` <span title="API Not Verified">❌</span>`;
               }
             } else {
-              wrap = `<span title="Not in TornStats">--</span>`;
+              wrap = `<span title="Not in Torn Stats">--</span>`;
             }
             $(this).find('li.offences').after(`<li class="nnb"><span class="t-hide"></span>`+wrap+`</li>`);
           });
@@ -81,11 +81,11 @@ function rosterTab() {
 
   if ($('ul.control-tabs.ui-tabs-nav').length == 1 && tsData["roster"]) {
 
-    $('ul.control-tabs.ui-tabs-nav').append(`<li class="white-grad bold">TornStats:</li>`);
+    $('ul.control-tabs.ui-tabs-nav').append(`<li class="white-grad bold">Torn Stats:</li>`);
     $('ul.control-tabs.ui-tabs-nav').append(`
       <li data-disable="0" class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tornstats-roster" aria-labelledby="ui-id-50" aria-selected="false">
         <a id="ts-roster" class="t-gray-3 ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-50">
-        TornStats Roster
+        Torn Stats Roster
         </a>
       </li>
       `);
