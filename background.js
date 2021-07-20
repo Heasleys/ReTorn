@@ -485,7 +485,7 @@ function newInstall() {
             enabled: true
           },
           education: {
-            enabled: true
+            enabled: false
           },
           messages: {
             enabled: true
@@ -712,6 +712,11 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
             if (data.notify == true) {
               createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "Get a Life"}, "https://www.torn.com/item.php#medical-items");
             }
+          }
+
+          // EDUCATION
+          if (notifications.education.enabled == true && oldValue.education_current != 0 && newValue.education_current == 0) {
+              createNotification("education", "ReTorn: Education", "Your education course has complete.", {action: 'Open', title: "Get Knowledge"}, "https://www.torn.com/education.php");
           }
 
         }
