@@ -37,6 +37,12 @@
     "background": {
     	"service_worker": "background.js"
   	},
+    "web_accessible_resources": [
+      {
+        "resources": [ "/js/everywhere/interceptFetch.js" ],
+        "matches": [ "https://www.torn.com/*" ]
+      }
+    ],
     "content_scripts": [
       {
         "matches": [
