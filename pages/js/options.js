@@ -7,6 +7,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_user"}, (response) => 
 });
 
 $(document).ready(function() {
+  initProfileTab();
   initChatUserHighlights();
   $('ul.tabs > li').first().addClass('active');
   $('.tab_container').first().addClass('show');
@@ -357,4 +358,20 @@ function initChatUserHighlights() {
     }
   });
 
+}
+
+function initProfileTab() {
+  chrome.runtime.sendMessage({name: "get_value", value: "re_user", type: "sync"}, (response) => {
+    console.log(response);
+    if (response.status) {
+      $('#name').text(response.value.re_user.name);
+    }
+  });
+
+  chrome.runtime.sendMessage({name: "get_value", value: "re_user_data", type: "local"}, (response) => {
+    console.log(response);
+    if (response.status) {
+      $('#money').text(response.value.re_user_data.money_onhand.toLocaleString('en-us'));
+    }
+  });
 }

@@ -602,19 +602,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
     case "logout":
 
-      removeValue("re_api_key", "sync").then((response) => {
-        console.log(response);
-      })
-      removeValue("re_user", "sync").then((response) => {
-        console.log(response);
-      })
-      removeValue("re_user_data", "local").then((response) => {
-        console.log(response);
-      })
-      //setValue() Set value of TornStats integration to off
-
+      removeValue("re_api_key", "sync")
+      removeValue("re_user", "sync")
+      removeValue("re_user_data", "local")
+      setValue({['re_settings']: {"tornstats": false}}, "sync")
       .catch((error) => {
-        sendResponse({status: false, message: "Failed to delete apikey."});
+        console.log({status: false, message: "Failed to delete apikey.", error: error});
+        sendResponse({status: false, message: "Failed to delete apikey.", error: error});
       });
 
 
