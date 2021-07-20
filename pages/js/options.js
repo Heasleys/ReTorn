@@ -1,18 +1,40 @@
-var notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education"];
-var user;
+$(document).ready(function() {
+
 chrome.runtime.sendMessage({name: "get_value", value: "re_user"}, (response) => {
   if (response.status == true) {
-    user = response.value.re_user;
+    const user = response.value.re_user;
   }
 });
 
-$(document).ready(function() {
-  initProfileTab();
+chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
+  if (response.status == true) {
+    const settings = response.value.re_settings;
+    initNotificationTab(settings);
+
+    initTornStatsTab(settings);
+  }
+});
+
+
+
   initChatUserHighlights();
+
+  /* Initialize Sidebar List */
   $('ul.tabs > li').first().addClass('active');
   $('.tab_container').first().addClass('show');
+  $('ul.tabs li:not(.disabled,:disabled)').click(function(){
+      var t = $(this).data('tab');
 
-  //$('ul.tabs > li').filter(':not([data-tab="profile"])',':not([data-tab="attributions"])').addClass('disabled');
+      if($(this).hasClass('active')){
+
+      } else {
+        $('ul.tabs > li').removeClass('active');
+        $(this).addClass('active');
+      }
+      $('.tab_container').removeClass('show');
+      $('.tab_container#'+ t).addClass('show');
+   });
+
   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
     console.log(response);
       if (response.status == true && response.value.re_settings != undefined) {
@@ -27,15 +49,7 @@ $(document).ready(function() {
           $('#darkmode').prop("checked", false);
         }
 
-        if (settings.tornstats != undefined && settings.tornstats == true) {
-          $('#ts_status').text("Enabled");
-          $('button#tornstats').html("Unlink account");
-          $('button#tornstats').val(1);
-        } else {
-          $('#ts_status').text("Disabled");
-          $('button#tornstats').html("Link account");
-          $('button#tornstats').val(0);
-        }
+
 
         if (settings.npclist != undefined && settings.npclist == true) {
           $('#npclist').prop("checked", true);
@@ -69,89 +83,12 @@ $(document).ready(function() {
           });
          });
 
-        notifications.forEach((notif, i) => {
-          var checkbox = $('div#general_notifications input#' + notif);
 
-          checkbox.val(settings.notifications[notif].enabled);
-          if (settings.notifications[notif].enabled == true) {
-            checkbox.prop("checked", true);
-          } else {
-            checkbox.prop("checked", false);
-          }
-
-          if (settings.notifications[notif].value != undefined) {
-            var textbox = $('div#general_notifications input#' + notif + '_value');
-            let val = settings.notifications[notif].value;
-
-            textbox.val(val);
-            if (val.includes("<")) {
-              $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" drops below "+ val.replace('<',''));
-            }
-            if (val.includes(">")) {
-              $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" increases above "+ val.replace('>',''));
-            }
-            if (!val.includes(">") && !val.includes("<")) {
-              if (val == "100%") {
-                $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" is full");
-              } else {
-                $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" equals "+ val);
-              }
-            }
-
-            textbox.change(function() {
-              var value = $(this).val();
-              let id = $(this).attr('id');
-              if (value == "" || /(?!^)[\<\>]|[\%](?!$)|[^0-9\>\<\%]/.test(value)) {
-                $(this).val($(this).data('prev'));
-              } else {
-                chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {[notif]: {value: value}}}}, (response) => {
-                  if (value.includes("<")) {
-                    $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" drops below "+ value.replace('<',''));
-                  }
-                  if (value.includes(">")) {
-                    $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" increases above "+ value.replace('>',''));
-                  }
-                  if (!value.includes(">") && !value.includes("<")) {
-                    if (value == "100%") {
-                      $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" is full");
-                    } else {
-                      $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" equals "+ value);
-                    }
-                  }
-                });
-              }
-            });
-
-            textbox.focus(function() {
-              $(this).data('prev', $(this).val());
-            });
-          }
-
-          checkbox.change(function() {
-            let value = $(this).val() == "false" ? true : false;
-            chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {[notif]: {enabled: value}}}}, (response) => {
-              $(this).val(value);
-            });
-           });
-
-        });
       }
   });
 
 
 
-  $('ul.tabs li:not(.disabled,:disabled)').click(function(){
-      var t = $(this).data('tab');
-
-      if($(this).hasClass('active')){
-
-      } else {
-        $('ul.tabs > li').removeClass('active');
-        $(this).addClass('active');
-      }
-      $('.tab_container').removeClass('show');
-      $('.tab_container#'+ t).addClass('show');
-   });
 
 
   $('#darkmode').change(function() {
@@ -173,8 +110,17 @@ $(document).ready(function() {
   $('#npclist').change(function() {
      let v = $(this).is(":checked");
      console.log(v);
-     chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"npclist": v}}, (response) => {
-       console.log(response);
+     chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
+        if (response.value.re_settings.tornstats) {
+         chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"npclist": v}}, (response) => {
+           console.log(response);
+         });
+       } else {
+         $('#npclist').prop("checked", false);
+         if (v) {
+           alert("TornStats Integration must be set to use this feature.");
+         }
+       }
       });
   });
 
@@ -229,25 +175,7 @@ $(document).ready(function() {
       }
     });
 
-});
-
-
-function message(response, me, status) {
-  if (status == false) {
-    $(".re_message#"+me).removeClass('success');
-    $(".re_message#"+me).addClass('error');
-  } else {
-    $(".re_message#"+me).removeClass('error');
-    $(".re_message#"+me).addClass('success');
-  }
-  if (response.value != undefined) {
-    $(".re_message#"+me).text(response.message + " {" + response.value + "}");
-  } else {
-    $(".re_message#"+me).text(response.message);
-  }
-  $(".re_message#"+me).attr('hidden', false);
-}
-
+}); //Document.ready
 
 function chatUserHighlight(parent) {
     let v = parent.find('input[type="checkbox"]').is(":checked");
@@ -360,18 +288,103 @@ function initChatUserHighlights() {
 
 }
 
-function initProfileTab() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_user", type: "sync"}, (response) => {
-    console.log(response);
-    if (response.status) {
-      $('#name').text(response.value.re_user.name);
-    }
-  });
 
-  chrome.runtime.sendMessage({name: "get_value", value: "re_user_data", type: "local"}, (response) => {
-    console.log(response);
-    if (response.status) {
-      $('#money').text(response.value.re_user_data.money_onhand.toLocaleString('en-us'));
+function message(response, me, status) {
+  if (status == false) {
+    $(".re_message#"+me).removeClass('success');
+    $(".re_message#"+me).addClass('error');
+  } else {
+    $(".re_message#"+me).removeClass('error');
+    $(".re_message#"+me).addClass('success');
+  }
+  if (response.value != undefined) {
+    $(".re_message#"+me).text(response.message + " {" + response.value + "}");
+  } else {
+    $(".re_message#"+me).text(response.message);
+  }
+  $(".re_message#"+me).attr('hidden', false);
+}
+
+
+
+function initNotificationTab(settings) {
+  const notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education"];
+  notifications.forEach((notif, i) => {
+    var checkbox = $('div#general_notifications input#' + notif);
+
+    checkbox.val(settings.notifications[notif].enabled);
+    if (settings.notifications[notif].enabled == true) {
+      checkbox.prop("checked", true);
+    } else {
+      checkbox.prop("checked", false);
     }
+
+    if (settings.notifications[notif].value != undefined) {
+      var textbox = $('div#general_notifications input#' + notif + '_value');
+      let val = settings.notifications[notif].value;
+
+      textbox.val(val);
+      if (val.includes("<")) {
+        $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" drops below "+ val.replace('<',''));
+      }
+      if (val.includes(">")) {
+        $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" increases above "+ val.replace('>',''));
+      }
+      if (!val.includes(">") && !val.includes("<")) {
+        if (val == "100%") {
+          $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" is full");
+        } else {
+          $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" equals "+ val);
+        }
+      }
+
+      textbox.change(function() {
+        var value = $(this).val();
+        let id = $(this).attr('id');
+        if (value == "" || /(?!^)[\<\>]|[\%](?!$)|[^0-9\>\<\%]/.test(value)) {
+          $(this).val($(this).data('prev'));
+        } else {
+          chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {[notif]: {value: value}}}}, (response) => {
+            if (value.includes("<")) {
+              $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" drops below "+ value.replace('<',''));
+            }
+            if (value.includes(">")) {
+              $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" increases above "+ value.replace('>',''));
+            }
+            if (!value.includes(">") && !value.includes("<")) {
+              if (value == "100%") {
+                $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" is full");
+              } else {
+                $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" equals "+ value);
+              }
+            }
+          });
+        }
+      });
+
+      textbox.focus(function() {
+        $(this).data('prev', $(this).val());
+      });
+    }
+
+    checkbox.change(function() {
+      let value = $(this).val() == "false" ? true : false;
+      chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {[notif]: {enabled: value}}}}, (response) => {
+        $(this).val(value);
+      });
+     });
+
   });
+}
+
+function initTornStatsTab(settings) {
+  if (settings.tornstats != undefined && settings.tornstats == true) {
+    $('#ts_status').text("Enabled");
+    $('button#tornstats').html("Unlink account");
+    $('button#tornstats').val(1);
+  } else {
+    $('#ts_status').text("Disabled");
+    $('button#tornstats').html("Link account");
+    $('button#tornstats').val(0);
+  }
 }
