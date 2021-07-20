@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  font-size: 14px;
 }
 
 ul {
@@ -15,8 +16,18 @@ a {
   text-decoration: none;
 }
 
+input[type="text"], input[type="number"] {
+  border-style: solid;
+  border-width: 1px;
+}
+
+html.dark input[type="text"]:disabled, html.dark input[type="number"]:disabled {
+  color: black;
+}
+
 .menu_title {
   letter-spacing: 0.4px;
+  font-size: 18px;
 }
 
 html.light .sidenav {
@@ -97,7 +108,7 @@ ul.credits {
 
 .sidenav li {
   text-decoration: none;
-  font-size: 1.5em;
+  font-size: 18px;
   color: inherit;
   padding: 3px;
   padding-left: 5px;
@@ -177,7 +188,6 @@ label + .switch_wrap {
 }
 
 .switch_wrap input + label {
-  margin-left: 8px;
   display: flex;
   align-items: center;
 }
@@ -246,18 +256,117 @@ div#tornstats label + button {
 
 
 
+
+/* Switches */
+
+.switch-holder {
+    display: flex;
+    max-width: 300px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+html.light .switch-holder {
+  border: 1px solid #111;
+}
+
+html.dark .switch-holder {
+  border: 1px solid #333;
+}
+
+.switch-label {
+    font-size: 16px;
+    width: 140px;
+}
+
+.switch-label span {
+
+}
+
+.switch-holder input[type="text"] {
+  width: 50px;
+  height: 20px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+html.dark .switch-holder input[type="text"] {
+  background-color: #222;
+  color: #CCC;
+}
+
+.switch-label i {
+    margin-right: 5px;
+}
+
+.switch-toggle {
+    height: 30px;
+}
+
+.switch-toggle input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    z-index: -2;
+}
+
+.switch-toggle input[type="checkbox"] + label {
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 30px;
+    border-radius: 20px;
+    margin: 0;
+    cursor: pointer;
+}
+
+html.light .switch-toggle input[type="checkbox"] + label {
+  border: 1px solid #111;
+}
+html.dark .switch-toggle input[type="checkbox"] + label {
+  border: 1px solid #333;
+}
+
+.switch-toggle input[type="checkbox"] + label::before {
+    position: absolute;
+    content: 'OFF';
+    font-size: 14px;
+    text-align: center;
+    line-height: 26px;
+    top: 2px;
+    left: 2%;
+    width: 40px;
+    height: 26px;
+    border-radius: 20px;
+    background-color: #d1dad3;
+    color: black;
+    transition: .3s ease-in-out;
+}
+
+.switch-toggle input[type="checkbox"]:checked + label::before {
+    left: 48%;
+    content: 'ON';
+    color: #fff;
+    background-color: #00b33c;
+}
+
+
+
+
 .card-container {
   display: flex;
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: stretch;
+  margin-right: 20px;
 }
 
 .card {
   margin: 10px;
+  margin-top: 0px;
   flex: 1 1 0px;
-	border: 1px solid white;
-  border-radius: 5px;
 }
 
 .card-content {
@@ -267,7 +376,10 @@ div#tornstats label + button {
 .card-content h4 {
   margin-top: 0px;
   margin-bottom: 8px;
-  text-decoration: underline;
+}
+
+.card_title {
+  font-size: 16px;
 }
 
 @media screen and (max-width: 750px) {
@@ -276,9 +388,16 @@ div#tornstats label + button {
   }
   .card-container {
     flex-flow: column wrap;
+    margin-left: -15px;
   }
   .card {
     min-width: 250px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .mainview {
+    padding-left: 0px;
   }
 }
 

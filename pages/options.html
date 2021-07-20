@@ -8,7 +8,11 @@
 
     <link rel="stylesheet" href="css/options.css">
     <link rel="stylesheet" href="css/tooltip.css">
+
+    <!--3rd party libraries -->
     <script src="../js/lib/jquery-3.6.0.min.js"></script>
+    <script src="js/libs/jscolor/jscolor.min.js"></script>
+    <link rel="stylesheet" href="css/libs/fontawesome/css/all.css">
 
   </head>
 
@@ -17,92 +21,222 @@
     <div class="sidenav">
       <span class="title"><span class="yellow">Re</span>Torn</span>
       <ul class="tabs">
-        <li data-tab="notifications_tab">Notifications</li>
-        <li data-tab="features">Features</li>
-        <li data-tab="other">Other</li>
-        <li data-tab="settings">Settings</li>
-        <li data-tab="discord">Discord</li>
-        <li data-tab="attributions">Attributions</li>
+        <li data-tab="notifications_tab"><i class="fas fa-bell"></i> Notifications</li>
+        <li data-tab="features"><i class="fas fa-tasks"></i> Features</li>
+        <li data-tab="settings"><i class="fas fa-cog"></i> Extension Settings</li>
+        <li data-tab="tornstats"><img src="../images/TornStats.png" width="16px" height="16px" style="vertical-align:middle;"> <span>Torn Stats</span></li>
+        <li data-tab="discord"><i class="fab fa-discord"></i> Discord</li>
+        <li data-tab="attributions"><i class="fab fa-creative-commons-by"></i> Attributions</li>
       </ul>
     </div>
 
     <div class="mainview">
       <div class="tab_groups">
+
         <div class="tab_container" id="notifications_tab">
-          <h3>Notifications</h3>
+          <h3 class="menu_title">Notifications</h3>
 
           <section class="card-container">
 
             <article class="card">
               <div class="card-content" id="general_notifications">
-                <h4>General Notifications:</h4>
-                <div class="switch_wrap">
-                  <label tooltip="Toggle all notifications">All Notifications:</label>
-                  <input type="checkbox" id="notifications">
+                <h4 class="card_title">General Notifications:</h4>
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span>All Notifications</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="notifications">
+                    <label for="notifications"></label>
+                  </div>
                 </div>
-                <br>
-                <div class="input_wrap">
-                  <div>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when energy reaches value" flow="right">Energy</span>
+
+                  </div>
+                  <input type="text" id="energy_value" value="">
+                  <div class="switch-toggle">
                     <input type="checkbox" id="energy">
-                    <input type="text" id="energy_value" value="">
-                    <label for="energy_value" tooltip="Notify when energy reaches value" flow="right">Energy</label>
+                    <label for="energy"></label>
                   </div>
                 </div>
-                <div class="input_wrap">
-                  <div>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when nerve reaches value" flow="right">Nerve</span>
+
+                  </div>
+                  <input type="text" id="nerve_value" value="">
+                  <div class="switch-toggle">
                     <input type="checkbox" id="nerve">
-                    <input type="text" id="nerve_value" value="">
-                    <label for="nerve_value" tooltip="Notify when nerve reaches value" flow="right">Nerve</label>
+                    <label for="nerve"></label>
                   </div>
                 </div>
-                <div class="input_wrap">
-                  <div>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when happy reaches value" flow="right">Happy</span>
+                  </div>
+                  <input type="text" id="happy_value" value="">
+                  <div class="switch-toggle">
                     <input type="checkbox" id="happy">
-                    <input type="text" id="happy_value" value="">
-                    <label for="happy_value" tooltip="Notify when happy reaches value" flow="right">Happy</label>
+                    <label for="happy"></label>
                   </div>
                 </div>
-                <div class="input_wrap">
-                  <div>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when life reaches value" flow="right">Life</span>
+                  </div>
+                  <input type="text" id="life_value" value="">
+                  <div class="switch-toggle">
                     <input type="checkbox" id="life">
-                    <input type="text" id="life_value" value="">
-                    <label for="life_value" tooltip="Notify when life reaches value" flow="right">Life</label>
+                    <label for="life"></label>
                   </div>
                 </div>
-                <div class="switch_wrap">
-                  <input type="checkbox" id="events">
-                  <label tooltip="Notify on new events" flow="right">Events</label>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify on new events" flow="right">Events</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="events">
+                    <label for="events"></label>
+                  </div>
                 </div>
-                <div class="switch_wrap">
-                  <input type="checkbox" id="messages">
-                  <label tooltip="Notify on new messages" flow="right">Messages</label>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify on new messages" flow="right">Messages</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="messages">
+                    <label for="messages"></label>
+                  </div>
                 </div>
-                <div class="switch_wrap">
-                  <input type="checkbox" id="drugs">
-                  <label tooltip="Notify when drug cooldown reaches zero" flow="right">Drug Cooldown</label>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when drug cooldown reaches zero" flow="right">Drug Cooldown</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="drugs">
+                    <label for="drugs"></label>
+                  </div>
                 </div>
-                <div class="switch_wrap">
-                  <input type="checkbox" id="boosters">
-                  <label tooltip="Notify when booster cooldown reaches zero" flow="right">Booster Cooldown</label>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when booster cooldown reaches zero" flow="right">Booster Cooldown</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="boosters">
+                    <label for="boosters"></label>
+                  </div>
                 </div>
-                <div class="switch_wrap">
-                  <input type="checkbox" id="medical">
-                  <label tooltip="Notify when medical cooldown reaches zero" flow="right">Medical Cooldown</label>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when medical cooldown reaches zero" flow="right">Medical Cooldown</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="medical">
+                    <label for="medical"></label>
+                  </div>
                 </div>
-                <div class="switch_wrap" style="display: none;">
-                  <input type="checkbox" id="education">
-                  <label tooltip="Notify when education has finished" flow="right">Education</label>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when education course has finished" flow="right">Education</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="education">
+                    <label for="education"></label>
+                  </div>
                 </div>
 
               </div>
             </article>
 
+            <article class="card" hidden>
+              <div class="card-content">
+                <h4 class="card_title">Chain Notifications:</h4>
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when drug cooldown reaches zero" flow="right">Chain</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="chain">
+                    <label for="chain"></label>
+                  </div>
+                </div>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when drug cooldown reaches zero" flow="right">Chain</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="chain">
+                    <label for="chain"></label>
+                  </div>
+                </div>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when drug cooldown reaches zero" flow="right">Chain</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="chain">
+                    <label for="chain"></label>
+                  </div>
+                </div>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when drug cooldown reaches zero" flow="right">Chain</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="chain">
+                    <label for="chain"></label>
+                  </div>
+                </div>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Notify when drug cooldown reaches zero" flow="right">Chain</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="chain">
+                    <label for="chain"></label>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-content">
+
+                <div id="events">
+                  <h4 class="card_title">Events:</h4>
+                  <div class="switch_wrap">
+                    <label tooltip="Toggle Easter Eggs alerts">Notify Easter Eggs:</label>
+                    <input type="checkbox" id="eastereggs">
+                  </div>
+                  <span><code tooltip="Some alerts will be Torn spawned fake eggs."><b>Note: Disable Forum and Profile Signatures to help prevent fake eggs alerts.</b></code></span>
+                  <br>
+                  <span><code>It has been rumored that scripts used to detect eggs may lower Easter Egg spawn rates. <b>USE AT YOUR OWN RISK!</b></code></span>
+                </div>
+
+              </div>
+            </article>
           </section>
 
         </div><!-- end of tab container -->
 
         <div class="tab_container" id="features">
-          <h3>Features</h3>
+          <h3 class="menu_title">Features</h3>
 
             <section class="card-container">
 
@@ -121,9 +255,15 @@
               <article class="card">
                 <div class="card-content">
                   <h4>Other Features:</h4>
-                  <div class="switch_wrap">
-                    <label class="tsblue" tooltip="Requires TornStats">NPC Sidebar List:</label>
-                    <input type="checkbox" id="npclist">
+
+                  <div class="switch-holder">
+                    <div class="switch-label">
+                      <span class="tsblue" tooltip="Lists NPC is sidebar - Requires TornStats" flow="right">NPC Sidebar List</span>
+                    </div>
+                    <div class="switch-toggle">
+                      <input type="checkbox" id="npclist">
+                      <label for="npclist"></label>
+                    </div>
                   </div>
 
                 </div>
@@ -150,31 +290,6 @@
 
         </div><!-- end of tab container -->
 
-        <div class="tab_container" id="other">
-          <h3>Other</h3>
-          <section class="card-container">
-
-            <article class="card">
-              <div class="card-content">
-
-                <div id="events">
-                  <h4>Events</h4>
-                  <div class="switch_wrap">
-                    <label tooltip="Toggle Easter Eggs alerts">Notify Easter Eggs:</label>
-                    <input type="checkbox" id="eastereggs">
-                  </div>
-                  <span><code tooltip="Some alerts will be Torn spawned fake eggs."><b>Note: Disable Forum and Profile Signatures to help prevent fake eggs alerts.</b></code></span>
-                  <br>
-                  <span><code>It has been said that scripts that detect eggs may lower Easter Egg spawns. <b>USE AT YOUR OWN RISK!</b></code></span>
-                </div>
-
-              </div>
-            </article>
-
-          </section>
-
-        </div><!-- end of tab container -->
-
         <div class="tab_container" id="settings">
           <h3 class="menu_title">Extension Settings</h3>
 
@@ -182,27 +297,32 @@
 
             <article class="card">
               <div class="card-content">
-                <h4>Settings:</h4>
-                <label tooltip="Change the default header color" flow="right"><b>Header Color:</b></label>
-                <div class="switch_wrap">
-                    <input type="color" id="header_color" value="#e0ce00">
-                    <label><code><b>ReTorn: <span style="color: #E0CE00;">#E0CE00</span> DocTorn: <span style="color: #663399;">#663399</span><br>TornTools: <span style="color: #627E0D;">#627E0D</span> TornStats: <span style="color: #8ABEEF;">#8ABEEF</span></b></code></label>
+                <h4 class="card_title">Settings:</h4>
+
+                <div class="switch-holder">
+                  <div class="switch-label">
+                    <span tooltip="Darkmode within ReTorn" flow="right">Darkmode</span>
+                  </div>
+                  <div class="switch-toggle">
+                    <input type="checkbox" id="darkmode">
+                    <label for="darkmode"></label>
+                  </div>
                 </div>
 
+                <br>
                 <div class="switch_wrap">
-                  <label tooltip="Within ReTorn">Darkmode:</label>
-                  <input type="checkbox" id="darkmode">
-                </div>
-              </div>
-            </article>
+                  <div>
+                    <label tooltip="Change the default header color" flow="right"><b>ReTorn Header Color:</b></label>
+                    <input data-jscolor="{}" id="header_color" value="#e0ce00">
+                    <ul><br>
+                      <li><b>Color Code Suggestions:</b></li>
+                      <li>ReTorn: <b><span style="color: #E0CE00;">#E0CE00</span></b> - <i>Default</i></li>
+                      <li>DocTorn: <b><span style="color: #663399;">#663399</span></b></li>
+                      <li>TornTools: <b><span style="color: #627E0D;">#627E0D</span></b></li>
+                      <li>Torn Stats: <b><span style="color: #8ABEEF;">#8ABEEF</span></b> - <i>Recommended</i></li>
+                    </ul>
+                  </div>
 
-            <article class="card">
-              <div class="card-content">
-                <h4>External Accounts:</h4>
-                <div id="tornstats">
-                  <label><b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>: </b><b><span id="ts_status"></span></b></label>
-                  <button id="tornstats">Link Account</button>
-                  <span class="re_message" id="ts_message" hidden></span>
                 </div>
 
               </div>
@@ -212,17 +332,35 @@
         </div><!-- end of tab container -->
 
         <div class="tab_container" id="discord">
-          <h3>Discord</h3>
+          <h3 class="menu_title">Discord</h3>
           <p>Join the ReTorn Discord to report bugs and request new features!</p>
-          <a href='https://discord.gg/SqKDND7FBA'>https://discord.gg/SqKDND7FBA</a>
+          <a href="https://discord.gg/SqKDND7FBA" target="_blank">https://discord.gg/SqKDND7FBA</a>
         </div><!-- end of tab container -->
 
+        <div class="tab_container" id="tornstats">
+          <h3 class="menu_title">TornStats</h3>
+          <p>
+            Many features in ReTorn rely on the <a href="https://www.tornstats.com/api"  target="_blank">Torn Stats API</a>.
+          </p>
+          <p>
+            In order to use these TornStats related features, you must have a <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats account</a></b> and then use the button below to link your Torn Stats account with ReTorn.
+          </p>
+          <div id="tornstats">
+            <label><b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>: </b><b><span id="ts_status"></span></b></label>
+            <button id="tornstats">Link Account</button>
+            <span class="re_message" id="ts_message" hidden></span>
+          </div>
+        </div><!-- end of tab container -->
+
+
+
         <div class="tab_container" id="attributions">
-          <h3>Credits and Attributions</h3>
+          <h3 class="menu_title">Credits and Attributions</h3>
           <ul class='credits'>
             <li><span>ReTorn was made by me: <a href="https://www.torn.com/profiles.php?XID=1468764" target="_blank">Heasleys4hemp [1468764]</a>. I am epic.</span></li>
             <li><span>Thank you to <a href="https://www.torn.com/profiles.php?XID=776"  target="_blank">IceBlueFire [776]</a> for his wonderful integration with <a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>.</span></li>
-            <li><span><a href="https://www.flaticon.com/free-icon/rifle_2062174"  target="_blank">Rifle Icon</a> made by <a href="https://www.freepik.com" title="Freepik"  target="_blank">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"  target="_blank">www.flaticon.com</a></span></li>
+            <li><span><a href="https://www.flaticon.com/free-icon/rifle_2062174"  target="_blank">Rifle Icon</a> provided by <a href="https://www.freepik.com" title="Freepik"  target="_blank">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"  target="_blank">www.flaticon.com</a></span></li>
+            <li><span>Settings Icons provided for free by <a href="https://fontawesome.com/" target="_blank" title="FontAwesome">FontAwesome</a></span></li>
           </ul>
           <p><a href='https://www.retorn.rocks/privacy' target='_blank'>Privacy Policy</a></p>
         </div><!-- end of tab container -->
