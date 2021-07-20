@@ -231,19 +231,27 @@ function checkLogin() {
 
 function checkUpdate() {
   getValue("re_settings", "sync").then((response) => {
+    console.log("UPDATE: ", response);
+    const settings = response.re_settings;
+
     let i = 0;
     let update_settings = {re_settings: {}}
 
-    if (response.value.npclist == undefined) {
+    if (settings.npclist == undefined) {
       update_settings.re_settings.npclist = false;
       i++;
     }
 
-    if (response.value.chatuserhighlight == undefined) {
+    if (settings.chatuserhighlight == undefined) {
       update_settings.re_settings.chatuserhighlight = false;
       i++;
     }
 
+    if (settings.notifications.travel == undefined) {
+      update_settings.re_settings.notifications = {travel: {enabled: true}};
+      i++;
+    }
+    console.log(update_settings);
     if (i > 0) {
       setValue(update_settings, "sync").catch((error) => {console.log(error);});
     }
@@ -493,6 +501,9 @@ function newInstall() {
             enabled: true
           },
           events: {
+            enabled: true
+          },
+          travel: {
             enabled: true
           }
         },
