@@ -659,34 +659,34 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 
           // MESSAGES
           if (newValue.notifications.messages != oldValue.notifications.messages && newValue.notifications.messages != 0 && notifications.messages.enabled == true) {
-            createNotification("new_message", "ReTorn: New Message", "You have " + newValue.notifications.messages + " new messages.", "", "View Messages", "https://www.torn.com/messages.php");
+            createNotification("new_message", "ReTorn: New Message", "You have " + newValue.notifications.messages + " new messages.", {action: 'Open', title: "View Messages"}, "https://www.torn.com/messages.php");
           }
 
           // EVENTS
           if (newValue.notifications.events != oldValue.notifications.events && newValue.notifications.events != 0 && notifications.events.enabled == true) {
-            createNotification("new_event", "ReTorn: New Event", "You have " + newValue.notifications.events + " new events.", "", "View Events", "https://www.torn.com/events.php");
+            createNotification("new_event", "ReTorn: New Event", "You have " + newValue.notifications.events + " new events.", {action: 'Open', title: "View Events"}, "https://www.torn.com/events.php");
           }
 
           // COOLDOWNS - DRUGS
           if (oldValue.cooldowns.drug != 0 && newValue.cooldowns.drug == 0 && notifications.drugs.enabled == true) {
-            createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", "", "View Items", "https://www.torn.com/item.php#drugs-items");
+            createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#drugs-items");
           }
 
           // COOLDOWNS - BOOSTERS
           if (oldValue.cooldowns.booster != 0 && newValue.cooldowns.booster == 0 && notifications.boosters.enabled == true) {
-            createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", "", "View Items", "https://www.torn.com/item.phphttps://www.torn.com/item.php#boosters-items");
+            createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#boosters-items");
           }
 
           // COOLDOWNS - MEDICAL
           if (oldValue.cooldowns.medical != 0 && newValue.cooldowns.medical == 0 && notifications.medical.enabled == true) {
-            createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", "", "View Items", "https://www.torn.com/item.php#medical-items");
+            createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#medical-items");
           }
 
           // ENERGY
           if (notifications.energy.enabled == true && newValue.energy.current != oldValue.energy.current) {
             let data = checkNotifyBars('energy', notifications, newValue, oldValue);
             if (data.notify == true) {
-              createNotification("energy", "ReTorn: Energy", data.message, "", "Visit Gym", "https://www.torn.com/gym.php");
+              createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Visit Gym"}, "https://www.torn.com/gym.php");
             }
           }
 
@@ -694,23 +694,23 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
           if (notifications.nerve.enabled == true && newValue.nerve.current != oldValue.nerve.current) {
             let data = checkNotifyBars('nerve', notifications, newValue, oldValue);
             if (data.notify == true) {
-              createNotification("nerve", "ReTorn: Nerve", data.message, "", "Commit Crimes", "https://www.torn.com/crimes.php");
+              createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Commit Crimes"}, "https://www.torn.com/crimes.php");
             }
           }
 
-          // ENERGY
+          // HAPPY
           if (notifications.happy.enabled == true && newValue.happy.current != oldValue.happy.current) {
             let data = checkNotifyBars('happy', notifications, newValue, oldValue);
             if (data.notify == true) {
-              createNotification("happy", "ReTorn: Happy", data.message, "", "Get Happy", "https://www.torn.com/item.php#candy-items");
+              createNotification("happy", "ReTorn: Happy", data.message, {action: 'Open', title: "Get Happy"}, "https://www.torn.com/item.php#candy-items");
             }
           }
 
-          // ENERGY
+          // LIFE
           if (notifications.life.enabled == true && newValue.life.current != oldValue.life.current) {
             let data = checkNotifyBars('life', notifications, newValue, oldValue);
             if (data.notify == true) {
-              createNotification("life", "ReTorn: Life", data.message, "", "Get a Life", "https://www.torn.com/item.php#medical-items");
+              createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "Get a Life"}, "https://www.torn.com/item.php#medical-items");
             }
           }
 
@@ -792,7 +792,7 @@ function checkNotifyBars(type, notifications, newValue, oldValue) {
   return data;
 }
 
-function createNotificationLATER(name, title, message, contextMessage, buttonTitle) {
+function createNotificationLATER(name, title, message, buttonTitle) {
   var image = chrome.runtime.getURL('ReTorn.png');
   console.log(image);
   chrome.notifications.create(
@@ -805,42 +805,29 @@ function createNotificationLATER(name, title, message, contextMessage, buttonTit
       },
       function (id) {console.log(id)}
     );
-  /*
-  chrome.notifications.create(
-      "new_event",
-      {
-        type: "basic",
-        iconUrl: "ReTorn.png",
-        title: title,
-        message: message,
-        contextMessage: contextMessage,
-        buttons: [
-          {
-          title: buttonTitle
-          }
-        ]
-      },
-      function (id) {console.log(id)}
-    );
-    */
 }
 
-function createNotification(name, title, message, contextMessage, buttonTitle, openURL) {
+function createNotification(name, title, message, actions, openURL = "https://www.torn.com/") {
+
+  //if actions parameter is passed, add close button to end of action buttons, else default to single close button
+  if (actions) {
+    actions = [actions, { action: 'Close', title: 'Close' }]
+  } else {
+    actions = [{ action: 'Close', title: 'Close' }]
+  }
+
   registration.showNotification(title, {
     body: message,
     data: {name: name, url: openURL},
     icon: '/images/ReTorn@Default.png',
     badge: '/images/ReTorn@96px.png',
     message,
-    actions: [
-      { action: 'Open', title: buttonTitle, url: openURL},
-      { action: 'Close', title: 'Close' }
-    ]
+    actions: actions
   })
 }
 
 self.addEventListener('notificationclick', function (event) {
-  if (event.action === 'Open') {
+  if (event.action === 'Open' && event.notification.data.url) {
     chrome.tabs.create({'url': event.notification.data.url});
   }
   event.notification.close();
@@ -852,9 +839,11 @@ chrome.webRequest.onBeforeRequest.addListener(
       getValue("re_settings", "sync").then((response) => {
         if (response.re_settings != undefined) {
           var settings = response.re_settings;
-          if (settings.events.eastereggs && settings.events.eastereggs.enabled && settings.events.eastereggs.enabled == true) {
-            console.log(details);
-            createNotification("egg", "ReTorn: Egg Alert", "Egg detected on the page, look around. It could be fake!", "", "Egg?", "https://www.torn.com/competition.php");
+          if (settings.notifications.notifications && settings.notifications.notifications.enabled && settings.notifications.notifications.enabled == true) {
+            if (settings.events.eastereggs && settings.events.eastereggs.enabled && settings.events.eastereggs.enabled == true) {
+              console.log(details);
+              createNotification("egg", "ReTorn: Egg Alert", "Egg detected on the page, look around. It could be fake!");
+            }
           }
         }
       });
