@@ -16,7 +16,7 @@ a {
   text-decoration: none;
 }
 
-input[type="text"], input[type="number"] {
+input[type="text"], input[type="number"], #header_color {
   border-style: solid;
   border-width: 1px;
 }
@@ -254,7 +254,9 @@ div#tornstats label + button {
   margin-top: 5px;
 }
 
-
+html.dark .jscolor-picker {
+  background-color: #222;
+}
 
 
 /* Switches */
@@ -293,7 +295,7 @@ html.dark .switch-holder {
   border-radius: 4px;
 }
 
-html.dark .switch-holder input[type="text"] {
+html.dark input[type="text"] {
   background-color: #222;
   color: #CCC;
 }
