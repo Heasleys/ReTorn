@@ -226,6 +226,11 @@ function checkUpdate() {
       i++;
     }
 
+    if (settings.leftalign == undefined) {
+      update_settings.re_settings.leftalign = false;
+      i++;
+    }
+
     if (settings.notifications.travel == undefined) {
       update_settings.re_settings.notifications = {travel: {enabled: true}};
       i++;
@@ -448,6 +453,7 @@ function newInstall() {
         tornstats: false,
         npclist: false,
         chatuserhighlight: false,
+        leftalign: false,
         header_color: "#e0ce00",
         notifications: {
           notifications: {

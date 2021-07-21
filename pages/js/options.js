@@ -57,6 +57,12 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
           $('#npclist').prop("checked", false);
         }
 
+        if (settings.leftalign != undefined && settings.leftalign == true) {
+          $('#leftalign').prop("checked", true);
+        } else {
+          $('#leftalign').prop("checked", false);
+        }
+
         if (settings.chatuserhighlight != undefined && settings.chatuserhighlight == true) {
           $('#chatuserhighlight').prop("checked", true);
           $('#highlightUsers').show();
@@ -108,7 +114,15 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
       });
   });
 
-  $('#npclist').change(function() {
+  $('#leftalign').change(function() {
+     let v = $(this).is(":checked");
+     console.log(v);
+       chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"leftalign": v}}, (response) => {
+         console.log(response);
+       });
+  });
+
+  $('#leftalign').change(function() {
      let v = $(this).is(":checked");
      console.log(v);
      chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {

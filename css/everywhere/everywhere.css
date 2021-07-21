@@ -2,6 +2,12 @@
   --re-header-color: #e0ce00;
   --re-title-color: #FFF;
   --re-dm-title-color: #CCC;
+  --re-leftalign: auto;
+}
+
+/* Torn Left Align */
+.d .container {
+  margin-left: var(--re-leftalign) !important;
 }
 
 div.re_checkbox {
