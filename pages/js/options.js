@@ -67,6 +67,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 
         if (settings.header_color != undefined) {
           $('#header_color').val(settings.header_color);
+          document.querySelector('#header_color').jscolor.fromString(settings.header_color);
         }
 
         $('div#events input#eastereggs').val(settings.events["eastereggs"].enabled);
@@ -308,7 +309,7 @@ function message(response, me, status) {
 
 
 function initNotificationTab(settings) {
-  const notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education"];
+  const notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education", "travel"];
   notifications.forEach((notif, i) => {
     var checkbox = $('div#general_notifications input#' + notif);
 

@@ -705,6 +705,11 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
               createNotification("education", "ReTorn: Education", "Your education course has complete.", {action: 'Open', title: "Get Knowledge"}, "https://www.torn.com/education.php");
           }
 
+          // TRAVEL
+          if (notifications.travel.enabled == true && newValue.travel.time_left == 0 && newValue.travel.time_left != oldValue.travel.time_left) {
+            createNotification("new_message", "ReTorn: Travel Notification", "You have landed in "+newValue.travel.destination+".", {action: 'Open', title: newValue.travel.destination}, "https://www.torn.com/index.php");
+          }
+
         }
       }
 
