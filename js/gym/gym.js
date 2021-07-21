@@ -37,7 +37,7 @@ if ($('div.captcha').length == 0) {
           });
         } else {
 
-          $('div#graph').html(`<p>You do not currently have your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account linked. Link your Torn Stats account on the options page under Extension Settings.</p>`);
+          $('div#graph').html(`<p>You do not currently have your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account linked. Link your Torn Stats account in the ReTorn options.</p>`);
 
         }
       } else {
