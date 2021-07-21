@@ -240,9 +240,10 @@ function checkUpdate() {
   });
 
   getValue("re_chatuserhighlight", "sync").then((response) => {
-
+    console.log("update", response);
   })
   .catch((error) => {
+      console.log("update: ", error);
       setValue({re_chatuserhighlight: {}}, "sync").catch((error) => {console.log(error);});
   });
 }
@@ -495,6 +496,9 @@ function newInstall() {
             enabled: false
           }
         }
+      },
+      re_chatuserhighlight: {
+
       }
     }
 
