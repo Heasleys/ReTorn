@@ -215,8 +215,7 @@ function initChatUserHighlights() {
           <input type="button" class="addChatUserHighlight" value="+">
           </div>`);
       } else {
-        console.log(user);
-        if (user.player_id) {
+        if (typeof user !== 'undefined' && user.player_id) {
           var u = user.player_id;
         } else {
           var u = "";
