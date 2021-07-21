@@ -2,8 +2,8 @@ chrome.runtime.onStartup.addListener(() => {
   checkLogin();
 });
 
+
 chrome.runtime.onInstalled.addListener((details) => {
-  console.log(details);
   if (details.reason == "update") {
     checkUpdate();
     checkLogin();
@@ -14,14 +14,13 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
+// if extension was enabled, verify user is logged in
 chrome.management.onEnabled.addListener((extensionInfo) => {
   checkLogin();
 });
 
-
+// Chrome Alarm for pulling API data every 30 seconds
 chrome.alarms.onAlarm.addListener((alarm) => {
-  console.log(alarm);
-
   if (alarm.name == "required_api") {
     getValue("re_api_key").then((response) => {
       pullRequiredAPI(response.re_api_key);
@@ -36,30 +35,6 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     });
   }
 });
-
-chrome.notifications.onButtonClicked.addListener(function(notifId, btnIdx) {
-    if (notifId === 'test-notification') {
-        if (btnIdx === 0) {
-            chrome.tabs.create({'url': 'https://www.torn.com/'});
-        } else if (btnIdx === 1) {
-            chrome.tabs.create({'url': 'https://www.torn.com/profiles.php?XID=1468764'});
-        }
-    }
-
-    if (notifId === 'new_message') {
-        if (btnIdx === 0) {
-            chrome.tabs.create({'url': 'https://www.torn.com/messages.php'});
-        }
-    }
-
-    if (notifId === 'new_event') {
-        if (btnIdx === 0) {
-            chrome.tabs.create({'url': 'https://www.torn.com/events.php'});
-        }
-    }
-});
-
-
 
 
 function createAPIAlarm(minutes) {
@@ -131,6 +106,7 @@ function fetchAPI(apikey, type, selection, id) {
   });
 }
 
+// Function for fetching TornStats API data
 function fetchTSAPI(apikey, selection) {
   return new Promise((resolve, reject) => {
     if (apikey == undefined || apikey.length > 16) {
@@ -172,6 +148,7 @@ function fetchTSAPI(apikey, selection) {
   });
 }
 
+
 function parseAPI(data) {
   return new Promise((resolve, reject) => {
     if (data.error != undefined) {
@@ -185,6 +162,7 @@ function parseAPI(data) {
   });
 }
 
+// Function for pulling the required API data
 function pullRequiredAPI(apikey) {
   fetchAPI(apikey, 'user', 'bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn').then((data) => {
     console.log(data);
@@ -202,7 +180,7 @@ function pullRequiredAPI(apikey) {
 }
 
 
-
+// Check if user has logged in with their API key
 function checkLogin() {
   getValue("re_api_key", "sync").then((response) => {
     getValue("re_user", "sync").then((res) => {
@@ -229,6 +207,7 @@ function checkLogin() {
   });
 }
 
+// Function for updating ReTorn settings in case user has older extension version
 function checkUpdate() {
   getValue("re_settings", "sync").then((response) => {
     console.log("UPDATE: ", response);
@@ -268,6 +247,7 @@ function checkUpdate() {
   });
 }
 
+// Function for integrating Torn Stats features into ReTorn
 function integrateTornStats() {
   return new Promise((resolve, reject) => {
     getValue("re_api_key").then((response) => {
@@ -291,7 +271,7 @@ function integrateTornStats() {
   });
 }
 
-
+// function for saving data to storage locations
 function setValue(value, type) {
   var keys = Object.keys(value);
   return new Promise((resolve, reject) => {
@@ -331,6 +311,7 @@ function setValue(value, type) {
   });
 }
 
+// function for pulling data from storage locations
 function getValue(value, type) {
   if (type == undefined) {
     type = "sync";
@@ -365,6 +346,7 @@ function getValue(value, type) {
   });
 }
 
+// function for deleting nested values from storage (NOT fulling deleting values)
 function delValue(value, key, type) {
   if (type == undefined) {
     type = "sync";
@@ -424,6 +406,7 @@ function delValue(value, key, type) {
   });
 }
 
+// Function for removing values from storage (complete destruction of value)
 function removeValue(value, type) {
   return new Promise((resolve, reject) => {
 
@@ -452,7 +435,7 @@ function removeValue(value, type) {
   });
 }
 
-
+// New Installation function for setting default settings
 function newInstall() {
   getValue("re_settings").then((response) => {
 
@@ -519,6 +502,7 @@ function newInstall() {
   })
 }
 
+// Function for merging two sets of nested objects
 function merge(a, b) {
     return Object.entries(b).reduce((o, [k, v]) => {
         o[k] = v && typeof v === 'object'
@@ -528,6 +512,7 @@ function merge(a, b) {
     }, a);
 }
 
+// Function for getting all Torn Item data and saving it to local storage
 function getItemsAPI() {
   getValue("re_api_key").then((response) => {
     fetchAPI(response.re_api_key, 'torn', 'items,timestamp&comment=ReTorn').then((data) => { //API key is available, so get a fresh new list of Torn items from the API
@@ -539,6 +524,7 @@ function getItemsAPI() {
     fetch(url).then((response) => response.json()).then((json) => setValue({"re_item_data": json}, "local"));
   });
 }
+
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
@@ -614,7 +600,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 
     case "logout":
-
       removeValue("re_api_key", "sync")
       removeValue("re_user", "sync")
       removeValue("re_user_data", "local")
@@ -639,12 +624,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       return true;
     break;
 
-
-    case "alarm_test":
-      chrome.alarms.create("test", {delayInMinutes: 1.0});
-    break;
-
-
     default:
     sendResponse({status: false, message: "Message received does not exist."});
     return true;
@@ -653,7 +632,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 });
 
-
+// On changes to Storage, check for differences in data for notifications
 chrome.storage.onChanged.addListener((changes, areaName) => {
   console.log({changes: changes, areaName: areaName});
   if (changes.re_user_data != undefined) {
@@ -665,27 +644,27 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
         if (newValue != undefined && oldValue != undefined) {
 
           // MESSAGES
-          if (newValue.notifications.messages != oldValue.notifications.messages && newValue.notifications.messages != 0 && notifications.messages.enabled == true) {
+          if (notifications.messages.enabled == true && newValue.notifications.messages != oldValue.notifications.messages && newValue.notifications.messages != 0) {
             createNotification("new_message", "ReTorn: New Message", "You have " + newValue.notifications.messages + " new messages.", {action: 'Open', title: "View Messages"}, "https://www.torn.com/messages.php");
           }
 
           // EVENTS
-          if (newValue.notifications.events != oldValue.notifications.events && newValue.notifications.events != 0 && notifications.events.enabled == true) {
+          if (notifications.events.enabled == true && newValue.notifications.events != oldValue.notifications.events && newValue.notifications.events != 0) {
             createNotification("new_event", "ReTorn: New Event", "You have " + newValue.notifications.events + " new events.", {action: 'Open', title: "View Events"}, "https://www.torn.com/events.php");
           }
 
           // COOLDOWNS - DRUGS
-          if (oldValue.cooldowns.drug != 0 && newValue.cooldowns.drug == 0 && notifications.drugs.enabled == true) {
+          if (notifications.drugs.enabled == true && oldValue.cooldowns.drug != 0 && newValue.cooldowns.drug == 0) {
             createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#drugs-items");
           }
 
           // COOLDOWNS - BOOSTERS
-          if (oldValue.cooldowns.booster != 0 && newValue.cooldowns.booster == 0 && notifications.boosters.enabled == true) {
+          if (notifications.boosters.enabled == true && oldValue.cooldowns.booster != 0 && newValue.cooldowns.booster == 0) {
             createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#boosters-items");
           }
 
           // COOLDOWNS - MEDICAL
-          if (oldValue.cooldowns.medical != 0 && newValue.cooldowns.medical == 0 && notifications.medical.enabled == true) {
+          if (notifications.medical.enabled == true && oldValue.cooldowns.medical != 0 && newValue.cooldowns.medical == 0) {
             createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#medical-items");
           }
 
@@ -733,6 +712,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   }
 });
 
+// Notification Checking for Energy, Nerve, Life, and Happy
 function checkNotifyBars(type, notifications, newValue, oldValue) {
   let notify = false;
   let message = "Your "+type+" has reached it's value.";
@@ -804,21 +784,7 @@ function checkNotifyBars(type, notifications, newValue, oldValue) {
   return data;
 }
 
-function createNotificationLATER(name, title, message, buttonTitle) {
-  var image = chrome.runtime.getURL('ReTorn.png');
-  console.log(image);
-  chrome.notifications.create(
-      "test-notification",
-      {
-        type: "basic",
-        iconUrl: image,
-        title: "ReTorn: This is a notification",
-        message: "hello there!"
-      },
-      function (id) {console.log(id)}
-    );
-}
-
+// Function for creating Notifications (Chrome/Firefox?)
 function createNotification(name, title, message, actions, openURL = "https://www.torn.com/") {
 
   //if actions parameter is passed, add close button to end of action buttons, else default to single close button
@@ -838,6 +804,7 @@ function createNotification(name, title, message, actions, openURL = "https://ww
   })
 }
 
+// Event Listener for Notification Button Clicks
 self.addEventListener('notificationclick', function (event) {
   if (event.action === 'Open' && event.notification.data.url) {
     chrome.tabs.create({'url': event.notification.data.url});
