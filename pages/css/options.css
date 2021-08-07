@@ -73,8 +73,11 @@ html.light a:hover {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  flex-basis: 15%;
   padding: 1em;
+}
+
+.sidenav ul.tabs > li {
+  white-space: nowrap;
 }
 
 .title {
@@ -83,18 +86,19 @@ html.light a:hover {
   letter-spacing: 0.5px;
   font-weight: normal;
   color: #fff;
+  border-bottom: 1px solid white;
 }
 
 .yellow {
   color: #e0ce00;
 }
 
-.sidenav ul {
-  border-top: 1px solid white;
-}
+
 
 ul.credits {
   list-style-type: "\2764";
+  padding-left: 10px;
+  padding-right: 10px;
 }
 .credits > li {
   margin-top: 5px;
@@ -169,8 +173,8 @@ li.disabled,li:disabled,li:hover.disabled,li:hover:disabled {
   display: none;
 }
 
-.tab_container.show {
-  display: block;
+.show {
+  display: block !important;
 }
 
 .switch_wrap {
@@ -362,7 +366,6 @@ html.dark .switch-toggle input[type="checkbox"] + label {
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: stretch;
-  margin-right: 20px;
 }
 
 .card {
@@ -383,6 +386,32 @@ html.dark .switch-toggle input[type="checkbox"] + label {
 .card_title {
   font-size: 16px;
 }
+
+button.mobile {
+  float: left;
+  width: 50px;
+  background-color: #00000000;
+  border: none;
+  color: white;
+  font-size: 32px;
+  padding-right: 20px;
+}
+
+@media screen and (max-width: 550px) {
+  .container {
+    flex-direction: column;
+  }
+  .sidenav > ul.tabs {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 551px) {
+  button.mobile {
+    display: none;
+  }
+}
+
 
 @media screen and (max-width: 750px) {
   .mainview {

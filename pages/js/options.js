@@ -10,7 +10,6 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
   if (response.status == true) {
     const settings = response.value.re_settings;
     initNotificationTab(settings);
-
     initTornStatsTab(settings);
   }
 });
@@ -33,6 +32,10 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
       }
       $('.tab_container').removeClass('show');
       $('.tab_container#'+ t).addClass('show');
+   });
+
+   $('button.mobile').click(function() {
+     $('ul.tabs').toggleClass('show');
    });
 
   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
@@ -122,7 +125,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
        });
   });
 
-  $('#leftalign').change(function() {
+  $('#npclist').change(function() {
      let v = $(this).is(":checked");
      console.log(v);
      chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {

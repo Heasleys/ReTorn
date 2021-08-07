@@ -19,7 +19,7 @@
   <body>
     <div class="container">
     <div class="sidenav">
-      <span class="title"><span class="yellow">Re</span>Torn</span>
+      <span class="title"><button class="mobile"><i class="fas fa-bars"></i></button><span><span class="yellow">Re</span>Torn</span></span>
       <ul class="tabs">
         <li data-tab="notifications_tab"><i class="fas fa-bell"></i> Notifications</li>
         <li data-tab="features"><i class="fas fa-tasks"></i> Features</li>
@@ -259,6 +259,15 @@
                   </div>
                   <div class="input_wrap" id="highlightUsers" style="display: none;">
                   </div>
+
+                  <div class="switch_wrap">
+                    <label tooltip="Add links to sidebar"  flow="right">Quick Links:</label>
+                    <select id="quicklinks">
+                      <option>Custom...</option>
+                    </select>
+                  </div>
+
+
                 </div>
               </article>
 
@@ -353,36 +362,54 @@
 
         <div class="tab_container" id="discord">
           <h3 class="menu_title">Discord</h3>
-          <p>Join the ReTorn Discord to report bugs and request new features!</p>
-          <a href="https://discord.gg/SqKDND7FBA" target="_blank">https://discord.gg/SqKDND7FBA</a>
+          <section class="card-container">
+            <article class="card">
+              <div class="card-content">
+                <span>Join the ReTorn Discord to report bugs and request new features!</span>
+                <br><a href="https://discord.gg/SqKDND7FBA" target="_blank">https://discord.gg/SqKDND7FBA</a>
+              </div>
+            </article>
+          </section>
         </div><!-- end of tab container -->
 
         <div class="tab_container" id="tornstats">
           <h3 class="menu_title">TornStats</h3>
-          <p>
-            Many features in ReTorn rely on the <a href="https://www.tornstats.com/api"  target="_blank">Torn Stats API</a>.
-          </p>
-          <p>
-            In order to use these TornStats related features, you must have a <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats account</a></b> and then use the button below to link your Torn Stats account with ReTorn.
-          </p>
-          <div id="tornstats">
-            <label><b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>: </b><b><span id="ts_status"></span></b></label>
-            <button id="tornstats">Link Account</button>
-            <span class="re_message" id="ts_message" hidden></span>
-          </div>
+          <section class="card-container">
+            <article class="card">
+              <div class="card-content">
+                <span>
+                  Many features in ReTorn rely on the <a href="https://www.tornstats.com/api"  target="_blank">Torn Stats API</a>.
+                </span>
+                <p>
+                  In order to use these TornStats related features, you must have a <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats account</a></b> and then use the button below to link your Torn Stats account with ReTorn.
+                </p>
+                <div id="tornstats">
+                  <label><b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>: </b><b><span id="ts_status"></span></b></label>
+                  <button id="tornstats">Link Account</button>
+                  <span class="re_message" id="ts_message" hidden></span>
+                </div>
+              </div>
+            </article>
+          </section>
         </div><!-- end of tab container -->
 
 
 
         <div class="tab_container" id="attributions">
           <h3 class="menu_title">Credits and Attributions</h3>
-          <ul class='credits'>
-            <li><span>ReTorn was made by me: <a href="https://www.torn.com/profiles.php?XID=1468764" target="_blank">Heasleys4hemp [1468764]</a>. I am epic.</span></li>
-            <li><span>Thank you to <a href="https://www.torn.com/profiles.php?XID=776"  target="_blank">IceBlueFire [776]</a> for his wonderful integration with <a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>.</span></li>
-            <li><span><a href="https://www.flaticon.com/free-icon/rifle_2062174"  target="_blank">Rifle Icon</a> provided by <a href="https://www.freepik.com" title="Freepik"  target="_blank">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"  target="_blank">www.flaticon.com</a></span></li>
-            <li><span>Settings Icons provided for free by <a href="https://fontawesome.com/" target="_blank" title="FontAwesome">FontAwesome</a></span></li>
-          </ul>
-          <p><a href='https://www.retorn.rocks/privacy' target='_blank'>Privacy Policy</a></p>
+          <section class="card-container">
+            <article class="card">
+              <div class="card-content">
+                <ul class='credits'>
+                  <li><span>ReTorn was made by me: <a href="https://www.torn.com/profiles.php?XID=1468764" target="_blank">Heasleys4hemp [1468764]</a>. I am epic.</span></li>
+                  <li><span>Thank you to <a href="https://www.torn.com/profiles.php?XID=776"  target="_blank">IceBlueFire [776]</a> for his wonderful integration with <a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>.</span></li>
+                  <li><span><a href="https://www.flaticon.com/free-icon/rifle_2062174"  target="_blank">Rifle Icon</a> provided by <a href="https://www.freepik.com" title="Freepik"  target="_blank">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"  target="_blank">www.flaticon.com</a></span></li>
+                  <li><span>Settings Icons provided for free by <a href="https://fontawesome.com/" target="_blank" title="FontAwesome">FontAwesome</a></span></li>
+                </ul>
+                <p><a href='https://www.retorn.rocks/privacy' target='_blank'>Privacy Policy</a></p>
+              </div>
+            </article>
+          </section>
         </div><!-- end of tab container -->
 
       </div>
