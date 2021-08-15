@@ -138,7 +138,8 @@ var observer = new MutationObserver(function(mutations) {
           if (sbail == true) {
             let hrefbail = a.attr("href");
             if (hrefbail) {
-              hrefbail = hrefbail.replace("=buy", "=buy1");
+              const regex = /buy$/;
+              hrefbail = hrefbail.replace(regex, 'buy1');
               a.find('.bye-icon').addClass('qbye-icon').removeClass('bye-icon');
               //Wait 100ms because for some reason click is triggering after changing the href
               setTimeout(function() {
@@ -215,11 +216,14 @@ function setQuickActions() {
   $('ul.user-info-list-wrap > li').each(function( index ) {
     let hrefbust = $(this).find('a.bust').attr("href");
     if (hrefbust) {
+      let regex;
       if (qbust == true) { //if quick busting checkbox is checked, replace =breakout in url with =breakout1, to trigger quick busting
-        hrefbust = hrefbust.replace("=breakout", "=breakout1");
+        regex = /breakout$/;
+        hrefbust = hrefbust.replace(regex, "breakout1");
         $(this).find('a.bust').find('.bust-icon').addClass('qbust-icon').removeClass('bust-icon');
       } else {
-        hrefbust = hrefbust.replace("=breakout1", "=breakout");
+        regex = /breakout1$/;
+        hrefbust = hrefbust.replace(regex, "breakout");
         $(this).find('a.bust').find('.qbust-icon').addClass('bust-icon').removeClass('qbust-icon');
       }
       $(this).find('a.bust').attr("href", hrefbust);
@@ -227,11 +231,14 @@ function setQuickActions() {
 
     let hrefbail = $(this).find('a.bye').attr("href");
     if (hrefbail) {
+      let regex;
       if (qbail == true) {
-        hrefbail = hrefbail.replace("=buy", "=buy1");
+        regex = /buy$/;
+        hrefbail = hrefbail.replace(regex, "buy1");
         $(this).find('a.bye').find('.bye-icon').addClass('qbye-icon').removeClass('bye-icon');
       } else {
-        hrefbail = hrefbail.replace("=buy1", "=buy");
+        regex = /buy1$/;
+        hrefbail = hrefbail.replace(regex, "buy");
         $(this).find('a.bye').find('.qbye-icon').addClass('bye-icon').removeClass('qbye-icon');
       }
       $(this).find('a.bye').attr("href", hrefbail);
