@@ -35,7 +35,7 @@ $('.re_content').html(`
     </div>
   </div>
   <div class="re_row">
-    <p>Showing <b><span id="shown">0</span></b> out of <b><span id="total">0</span></b> people in jail.
+    <p>Showing <b><span id="shown">0</span></b> out of <b><span id="total">0</span></b> people.
   </div>
   `);
 
@@ -120,7 +120,8 @@ var observer = new MutationObserver(function(mutations) {
           if (sbust == true) {
             let hrefbust = a.attr("href");
             if (hrefbust) {
-              hrefbust = hrefbust.replace("=breakout", "=breakout1");
+              const regex = /breakout$/;
+              hrefbust = hrefbust.replace(regex, 'breakout1');
               a.find('.bust-icon').addClass('qbust-icon').removeClass('bust-icon');
               //Wait 100ms because for some reason click is triggering after changing the href
               setTimeout(function() {
