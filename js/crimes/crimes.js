@@ -1,7 +1,7 @@
 // @version      1.0.0
 // @description  Add quick crimes
 // @author       Heasleys4hemp [1468764]
-if ($('div.captcha').length == 0) {
+if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length == 0) {
   var timeToCrime;
   var n = 1;
   var url = window.location.href;
