@@ -123,6 +123,11 @@
         "js": ["js/factions/factions.js"],
         "css": ["css/factions/factions.css"],
         "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/loader.php?sid=attack*"],
+        "js": ["js/loader/attack/npc.js"],
+        "run_at": "document_end"
       }
     ]
 
