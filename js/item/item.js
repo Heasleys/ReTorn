@@ -25,7 +25,9 @@ if ($('div.captcha').length == 0) {
                   let itemCategory = element.dataset.category;
 
                   if (itemCategory == 'Medical' || itemCategory == 'Drug' || itemCategory == 'Energy Drink' || itemCategory == 'Alcohol' || itemCategory == 'Candy' || itemCategory == 'Booster' || itemCategory == 'Supply Pack' ) {
-
+                    if ($(element).find('.re_add_qitem').length > 0) {
+                      return;
+                    }
                     let nameWrap = $(element).find('span.name-wrap');
                     let actionWrap = $(element).find('ul.actions-wrap');
                     actionWrap.parent('.actions').addClass("re_qitemWrap");

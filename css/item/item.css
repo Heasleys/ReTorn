@@ -24,6 +24,10 @@ li.re_add_qitem .wai-btn {
   justify-content: center;
 }
 
+#re_quick_items_response {
+  justify-content: center;
+}
+
 #re_quick_items div {
   padding: 0px;
   align-self: stretch;
