@@ -2,13 +2,20 @@ button.re_add_qitem:hover {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAeCAYAAABwmH1PAAADJklEQVRYhZ2ZAY7jIAxFnYS5/B5qr7QHmAZWlcLIefm26SBZpG0Af/9vB9Ltz99/Zmabme1mdlx9u659H5n/3Y853Jxz/tmzdTMbrj+v6/Oyl+t5rYxj5ly9XQvTIW9HYV8iKAdA727+abMNZ/2y43KQ48z1o7D3uEff4ATBRuAJrgE4g6RAE3B3dorgcIwaT3894LdtBOyZPhZYbg6sCkIk6wjwlPPh5KjGqHEdwN9zzOs+5/CSJsNbIeUqz+d3O4JHxw0M3xxM5J8B9sCHn7MFcvOfmduK4aygUdaVpHdImoGJ0iDyt7vPgwxHecyqW0lcgf4EsFIC2WPOH2KOR7FsbmLmWFSxowqeSZu5rACfkHKVryf8IFDieP9uLQCq8jkCn4FWz2WyN4SUFdhxzcHClvn5wESGI8vAknkl8UjWlLNi38t0MnkUoCMzn8MGdtV1xvxKRV8BTFaZqxWTke+mctg3fyMroGJ9dZcWSfoU+VrNT2A7iCMei6p0Je8s36sCtzvHTDCbFaJo7WV/m+XtJgfB/spiUSCmpBXYT0AY/FPs/jTmMAGxRVJhYFYD0CHrsNiIz7/ytWXRyAYWY7LxG2Q9kntX5q58vbWGBVUb4p5qDO/l6WYy28Vvn86drfVo7cOBEXj/fXZOVY+e7oBHptb5la9V0SIQfl85yj3vJubiPSsB6AIQAyNbw02rICpgfpPQxXO2Ox/8c5jjVwLxkb8+hzOp8KypQEanmA3MZjut09nK/ATVhe83BTCHVVQYwciJbE/rwa4CVhaBjxil9B8Mr+biKTbwB4Bz+0jAlLQH/ArYPoN+Nfd/Hkv+dUjFpAK9BS/eCGrlPOxB85XrKUBnfj6II8OZfDuYJJuvBOxwBSwCrFiuQGcFTsk8rNJRxd1xzZNMxGwX+VsBVqCz3FaBeIBviPqOxVkBCT46XCggKn+jPO4L/zAotpW/Nz/IcHcBmHm1CRaj0wzBUsoVw8zl6C8WJXGazOcG53wBm2B7Arxi9RCvYSpJq8fTBPe9IHE/R7jx8ItOkLOnI9E5dDqvakL0bM7qR5bLStoqd+8Mm43/K1vuzLF5yPUAAAAASUVORK5CYII=');
 }
 
-button.re_add_qitem {
-    display: inline-block;
-    width: 58px;
-    height: 32px;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
+li.re_add_qitem {
+  font-size: 12px;
+  top: 0;
+  left: 0;
+  position: relative;
+  margin-top: 0;
+  width: 34px;
+  height: 31px;
+  text-align: center;
+  float: left;
+}
+
+li.re_add_qitem .wai-btn {
+  filter: sepia(50%) hue-rotate(144deg) saturate(100%);
 }
 
 #re_quick_items {
@@ -58,6 +65,25 @@ button.re_add_qitem {
 }
 
 
+
+/* Modified Torn CSS */
+.d .items-cont .re_qitemWrap.actions {
+width: 172px !important;
+}
+
+.d .re_qitemWrap.name-wrap {
+    width: auto !important;
+}
+
+@media screen and (max-width: 1000px) {
+  .r .items-cont .re_qitemWrap.actions {
+    width: 386px !important;
+  }
+
+  .re_qitemWrap.actions .actions-wrap li {
+    width: 77px !important;
+  }
+}
 
 /* Color CSS */
 #re_quick_items button {

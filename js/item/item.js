@@ -26,8 +26,11 @@ if ($('div.captcha').length == 0) {
 
                   if (itemCategory == 'Medical' || itemCategory == 'Drug' || itemCategory == 'Energy Drink' || itemCategory == 'Alcohol' || itemCategory == 'Candy' || itemCategory == 'Booster' || itemCategory == 'Supply Pack' ) {
 
-                    let imageWrap = $(element).find('span.image-wrap');
                     let nameWrap = $(element).find('span.name-wrap');
+                    let actionWrap = $(element).find('ul.actions-wrap');
+                    actionWrap.parent('.actions').addClass("re_qitemWrap");
+                    nameWrap.addClass("re_qitemWrap");
+
 
                     let itemName = nameWrap.find('.name').text();
                     let itemQty = nameWrap.find('.qty.t-hide').text().replace('x', '');
@@ -47,15 +50,21 @@ if ($('div.captcha').length == 0) {
 
 
                     }
+                      var qitemButton = $('<li/>');
+                      qitemButton.addClass('re_add_qitem');
+                      qitemButton.data('itemName', itemName);
+                      qitemButton.data('itemQty', parseInt(itemQty));
+                      qitemButton.data('itemID', itemID);
+                      qitemButton.data('itemCategory', itemCategory);
+                      qitemButton.append(`<span class="icon-h" title="Add to Quick Items">
+                                              <button aria-label="Add ${itemName} to Quick Items" class="option-equip wai-btn re_green"></button>
+                                              <span class="opt-name">
+                                                  Add
+                                                  <span class="t-hide">to Quick Items</span>
+                                              </span>
+                                          </span>`);
 
-                      var buttonWrap = $('<button/>');
-                      buttonWrap.addClass('re_add_qitem');
-                      buttonWrap.attr('title', 'Add to Quick Items');
-                      buttonWrap.data('itemName', itemName);
-                      buttonWrap.data('itemQty', parseInt(itemQty));
-                      buttonWrap.data('itemID', itemID);
-                      buttonWrap.data('itemCategory', itemCategory);
-                      imageWrap.children().wrapAll(buttonWrap);
+                      actionWrap.find('li').first().after(qitemButton);
                   }
 
                 }//for
