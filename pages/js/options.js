@@ -336,6 +336,12 @@ function initNotificationTab(settings) {
       checkbox.prop("checked", false);
     }
 
+    if (!settings.notifications["notifications"].enabled) {
+      $('div#general_notifications input:not(#notifications)').closest('.switch-holder').hide();
+    } else {
+      $('div#general_notifications input:not(#notifications)').closest('.switch-holder').show();
+    }
+
     if (settings.notifications[notif].value != undefined) {
       var textbox = $('div#general_notifications input#' + notif + '_value');
       let val = settings.notifications[notif].value;
@@ -389,6 +395,13 @@ function initNotificationTab(settings) {
       chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {[notif]: {enabled: value}}}}, (response) => {
         $(this).val(value);
       });
+      if (notif == "notifications") {
+        if (!value) {
+          $('div#general_notifications input:not(#notifications)').closest('.switch-holder').hide();
+        } else {
+          $('div#general_notifications input:not(#notifications)').closest('.switch-holder').show();
+        }
+      }
      });
 
   });
