@@ -161,7 +161,7 @@
     npc_list = `
     <li id="npc_`+npc.torn_id+`" data-tornid="`+npc.torn_id+`">
       <a href="/loader.php?sid=attack&user2ID=`+npc.torn_id+`">`+npc.name+`</a>
-      <span class="attack_time" title="Time until `+loot_time.replace("_", " ")+`" data-loot_time="`+loot_time+`">`+loot_time.replace("_", " ") + ": " +attack_time+`</span>
+      <span class="attack_time" title="Time until `+loot_time.replace("_", " ")+`" data-loot_time="`+loot_time+`">`+loot_time.replace("_", " ").replace("hosp out", "loot 1") + ": " +attack_time+`</span>
     </li>
     `;
 
@@ -183,7 +183,7 @@
         $('.list_header').addClass('highlight');
       }
 
-      $('li#npc_'+npc.torn_id+' span.attack_time').text(loot_time.replace("_", " ") + ": " + attack_time);
+      $('li#npc_'+npc.torn_id+' span.attack_time').text(loot_time.replace("_", " ").replace("hosp out", "loot 1") + ": " + attack_time);
     }, 1000);
 
     return npc_list;

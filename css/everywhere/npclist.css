@@ -149,12 +149,12 @@ ul.npc_list {
 }
 
 ul.npc_list li {
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 2px;
+  padding-right: 2px;
   margin-bottom: 3px;
   margin-left: 5px;
   line-height: 10px;
-  width: 142px;
+  width: auto;
   display: block;
   height: 18px;
   border-radius: 3px;
