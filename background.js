@@ -217,7 +217,7 @@ function checkUpdate() {
     let update_settings = {re_settings: {}}
 
     if (settings.npclist == undefined) {
-      update_settings.re_settings.npclist = false;
+      update_settings.re_settings.npclist = {enabled: false};
       i++;
     }
 
@@ -451,7 +451,9 @@ function newInstall() {
       re_settings: {
         darkmode: false,
         tornstats: false,
-        npclist: false,
+        npclist: {
+          enabled: false
+        },
         chatuserhighlight: false,
         leftalign: false,
         header_color: "#e0ce00",

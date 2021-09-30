@@ -54,7 +54,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 
 
 
-        if (settings.npclist != undefined && settings.npclist == true) {
+        if (settings.npclist != undefined && settings.npclist.enabled && settings.npclist.enabled == true) {
           $('#npclist').prop("checked", true);
         } else {
           $('#npclist').prop("checked", false);
@@ -130,7 +130,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
      console.log(v);
      chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
         if (response.value.re_settings.tornstats) {
-         chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"npclist": v}}, (response) => {
+         chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"npclist": {enabled: v}}}, (response) => {
            console.log(response);
          });
        } else {

@@ -1,5 +1,8 @@
 (function() {
   var settings;
+  var intervals = [];
+  var re_npcs;
+  const LOOT_TIMES = ["hosp_out", "loot_2", "loot_3", "loot_4", "loot_5"]
 
 
   const observer = new MutationObserver(function(mutations) {
@@ -14,7 +17,7 @@
     if (res.status && res.status == true) {
       if (res.value.re_settings) {
         settings = res.value.re_settings;
-        if (settings && settings.tornstats != undefined && settings.tornstats == true && settings.npclist != undefined && settings.npclist == true) {
+        if (settings && settings.tornstats != undefined && settings.tornstats == true && settings.npclist != undefined && settings.npclist.enabled == true) {
           //if npc list is enabled and tornstats integration is enabled, start observer
           observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
         }
@@ -110,47 +113,18 @@
     chrome.runtime.sendMessage({name: "get_value", value: "re_npcs", type: "local"}, (response) => {
       if (response.status == true) {
         if (response.value.re_npcs) {
-          let re_npcs = response.value.re_npcs;
+          re_npcs = response.value.re_npcs;
           if (re_npcs) {
             if (((Math.floor(Date.now() / 1000)) - re_npcs.timestamp) < (10*60)) { //only pull from tornstats if cached response is older than 10 minutes
               let npc_list = ``;
               let i = 0;
               Object.entries(re_npcs.data).forEach(([key, value]) => {
+                npc_list += addNPC(value);
                 i++;
-                let attack_time;
-                var d = value.loot_4 - ((Math.floor(Date.now() / 1000)));
-                if (d < 0) {
-                  attack_time = "Now";
-                } else {
-                  attack_time = new Date(d * 1000).toISOString().substr(11, 8);
-                }
-                npc_list += `
-                <li id="`+value.torn_id+`">
-                  <a href="/loader.php?sid=attack&user2ID=`+value.torn_id+`">`+value.name+`</a>
-                  <span class="attack_time" title="Time until Loot Level 4">`+attack_time+`</span>
-                </li>
-                `;
-
-                var t = 0;
-                setInterval(function() {
-                  t++;
-                  let attack_time = "";
-                  if ((d-t) > 0) {
-                    attack_time = new Date((d-t) * 1000).toISOString().substr(11, 8);
-                  } else {
-                    attack_time = "Now";
-                  }
-                  if ((d-t) < (10*60) && !$('li#'+value.torn_id).hasClass('highlight')) {
-                    $('li#'+value.torn_id).addClass('highlight');
-                    $('.list_header').addClass('highlight');
-                  }
-
-                  $('li#'+value.torn_id+' span.attack_time').text(attack_time);
-                }, 1000);
               });
-
               $('ul.npc_list').append(npc_list);
               $('div.re_npcButton > span.amount').text(i);
+              setAttackTimeClick();
             } else {
               tornstatsSync();
               return;
@@ -164,4 +138,99 @@
     });
   }
 
+
+  function addNPC(npc) {
+    let attack_time;
+    let loot_time;
+    let npc_list;
+
+    if (settings.npclist[npc.torn_id] && settings.npclist[npc.torn_id].loot_time) {
+      loot_time = settings.npclist[npc.torn_id].loot_time;
+    } else {
+      loot_time = "loot_4";
+    }
+
+    let npc_time = npc[loot_time];
+
+    var d = npc_time - ((Math.floor(Date.now() / 1000)));
+    if (d < 0) {
+      attack_time = "now";
+    } else {
+      attack_time = new Date(d * 1000).toISOString().substr(11, 8);
+    }
+    npc_list = `
+    <li id="npc_`+npc.torn_id+`" data-tornid="`+npc.torn_id+`">
+      <a href="/loader.php?sid=attack&user2ID=`+npc.torn_id+`">`+npc.name+`</a>
+      <span class="attack_time" title="Time until `+loot_time.replace("_", " ")+`" data-loot_time="`+loot_time+`">`+loot_time.replace("_", " ") + ": " +attack_time+`</span>
+    </li>
+    `;
+
+    if (intervals[npc.torn_id]) {
+      clearInterval(intervals[npc.torn_id]);
+    }
+
+    var t = 0;
+    intervals[npc.torn_id] = setInterval(function() {
+      t++;
+      let attack_time = "";
+      if ((d-t) > 0) {
+        attack_time = new Date((d-t) * 1000).toISOString().substr(11, 8);
+      } else {
+        attack_time = "now";
+      }
+      if ((d-t) < (10*60) && !$('li#npc_'+npc.torn_id).hasClass('highlight')) {
+        $('li#npc_'+npc.torn_id).addClass('highlight');
+        $('.list_header').addClass('highlight');
+      }
+
+      $('li#npc_'+npc.torn_id+' span.attack_time').text(loot_time.replace("_", " ") + ": " + attack_time);
+    }, 1000);
+
+    return npc_list;
+  }
+
+
+  //Set the click event functions for attack timer
+  function setAttackTimeClick() {
+    $('ul.npc_list .attack_time').off('click').click(function() {
+      let loot_time;
+      let cur_loot_time = $(this).data('loot_time');
+      let npc_id = $(this).parent('li').data('tornid');
+      //get index in loot_times array
+      index = LOOT_TIMES.indexOf(cur_loot_time);
+      //get the next loot_time in array, else get the first one (hosp_out)
+      if(index >= 0 && index < LOOT_TIMES.length - 1) {
+        loot_time = LOOT_TIMES[index + 1]
+      } else {
+        loot_time = LOOT_TIMES[0];
+      }
+
+      //set loot_time timer for specific npc
+      if (npc_id && loot_time) {
+        chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {npclist: {[npc_id]: {loot_time: loot_time}}}}, (response) => {
+          if (re_npcs.data[npc_id]) {
+            refreshSettings().then(() => {
+              let npc_li = addNPC(re_npcs.data[npc_id]);
+              $('#npc_'+npc_id).replaceWith(npc_li);
+              setAttackTimeClick();
+            });
+          }
+        });
+      }
+
+    });
+  }
+
+  function refreshSettings() {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
+        if (res.status && res.status == true) {
+          if (res.value.re_settings) {
+            settings = res.value.re_settings;
+            resolve();
+          }
+        }
+      });
+    });
+  }
 })();

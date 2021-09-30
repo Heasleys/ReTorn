@@ -157,7 +157,6 @@ ul.npc_list li {
   width: 142px;
   display: block;
   height: 18px;
-  cursor: pointer;
   border-radius: 3px;
 }
 
@@ -178,6 +177,8 @@ ul.npc_list span.attack_time {
   line-height: 18px;
   display: inline-block;
   position: relative;
+  cursor: pointer;
+  text-transform: capitalize;
 }
 
 
@@ -234,14 +235,18 @@ body.dark-mode .list_parent .npc_area {
 ul.npc_list li a, ul.npc_list li a:visited {
   color: #069 !important;
 }
-ul.npc_list li:hover a {
+ul.npc_list li a:hover {
   color: #999 !important;
+}
+
+ul.npc_list span.attack_time:hover {
+  color: #b6b6b6;
 }
 
 body.dark-mode ul.npc_list li a, body.dark-mode ul.npc_list li a:visited {
   color: #74c0fc !important;
 }
-body.dark-mode ul.npc_list li:hover a {
+body.dark-mode ul.npc_list li a:hover {
   color: #a5d8ff !important;
 }
 
