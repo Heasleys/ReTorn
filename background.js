@@ -153,7 +153,7 @@ function parseAPI(data) {
   return new Promise((resolve, reject) => {
     if (data.error != undefined) {
       if (data.error.code == 2) { //key invalid
-        //remove key, reset data
+          logout();
       }
       reject({status: false, message: "API Error: Code: " + data.error.code + " | Message: " + data.error.error});
     } else {
@@ -204,6 +204,17 @@ function checkLogin() {
   .catch((error) => {
     console.log(error);
     getItemsAPI();
+  });
+}
+
+function logout() {
+  removeValue("re_api_key", "sync")
+  removeValue("re_user", "sync")
+  removeValue("re_user_data", "local")
+  setValue({['re_settings']: {"tornstats": false}}, "sync")
+  .catch((error) => {
+    console.log({status: false, message: "Failed to delete apikey.", error: error});
+    sendResponse({status: false, message: "Failed to delete apikey.", error: error});
   });
 }
 
@@ -612,16 +623,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 
     case "logout":
-      removeValue("re_api_key", "sync")
-      removeValue("re_user", "sync")
-      removeValue("re_user_data", "local")
-      setValue({['re_settings']: {"tornstats": false}}, "sync")
-      .catch((error) => {
-        console.log({status: false, message: "Failed to delete apikey.", error: error});
-        sendResponse({status: false, message: "Failed to delete apikey.", error: error});
-      });
-
-
+      logout();
       sendResponse({status: true, value: "Logout success."});
       return true;
     break;
