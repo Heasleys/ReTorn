@@ -221,33 +221,39 @@ function logout() {
 // Function for updating ReTorn settings in case user has older extension version
 function checkUpdate() {
   getValue("re_settings", "sync").then((response) => {
-    console.log("UPDATE: ", response);
+    console.log("ReTorn: Checking for updates in settings...", response);
     const settings = response.re_settings;
 
+    //update counter
     let i = 0;
     let update_settings = {re_settings: {}}
 
     if (settings.npclist == undefined) {
+      console.log("ReTorn: Update found. Adding NPC List update.");
       update_settings.re_settings.npclist = {enabled: false};
       i++;
     }
 
     if (settings.chatuserhighlight == undefined) {
+      console.log("ReTorn: Update found. Adding Chat User Highlight update.");
       update_settings.re_settings.chatuserhighlight = false;
       i++;
     }
 
     if (settings.leftalign == undefined) {
+      console.log("ReTorn: Update found. Adding Left Align update.");
       update_settings.re_settings.leftalign = false;
       i++;
     }
 
     if (settings.notifications.travel == undefined) {
+      console.log("ReTorn: Update found. Adding Travel Notification update.");
       update_settings.re_settings.notifications = {travel: {enabled: true}};
       i++;
     }
     console.log(update_settings);
     if (i > 0) {
+      console.log("ReTorn: Applying updates...");
       setValue(update_settings, "sync").catch((error) => {console.log(error);});
     }
   })
@@ -256,11 +262,20 @@ function checkUpdate() {
   });
 
   getValue("re_chatuserhighlight", "sync").then((response) => {
-    console.log("update", response);
+    console.log("ReTorn: Checking for updates - Chat User Highlights data found. No update needed.", response);
   })
   .catch((error) => {
-      console.log("update: ", error);
-      setValue({re_chatuserhighlight: {}}, "sync").catch((error) => {console.log(error);});
+    console.log("ReTorn: Update found for Chat User Highlights. Adding Chat User Highlights data.", error);
+    setValue({re_chatuserhighlight: {}}, "sync").catch((error) => {console.log(error);});
+  });
+
+  getValue("re_logs", "local").then((response) => {
+    console.log("ReTorn: Checking for updates - Log Data found. No update needed.", response);
+  })
+  .catch((error) => {
+    console.log("ReTorn: Update found for Logs. Adding Logs data.", error);
+    let re_logs = {re_logs: {error_logs: {api: {},page: {}},update_logs: {},}}
+    setValue(re_logs, "local").catch((error) => {console.log(error);});
   });
 }
 
@@ -521,7 +536,32 @@ function newInstall() {
       }
     }
 
+    let re_logs = {
+      re_logs: {
+        error_logs: {
+          api: {
+
+          },
+          page: {
+
+          },
+          notification: {
+
+          },
+          settings: {
+
+          }
+        },
+        update_logs: {
+          changed_value: {
+
+          }
+        }
+      }
+    }
+
     setValue(startup_settings, "sync").then((res) => {}).catch((error) => {console.log(error);})
+    setValue(re_logs, "local").then((res) => {}).catch((error) => {console.log(error);})
   })
 }
 
