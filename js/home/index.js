@@ -22,19 +22,19 @@ bsBox.find('ul > li').each( function(i) {
   stats[i] = Math.floor(calced);
   bonuses[i] = Math.floor(bonus);
   if (bonus > 0) {
-    titles[i] = "<div class='green'>"+bonuses[i].toLocaleString()+"</div>";
+    titles[i] = "<div class='green'>+"+bonuses[i].toLocaleString()+"</div>";
   }
   if (bonus < 0) {
     titles[i] = "<div class='red'>"+bonuses[i].toLocaleString()+"</div>";
   }
   if (bonus == 0) {
-    titles[i] = "<div>"+bonuses[i].toLocaleString()+"</div>";
+    titles[i] = "<div>"+bonuses[i]+"</div>";
   }
 });
 stats[4] = Math.floor(stats[0] + stats[1] + stats[2] + stats[3]);
 bonuses[4] = Math.floor(bonuses[0] + bonuses[1] + bonuses[2] + bonuses[3]);
 if (bonuses[4] > 0) {
-  titles[4] = "<div class='green'>"+bonuses[4].toLocaleString()+"</div>";
+  titles[4] = "<div class='green'>+"+bonuses[4].toLocaleString()+"</div>";
 }
 if (bonuses[4] < 0) {
   titles[4] = "<div class='red'>"+bonuses[4].toLocaleString()+"</div>";
