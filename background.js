@@ -248,6 +248,13 @@ function checkUpdate() {
       i++;
     }
 
+    //checking torn3d
+    if (settings.torn3d == undefined) {
+      console.log("ReTorn: Update found. Torn 3D");
+      update_settings.re_settings.torn3d = false;
+      i++;
+    }
+
     //checking travel notifications
     if (settings.notifications.travel == undefined) {
       console.log("ReTorn: Update found. Adding Travel Notification update.");
@@ -486,6 +493,7 @@ function newInstall() {
         },
         chatuserhighlight: false,
         leftalign: false,
+        torn3d: false,
         header_color: "#e0ce00",
         notifications: {
           notifications: {

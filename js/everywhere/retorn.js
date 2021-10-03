@@ -16,6 +16,14 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
         root.style.setProperty('--re-leftalign', "20px");
       }
 
+      if (settings.torn3d != undefined && settings.torn3d == true) {
+        $( document ).ready(function() {
+          var ss = document.createElement("script");
+          ss.src = chrome.runtime.getURL("/js/everywhere/torn3d.js");
+          (document.head || document.documentElement).appendChild(ss);
+        });
+      }
+
     }
   }
 });

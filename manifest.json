@@ -39,7 +39,7 @@
   	},
     "web_accessible_resources": [
       {
-        "resources": [ "/js/everywhere/interceptFetch.js" ],
+        "resources": [ "/js/everywhere/interceptFetch.js", "/js/everywhere/torn3d.js" ],
         "matches": [ "https://www.torn.com/*" ]
       }
     ],
