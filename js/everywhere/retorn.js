@@ -1,4 +1,4 @@
-var settings;
+var settings; // global variable for other files to use
 var loc = window.location.href.split('.com/').pop().split('.php').shift().trim().toLowerCase();
 
 
