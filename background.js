@@ -73,7 +73,7 @@ function fetchAPI(apikey, type, selection, id) {
     if (id == undefined) {
       id = "";
     }
-    if (apikey == undefined || apikey.length > 16) {
+    if (apikey == undefined || apikey.length != 16) {
       reject({status: false, message: "Invalid apikey."})
     }
     fetch('https://api.torn.com/'+type+'/'+id+'?selections='+selection+'&key='+apikey+'&comment=ReTorn')
@@ -153,7 +153,7 @@ function parseAPI(data) {
   return new Promise((resolve, reject) => {
     if (data.error != undefined) {
       if (data.error.code == 2) { //key invalid
-          logout();
+        logout();
       }
       reject({status: false, message: "API Error: Code: " + data.error.code + " | Message: " + data.error.error});
     } else {
@@ -165,7 +165,6 @@ function parseAPI(data) {
 // Function for pulling the required API data
 function pullRequiredAPI(apikey) {
   fetchAPI(apikey, 'user', 'bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn').then((data) => {
-    console.log(data);
     setValue({"re_user_data": data}, "local").then((res) => {
       console.log(res);
       chrome.runtime.sendMessage({name: "popup_data", data: data});
@@ -228,29 +227,42 @@ function checkUpdate() {
     let i = 0;
     let update_settings = {re_settings: {}}
 
+    //checking npclist
     if (settings.npclist == undefined) {
       console.log("ReTorn: Update found. Adding NPC List update.");
       update_settings.re_settings.npclist = {enabled: false};
       i++;
     }
 
+    //checking chat user highlights
     if (settings.chatuserhighlight == undefined) {
       console.log("ReTorn: Update found. Adding Chat User Highlight update.");
       update_settings.re_settings.chatuserhighlight = false;
       i++;
     }
 
+    //checking left align
     if (settings.leftalign == undefined) {
       console.log("ReTorn: Update found. Adding Left Align update.");
       update_settings.re_settings.leftalign = false;
       i++;
     }
 
+    //checking torn3d
+    if (settings.torn3d == undefined) {
+      console.log("ReTorn: Update found. Torn 3D");
+      update_settings.re_settings.torn3d = false;
+      i++;
+    }
+
+    //checking travel notifications
     if (settings.notifications.travel == undefined) {
       console.log("ReTorn: Update found. Adding Travel Notification update.");
       update_settings.re_settings.notifications = {travel: {enabled: true}};
       i++;
     }
+
+
     console.log(update_settings);
     if (i > 0) {
       console.log("ReTorn: Applying updates...");
@@ -266,7 +278,7 @@ function checkUpdate() {
   })
   .catch((error) => {
     console.log("ReTorn: Update found for Chat User Highlights. Adding Chat User Highlights data.", error);
-    setValue({re_chatuserhighlight: {}}, "sync").catch((error) => {console.log(error);});
+    setValue({"re_chatuserhighlight": {}}, "sync").catch((error) => {console.log(error);});
   });
 
   getValue("re_logs", "local").then((response) => {
@@ -274,7 +286,7 @@ function checkUpdate() {
   })
   .catch((error) => {
     console.log("ReTorn: Update found for Logs. Adding Logs data.", error);
-    let re_logs = {re_logs: {error_logs: {api: {},page: {}},update_logs: {},}}
+    let re_logs = { re_logs: { error: { api: { }, page: { }, notification: { }, settings: { }, background: { } }, update: { changed: { }, deleted: { }, new: { } }, api: { } } }
     setValue(re_logs, "local").catch((error) => {console.log(error);});
   });
 }
@@ -285,7 +297,6 @@ function integrateTornStats() {
     getValue("re_api_key").then((response) => {
       fetchTSAPI(response.re_api_key, "").then((res) => {
         setValue({"re_settings": {"tornstats": true}}).then(() => {
-          console.log(res);
           resolve(res);
         })
         .catch((error) => {
@@ -482,6 +493,7 @@ function newInstall() {
         },
         chatuserhighlight: false,
         leftalign: false,
+        torn3d: false,
         header_color: "#e0ce00",
         notifications: {
           notifications: {
@@ -538,7 +550,7 @@ function newInstall() {
 
     let re_logs = {
       re_logs: {
-        error_logs: {
+        error: {
           api: {
 
           },
@@ -550,12 +562,24 @@ function newInstall() {
           },
           settings: {
 
-          }
-        },
-        update_logs: {
-          changed_value: {
+          },
+          background: {
 
           }
+        },
+        update: {
+          changed: {
+
+          },
+          deleted: {
+
+          },
+          new: {
+
+          }
+        },
+        api: {
+
         }
       }
     }
@@ -588,7 +612,7 @@ function getItemsAPI() {
   });
 }
 
-
+// Listen for sent browser messages
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   switch (msg.name) {

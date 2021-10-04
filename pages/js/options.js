@@ -66,6 +66,12 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
           $('#leftalign').prop("checked", false);
         }
 
+        if (settings.torn3d != undefined && settings.torn3d == true) {
+          $('#torn3d').prop("checked", true);
+        } else {
+          $('#torn3d').prop("checked", false);
+        }
+
         if (settings.chatuserhighlight != undefined && settings.chatuserhighlight == true) {
           $('#chatuserhighlight').prop("checked", true);
           $('#highlightUsers').show();
