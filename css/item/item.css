@@ -28,6 +28,11 @@ li.re_add_qitem .wai-btn {
   justify-content: center;
 }
 
+#re_quick_items_response > img.ajax-placeholder {
+  left: 0;
+  margin-left: 0px;
+}
+
 #re_quick_items div {
   padding: 0px;
   align-self: stretch;
