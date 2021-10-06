@@ -632,6 +632,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           setValue({"re_api_key": msg.apikey}).then(() => {
             chrome.action.setPopup({popup: "pages/popup.html"});
             sendResponse({status: true, message: "Your apikey has been saved."});
+            checkLogin();
           })
           .catch((error) => {
             sendResponse(error);
