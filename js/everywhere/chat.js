@@ -1,11 +1,16 @@
 (function() {
 
 //Create Observer for start of Chat Functions - Add Filter Textbox/Check Highlights
-const observer = new MutationObserver(function(mutations) {
+const tradeObserver = new MutationObserver(function(mutations) {
   if ($('#chatRoot').length == 1) {
     if ($('div[class^="chat-box"][class*="trade"]').length != 0 && $('input.re_chat_search').length == 0) {
       insertChatSearch();
+      tradeObserver.disconnect();
     }
+  }
+});
+const observer = new MutationObserver(function(mutations) {
+  if ($('#chatRoot').length == 1) {
     //Start other observers
     const chatRoot = document.getElementById("chatRoot");
     chatobserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
@@ -13,6 +18,8 @@ const observer = new MutationObserver(function(mutations) {
     observer.disconnect();
   }
 });
+
+
 
 //Trade Chat Filter - New Messages (Create Observer)
 const chatobserver = new MutationObserver(function(mutations) {
@@ -70,6 +77,7 @@ const nameHighlightObserver = new MutationObserver(function(mutations) {
 
 
 //Actually Start Observer
+tradeObserver.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
 observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
 
 function insertChatSearch() {
