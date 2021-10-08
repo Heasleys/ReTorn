@@ -24,7 +24,7 @@ if ($('div.captcha').length == 0) {
                   let itemID = element.dataset.item;
                   let itemCategory = element.dataset.category;
 
-                  if (itemCategory == 'Medical' || itemCategory == 'Drug' || itemCategory == 'Energy Drink' || itemCategory == 'Alcohol' || itemCategory == 'Candy' || itemCategory == 'Booster' || itemCategory == 'Supply Pack' ) {
+                  if (itemCategory == 'Medical' || itemCategory == 'Drug' || itemCategory == 'Energy Drink' || itemCategory == 'Alcohol' || itemCategory == 'Candy' || itemCategory == 'Booster' || itemCategory == 'Supply Pack' || itemID == 283) { //Donator Packs = 283
                     if ($(element).find('.re_add_qitem').length > 0) {
                       return;
                     }
