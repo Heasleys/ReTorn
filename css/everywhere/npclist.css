@@ -1,3 +1,6 @@
+body.hospital .list_parent {
+  margin: 0px;
+}
 .list_parent {
   margin-top: 2px;
   overflow: hidden;
@@ -217,11 +220,18 @@ body.dark-mode .list_header div.button span.arrow {
 
 .list_header > a span.svg svg {
   filter: drop-shadow(0px 0.7px 0.1px #fff);
-  fill: #B3B3B3;
+  fill: url(#sidebar_svg_gradient_regular_desktop);
 }
 body.dark-mode .list_header > a span.svg svg {
   filter: drop-shadow(0px 0px 1.3px #000);
   fill: #777;
+}
+
+body.dark-mode.hospital .list_header > a span.svg svg {
+  fill: url("#sidebar_svg_gradient_hospital_mobile");
+}
+body.dark-mode.jail .list_header > a span.svg svg {
+  fill: url("#sidebar_svg_gradient_jail_mobile");
 }
 
 .list_parent .npc_area {
