@@ -15,30 +15,48 @@
     <div>
       <span class="title"><span class="logo"><span class="yellow">Re</span>Torn</span>: <a href="https://www.torn.com/index.php" target="_blank" class="to_torn" id="re_user"></a></span>
     </div>
-    <div>
-      <span class="cooldowns" style="display: none;"><ul class="torn_icons"><li class="booster_icon"></li><span>0hr 0m 0s</span><li class="medical_icon"></li><li class="drug_icon"></li></ul></span>
+
+    <div class="cooldowns">
+        <a href="https://www.torn.com/item.php#boosters-items" target="_blank"><span class="torn_icons booster_icon"></span><span id="booster">0hr 0m 0s</span></a>
+        <a href="https://www.torn.com/item.php#medical-items" target="_blank"><span class="torn_icons medical_icon"></span><span id="medical">0hr 0m 0s</span></a>
+        <a href="https://www.torn.com/item.php#drugs-items" target="_blank"><span class="torn_icons drug_icon"></span><span id="drug">0hr 0m 0s</span></a>
     </div>
+
     <div class="progress_bars">
-      <label for="energy">Energy: <span id="energy_text"></span><span class="countdown" tooltip="Time until full" flow="left" id="energy_countdown"></span></label>
-      <div class="progressbar">
-        <span id="energy" style="width: 25%"></span>
-      </div>
+      <a href="https://www.torn.com/gym.php" target="_blank">
+        <label for="energy">Energy: <span id="energy_text"></span><span class="countdown" tooltip="Time until full" flow="left" id="energy_countdown"></span></label>
+        <div class="progressbar">
+          <span id="energy" style="width: 25%"></span>
+        </div>
+      </a>
 
-      <label for="nerve">Nerve: <span id="nerve_text"></span><span class="countdown" tooltip="Time until full" flow="left" id="nerve_countdown"></span></label>
-      <div class="progressbar">
-        <span id="nerve" style="width: 25%"></span>
-      </div>
+      <a href="https://www.torn.com/crimes.php" target="_blank">
+        <label for="nerve">Nerve: <span id="nerve_text"></span><span class="countdown" tooltip="Time until full" flow="left" id="nerve_countdown"></span></label>
+        <div class="progressbar">
+          <span id="nerve" style="width: 25%"></span>
+        </div>
+      </a>
 
-      <label for="happy">Happy: <span id="happy_text"></span><span class="countdown" tooltip="Time until full" flow="left" id="happy_countdown"></span></label>
-      <div class="progressbar">
-        <span id="happy" style="width: 25%"></span>
-      </div>
+      <a>
+        <label for="happy">Happy: <span id="happy_text"></span><span class="countdown" tooltip="Time until full" flow="left" id="happy_countdown"></span></label>
+        <div class="progressbar">
+          <span id="happy" style="width: 25%"></span>
+        </div>
+      </a>
 
-      <label for="life">Life: <span id="life_text"></span><span class="countdown" tooltip="Time until full" flow="left" id="life_countdown"></span></label>
-      <div class="progressbar">
-        <span id="life" style="width: 25%"></span>
-      </div>
+      <a>
+        <label for="life">Life: <span id="life_text"></span><span class="countdown" tooltip="Time until full" flow="left" id="life_countdown"></span></label>
+        <div class="progressbar">
+          <span id="life" style="width: 25%"></span>
+        </div>
+      </a>
 
+    </div>
+
+    <div class="wealth">
+      <a href="https://www.torn.com/properties.php#/p=options&tab=vault" target="_blank"><div>Money: <span id="cash">0</span></div></a>
+      <a href="https://www.torn.com/points.php" target="_blank"><div>Points: <span id="points">0</span></div></a>
+      <a href="https://www.torn.com/properties.php#/p=options&tab=vault" target="_blank"><div>Vault: <span id="vault">0</span></div></a>
     </div>
 
     <div class="re_messages">

@@ -1,5 +1,6 @@
 var interval = [];
 var bars = ["energy", "nerve", "happy", "life"];
+var cooldowns = ["booster", "medical", "drug"];
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         if (msg.name === "popup_data") {
@@ -81,20 +82,52 @@ function updatePopup(data) {
     }, 1000);
 
   });
+
+  cooldowns.forEach((cooldown, i) => {
+    var timestamp = data.timestamp;
+    var lastupdate = (Date.now()/1000) - timestamp;
+
+    if (data.cooldowns[cooldown] != "undefined") {
+      let seconds = data.cooldowns[cooldown];
+      if ((seconds - lastupdate) > 0) {
+        var timeDisplay = secondsToDhms(seconds - lastupdate);
+      }
+      timeDisplay = timeDisplay == "" ? "0h 0m 0s" : timeDisplay;
+      $("#"+cooldown).text(timeDisplay);
+
+      clearInterval(interval[cooldown]);
+      interval[cooldown] = setInterval(function() {
+        --seconds;
+
+        if ((seconds - lastupdate) > 0) {
+          var timeDisplay = secondsToDhms(seconds - lastupdate);
+        }
+        timeDisplay = timeDisplay == "" ? "0h 0m 0s" : timeDisplay;
+        $("#"+cooldown).text(timeDisplay);
+      }, 1000);
+    }
+  });
+
+  if ($('div.wealth').length != 0) {
+    $('#cash').text("$"+data.money_onhand.toLocaleString());
+    $('#points').text(data.points.toLocaleString());
+    $('#vault').text("$"+data.vault_amount.toLocaleString());
+  }
 }
 
 function secondsToDhms(seconds) {
   seconds = Number(seconds);
-  var d = Math.floor(seconds / (3600*24));
-  var h = Math.floor(seconds % (3600*24) / 3600);
+  //var d = Math.floor(seconds / (3600*24));
+  var h = Math.floor(seconds / 3600);
   var m = Math.floor(seconds % 3600 / 60);
   var s = Math.floor(seconds % 60);
 
-  var dDisplay = d > 0 ? d + (d == 1 ? "d " : "d ") : "";
+  //var dDisplay = d > 0 ? d + (d == 1 ? "d " : "d ") : "";
   var hDisplay = h > 0 ? h + (h == 1 ? "h " : "h ") : "";
   var mDisplay = m > 0 ? m + (m == 1 ? "m " : "m ") : "";
   var sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
 
-  let display = dDisplay + hDisplay + mDisplay + sDisplay;
+  //let display = dDisplay + hDisplay + mDisplay + sDisplay;
+  let display = hDisplay + mDisplay + sDisplay;
   return display;
 }
