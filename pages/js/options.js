@@ -353,8 +353,10 @@ function initNotificationTab(settings) {
     }
 
     if (!settings.notifications["notifications"].enabled) {
+      $('span[for="all_notifications"').attr('tooltip', "All notifications disabled");
       $('div#general_notifications input:not(#notifications)').closest('.switch-holder').hide();
     } else {
+      $('span[for="all_notifications').attr('tooltip', "All notifications enabled");
       $('div#general_notifications input:not(#notifications)').closest('.switch-holder').show();
     }
 
@@ -363,16 +365,16 @@ function initNotificationTab(settings) {
       let val = settings.notifications[notif].value;
       textbox.val(val);
       if (val.includes("<")) {
-        $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" drops below "+ val.replace('<',''));
+        $('span[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" drops below "+ val.replace('<',''));
       }
       if (val.includes(">")) {
-        $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" increases above "+ val.replace('>',''));
+        $('span[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" increases above "+ val.replace('>',''));
       }
       if (!val.includes(">") && !val.includes("<")) {
         if (val == "100%") {
-          $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" is full");
+          $('span[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" is full");
         } else {
-          $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" equals "+ val);
+          $('span[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" equals "+ val);
         }
       }
 
@@ -384,16 +386,16 @@ function initNotificationTab(settings) {
         } else {
           chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {[notif]: {value: value}}}}, (response) => {
             if (value.includes("<")) {
-              $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" drops below "+ value.replace('<',''));
+              $('span[for='+  id  +']').attr("tooltip", "Notify when "+notif+" drops below "+ value.replace('<',''));
             }
             if (value.includes(">")) {
-              $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" increases above "+ value.replace('>',''));
+              $('span[for='+  id  +']').attr("tooltip", "Notify when "+notif+" increases above "+ value.replace('>',''));
             }
             if (!value.includes(">") && !value.includes("<")) {
               if (value == "100%") {
-                $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" is full");
+                $('span[for='+  id  +']').attr("tooltip", "Notify when "+notif+" is full");
               } else {
-                $('label[for='+  id  +']').attr("tooltip", "Notify when "+notif+" equals "+ value);
+                $('span[for='+  id  +']').attr("tooltip", "Notify when "+notif+" equals "+ value);
               }
             }
           });
@@ -412,8 +414,10 @@ function initNotificationTab(settings) {
       });
       if (notif == "notifications") {
         if (!value) {
+          $('span[for="all_notifications"').attr('tooltip', "All notifications disabled");
           $('div#general_notifications input:not(#notifications)').closest('.switch-holder').hide();
         } else {
+          $('span[for="all_notifications').attr('tooltip', "All notifications enabled");
           $('div#general_notifications input:not(#notifications)').closest('.switch-holder').show();
         }
       }
