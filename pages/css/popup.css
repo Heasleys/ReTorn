@@ -24,6 +24,14 @@ div.re_messages {
   background: #ddd;
   box-shadow: inset 0 2px 5px rgb(0 0 0 / 25%);
   margin-bottom: 5px;
+.progress_bars > a, .cooldowns > a {
+    padding: 4px;
+}
+html.light .progress_bars > a:hover, html.light .wealth div:hover, html.light .cooldowns a:hover {
+    box-shadow: 0 0px 4px #000000ee, inset 0 0px 1px #000000bb;
+}
+html.dark .progress_bars > a:hover, html.dark .wealth div:hover, html.dark .cooldowns a:hover {
+    box-shadow: 0 0px 2px #ffffffee, inset 0 0px 1px #ffffffbb;
 }
 
 .progressbar > span {
