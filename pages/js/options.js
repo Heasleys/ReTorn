@@ -169,10 +169,12 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
                 $('#ts_status').text("Enabled");
                 $(this).html("Unlink account");
                 $('button#tornstats').val(1);
+                $('#tornstats_features').show();
               } else {
                 $('#ts_status').text("Disabled");
                 $(this).html("Link account");
                 $('button#tornstats').val(0);
+                $('#tornstats_features').hide();
               }
             } else {
               message("Unknown error.", "ts_message", false);
@@ -190,10 +192,12 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
             $('#ts_status').text("Disabled");
             $(this).html("Link account");
             $('button#tornstats').val(0);
+            $('#tornstats_features').hide();
           } else {
             $('#ts_status').text("Enabled");
             $(this).html("Unlink account");
             $('button#tornstats').val(1);
+            $('#tornstats_features').show();
           }
         });
       }
@@ -418,9 +422,11 @@ function initTornStatsTab(settings) {
     $('#ts_status').text("Enabled");
     $('button#tornstats').html("Unlink account");
     $('button#tornstats').val(1);
+    $('#tornstats_features').show();
   } else {
     $('#ts_status').text("Disabled");
     $('button#tornstats').html("Link account");
     $('button#tornstats').val(0);
+    $('#tornstats_features').hide();
   }
 }
