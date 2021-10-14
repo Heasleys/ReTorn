@@ -152,7 +152,8 @@ function fetchTSAPI(apikey, selection) {
 function parseAPI(data) {
   return new Promise((resolve, reject) => {
     if (data.error != undefined) {
-      if (data.error.code == 2) { //key invalid
+      logger("error", "api", "Error parsing api data. Torn API Error code detected.", {code: data.error.code, error: data.error.error, timestamp: Date.now()});
+      if (data.error.code == 2 || data.error.code == 10 || data.error.code == 13) { //key invalid, key owner is in federal jail, or key owner is inactive, then remove apikey
         logout();
       }
       reject({status: false, message: "API Error: Code: " + data.error.code + " | Message: " + data.error.error});
