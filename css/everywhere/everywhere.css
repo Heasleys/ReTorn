@@ -142,6 +142,7 @@ d: path('M16 10l-6 6-6-6-4 4 10 10 10-10-4-4z');
 
 div.re_button_wrap {
   display: flex;
+  flex-wrap: wrap;
 }
 
 div.re_button_wrap > button {
@@ -364,7 +365,7 @@ body.dark-mode .re_content {
 .re_content * {
   color: #333;
 }
-body.dark-mode .re_content * {
+body.dark-mode .re_content *:not(button.re_torn_button) {
   color: #DDD;
 }
 
