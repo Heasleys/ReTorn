@@ -15,7 +15,6 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 });
 
 
-
   initChatUserHighlights();
 
   /* Initialize Sidebar List */
@@ -39,7 +38,6 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
    });
 
   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
-    console.log(response);
       if (response.status == true && response.value.re_settings != undefined) {
         settings = response.value.re_settings;
         if (settings.darkmode != undefined && settings.darkmode == true) {
@@ -115,9 +113,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 
   $('#darkmode').change(function() {
      let v = $(this).is(":checked");
-     console.log(v);
      chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"darkmode": v}}, (response) => {
-       console.log(response);
           if ($(this).is(':not(:checked)')) {
             $("html").removeClass('dark');
             $("html").addClass('light');
@@ -131,19 +127,15 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 
   $('#leftalign').change(function() {
      let v = $(this).is(":checked");
-     console.log(v);
        chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"leftalign": v}}, (response) => {
-         console.log(response);
        });
   });
 
   $('#npclist').change(function() {
      let v = $(this).is(":checked");
-     console.log(v);
      chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
         if (response.value.re_settings.tornstats) {
          chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"npclist": {enabled: v}}}, (response) => {
-           console.log(response);
          });
        } else {
          $('#npclist').prop("checked", false);
@@ -172,7 +164,6 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
   $('#header_color').change(function() {
     let color = $(this).val();
     chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"header_color": color}}, (response) => {
-      console.log(response);
     });
   });
 
@@ -182,7 +173,6 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
         if (confirm('By accepting, you are agreeing to allow your Torn API key to be transmitted to Torn Stats.')) {
 
           chrome.runtime.sendMessage({name: "integrate_tornstats"}, (response) => {
-            console.log(response);
             if (response.status != undefined) {
               message(response, "ts_message", response.status);
               if (response.status == true) {
@@ -232,7 +222,6 @@ function chatUserHighlight(parent) {
 
     if (value && c && v != undefined) {
       chrome.runtime.sendMessage({name: "set_value", value_name: "re_chatuserhighlight", value: {[value]: {enabled: v, color: c}}}, (response) => {
-        console.log(response);
         initChatUserHighlights();
       });
     }
@@ -240,13 +229,11 @@ function chatUserHighlight(parent) {
 
 function initChatUserHighlights() {
   chrome.runtime.sendMessage({name: "get_value", value: "re_chatuserhighlight"}, (response) => {
-    console.log(response);
     if (response.status && response.status == true && response.value) {
       if (response.value.re_chatuserhighlight && !jQuery.isEmptyObject(response.value.re_chatuserhighlight)) {
         var userHighlights = response.value.re_chatuserhighlight;
         $('#highlightUsers').empty();
         Object.keys(userHighlights).forEach(userid => {
-          console.log(userid, userHighlights[userid]);
           $('#highlightUsers').append(`<div data-id="`+userid+`">
             <input type="checkbox">
             <input type="text" class="numOnly" value="`+userid+`" disabled>
@@ -277,7 +264,6 @@ function initChatUserHighlights() {
 
       $('input#chatuserhighlight[type=checkbox]').change(function() {
          let v = $(this).is(":checked");
-         console.log(v);
          chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"chatuserhighlight": v}}, (response) => {
 
          });
@@ -375,7 +361,6 @@ function initNotificationTab(settings) {
     if (settings.notifications[notif].value != undefined) {
       var textbox = $('div#general_notifications input#' + notif + '_value');
       let val = settings.notifications[notif].value;
-
       textbox.val(val);
       if (val.includes("<")) {
         $('label[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" drops below "+ val.replace('<',''));

@@ -84,7 +84,6 @@ function fetchAPI(apikey, type, selection, id) {
         reject({status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status});
       } else {
         response.json().then((data) => {
-          console.log(data);
           parseAPI(data).then((res) => {
             resolve(res);
           })
@@ -124,7 +123,6 @@ function fetchTSAPI(apikey, selection) {
         reject({status: false, message: "There was a problem connecting to Torn Stats servers. Status Code: " + response.status});
       } else {
         response.json().then((data) => {
-          console.log(data);
           if (data.status == undefined) {
             reject({status: false, message: "No status detected from Torn Stats. Rejecting.", TSData: data});
           }
@@ -600,7 +598,6 @@ function newInstall() {
           }
         },
         api: {
-
         }
       }
     }
@@ -891,7 +888,6 @@ function checkNotifyBars(type, notifications, newValue, oldValue) {
 
 // Function for creating Notifications (Chrome/Firefox?)
 function createNotification(name, title, message, actions, openURL = "https://www.torn.com/") {
-
   //if actions parameter is passed, add close button to end of action buttons, else default to single close button
   if (actions) {
     actions = [actions, { action: 'Close', title: 'Close' }]
