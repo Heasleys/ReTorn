@@ -85,15 +85,25 @@ width: 172px !important;
 }
 
 @media screen and (max-width: 1000px) {
-  .r .items-cont .re_qitemWrap.actions {
+  html:not(.html-manual-desktop) .r .items-cont .re_qitemWrap.actions {
     width: 386px !important;
   }
 
-  .re_qitemWrap.actions .actions-wrap li {
+  html:not(.html-manual-desktop) .re_qitemWrap.actions .actions-wrap li {
     width: 77px !important;
   }
 }
-
+@media (max-width: 600px) {
+  html:not(.html-manual-desktop) .r .items-cont .re_qitemWrap.actions {
+    width: 320px !important;
+  }
+  html:not(.html-manual-desktop) .re_qitemWrap.actions .actions-wrap li {
+    width: 64px !important;
+  }
+  html:not(.html-manual-desktop) .re_qitemWrap.actions .opt-name {
+    display: none;
+  }
+}
 /* Color CSS */
 #re_quick_items button {
   color: #000;
