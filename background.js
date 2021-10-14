@@ -183,7 +183,19 @@ function checkLogin() {
   getValue("re_api_key", "sync").then((response) => {
     getValue("re_user", "sync").then((res) => {
       chrome.action.setPopup({popup: "pages/popup.html"});
+      chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"});
       createAPIAlarm();
+      getValue("re_user_data", "local").then((response) => {
+        const data = response.re_user_data;
+        if (data.notifications.events != undefined && data.notifications.messages != undefined) {
+          if ((data.notifications.events + data.notifications.messages) > 0) {
+            let badgeNum = parseInt(data.notifications.events + data.notifications.messages).toString();
+            chrome.action.setBadgeText({text: badgeNum});
+          } else {
+            chrome.action.setBadgeText({text: NULL});
+          }
+        }
+      });
     })
     .catch((error) => {
       console.log(error);
@@ -739,6 +751,14 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
         let newValue = changes.re_user_data.newValue;
         let oldValue = changes.re_user_data.oldValue;
         if (newValue != undefined && oldValue != undefined) {
+
+          if ((newValue.notifications.events + newValue.notifications.messages) > 0) {
+            let badgeNum = parseInt(newValue.notifications.events + newValue.notifications.messages).toString();
+            chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"});
+            chrome.action.setBadgeText({text: badgeNum});
+          } else {
+            chrome.action.setBadgeText({text: NULL});
+          }
 
           // MESSAGES
           if (notifications.messages.enabled == true && newValue.notifications.messages != oldValue.notifications.messages && newValue.notifications.messages != 0) {
