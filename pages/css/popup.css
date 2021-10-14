@@ -1,5 +1,6 @@
 body {
   height: auto;
+  width: 384px;
 }
 
 a.to_torn {
@@ -19,11 +20,14 @@ div.re_messages {
 
 .progressbar {
   height: 1em;
-  width: 100%;
   position: relative;
   background: #ddd;
   box-shadow: inset 0 2px 5px rgb(0 0 0 / 25%);
   margin-bottom: 5px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
 .progress_bars > a, .cooldowns > a {
     padding: 4px;
 }
@@ -49,6 +53,22 @@ html.dark .progress_bars > a:hover, html.dark .wealth div:hover, html.dark .cool
   position: relative;
   overflow: hidden;
 }
+
+.wealth {
+  display: flex;
+  justify-content: space-around;
+}
+
+.wealth > a {
+  min-width: 135px;
+  text-align: center;
+}
+
+.wealth div {
+  padding: 8px 4px;
+  margin: 0px;
+}
+
 
 html.light div.progressbar > span#energy {
   background-color: #6cad2b !important;
@@ -92,10 +112,17 @@ button#re_logout {
 }
 
 .cooldowns {
+  display: flex;
+  justify-content: space-around;
   line-height: 2em;
 }
 
-ul.torn_icons {
+.cooldowns a {
+  min-width: 100px;
+  text-align: center;
+}
+
+.torn_icons {
     list-style: none;
     display: inline;
     margin-block-start: 0px;
@@ -105,7 +132,7 @@ ul.torn_icons {
     padding-inline-start: 0px;
 }
 
-ul.torn_icons li {
+span.torn_icons {
   background-image: url('/images/user_status_icons_sprite.svg');
   width: 16px;
   height: 16px;
