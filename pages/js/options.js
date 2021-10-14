@@ -60,6 +60,12 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
           $('#npclist').prop("checked", false);
         }
 
+        if (settings.tsevents != undefined && settings.tsevents == true) {
+          $('#tsevents').prop("checked", true);
+        } else {
+          $('#tsevents').prop("checked", false);
+        }
+
         if (settings.leftalign != undefined && settings.leftalign == true) {
           $('#leftalign').prop("checked", true);
         } else {
@@ -147,6 +153,20 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
        }
       });
   });
+  $('#tsevents').change(function() {
+     let v = $(this).is(":checked");
+     chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
+       if (response.value.re_settings.tornstats) {
+         chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"tsevents": v}}, (response) => {
+         });
+       } else {
+         $('#tsevents').prop("checked", false);
+         if (v) {
+           alert("TornStats Integration must be set to use this feature.");
+         }
+       }
+     });
+   });
 
 
   $('#header_color').change(function() {

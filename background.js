@@ -233,6 +233,12 @@ function checkUpdate() {
       update_settings.re_settings.npclist = {enabled: false};
       i++;
     }
+    //checking npclist
+    if (settings.tsevents == undefined) {
+      console.log("ReTorn: Update found. Adding tsevents update.");
+      update_settings.re_settings.tsevents = false;
+      i++;
+    }
 
     //checking chat user highlights
     if (settings.chatuserhighlight == undefined) {
@@ -491,6 +497,7 @@ function newInstall() {
         npclist: {
           enabled: false
         },
+        tsevents: false,
         chatuserhighlight: false,
         leftalign: false,
         torn3d: false,

@@ -29,7 +29,7 @@
   // pull data from Torn Stats for Torn Stats events
   function tornstatsSync() {
     // Check ReTorn settings for API key
-    if (settings && settings.tornstats != undefined && settings.tornstats == true) {
+    if (settings && settings.tornstats != undefined && settings.tornstats == true && settings.tsevents != undefined && settings.tsevents == true) {
       chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) => {
         if (response.status != undefined && response.status == true) {
           // Pull event data from Torn Stats using Torn API key
