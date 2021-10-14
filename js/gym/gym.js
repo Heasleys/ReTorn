@@ -24,17 +24,8 @@ if ($('div.captcha').length == 0) {
   function loadTS() {
     chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
       if (res.status != undefined) {
-        console.log(res);
         if (res.value.re_settings.tornstats != undefined && res.value.re_settings.tornstats == true) {
-          chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) => {
-            if (response.status != undefined) {
-              if (response.status == true) {
-                tornstatsSync(response.value.re_api_key);
-              }
-            } else {
-              errorMessage({status: false, message: "Unknown error."});
-            }
-          });
+          tornstatsSync();
         } else {
 
           $('div#graph').html(`<p>You do not currently have your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account linked. Link your Torn Stats account in the ReTorn options.</p>`);
@@ -47,7 +38,7 @@ if ($('div.captcha').length == 0) {
   }
 
 
-  function tornstatsSync(apikey) {
+  function tornstatsSync() {
     $('div#graph').html(`
       <div id="stats" style="height: 250px; width: 100%;"></div>
       `);
@@ -62,13 +53,8 @@ if ($('div.captcha').length == 0) {
       $('div#buttons').show();
 
     $("button#re_tornstats_stats").click(function() {
-      $.ajax({
-        method: "GET",
-        url: "https://www.tornstats.com/api/v1/"+apikey+"/battlestats/record"
-      })
-      .done(function( data ) {
+      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "battlestats/record"}, (data) => {
         if (data) {
-          console.log(data);
           if (data.status == true) {
             $('#re_message').text(data.message);
             $('#re_message').attr('hidden', false);
@@ -80,13 +66,8 @@ if ($('div.captcha').length == 0) {
 
     $("button#re_tornstats_hof").click(function() {
       let num = $(this).val();
-      $.ajax({
-        method: "GET",
-        url: "https://www.tornstats.com/api/v1/"+apikey+"/hof/" + num
-      })
-      .done(function( data ) {
+      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "hof/" + num}, (data) => {
         if (data) {
-          console.log(data);
           if (data.status == true) {
             $('#re_message').text(data.message);
             $('#re_message').attr('hidden', false);
@@ -103,27 +84,23 @@ if ($('div.captcha').length == 0) {
       });
     });
 
-    $.ajax({
-      method: "GET",
-      url: "https://www.tornstats.com/api/v1/" + apikey + "/battlestats/graph"
-    })
+    //Load Torn Stats Battlestats graphs after header is opened
+    chrome.runtime.sendMessage({name: "pull_tornstats", selection: "battlestats/graph"}, (data) => {
+        if (data) {
+          if (data.status == true) {
+              insertGraph(data.data);
+          }
 
-    .done(function( data ) {
-      if (data) {
-        console.log(data);
-        if (data.status == true) {
-            insertGraph(data.data);
+          if (data.share_hof == 1) {
+            $('#re_tornstats_hof').val(0);
+            $('#re_tornstats_hof').html("DISABLE TORNSTATS HOF");
+          } else {
+            $('#re_tornstats_hof').val(1);
+            $('#re_tornstats_hof').html("ENABLE TORNSTATS HOF");
+          }
         }
-
-        if (data.share_hof == 1) {
-          $('#re_tornstats_hof').val(0);
-          $('#re_tornstats_hof').html("DISABLE TORNSTATS HOF");
-        } else {
-          $('#re_tornstats_hof').val(1);
-          $('#re_tornstats_hof').html("ENABLE TORNSTATS HOF");
-        }
-      }
     });
+
   }
 
 

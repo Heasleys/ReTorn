@@ -733,6 +733,23 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       return true;
     break;
 
+    case "pull_tornstats":
+      console.log("PULL TORNSTATS", msg);
+      if (msg.selection != undefined) {
+        getValue("re_api_key").then((response) => {
+          fetchTSAPI(response.re_api_key, msg.selection).then((res) => {
+            logger("api", "tornstats", "Torn Stats API", {status: res.status, message: res.message, selection: msg.selection, timestamp: Date.now()});
+            sendResponse(res);
+          })
+        }).catch((error) => {
+          reject(error);
+        })
+
+      }
+
+      return true;
+    break;
+
     default:
     sendResponse({status: false, message: "Message received does not exist."});
     return true;

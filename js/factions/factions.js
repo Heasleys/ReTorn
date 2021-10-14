@@ -133,33 +133,25 @@ function tornstatsSync(type) {
   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
     if (res.status != undefined) {
       if (res.value.re_settings.tornstats != undefined && res.value.re_settings.tornstats == true) {
-        chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) => {
-          if (response.status != undefined && response.status == true) {
-              $.ajax({
-                method: "GET",
-                url: "https://www.tornstats.com/api/v1/"+response.value.re_api_key+"/faction/"+type
-              })
-              .done(function( data ) {
-                if (data) {
-                  if (data.status == true) {
-                    if (type == 'crimes') {
-                      tsData[type] = data;
-                      crimesTab();
-                    }
-                    if (type == 'roster') {
-                      Object.entries(data.members).forEach(([key, value]) => {
-                        data.members[key]['userid'] = key;
-                        if (value.total == "N/A") {
-                          data.members[key]['total'] = 0;
-                        }
-                      });
-
-                      tsData[type] = data;
-                      rosterTab();
-                    }
+        chrome.runtime.sendMessage({name: "pull_tornstats", selection: "faction/"+type}, (data) => {
+          if (data) {
+            if (data.status == true) {
+              if (type == 'crimes') {
+                tsData[type] = data;
+                crimesTab();
+              }
+              if (type == 'roster') {
+                Object.entries(data.members).forEach(([key, value]) => {
+                  data.members[key]['userid'] = key;
+                  if (value.total == "N/A") {
+                    data.members[key]['total'] = 0;
                   }
-                }
-              });
+                });
+
+                tsData[type] = data;
+                rosterTab();
+              }
+            }
           }
         });
       }

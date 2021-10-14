@@ -79,32 +79,21 @@
 
 
   function tornstatsSync() {
-
     //check ReTorn settings for Torn Stats integration, if so, continue
     if (settings && settings.tornstats != undefined && settings.tornstats == true) {
-      // get apikey from ReTorn settings
-      chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) => {
-        if (response.status != undefined && response.status == true) {
-            $.ajax({
-              method: "GET",
-              url: "https://www.tornstats.com/api/v1/"+response.value.re_api_key+"/loot"
-            })
-            .done(function( data ) {
-              if (data) {
-                if (data.status == true) {
-                  var timestamp = Math.floor(Date.now() / 1000);
-                  delete data.status;
-                  delete data.message;
-                  chrome.runtime.sendMessage({name: "set_value", value_name: "re_npcs", value: {timestamp: timestamp, data}, type: "local"}, (response) => {
-                    setNPCs();
-                  });
-                }
-              }
+      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "loot"}, (data) => {
+        if (data) {
+          if (data.status == true) {
+            var timestamp = Math.floor(Date.now() / 1000);
+            delete data.status;
+            delete data.message;
+            chrome.runtime.sendMessage({name: "set_value", value_name: "re_npcs", value: {timestamp: timestamp, data}, type: "local"}, (response) => {
+              setNPCs();
             });
+          }
         }
       });
     }
-
   }
 
 

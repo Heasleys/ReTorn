@@ -31,11 +31,7 @@ function loadTS() {
 function tornstatsSync(apikey) {
   var uid = parseInt($('a[href*="/playerreport.php?step=add&userID="]').attr("href").replace(/\D/g, ""));
   if (uid) {
-    $.ajax({
-      method: "GET",
-      url: "https://www.tornstats.com/api/v1/"+apikey+"/spy/"+uid
-    })
-    .done(function( data ) {
+    chrome.runtime.sendMessage({name: "pull_tornstats", selection: "spy/"+uid}, (data) => {
       if (data) {
         console.log(data);
         if (data.status == true) {
