@@ -234,6 +234,19 @@ function checkUpdate() {
       update_settings.re_settings.npclist = {enabled: false};
       i++;
     }
+    //if old npclist settings exist (v0.0.4), fix with new version (v0.0.5)
+    if (settings.npclist == false) {
+      delete settings.npclist;
+      update_settings.re_settings.npclist = {enabled: false};
+      i++;
+    }
+    //if old npclist settings exist (v0.0.4), fix with new version (v0.0.5)
+    if (settings.npclist == true) {
+      delete settings.npclist;
+      update_settings.re_settings.npclist = {enabled: true};
+      i++;
+    }
+
     //checking npclist
     if (settings.tsevents == undefined) {
       console.log("ReTorn: Update found. Adding tsevents update.");
