@@ -1,7 +1,7 @@
 // @version      1.0.0
 // @description  Add quick items
 // @author       Heasleys4hemp [1468764]
-if ($('div.captcha').length == 0) {
+if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true") { //Check for captcha and traveling
   var n = 1;
   insertHeader($("div.equipped-items-wrap"), 'before', 'after');
 
