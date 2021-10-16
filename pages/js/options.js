@@ -614,3 +614,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 
+$('#torn3d').change(function() {
+   let v = $(this).is(":checked");
+     chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"torn3d": v}}, (response) => {
+     });
+});
