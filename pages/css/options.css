@@ -391,6 +391,98 @@ html.dark .switch-toggle input[type="checkbox"] + label {
   font-size: 16px;
 }
 
+
+
+.navbar {
+
+}
+.navbar ul.nav {
+  display: flex;
+  flex-wrap: wrap;
+}
+.navbar ul.nav li.nav-item {
+  display: list-item;
+  font-size: 14px;
+  text-align: center;
+  width: 100px;
+}
+.navbar ul.nav.column li.nav-item {
+
+}
+
+.nav-link {
+  display: block;
+  padding: .5rem 0;
+}
+
+.nav-tabs .nav-link {
+  margin-bottom: -1px;
+  background: 0 0;
+  border: 1px solid transparent;
+  border-top-left-radius: .25rem;
+  border-top-right-radius: .25rem;
+}
+
+html.light .nav-tabs .nav-link.active {
+  border-color: #111;
+  border-bottom-color: #fafafa;
+}
+html.dark .nav-tabs .nav-link.active {
+  border-color: #dee2e6;
+  border-bottom-color: #121212;
+}
+
+html.light ul.nav-tabs {
+  border-bottom: 1px solid #111;
+}
+html.dark ul.nav-tabs {
+  border-bottom: 1px solid #dee2e6;
+}
+
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  padding: 5px 0px;
+  border-radius: 4px;
+  width:98px;
+  text-align: center;
+  border: 1px solid;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-top-color: transparent;
+}
+
+html.light .dropdown-menu {
+  background-color: #fbfbfb;
+  border-color: #111;
+}
+html.dark .dropdown-menu {
+  background: #181818;
+  border-color: #dee2e6;
+}
+
+.dropdown-menu li {
+  padding: 3px 5px;
+}
+.dropdown-menu li:hover, .nav-item:hover, .nav-link:hover {
+  cursor: pointer;
+}
+.dropdown-menu li a.dropdown-item {
+  display: block;
+}
+
+
+.tab-pane {
+  display: none;
+}
+.tab-pane.active {
+  display: block;
+}
+.tab-pane h3 {
+  text-transform: capitalize;
+}
+
 button.mobile {
   float: left;
   width: 50px;
@@ -409,6 +501,26 @@ button.mobile {
   .sidenav > ul.tabs {
     display: none;
   }
+  .nav-link {
+    padding: .5rem 1rem;
+  }
+
+  .num {
+    display: none;
+  }
+
+  .switch-holder {
+    width: auto;
+  }
+
+  .tab_groups {
+    margin-left: 0px;
+  }
+
+  .menu_title {
+    margin-left: 5px;
+  }
+
 }
 
 @media screen and (min-width: 551px) {

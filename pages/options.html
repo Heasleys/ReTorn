@@ -377,6 +377,59 @@
                   <li><span>Settings Icons provided for free by <a href="https://fontawesome.com/" target="_blank" title="FontAwesome">FontAwesome</a></span></li>
                 </ul>
                 <p><a href='https://www.retorn.rocks/privacy' target='_blank'>Privacy Policy</a></p>
+                <ul class="tabs"><li data-tab="advanced"><a>Advanced Settings</a></li></ul>
+              </div>
+            </article>
+          </section>
+        </div><!-- end of tab container -->
+
+        <div class="tab_container" id="advanced">
+          <h3 class="menu_title">Advanced Settings</h3>
+          <section class="card-container">
+            <article class="card">
+              <div class="card-content">
+                <h4 class="card_title">Log:</h4>
+                <p>These are the internal logs of ReTorn. Check here if you are having issues.</p>
+                <p>Each sub-section holds a max of 100 logs for browser storage purposes.</p>
+                <div class="navbar">
+                  <ul class="nav nav-tabs" id="nav-logs" tab-target="#logs-tabContent">
+                    <li class="nav-item dropdown">
+                      <a class="nav-link active" data="#logs-error">Error</a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" data-target="#logs-error-api">API</a></li>
+                        <li><a class="dropdown-item" data-target="#logs-error-page">Page</a></li>
+                        <li><a class="dropdown-item" data-target="#logs-error-background">Background</a></li>
+                      </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link">Data</a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" data-target="#logs-data-set">Set</a></li>
+                        <li><a class="dropdown-item" data-target="#logs-data-set_local">Set Local</a></li>
+                        <li><a class="dropdown-item" data-target="#logs-data-deleted">Deleted</a></li>
+                      </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link">API</a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" data-target="#logs-api-torn">Torn</a></li>
+                        <li><a class="dropdown-item" data-target="#logs-api-tornstats">Torn Stats</a></li>
+                      </ul>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" data-target="#logs-notifications-history">Notifications</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="tab-content" id="logs-tabContent">
+
+                </div>
+              </div>
+              <ul class="tabs beyond"><li data-tab="beyond"><a>The Great Beyond</a></li></ul>
+            </article>
+          </section>
+        </div><!-- end of tab container -->
+
         <div class="tab_container" id="beyond">
           <h3 class="menu_title">The Great Beyond</h3>
           <section class="card-container">

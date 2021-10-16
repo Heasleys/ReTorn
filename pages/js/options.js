@@ -15,7 +15,17 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 });
 
 
+  initLogger();
   initChatUserHighlights();
+
+  $(document).click(function(event) {
+      if (!$(event.target).closest(".dropdown-menu, .dropdown .nav-link").length) {
+          $(".dropdown-menu").hide();
+      }
+      if ($(event.target).closest(".mainview, ul.tabs.show > li").length) {
+          $("ul.tabs.show").removeClass("show");
+      }
+  });
 
   /* Initialize Sidebar List */
   $('ul.tabs > li').first().addClass('active');
@@ -35,6 +45,28 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 
    $('button.mobile').click(function() {
      $('ul.tabs').toggleClass('show');
+   });
+
+
+   //Tab Menus functionality
+   $('ul.nav > li.nav-item > a.nav-link, ul.dropdown-menu > li > a.dropdown-item').click(function() {
+     let tab_target = $(this).closest(".nav").attr("tab-target");
+     let target = $(this).data("target");
+     $(tab_target+" > .tab-pane").removeClass("active");
+     $(tab_target+" "+target).addClass("active");
+     $('.nav-link').removeClass("active");
+     $(this).closest(".nav-item").find(".nav-link").addClass("active");
+     $(".dropdown-menu").hide();
+   });
+
+   $('ul.nav > li.nav-item.dropdown > a.nav-link').off("click").click(function() {
+     let menu = $(this).parent(".dropdown").find("ul.dropdown-menu");
+     if (menu.is(":visible")) {
+       menu.hide();
+     } else {
+       $('ul.dropdown-menu').hide();
+       menu.show();
+     }
    });
 
   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
@@ -450,3 +482,129 @@ function initTornStatsTab(settings) {
     $('#tornstats_features').hide();
   }
 }
+
+function initLogger() {
+  chrome.runtime.sendMessage({name: "get_value", value: "re_logs", type: "local"}, (response) => {
+    if (response.status == true) {
+      let logs = response.value.re_logs;
+      for (const [type, subtype] of Object.entries(logs)) {
+        for (const key of Object.keys(subtype)) {
+          $('#logs-tabContent').append(`<div class="tab-pane" id="logs-`+type+`-`+key+`">
+                              <h3>`+type+` `+key+`</h3>
+                              <div class="log-wrap"></div>
+                            </div>`)
+        }
+      }
+      $('#logs-error-api').addClass('active');
+      updateLogger();
+    }
+  });
+}
+
+function updateLogger() {
+  chrome.runtime.sendMessage({name: "get_value", value: "re_logs", type: "local"}, (response) => {
+    if (response.status == true) {
+      let logs = response.value.re_logs;
+      if (logs.error) {
+        for (const subtype of Object.keys(logs.error)) {
+          if (logs.error[subtype]) {
+            let table = `<table class="log-list"><tr><th class="num">#</th><th>Message</th><th>Error</th><th>Timestamp</th></tr>`;
+            if (Object.keys(logs.error[subtype]).length) {
+              for (const [key, value] of Object.entries(logs.error[subtype]).reverse()) {
+                let log = value.log;
+                if (subtype == "api") {
+                  table += `<tr class="log-item"><td class="num">`+key+`</td><td>`+value.message+`</td><td>Error Code: `+log.code+` - `+log.error+`</td><td class="log-timestamp">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
+                } else {
+                  table += `<tr class="log-item"><td class="num">`+key+`</td><td colspan="2">`+value.message+`</td><td class="log-timestamp">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
+                }
+              }
+            } else {
+              table += `<tr><td colspan=4>No log data</td></tr>`;
+            }
+            table += `</table>`;
+            $('#logs-error-'+subtype+' > div').html(table);
+          }
+        }
+      }
+
+      if (logs.data) {
+        for (const subtype of Object.keys(logs.data)) {
+          if (logs.data[subtype]) {
+            let table = `<table class="log-list"><tr><th class="num">#</th><th>Message</th><th>Timestamp</th></tr>`;
+            if (Object.keys(logs.data[subtype]).length) {
+              for (const [key, value] of Object.entries(logs.data[subtype]).reverse()) {
+                let log = value.log;
+                let time_diff = new Date() - new Date(log.timestamp);
+                table += `<tr class="log-item"><td class="num">`+key+`</td><td>`+value.message+`</td><td class="log-timestamp" tooltip="`+time_diff+`" flow="up">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
+              }
+            } else {
+              table += `<tr><td colspan=4>No log data</td></tr>`;
+            }
+            table += `</table>`;
+            $('#logs-data-'+subtype+' > div').html(table);
+          }
+        }
+      }
+
+      if (logs.notifications) {
+        for (const subtype of Object.keys(logs.notifications)) {
+          if (logs.notifications[subtype]) {
+            let table = `<table class="log-list"><tr><th class="num">#</th><th>Title</th><th>Message</th><th>Timestamp</th></tr>`;
+            if (Object.keys(logs.notifications[subtype]).length) {
+              for (const [key, value] of Object.entries(logs.notifications[subtype]).reverse()) {
+                let log = value.log;
+                let time_diff = new Date() - new Date(log.timestamp);
+                table += `<tr class="log-item"><td class="num">`+key+`</td><td>`+value.message+`</td><td>`+log.message+`</td><td class="log-timestamp" tooltip="`+time_diff+`" flow="up">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
+              }
+            } else {
+              table += `<tr><td colspan=4>No log data</td></tr>`;
+            }
+            table += `</table>`;
+            $('#logs-notifications-'+subtype+' > div').html(table);
+          }
+        }
+      }
+
+      if (logs.api) {
+        for (const subtype of Object.keys(logs.api)) {
+          if (logs.api[subtype]) {
+            if (subtype == "torn") {
+              let table = `<table class="log-list"><tr><th class="num">#</th><th>Message</th><th class="ellipsis">API URL</th><th>Timestamp</th></tr>`;
+              if (Object.keys(logs.api[subtype]).length) {
+                for (const [key, value] of Object.entries(logs.api[subtype]).reverse()) {
+                  let log = value.log;
+                  table += `<tr class="log-item"><td class="num">`+key+`</td><td>`+value.message+`</td><td class="ellipsis" data-text="https://api.torn.com/`+log.type+`/`+log.id+`?selections=`+log.selection+`">https://api.torn.com/`+log.type+`/`+log.id+`?selections=`+log.selection+`</td><td class="log-timestamp">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
+                }
+              } else {
+                table += `<tr><td colspan=4>No log data</td></tr>`;
+              }
+              table += `</table>`;
+              $('#logs-api-'+subtype+' > div').html(table);
+            }
+            if (subtype == "tornstats") {
+              let table = `<table class="log-list"><tr><th class="num">#</th><th>Status</th><th>Message</th><th class="ellipsis">API URL</th><th>Timestamp</th></tr>`;
+              if (Object.keys(logs.api[subtype]).length) {
+                for (const [key, value] of Object.entries(logs.api[subtype]).reverse()) {
+                  let log = value.log;
+                  table += `<tr class="log-item"><td class="num">`+key+`</td><td>`+log.status+`</td><td>`+log.message+`</td><td class="ellipsis" data-text="https://www.tornstats.com/api/v1/KEY/`+log.selection+`">https://www.tornstats.com/api/v1/KEY/`+log.selection+`</td><td class="log-timestamp">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
+                }
+              } else {
+                table += `<tr><td colspan=4>No log data</td></tr>`;
+              }
+              table += `</table>`;
+              $('#logs-api-'+subtype+' > div').html(table);
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.name == "log") {
+    updateLogger();
+  }
+});
+
+
