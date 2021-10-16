@@ -1,6 +1,8 @@
+// Event Listener for Starting Up chrome/extension
 chrome.runtime.onStartup.addListener(() => {
   checkLogin();
 });
+// Event Listener for Installing extension (update or new install)
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
     newInstall();
@@ -43,6 +45,8 @@ function checkLogin() {
             chrome.action.setBadgeText({text: ""});
           }
         }
+      }).catch((error) => {
+        console.log(error);
       });
     })
     .catch((error) => {
@@ -137,7 +141,8 @@ function newInstall() {
             enabled: true
           },
           chain: {
-            enabled: true,
+            time: true,
+            hit: false,
             alerts: {
               time: "60,90,120",
               hit: "4975,9975,24975"
@@ -372,7 +377,6 @@ function fetchAPI(apikey, type, selection, id) {
         });
       }
     })
-
     .catch((error) => {
       logger("error", "background", "There was a Fetch Error: "+ error, {timestamp: Date.now()});
       console.log('Fetch Error: ', error);
@@ -709,7 +713,11 @@ function logger(type, subtype, message, log) {
       }
 
       chrome.runtime.sendMessage({name: "log"});
-    });
+    }).catch((error) => {
+      console.log(error);
+    })
+  }).catch((error) => {
+    console.log(error);
   });
 }
 
@@ -751,6 +759,9 @@ function getItemsAPI() {
     fetchAPI(response.re_api_key, 'torn', 'items,timestamp&comment=ReTorn').then((data) => { //API key is available, so get a fresh new list of Torn items from the API
       logger("api", "torn", "Torn item data", {type: "torn", id: "", selection: "items,timestamp&comment=ReTorn", timestamp: Date.now()});
       setValue({"re_item_data": data}, "local");
+    })
+    .catch((error) => {
+      console.log(error);
     });
   })
   .catch((error) => {
@@ -1123,6 +1134,9 @@ chrome.webRequest.onBeforeRequest.addListener(
                 }
               }
             }
+          }).catch((error) => {
+            console.log(error);
+            logger("error", "background", "There was a problem getting settings for Easter Egg Alerts. "+ error, {timestamp: Date.now()});
           });
         }
   },
