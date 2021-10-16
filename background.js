@@ -4,12 +4,12 @@ chrome.runtime.onStartup.addListener(() => {
 
 
 chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason == "update") {
-    checkUpdate();
-    checkLogin();
-  }
   if (details.reason == "install") {
     newInstall();
+    checkLogin();
+  }
+  if (details.reason == "update") {
+    checkUpdate();
     checkLogin();
   }
 });
@@ -17,23 +17,6 @@ chrome.runtime.onInstalled.addListener((details) => {
 // if extension was enabled, verify user is logged in
 chrome.management.onEnabled.addListener((extensionInfo) => {
   checkLogin();
-});
-
-// Chrome Alarm for pulling API data every 30 seconds
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name == "required_api") {
-    getValue("re_api_key").then((response) => {
-      pullRequiredAPI(response.re_api_key);
-    })
-    .catch((error) => {
-      console.log(error);
-      chrome.alarms.clear("required_api", (wasCleared) => {
-        if (wasCleared == true) {
-            console.log("API alarm removed");
-        }
-      });
-    });
-  }
 });
 
 // Delete all settings and restore to default
@@ -44,148 +27,6 @@ function fullReset() {
   newInstall();
   checkLogin();
 }
-
-
-function createAPIAlarm(minutes) {
-  if (minutes == undefined) {
-    minutes = 0.5;
-  }
-  chrome.alarms.get("required_api", (alarm) => {
-    if (alarm == undefined) {
-      console.log("Creating API alarm");
-      chrome.alarms.create("required_api", {periodInMinutes: minutes});
-    }
-  });
-}
-
-
-
-function validateAPIKEY(apikey) {
-  return new Promise((resolve, reject) => {
-    fetchAPI(apikey, 'user', 'basic,timestamp&comment=ReTorn').then((response) => {
-      setValue({"re_user": {"name": response.name, "player_id": response.player_id}}, "sync");
-      pullRequiredAPI(apikey);
-      checkLogin();
-      resolve();
-    })
-    .catch((error) => {
-      reject(error);
-    });
-  });
-}
-
-function fetchAPI(apikey, type, selection, id) {
-  return new Promise((resolve, reject) => {
-    if (selection == undefined) {
-      selection = "";
-    }
-    if (id == undefined) {
-      id = "";
-    }
-    if (apikey == undefined || apikey.length != 16) {
-      reject({status: false, message: "Invalid apikey."})
-    }
-    fetch('https://api.torn.com/'+type+'/'+id+'?selections='+selection+'&key='+apikey+'&comment=ReTorn')
-
-    .then((response) => {
-      if (response.status !== 200) {
-        console.log("There was a problem connecting to Torn servers. Status Code: " + response.status);
-        reject({status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status});
-      } else {
-        response.json().then((data) => {
-          parseAPI(data).then((res) => {
-            resolve(res);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-        })
-        .catch((error) => {
-          reject(error);
-        });
-      }
-    })
-
-    .catch((error) => {
-      console.log('Fetch Error: ', error);
-      reject({status: false, message: "Fetch Error: " + error});
-    });
-
-  });
-}
-
-// Function for fetching TornStats API data
-function fetchTSAPI(apikey, selection) {
-  return new Promise((resolve, reject) => {
-    if (apikey == undefined || apikey.length > 16) {
-      reject({status: false, message: "Invalid apikey."})
-    }
-    if (selection == undefined) {
-      reject({status: false, message: "No selection given."});
-    }
-
-    fetch('https://www.tornstats.com/api/v1/' + apikey + '/' + selection)
-
-    .then((response) => {
-      if (response.status !== 200) {
-        console.log("There was a problem connecting to Torn Stats servers. Status Code: " + response.status);
-        reject({status: false, message: "There was a problem connecting to Torn Stats servers. Status Code: " + response.status});
-      } else {
-        response.json().then((data) => {
-          if (data.status == undefined) {
-            reject({status: false, message: "No status detected from Torn Stats. Rejecting.", TSData: data});
-          }
-
-          if (data.status == false || data.status == "false") {
-            reject(data);
-          } else {
-            resolve(data);
-          }
-        })
-        .catch((error) => {
-          reject(error);
-        });
-      }
-
-    })
-    .catch((error) => {
-      console.log('Fetch Error: ', error);
-      reject({status: false, message: "Fetch Error: " + error});
-    });
-  });
-}
-
-
-function parseAPI(data) {
-  return new Promise((resolve, reject) => {
-    if (data.error != undefined) {
-      logger("error", "api", "Error parsing api data. Torn API Error code detected.", {code: data.error.code, error: data.error.error, timestamp: Date.now()});
-      if (data.error.code == 2 || data.error.code == 10 || data.error.code == 13) { //key invalid, key owner is in federal jail, or key owner is inactive, then remove apikey
-        logout();
-      }
-      reject({status: false, message: "API Error: Code: " + data.error.code + " | Message: " + data.error.error});
-    } else {
-      resolve(data);
-    }
-  });
-}
-
-// Function for pulling the required API data
-function pullRequiredAPI(apikey) {
-  fetchAPI(apikey, 'user', 'bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn').then((data) => {
-    setValue({"re_user_data": data}, "local").then((res) => {
-      console.log(res);
-      chrome.runtime.sendMessage({name: "popup_data", data: data});
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-}
-
 
 // Check if user has logged in with their API key
 function checkLogin() {
@@ -235,6 +76,115 @@ function logout() {
     console.log({status: false, message: "Failed to delete apikey.", error: error});
     sendResponse({status: false, message: "Failed to delete apikey.", error: error});
   });
+}
+
+// New Installation function for setting default settings
+function newInstall() {
+  getValue("re_settings").then((response) => {
+
+  })
+  .catch((error) => {
+    let startup_settings = {
+      re_settings: {
+        darkmode: false,
+        tornstats: false,
+        npclist: {
+          enabled: false
+        },
+        tsevents: false,
+        chatuserhighlight: false,
+        quicklinks: false,
+        leftalign: false,
+        torn3d: false,
+        header_color: "#e0ce00",
+        notifications: {
+          notifications: {
+            enabled: true
+          },
+          energy: {
+            enabled: true,
+            value: "100%"
+          },
+          nerve: {
+            enabled: true,
+            value: "100%"
+          },
+          happy: {
+            enabled: false,
+            value: "100%"
+          },
+          life: {
+            enabled: false,
+            value: "<100%"
+          },
+          drugs: {
+            enabled: true
+          },
+          boosters: {
+            enabled: true
+          },
+          medical: {
+            enabled: true
+          },
+          education: {
+            enabled: false
+          },
+          messages: {
+            enabled: true
+          },
+          events: {
+            enabled: true
+          },
+          travel: {
+            enabled: true
+          },
+          chain: {
+            enabled: true,
+            alerts: {
+              time: "60,90,120",
+              hit: "4975,9975,24975"
+            }
+          }
+        },
+        events: {
+          eastereggs: {
+            enabled: false
+          }
+        }
+      },
+      re_chatuserhighlight: {
+
+      },
+      re_quicklinks: {
+
+      }
+    }
+
+    let re_logs = {
+      re_logs: {
+        error: {
+          api: {},
+          page: {},
+          background: {}
+        },
+        data: {
+          deleted: {},
+          set: {},
+          set_local: {}
+        },
+        api: {
+          torn: {},
+          tornstats: {}
+        },
+        notifications: {
+          history: {}
+        }
+      }
+    }
+
+    setValue(startup_settings, "sync").then((res) => {}).catch((error) => {console.log(error);})
+    setValue(re_logs, "local").then((res) => {}).catch((error) => {console.log(error);})
+  })
 }
 
 // Function for updating ReTorn settings in case user has older extension version
@@ -301,6 +251,18 @@ function checkUpdate() {
       i++;
     }
 
+    //checking chain notifications
+    if (settings.notifications.chain == undefined) {
+      console.log("ReTorn: Update found. Adding Chain Notification update.");
+      update_settings.re_settings.notifications.chain = {enabled: true,alerts: {time: "60,90,120",hit: "4975,9975,24975"}};
+      i++;
+    }
+
+    if (settings.notifications.chain == undefined) {
+      console.log("ReTorn: Update found. Adding Chain Notification update.");
+      update_settings.re_settings.notifications = {chain: {enabled: true,alerts: {time: {"1": 60,"2": 90,"3": 120},hit: {"1": 4975,"2": 9975,"3": 24975}}}};
+      i++;
+    }
 
     console.log(update_settings);
     if (i > 0) {
@@ -325,16 +287,189 @@ function checkUpdate() {
   })
   .catch((error) => {
     console.log("ReTorn: Update found for Logs. Adding Logs data.", error);
-    let re_logs = { re_logs: { error: { api: { }, page: { }, notification: { }, settings: { }, background: { } }, update: { changed: { }, deleted: { }, new: { } }, api: { } } }
+    let re_logs = { re_logs: { error: { api: { }, page: { }, background: { } }, data: {deleted: { }, set: { }, set_local:{} }, api: {torn:{}, tornstats:{} }, notifications: {history: {}} } }
     setValue(re_logs, "local").catch((error) => {console.log(error);});
   });
 }
+
+// Chrome Alarm for pulling API data every 30 seconds
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name == "required_api") {
+    getValue("re_api_key").then((response) => {
+      pullRequiredAPI(response.re_api_key);
+    })
+    .catch((error) => {
+      console.log(error);
+      chrome.alarms.clear("required_api", (wasCleared) => {
+        if (wasCleared == true) {
+            console.log("API alarm removed");
+        }
+      });
+    });
+  }
+});
+
+
+function createAPIAlarm(minutes) {
+  if (minutes == undefined) {
+    minutes = 0.5;
+  }
+  chrome.alarms.get("required_api", (alarm) => {
+    if (alarm == undefined) {
+      console.log("Creating API alarm");
+      chrome.alarms.create("required_api", {periodInMinutes: minutes});
+    }
+  });
+}
+
+
+
+function validateAPIKEY(apikey) {
+  return new Promise((resolve, reject) => {
+    fetchAPI(apikey, 'user', 'basic,timestamp&comment=ReTorn').then((response) => {
+      logger("api", "torn", "Validating User", {type: "user", id: "", selection: "basic,timestamp&comment=ReTorn", timestamp: Date.now()});
+      setValue({"re_user": {"name": response.name, "player_id": response.player_id}}, "sync");
+      pullRequiredAPI(apikey);
+      checkLogin();
+      resolve();
+    })
+    .catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+function fetchAPI(apikey, type, selection, id) {
+  return new Promise((resolve, reject) => {
+    if (selection == undefined) {
+      selection = "";
+    }
+    if (id == undefined) {
+      id = "";
+    }
+    if (apikey == undefined || apikey.length != 16) {
+      reject({status: false, message: "Invalid apikey."})
+    }
+    fetch('https://api.torn.com/'+type+'/'+id+'?selections='+selection+'&key='+apikey+'&comment=ReTorn')
+
+    .then((response) => {
+      if (response.status !== 200) {
+        logger("error", "background", "There was a problem connecting to the Torn servers. Status Code: "+ response.status, {timestamp: Date.now()});
+        console.log("There was a problem connecting to Torn servers. Status Code: " + response.status);
+        reject({status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status});
+      } else {
+        response.json().then((data) => {
+          parseAPI(data).then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+        })
+        .catch((error) => {
+          console.log("Error parsing JSON data: ", error);
+          logger("error", "background", "Error parsing JSON data: " + error, {timestamp: Date.now()});
+          reject(error);
+        });
+      }
+    })
+
+    .catch((error) => {
+      logger("error", "background", "There was a Fetch Error: "+ error, {timestamp: Date.now()});
+      console.log('Fetch Error: ', error);
+      reject({status: false, message: "Fetch Error: " + error});
+    });
+
+  });
+}
+
+// Function for fetching TornStats API data
+function fetchTSAPI(apikey, selection) {
+  return new Promise((resolve, reject) => {
+    if (apikey == undefined || apikey.length > 16) {
+      logger("error", "background", "Invalid apikey attempting to fetch Torn Stats API.", {timestamp: Date.now()});
+      reject({status: false, message: "Invalid apikey."})
+    }
+    if (selection == undefined) {
+      logger("error", "background", "No selection given attempting to fetch Torn Stats API.", {timestamp: Date.now()});
+      reject({status: false, message: "No selection given."});
+    }
+
+    fetch('https://www.tornstats.com/api/v1/' + apikey + '/' + selection)
+
+    .then((response) => {
+      if (response.status !== 200) {
+        console.log("There was a problem connecting to Torn Stats servers. Status Code: " + response.status);
+        logger("error", "background", "There was a problem connecting to Torn Stats servers. Status Code: " + response.status, {timestamp: Date.now()});
+        reject({status: false, message: "There was a problem connecting to Torn Stats servers. Status Code: " + response.status});
+      } else {
+        response.json().then((data) => {
+          if (data.status == undefined) {
+            logger("error", "background", "No status detected from Torn Stats. Rejecting.", {timestamp: Date.now()});
+            console.log({status: false, message: "No status detected from Torn Stats. Rejecting.", TSData: data});
+            reject({status: false, message: "No status detected from Torn Stats. Rejecting.", TSData: data});
+          }
+
+          if (data.status == false || data.status == "false") {
+            console.log("ReTorn: Torn Stats status is false. Rejecting.", data);
+            reject(data);
+          } else {
+            console.log("ReTorn: Torn Stats status is true.", data);
+            resolve(data);
+          }
+        })
+        .catch((error) => {
+          reject(error);
+        });
+      }
+
+    })
+    .catch((error) => {
+      console.log('Fetch Error: ', error);
+      reject({status: false, message: "Fetch Error: " + error});
+    });
+  });
+}
+
+
+function parseAPI(data) {
+  return new Promise((resolve, reject) => {
+    if (data.error != undefined) {
+      logger("error", "api", "Error parsing api data. Torn API Error code detected.", {code: data.error.code, error: data.error.error, timestamp: Date.now()});
+      if (data.error.code == 2 || data.error.code == 10 || data.error.code == 13) { //key invalid, key owner is in federal jail, or key owner is inactive, then remove apikey
+        logout();
+      }
+      reject({status: false, message: "API Error: Code: " + data.error.code + " | Message: " + data.error.error});
+    } else {
+      resolve(data);
+    }
+  });
+}
+
+// Function for pulling the required API data
+function pullRequiredAPI(apikey) {
+  fetchAPI(apikey, 'user', 'bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn').then((data) => {
+    logger("api", "torn", "Required API", {type: "user", id: "", selection: "bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn", timestamp: Date.now()});
+    setValue({"re_user_data": data}, "local").then((res) => {
+      console.log(res);
+      chrome.runtime.sendMessage({name: "popup_data", data: data});
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+
 
 // Function for integrating Torn Stats features into ReTorn
 function integrateTornStats() {
   return new Promise((resolve, reject) => {
     getValue("re_api_key").then((response) => {
       fetchTSAPI(response.re_api_key, "").then((res) => {
+        logger("api", "tornstats", "Integrate Torn Stats", {status: res.status, message: res.message, selection: "", timestamp: Date.now()});
         setValue({"re_settings": {"tornstats": true}}).then(() => {
           resolve(res);
         })
@@ -368,7 +503,7 @@ function setValue(value, type) {
         } else {
           merged = value;
         }
-        console.log("Merged", merged);
+        console.log("Merged me", merged);
 
         chrome.storage.sync.set(merged, () => {
           if (chrome.runtime.lastError) {
@@ -403,9 +538,11 @@ function getValue(value, type) {
       chrome.storage.sync.get([value], (response) => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
+          logger("error", "background", "Chrome Runtime Error while getting storage: " + chrome.runtime.lastError.message, {timestamp: Date.now()});
           reject({status: false, message: chrome.runtime.lastError.message});
         } else {
           if (Object.keys(response).length === 0 && response.constructor === Object) {
+            logger("error", "background", "Could not find value in storage. Value: " + value, {timestamp: Date.now()});
             reject({status: false, message: "Could not find value in storage.", value: value});
           }
           resolve(response);
@@ -416,9 +553,11 @@ function getValue(value, type) {
       chrome.storage.local.get([value], (response) => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
+          logger("error", "background", "Chrome Runtime Error while getting local storage: " + chrome.runtime.lastError.message, {timestamp: Date.now()});
           reject({status: false, message: chrome.runtime.lastError.message});
         } else {
           if (Object.keys(response).length === 0 && response.constructor === Object) {
+            logger("error", "background", "Could not find value in local storage. Value: " + value, {timestamp: Date.now()});
             reject({status: false, message: "Could not find value in storage.", value: value});
           }
           resolve(response);
@@ -438,9 +577,11 @@ function delValue(value, key, type) {
       chrome.storage.sync.get([value], (response) => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
+          logger("error", "background", "Chrome Runtime Error while getting storage for deletion: " + chrome.runtime.lastError.message, {timestamp: Date.now()});
           reject({status: false, message: chrome.runtime.lastError.message});
         } else {
           if (Object.keys(response).length === 0 && response.constructor === Object) {
+            logger("error", "background", "Could not find value in storage. Value: " + value, {timestamp: Date.now()});
             reject({status: false, message: "Could not find value in storage.", value: value});
           }
           console.log("Delete Value: ", value);
@@ -476,8 +617,10 @@ function delValue(value, key, type) {
           chrome.storage.sync.set(response, () => {
             if (chrome.runtime.lastError) {
               console.error(chrome.runtime.lastError.message);
+              logger("error", "background", "Chrome Runtime Error while deleting value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
               reject({status: false, message: chrome.runtime.lastError.message});
             } else {
+              logger("data", "deleted", key + " has been deleted from " + value + " storage.", {data: key, timestamp: Date.now()});
               resolve({status: true, message: "Value: " + key + " has been deleted."});
             }
           });
@@ -496,8 +639,10 @@ function removeValue(value, type) {
       chrome.storage.sync.remove(value, () => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
+          logger("error", "background", "Chrome Runtime Error while deleting value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
           reject({status: false, message: chrome.runtime.lastError.message});
         } else {
+          logger("data", "deleted", value + " has been deleted from " + type + " storage.", {data: value, timestamp: Date.now()});
           resolve({status: true, message: "Sync Value: " + value + " has been removed."});
         }
       });
@@ -506,9 +651,11 @@ function removeValue(value, type) {
     if (type == "local") {
       chrome.storage.local.remove(value, () => {
         if (chrome.runtime.lastError) {
+          logger("error", "background", "Chrome Runtime Error while deleting value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
           console.error(chrome.runtime.lastError.message);
           reject({status: false, message: chrome.runtime.lastError.message});
         } else {
+          logger("data", "deleted", value + " has been deleted from " + type + " storage.", {data: value, timestamp: Date.now()});
           resolve({status: true, message: "Local Value: " + value + " has been removed."});
         }
       });
@@ -517,116 +664,6 @@ function removeValue(value, type) {
   });
 }
 
-// New Installation function for setting default settings
-function newInstall() {
-  getValue("re_settings").then((response) => {
-
-  })
-  .catch((error) => {
-    let startup_settings = {
-      re_settings: {
-        darkmode: false,
-        tornstats: false,
-        npclist: {
-          enabled: false
-        },
-        tsevents: false,
-        chatuserhighlight: false,
-        leftalign: false,
-        torn3d: false,
-        header_color: "#e0ce00",
-        notifications: {
-          notifications: {
-            enabled: true
-          },
-          energy: {
-            enabled: true,
-            value: "100%"
-          },
-          nerve: {
-            enabled: true,
-            value: "100%"
-          },
-          happy: {
-            enabled: false,
-            value: "100%"
-          },
-          life: {
-            enabled: false,
-            value: "<100%"
-          },
-          drugs: {
-            enabled: true
-          },
-          boosters: {
-            enabled: true
-          },
-          medical: {
-            enabled: true
-          },
-          education: {
-            enabled: false
-          },
-          messages: {
-            enabled: true
-          },
-          events: {
-            enabled: true
-          },
-          travel: {
-            enabled: true
-          }
-        },
-        events: {
-          eastereggs: {
-            enabled: false
-          }
-        }
-      },
-      re_chatuserhighlight: {
-
-      }
-    }
-
-    let re_logs = {
-      re_logs: {
-        error: {
-          api: {
-
-          },
-          page: {
-
-          },
-          notification: {
-
-          },
-          settings: {
-
-          },
-          background: {
-
-          }
-        },
-        update: {
-          changed: {
-
-          },
-          deleted: {
-
-          },
-          new: {
-
-          }
-        },
-        api: {
-        }
-      }
-    }
-
-    setValue(startup_settings, "sync").then((res) => {}).catch((error) => {console.log(error);})
-    setValue(re_logs, "local").then((res) => {}).catch((error) => {console.log(error);})
-  })
-}
 
 // Function for merging two sets of nested objects
 function merge(a, b) {
@@ -638,10 +675,76 @@ function merge(a, b) {
     }, a);
 }
 
+// Function for adding logs to log data
+function logger(type, subtype, message, log) {
+  getValue("re_logs", "local").then((response) => {
+    //create new log base
+    let new_log = {re_logs: {}}
+    new_log.re_logs[type] = {};
+    new_log.re_logs[type][subtype] = {};
+
+    //check if re_logs has type and subtype, if not, add them
+    if (response.re_logs[type] == 'undefined') {
+      console.log(response)
+      response.relogs[type] = {};
+      response.relogs[type][subtype] = {};
+    }
+    if (response.re_logs[type][subtype] == 'undefined') {
+      console.log(response)
+      response.relogs[type][subtype] = {};
+    }
+
+    //check if logs need shifted (max of 100 per subtype);
+    shiftObject(response.re_logs[type][subtype]).then((shift) => {
+      response.re_logs[type][subtype] = shift.object;
+      new_log.re_logs[type][subtype][shift.keyCount] = {log, message: message}
+
+
+      merged = merge(response, new_log);
+      if (merged) {
+        setValue(merged, "local").then(() => {
+        })
+        .catch((error) => {
+          console.log("Logger Error:", error);
+        });
+      }
+
+      chrome.runtime.sendMessage({name: "log"});
+    });
+  });
+}
+
+function shiftObject(object) {
+  const MAX = 100;
+  return new Promise((resolve, reject) => {
+    if (object == null) {
+      resolve({object:object, keyCount: keyCount});
+    }
+    let keyCount = Object.keys(object).length; //Get length of object
+    //Only keep last 100 entries
+    if (keyCount >= MAX) {
+      for (const [key, value] of Object.entries(object)) {
+        let nextkey = parseInt(key)+1;
+        if (object[nextkey]) {
+          object[key] = object[nextkey];
+        } else{
+          if (nextkey == keyCount) {
+            delete object[key];
+          }
+        }
+      };
+      resolve({object:object, keyCount: (MAX-1)});
+    } else {
+      resolve({object:object, keyCount: keyCount});
+    }
+  });
+}
+
 // Function for getting all Torn Item data and saving it to local storage
 function getItemsAPI() {
   getValue("re_api_key").then((response) => {
     fetchAPI(response.re_api_key, 'torn', 'items,timestamp&comment=ReTorn').then((data) => { //API key is available, so get a fresh new list of Torn items from the API
+      logger("api", "torn", "Torn item data", {type: "torn", id: "", selection: "items,timestamp&comment=ReTorn", timestamp: Date.now()});
       setValue({"re_item_data": data}, "local");
     });
   })
@@ -684,7 +787,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           sendResponse(error);
         });
       } else {
-        sendResponse({status: false, message: "The apikey entered is invalid."});
+        logger("error", "background", "The apikey entered was invalid.", {timestamp: Date.now()});
+        sendResponse({status: false, message: "The apikey entered was invalid."});
       }
       return true;
     break;
@@ -719,6 +823,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     case "set_value":
       if (msg.value_name != undefined && msg.value != undefined) {
         setValue({[msg.value_name]: msg.value}, msg.type).then((response) => {
+          if (typeof msg.type == "undefined" || msg.type == "sync") {
+            logger("data", "set", objectStringify(msg.value) + " has been set in " + msg.value_name + ".", {data: msg.value, timestamp: Date.now()});
+          }
+          if (typeof msg.type != "undefined" && msg.type == "local") {
+            logger("data", "set_local", objectStringify(msg.value) + " has been set in " + msg.value_name + ".", {data: msg.value, timestamp: Date.now()});
+          }
           sendResponse(response);
         })
         .catch((error) => {
@@ -745,6 +855,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       return true;
     break;
 
+    case "set_logger":
+      if (msg.type != undefined && msg.subtype != undefined) {
+        logger(msg.type, msg.subtype, msg.message, msg.log);
+      }
+
+      return true;
+    break;
+
     case "pull_tornstats":
       console.log("PULL TORNSTATS", msg);
       if (msg.selection != undefined) {
@@ -752,6 +870,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           fetchTSAPI(response.re_api_key, msg.selection).then((res) => {
             logger("api", "tornstats", "Torn Stats API", {status: res.status, message: res.message, selection: msg.selection, timestamp: Date.now()});
             sendResponse(res);
+          }).catch((error) => {
+            logger("api", "tornstats", "Torn Stats API Error", {status: error.status, message: error.message, selection: msg.selection, timestamp: Date.now()});
+            reject(error);
           })
         }).catch((error) => {
           reject(error);
@@ -763,6 +884,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     break;
 
     default:
+    logger("error", "background", "Message received does not exist: " + msg.name, {timestamp: Date.now()});
     sendResponse({status: false, message: "Message received does not exist."});
     return true;
     break;
@@ -856,6 +978,21 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
             createNotification("new_message", "ReTorn: Travel Notification", "You have landed in "+newValue.travel.destination+".", {action: 'Open', title: newValue.travel.destination}, "https://www.torn.com/index.php");
           }
 
+          if (notifications.chain.enabled == true && newValue.chain.cooldown == 0 && newValue.chain.current >= 10) {
+            if (notifications.chain.alerts) {
+              if (notifications.chain.alerts.time) {
+                for (const [key, seconds] of Object.entries(notifications.chain.alerts.time)) {
+                  if (newValue.chain.timeout <= seconds && oldValue.chain.timeout >= seconds) {
+                    createNotification("chain", "ReTorn: Chain Alert", "The chain is about to drop in " + newValue.chain.timeout + " seconds!", {action: 'Open', title: "Chain"}, "https://www.torn.com/blacklist.php");
+                  }
+                };
+              }
+              if (notifications.chain.alerts.hit) {
+
+              }
+            }
+          }
+
         }
       }
 
@@ -937,6 +1074,7 @@ function checkNotifyBars(type, notifications, newValue, oldValue) {
 
 // Function for creating Notifications (Chrome/Firefox?)
 function createNotification(name, title, message, actions, openURL = "https://www.torn.com/") {
+  logger("notifications", "history", title, {title: title, message: message, timestamp: Date.now()});
   //if actions parameter is passed, add close button to end of action buttons, else default to single close button
   if (actions) {
     actions = [actions, { action: 'Close', title: 'Close' }]
@@ -985,3 +1123,7 @@ chrome.webRequest.onBeforeRequest.addListener(
   },
   {urls: ["https://www.torn.com/competition.php*"], types: ["image"]}
 );
+
+function objectStringify(object) {
+  return JSON.stringify(object).replaceAll(`":{"`, ` -> `).replaceAll(`:`, ` = `).replaceAll(`{`, ``).replaceAll(`}`, ``).replaceAll(`"`, ``).replaceAll(`,`, `, `);
+}
