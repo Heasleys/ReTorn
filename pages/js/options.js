@@ -384,7 +384,7 @@ function message(response, me, status) {
 
 
 function initNotificationTab(settings) {
-  const notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education", "travel"];
+  const notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education", "travel", "chain"];
   notifications.forEach((notif, i) => {
     var checkbox = $('div#general_notifications input#' + notif);
 
@@ -448,6 +448,12 @@ function initNotificationTab(settings) {
       textbox.focus(function() {
         $(this).data('prev', $(this).val());
       });
+    }
+
+    if (notif == "chain") {
+      console.log(settings.notifications.chain);
+      $("#chaintime_value").val(settings.notifications.chain.alerts.time);
+      $("#chainhits_value").val(settings.notifications.chain.alerts.hit);
     }
 
     checkbox.change(function() {

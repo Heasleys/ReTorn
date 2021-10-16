@@ -170,7 +170,7 @@
               </div>
             </article>
 
-            <article class="card" hidden>
+            <article class="card">
               <div class="card-content">
                 <h4 class="card_title">Chain Notifications:</h4>
 
@@ -178,19 +178,21 @@
                   <div class="switch-label">
                     <span tooltip="Notify when drug cooldown reaches zero" flow="right">Chain</span>
                   </div>
+                  <input type="text" id="chaintime_value" value="" style="width: 120px;">
                   <div class="switch-toggle">
-                    <input type="checkbox" id="chain">
-                    <label for="chain"></label>
+                    <input type="checkbox" id="chaintime">
+                    <label for="chaintime"></label>
                   </div>
                 </div>
 
                 <div class="switch-holder">
                   <div class="switch-label">
-                    <span tooltip="Notify when drug cooldown reaches zero" flow="right">Chain</span>
+                    <span tooltip="Notify when chain reaches value" flow="right">Chain Hits</span>
                   </div>
+                  <input type="text" id="chainhits_value" value="" style="width: 120px;">
                   <div class="switch-toggle">
-                    <input type="checkbox" id="chain">
-                    <label for="chain"></label>
+                    <input type="checkbox" id="chainhits">
+                    <label for="chainhits"></label>
                   </div>
                 </div>
 
