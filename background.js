@@ -192,7 +192,7 @@ function checkLogin() {
             let badgeNum = parseInt(data.notifications.events + data.notifications.messages).toString();
             chrome.action.setBadgeText({text: badgeNum});
           } else {
-            chrome.action.setBadgeText({text: NULL});
+            chrome.action.setBadgeText({text: ""});
           }
         }
       });
@@ -774,7 +774,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
             chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"});
             chrome.action.setBadgeText({text: badgeNum});
           } else {
-            chrome.action.setBadgeText({text: NULL});
+            chrome.action.setBadgeText({text: ""});
           }
 
           // MESSAGES
