@@ -95,7 +95,13 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
     });
 
   var target = document.querySelector('div.items-wrap');
-  observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+  if (target) {
+    observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+  } else {
+    console.log("Could not find items wrap.");
+    chrome.runtime.sendMessage({name: "set_logger", type: "error", subtype: "page", message: "Could not find items wrap on item.php.", log: {timestamp: Date.now()}});
+  }
+
 
 
 } //if captcha
