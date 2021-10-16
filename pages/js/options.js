@@ -384,7 +384,7 @@ function message(response, me, status) {
 
 
 function initNotificationTab(settings) {
-  const notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education", "travel", "chain"];
+  const notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education", "travel"];
   notifications.forEach((notif, i) => {
     var checkbox = $('div#general_notifications input#' + notif);
 
@@ -450,12 +450,6 @@ function initNotificationTab(settings) {
       });
     }
 
-    if (notif == "chain") {
-      console.log(settings.notifications.chain);
-      $("#chaintime_value").val(settings.notifications.chain.alerts.time);
-      $("#chainhits_value").val(settings.notifications.chain.alerts.hit);
-    }
-
     checkbox.change(function() {
       let value = $(this).val() == "false" ? true : false;
       chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {[notif]: {enabled: value}}}}, (response) => {
@@ -473,6 +467,50 @@ function initNotificationTab(settings) {
      });
 
   });
+
+
+
+
+
+  if (settings.notifications.chain) {
+    $("#chaintime_value").val(settings.notifications.chain.alerts.time);
+    $("#chainhit_value").val(settings.notifications.chain.alerts.hit);
+
+    if (settings.notifications.chain.hit) {
+      $('#chainhit').prop("checked", true);
+    } else {
+      $('#chainhit').prop("checked", false);
+    }
+
+    if (settings.notifications.chain.time) {
+      $('#chaintime').prop("checked", true);
+    } else {
+      $('#chaintime').prop("checked", false);
+    }
+
+    $('#chainhit, #chaintime').change(function() {
+      let id = $(this).attr('id').replace("chain", "");
+      let v = $(this).is(":checked");
+      chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"notifications": {"chain": {[id]: v}}}});
+    });
+
+    $('input#chainhit_value, input#chaintime_value').change(function() {
+      let id = $(this).attr('id').replace("chain", "").replace("_value", "");
+      let v = $(this).val();
+      alert(v);
+      if (v == "" || /(?!^)[\<\>]|[\%](?!$)|[^0-9\>\<\%]/.test(v)) {
+        alert("BAD", v);
+      } else {
+
+      }
+      //chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"notifications": {"chain": {"alerts": {[id]: v}}}}});
+    });
+
+    $('input#chainhit_value, input#chaintime_value').focus(function() {
+      $(this).select();
+      $(this).data('prev', $(this).val());
+    });
+  }
 }
 
 function initTornStatsTab(settings) {

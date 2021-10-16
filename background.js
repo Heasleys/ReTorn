@@ -257,7 +257,7 @@ function checkUpdate() {
     //checking chain notifications
     if (settings.notifications.chain == undefined) {
       console.log("ReTorn: Update found. Adding Chain Notification update.");
-      update_settings.re_settings.notifications.chain = {enabled: true,alerts: {time: "60,90,120",hit: "4975,9975,24975"}};
+      update_settings.re_settings.notifications.chain = {time: true, hit: false,alerts: {time: "60,90,120",hit: "4975,9975,24975"}};
       i++;
     }
 

@@ -176,7 +176,7 @@
 
                 <div class="switch-holder">
                   <div class="switch-label">
-                    <span tooltip="Notify when drug cooldown reaches zero" flow="right">Chain</span>
+                    <span tooltip="Notify when chain timer goes below value" flow="right">Chain Time</span>
                   </div>
                   <input type="text" id="chaintime_value" value="" style="width: 120px;">
                   <div class="switch-toggle">
@@ -189,10 +189,10 @@
                   <div class="switch-label">
                     <span tooltip="Notify when chain reaches value" flow="right">Chain Hits</span>
                   </div>
-                  <input type="text" id="chainhits_value" value="" style="width: 120px;">
+                  <input type="text" id="chainhit_value" value="" style="width: 120px;">
                   <div class="switch-toggle">
-                    <input type="checkbox" id="chainhits">
-                    <label for="chainhits"></label>
+                    <input type="checkbox" id="chainhit">
+                    <label for="chainhit"></label>
                   </div>
                 </div>
 
@@ -226,13 +226,15 @@
 
               <article class="card">
                 <div class="card-content">
-                  <h4>Chat Features:</h4>
+                  <h4 class="card_title">Chat Features:</h4>
                   <div class="switch_wrap">
                     <label tooltip="Enter UserID to highlight name in chat"  flow="right">User Highlight:</label>
                     <input type="checkbox" id="chatuserhighlight">
                   </div>
                   <div class="input_wrap" id="highlightUsers" style="display: none;">
                   </div>
+                </div>
+              </article>
 
                   <div class="switch_wrap">
                     <label tooltip="Add links to sidebar"  flow="right">Quick Links:</label>
