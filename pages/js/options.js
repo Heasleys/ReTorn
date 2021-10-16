@@ -213,6 +213,17 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
       }
     });
 
+
+  $("button#reset").click(function() {
+    // Full reset of ReTorn Settings
+      if (confirm('This will completely reset your settings and ReTorn data, including sync settings and local ReTorn storage. There is no going back from this. Are you sure you would like to fully reset ReTorn?')) {
+
+        chrome.runtime.sendMessage({name: "full_reset"});
+        location.reload();
+      }
+
+  });
+
 }); //Document.ready
 
 function chatUserHighlight(parent) {

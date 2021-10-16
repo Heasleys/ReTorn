@@ -36,6 +36,15 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
+// Delete all settings and restore to default
+function fullReset() {
+  chrome.storage.sync.clear();
+  chrome.storage.local.clear();
+
+  newInstall();
+  checkLogin();
+}
+
 
 function createAPIAlarm(minutes) {
   if (minutes == undefined) {
@@ -655,6 +664,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       }
     break;
 
+    case "full_reset":
+      fullReset();
+    break;
 
     case "set_api":
       if (msg.apikey != undefined) {
