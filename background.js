@@ -1,8 +1,6 @@
 chrome.runtime.onStartup.addListener(() => {
   checkLogin();
 });
-
-
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
     newInstall();
@@ -13,11 +11,11 @@ chrome.runtime.onInstalled.addListener((details) => {
     checkLogin();
   }
 });
-
 // if extension was enabled, verify user is logged in
 chrome.management.onEnabled.addListener((extensionInfo) => {
   checkLogin();
 });
+
 
 // Delete all settings and restore to default
 function fullReset() {
@@ -292,6 +290,7 @@ function checkUpdate() {
   });
 }
 
+
 // Chrome Alarm for pulling API data every 30 seconds
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name == "required_api") {
@@ -309,7 +308,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
-
+//function to create alarms
 function createAPIAlarm(minutes) {
   if (minutes == undefined) {
     minutes = 0.5;
@@ -322,8 +321,7 @@ function createAPIAlarm(minutes) {
   });
 }
 
-
-
+// Function for Validating APIKEY before storing in settings
 function validateAPIKEY(apikey) {
   return new Promise((resolve, reject) => {
     fetchAPI(apikey, 'user', 'basic,timestamp&comment=ReTorn').then((response) => {
@@ -339,6 +337,7 @@ function validateAPIKEY(apikey) {
   });
 }
 
+// Function for fetching API from Torn
 function fetchAPI(apikey, type, selection, id) {
   return new Promise((resolve, reject) => {
     if (selection == undefined) {
@@ -431,7 +430,7 @@ function fetchTSAPI(apikey, selection) {
   });
 }
 
-
+// Function for parsing the API data
 function parseAPI(data) {
   return new Promise((resolve, reject) => {
     if (data.error != undefined) {
@@ -714,6 +713,7 @@ function logger(type, subtype, message, log) {
   });
 }
 
+// Assist function for logger to shift logger objects
 function shiftObject(object) {
   const MAX = 100;
   return new Promise((resolve, reject) => {
@@ -738,6 +738,11 @@ function shiftObject(object) {
       resolve({object:object, keyCount: keyCount});
     }
   });
+}
+
+// Assist function for making logs more readable in settings menu
+function objectStringify(object) {
+  return JSON.stringify(object).replaceAll(`":{"`, ` -> `).replaceAll(`:`, ` = `).replaceAll(`{`, ``).replaceAll(`}`, ``).replaceAll(`"`, ``).replaceAll(`,`, `, `);
 }
 
 // Function for getting all Torn Item data and saving it to local storage
@@ -1000,7 +1005,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   }
 });
 
-// Notification Checking for Energy, Nerve, Life, and Happy
+// Assist Function for Notification Checking for Energy, Nerve, Life, and Happy
 function checkNotifyBars(type, notifications, newValue, oldValue) {
   let notify = false;
   let message = "Your "+type+" has reached it's value.";
@@ -1101,7 +1106,7 @@ self.addEventListener('notificationclick', function (event) {
 });
 
 
-/* Watch for Easter Egg Competition images being loaded */
+/* Watch for Easter Egg Competition images being loaded in WebRequest */
 chrome.webRequest.onBeforeRequest.addListener(
   function(details) {
         let datenow = new Date();
@@ -1123,7 +1128,3 @@ chrome.webRequest.onBeforeRequest.addListener(
   },
   {urls: ["https://www.torn.com/competition.php*"], types: ["image"]}
 );
-
-function objectStringify(object) {
-  return JSON.stringify(object).replaceAll(`":{"`, ` -> `).replaceAll(`:`, ` = `).replaceAll(`{`, ``).replaceAll(`}`, ``).replaceAll(`"`, ``).replaceAll(`,`, `, `);
-}
