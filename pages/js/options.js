@@ -498,19 +498,23 @@ function initNotificationTab(settings) {
     });
 
     $('input#chainhit_value, input#chaintime_value').change(function() {
-      let id = $(this).attr('id').replace("chain", "").replace("_value", "");
-      let v = $(this).val();
-      alert(v);
-      if (v == "" || /(?!^)[\<\>]|[\%](?!$)|[^0-9\>\<\%]/.test(v)) {
-        alert("BAD", v);
+      var input = $(this);
+      let id = input.attr('id').replace("chain", "").replace("_value", "");
+      let v = input.val();
+      if (v == "" || /[^0-9\,\s].*/.test(v)) {
+        input.val(input.data('prev'));
+        input.addClass('alerts-border');
+        setTimeout(
+            function() {   input.removeClass('alerts-border'); },
+            1750
+        );
       } else {
-
+        input.data('prev', v);
+        chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"notifications": {"chain": {"alerts": {[id]: v}}}}});
       }
-      //chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"notifications": {"chain": {"alerts": {[id]: v}}}}});
     });
 
     $('input#chainhit_value, input#chaintime_value').focus(function() {
-      $(this).select();
       $(this).data('prev', $(this).val());
     });
   }
