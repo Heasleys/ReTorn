@@ -33,7 +33,7 @@ function insertHeader(element, where, classes) {
     var header = `
     <div class="re_container `+classes+`">
       <div class="re_head">
-        <span class="re_title noselect">ReTorn: <span id="re_title"></span></span>
+        <span class="re_title noselect"><span class="re_logo"><span class="re_yellow">Re</span>Torn: </span><span id="re_title"></span></span>
           <div class="re_icon_wrap">
             <span class="re_icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>

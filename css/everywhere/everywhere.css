@@ -5,6 +5,17 @@
   --re-leftalign: auto;
 }
 
+.re_logo {
+  font-family: "impact", "Arial Black";
+  font-size: 15px;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+  text-shadow: rgb(0 0 0 / 95%) 0px 0px 4px;
+}
+.re_yellow {
+  color: #e0ce00;
+}
+
 /* Torn Left Align */
 .d .container {
   margin-left: var(--re-leftalign) !important;
