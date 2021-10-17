@@ -119,6 +119,8 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
         if (settings.header_color != undefined) {
           $('#header_color').val(settings.header_color);
           document.querySelector('#header_color').jscolor.fromString(settings.header_color);
+
+          $('.re_head').css("background-color", settings.header_color);
         }
 
         $('div#events input#eastereggs').val(settings.events["eastereggs"].enabled);
@@ -195,6 +197,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 
   $('#header_color').change(function() {
     let color = $(this).val();
+    $('.re_head').css("background-color", color);
     chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"header_color": color}}, (response) => {
     });
   });
