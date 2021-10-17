@@ -38,6 +38,10 @@ html.dark .progress_bars > a:hover, html.dark .wealth div:hover, html.dark .cool
     box-shadow: 0 0px 2px #ffffffee, inset 0 0px 1px #ffffffbb;
 }
 
+.progress_bars > a:active, .wealth div:active, .cooldowns a:active {
+  transform: translateY(2px);
+}
+
 .progressbar > span {
   display: block;
   height: 100%;
