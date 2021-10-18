@@ -30,42 +30,45 @@ function fullReset() {
 
 // Check if user has logged in with their API key
 function checkLogin() {
-  getValue("re_api_key", "sync").then((response) => {
-    getValue("re_user", "sync").then((res) => {
-      chrome.action.setPopup({popup: "pages/popup.html"});
-      chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"});
-      createAPIAlarm();
-      getValue("re_user_data", "local").then((response) => {
-        const data = response.re_user_data;
-        if (data.notifications.events != undefined && data.notifications.messages != undefined) {
-          if ((data.notifications.events + data.notifications.messages) > 0) {
-            let badgeNum = parseInt(data.notifications.events + data.notifications.messages).toString();
-            chrome.action.setBadgeText({text: badgeNum});
-          } else {
-            chrome.action.setBadgeText({text: ""});
-          }
-        }
-      }).catch((error) => {
-        console.log(error);
-      });
+  //check for apikey
+  getValue("re_api_key", "sync")
+  //then pull required api data
+  .then((api) => pullRequiredAPI(api.re_api_key))
+  //then check for user data
+  .then(() => getValue("re_user", "sync"))
+  //then set popup and alarms
+  .then((res) => {
+    chrome.action.setPopup({popup: "pages/popup.html"});
+    createAPIAlarm();
+    return getValue("re_user_data", "local");
+  })
+  //then set Badge if messages/events
+  .then((response) => {
+    chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"});
+    const data = response.re_user_data;
+    if (data.notifications.events != undefined && data.notifications.messages != undefined) {
+      if ((data.notifications.events + data.notifications.messages) > 0) {
+        let badgeNum = parseInt(data.notifications.events + data.notifications.messages).toString();
+        chrome.action.setBadgeText({text: badgeNum});
+      } else {
+        chrome.action.setBadgeText({text: ""});
+      }
+    }
+  })
+  //then check Torn Item data
+  .then(() => {
+    getValue("re_item_data", "local").then((res) => {
+      if ((Math.floor(Date.now() / 1000) - parseInt(res.re_item_data.timestamp)) > 86400) { //has items been updated in 1 day?
+        getItemsAPI();
+      }
     })
     .catch((error) => {
       console.log(error);
-    });
-    pullRequiredAPI(response.re_api_key);
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-
-  getValue("re_item_data", "local").then((res) => {
-    if ((Math.floor(Date.now() / 1000) - parseInt(res.re_item_data.timestamp)) > 86400) { //has items been updated in 1 day?
       getItemsAPI();
-    }
+    });
   })
   .catch((error) => {
     console.log(error);
-    getItemsAPI();
   });
 }
 
@@ -85,7 +88,7 @@ function newInstall() {
   getValue("re_settings").then((response) => {
 
   })
-  .catch((error) => {
+  .catch(async (error) => {
     let startup_settings = {
       re_settings: {
         darkmode: false,
@@ -144,7 +147,7 @@ function newInstall() {
             time: true,
             hit: false,
             alerts: {
-              time: "60,90,120",
+              time: "30,60,90,120",
               hit: "4975,9975,24975"
             }
           }
@@ -184,9 +187,12 @@ function newInstall() {
         }
       }
     }
+    await setValue(re_logs, "local")
+    setValue(startup_settings, "sync")
+    .catch((error) => {
+      console.log(error);
+    })
 
-    setValue(startup_settings, "sync").then((res) => {}).catch((error) => {console.log(error);})
-    setValue(re_logs, "local").then((res) => {}).catch((error) => {console.log(error);})
   })
 }
 
@@ -257,13 +263,7 @@ function checkUpdate() {
     //checking chain notifications
     if (settings.notifications.chain == undefined) {
       console.log("ReTorn: Update found. Adding Chain Notification update.");
-      update_settings.re_settings.notifications.chain = {time: true, hit: false,alerts: {time: "60,90,120",hit: "4975,9975,24975"}};
-      i++;
-    }
-
-    if (settings.notifications.chain == undefined) {
-      console.log("ReTorn: Update found. Adding Chain Notification update.");
-      update_settings.re_settings.notifications = {chain: {enabled: true,alerts: {time: {"1": 60,"2": 90,"3": 120},hit: {"1": 4975,"2": 9975,"3": 24975}}}};
+      update_settings.re_settings.notifications.chain = {time: true, hit: false,alerts: {time: "30,60,90,120",hit: "4975,9975,24975"}};
       i++;
     }
 
@@ -329,8 +329,10 @@ function createAPIAlarm(minutes) {
 // Function for Validating APIKEY before storing in settings
 function validateAPIKEY(apikey) {
   return new Promise((resolve, reject) => {
-    fetchAPI(apikey, 'user', 'basic,timestamp&comment=ReTorn').then((response) => {
-      logger("api", "torn", "Validating User", {type: "user", id: "", selection: "basic,timestamp&comment=ReTorn", timestamp: Date.now()});
+    fetchAPI(apikey, 'user', 'basic,timestamp&comment=ReTorn')
+    .then(async (response) => {
+      await logger("api", "torn", "Validating User", {type: "user", id: "", selection: "basic,timestamp&comment=ReTorn", timestamp: Date.now()});
+      setValue({"re_api_key": apikey});
       setValue({"re_user": {"name": response.name, "player_id": response.player_id}}, "sync");
       pullRequiredAPI(apikey);
       checkLogin();
@@ -436,9 +438,9 @@ function fetchTSAPI(apikey, selection) {
 
 // Function for parsing the API data
 function parseAPI(data) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     if (data.error != undefined) {
-      logger("error", "api", "Error parsing api data. Torn API Error code detected.", {code: data.error.code, error: data.error.error, timestamp: Date.now()});
+      await logger("error", "api", "Torn API Error code detected during parsing.", {code: data.error.code, error: data.error.error, timestamp: Date.now()});
       if (data.error.code == 2 || data.error.code == 10 || data.error.code == 13) { //key invalid, key owner is in federal jail, or key owner is inactive, then remove apikey
         logout();
       }
@@ -451,38 +453,27 @@ function parseAPI(data) {
 
 // Function for pulling the required API data
 function pullRequiredAPI(apikey) {
-  fetchAPI(apikey, 'user', 'bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn').then((data) => {
-    logger("api", "torn", "Required API", {type: "user", id: "", selection: "bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn", timestamp: Date.now()});
-    setValue({"re_user_data": data}, "local").then((res) => {
-      console.log(res);
-      chrome.runtime.sendMessage({name: "popup_data", data: data});
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  fetchAPI(apikey, 'user', 'bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn')
+  .then(async (data) => {
+    await logger("api", "torn", "Required API", {type: "user", id: "", selection: "bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn", timestamp: Date.now()});
+    chrome.runtime.sendMessage({name: "popup_data", data: data});
+    setValue({"re_user_data": data}, "local")
   })
   .catch((error) => {
     console.log(error);
-  });
+  })
 }
 
 
 // Function for integrating Torn Stats features into ReTorn
 function integrateTornStats() {
   return new Promise((resolve, reject) => {
-    getValue("re_api_key").then((response) => {
-      fetchTSAPI(response.re_api_key, "").then((res) => {
-        logger("api", "tornstats", "Integrate Torn Stats", {status: res.status, message: res.message, selection: "", timestamp: Date.now()});
-        setValue({"re_settings": {"tornstats": true}}).then(() => {
-          resolve(res);
-        })
-        .catch((error) => {
-          reject(error);
-        })
-      })
-      .catch((error) => {
-        reject(error);
-      })
+    getValue("re_api_key")
+    .then((response) => fetchTSAPI(response.re_api_key, ""))
+    .then(async (res) => {
+      await logger("api", "tornstats", "Integrate Torn Stats", {status: res.status, message: res.message, selection: "", timestamp: Date.now()});
+      setValue({"re_settings": {"tornstats": true}});
+      resolve(res);
     })
     .catch((error) => {
       console.log(error);
@@ -493,22 +484,20 @@ function integrateTornStats() {
 
 // function for saving data to storage locations
 function setValue(value, type) {
-  var keys = Object.keys(value);
   return new Promise((resolve, reject) => {
+    var keys = Object.keys(value);
     if (type == undefined) {
       type = "sync";
     }
-    if (type == "sync") {
-      chrome.storage.sync.get([keys[0]], (response) => {
-        var merged = {};
+    if (type == "sync" || type == "local") {
+      chrome.storage[type].get([keys[0]], async (response) => {
+        let merged = {};
         if (Object.keys(response).length != 0 && response.constructor === Object) {
           merged = merge(response, value);
         } else {
           merged = value;
         }
-        console.log("Merged me", merged);
-
-        chrome.storage.sync.set(merged, () => {
+        await chrome.storage[type].set(merged, (response) => {
           if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError.message);
             reject({status: false, message: chrome.runtime.lastError.message});
@@ -516,56 +505,34 @@ function setValue(value, type) {
             resolve({status: true, message: "Value: " + keys[0] + " has been set."});
           }
         });
-      });
+      })
+    } else {
+      reject({status: false, message: "Type not sync or local when setting value.", value: value});
     }
-    if (type == "local") {
-      chrome.storage.local.set(value, () => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError.message);
-          reject({status: false, message: chrome.runtime.lastError.message});
-        } else {
-          resolve({status: true, message: "Value: " + keys[0] + " has been set."});
-        }
-      });
-    }
-  });
+  })
 }
 
 // function for pulling data from storage locations
 function getValue(value, type) {
-  if (type == undefined) {
-    type = "sync";
-  }
+  console.log("GET VALUE", value, type);
   return new Promise((resolve, reject) => {
-    if (type == "sync") {
-      chrome.storage.sync.get([value], (response) => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError.message);
-          logger("error", "background", "Chrome Runtime Error while getting storage: " + chrome.runtime.lastError.message, {timestamp: Date.now()});
-          reject({status: false, message: chrome.runtime.lastError.message});
-        } else {
-          if (Object.keys(response).length === 0 && response.constructor === Object) {
-            logger("error", "background", "Could not find value in storage. Value: " + value, {timestamp: Date.now()});
-            reject({status: false, message: "Could not find value in storage.", value: value});
-          }
-          resolve(response);
-        }
-      });
+    if (type == undefined) {
+      type = "sync";
     }
-    if (type == "local") {
-      chrome.storage.local.get([value], (response) => {
+    if (type == "sync" || type == "local") {
+      chrome.storage[type].get([value], async (response) => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
-          logger("error", "background", "Chrome Runtime Error while getting local storage: " + chrome.runtime.lastError.message, {timestamp: Date.now()});
           reject({status: false, message: chrome.runtime.lastError.message});
-        } else {
-          if (Object.keys(response).length === 0 && response.constructor === Object) {
-            logger("error", "background", "Could not find value in local storage. Value: " + value, {timestamp: Date.now()});
-            reject({status: false, message: "Could not find value in storage.", value: value});
-          }
-          resolve(response);
         }
+        if (Object.keys(response).length === 0 && response.constructor === Object) {
+          await logger("error", "background", "Could not find value in "+type+" storage. Value: " + value, {timestamp: Date.now()});
+          reject({status: false, message: "Could not find value in storage.", value: value});
+        }
+        resolve(response);
       });
+    } else {
+      reject({status: false, message: "Type not sync or local when getting value.", value: value})
     }
   });
 }
@@ -577,14 +544,14 @@ function delValue(value, key, type) {
   }
   return new Promise((resolve, reject) => {
     if (type == "sync") {
-      chrome.storage.sync.get([value], (response) => {
+      chrome.storage.sync.get([value], async (response) => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
-          logger("error", "background", "Chrome Runtime Error while getting storage for deletion: " + chrome.runtime.lastError.message, {timestamp: Date.now()});
+          await logger("error", "background", "Chrome Runtime Error while getting storage for deletion: " + chrome.runtime.lastError.message, {timestamp: Date.now()});
           reject({status: false, message: chrome.runtime.lastError.message});
         } else {
           if (Object.keys(response).length === 0 && response.constructor === Object) {
-            logger("error", "background", "Could not find value in storage. Value: " + value, {timestamp: Date.now()});
+            await logger("error", "background", "Could not find value in storage. Value: " + value, {timestamp: Date.now()});
             reject({status: false, message: "Could not find value in storage.", value: value});
           }
           console.log("Delete Value: ", value);
@@ -617,13 +584,13 @@ function delValue(value, key, type) {
             });
           }
 
-          chrome.storage.sync.set(response, () => {
+          chrome.storage.sync.set(response, async () => {
             if (chrome.runtime.lastError) {
               console.error(chrome.runtime.lastError.message);
-              logger("error", "background", "Chrome Runtime Error while deleting value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
+              await logger("error", "background", "Chrome Runtime Error while deleting value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
               reject({status: false, message: chrome.runtime.lastError.message});
             } else {
-              logger("data", "deleted", key + " has been deleted from " + value + " storage.", {data: key, timestamp: Date.now()});
+              await logger("data", "deleted", key + " has been deleted from " + value + " storage.", {data: key, timestamp: Date.now()});
               resolve({status: true, message: "Value: " + key + " has been deleted."});
             }
           });
@@ -637,33 +604,20 @@ function delValue(value, key, type) {
 // Function for removing values from storage (complete destruction of value)
 function removeValue(value, type) {
   return new Promise((resolve, reject) => {
-
-    if (type == "sync") {
-      chrome.storage.sync.remove(value, () => {
+    if (type == "sync" || type == "local") {
+      chrome.storage[type].remove(value, async () => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
-          logger("error", "background", "Chrome Runtime Error while deleting value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
+          await logger("error", "background", "Chrome Runtime Error while deleting "+type+" value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
           reject({status: false, message: chrome.runtime.lastError.message});
         } else {
-          logger("data", "deleted", value + " has been deleted from " + type + " storage.", {data: value, timestamp: Date.now()});
-          resolve({status: true, message: "Sync Value: " + value + " has been removed."});
+          await logger("data", "deleted", value + " has been deleted from " + type + " storage.", {data: value, timestamp: Date.now()});
+          resolve({status: true, message: type+" value: " + value + " has been removed."});
         }
       });
+    } else {
+      reject({status: false, message: "Type not sync or local when removing value.", value: value})
     }
-
-    if (type == "local") {
-      chrome.storage.local.remove(value, () => {
-        if (chrome.runtime.lastError) {
-          logger("error", "background", "Chrome Runtime Error while deleting value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
-          console.error(chrome.runtime.lastError.message);
-          reject({status: false, message: chrome.runtime.lastError.message});
-        } else {
-          logger("data", "deleted", value + " has been deleted from " + type + " storage.", {data: value, timestamp: Date.now()});
-          resolve({status: true, message: "Local Value: " + value + " has been removed."});
-        }
-      });
-    }
-
   });
 }
 
@@ -679,73 +633,77 @@ function merge(a, b) {
 }
 
 // Function for adding logs to log data
-function logger(type, subtype, message, log) {
-  getValue("re_logs", "local").then((response) => {
-    //create new log base
-    let new_log = {re_logs: {}}
-    new_log.re_logs[type] = {};
-    new_log.re_logs[type][subtype] = {};
+async function logger(type, subtype, message, log) {
+    await getValue("re_logs", "local")
 
-    //check if re_logs has type and subtype, if not, add them
-    if (response.re_logs[type] == 'undefined') {
-      console.log(response)
-      response.relogs[type] = {};
-      response.relogs[type][subtype] = {};
-    }
-    if (response.re_logs[type][subtype] == 'undefined') {
-      console.log(response)
-      response.relogs[type][subtype] = {};
-    }
-
-    //check if logs need shifted (max of 100 per subtype);
-    shiftObject(response.re_logs[type][subtype]).then((shift) => {
-      response.re_logs[type][subtype] = shift.object;
-      new_log.re_logs[type][subtype][shift.keyCount] = {log, message: message}
-
-
-      merged = merge(response, new_log);
-      if (merged) {
-        setValue(merged, "local").then(() => {
-        })
-        .catch((error) => {
-          console.log("Logger Error:", error);
-        });
+    .then(async (response) => {
+      //check if re_logs has type and subtype, if not, add them
+      if (response.re_logs[type] == 'undefined') {
+        console.log(response)
+        response.relogs[type] = {};
+        response.relogs[type][subtype] = {};
+      }
+      if (response.re_logs[type][subtype] == 'undefined') {
+        console.log(response)
+        response.relogs[type][subtype] = {};
       }
 
-      chrome.runtime.sendMessage({name: "log"});
-    }).catch((error) => {
-      console.log(error);
+      //check if logs need shifted (max of 100 per subtype);
+        let key = await shiftObject(response.re_logs[type][subtype]);
+        //create new log base
+        let new_log = {re_logs: {}}
+        new_log.re_logs[type] = {};
+        new_log.re_logs[type][subtype] = {};
+
+
+
+        await getValue("re_logs", "local")
+        .then(async (res) => {
+          let keyCount2 = Object.keys(res.re_logs[type][subtype]).length; //Get length of object
+          console.log("await", res.re_logs[type][subtype], keyCount2);
+          new_log.re_logs[type][subtype][keyCount2] = {log, message: message}
+
+          await setValue(new_log, "local")
+          .then(() => {
+            chrome.runtime.sendMessage({name: "log"});
+          })
+          .catch((error) => {
+            console.log("Logger Error:", error);
+          });
+        })
+
     })
-  }).catch((error) => {
-    console.log(error);
-  });
+
+    .catch((error) => {
+      console.log(error);
+    });
+
 }
 
 // Assist function for logger to shift logger objects
-function shiftObject(object) {
+async function shiftObject(object) {
   const MAX = 100;
-  return new Promise((resolve, reject) => {
-    if (object == null) {
-      resolve({object:object, keyCount: keyCount});
-    }
-    let keyCount = Object.keys(object).length; //Get length of object
-    //Only keep last 100 entries
-    if (keyCount >= MAX) {
-      for (const [key, value] of Object.entries(object)) {
-        let nextkey = parseInt(key)+1;
-        if (object[nextkey]) {
-          object[key] = object[nextkey];
-        } else{
-          if (nextkey == keyCount) {
-            delete object[key];
-          }
+  if (object == null) {
+    return 0;
+  }
+  let keyCount = Object.keys(object).length; //Get length of object
+  //Only keep last 100 entries
+  if (keyCount >= MAX) {
+    for (const [key, value] of Object.entries(object)) {
+      let nextkey = parseInt(key)+1;
+      if (object[nextkey]) {
+        object[key] = object[nextkey];
+      } else{
+        if (nextkey == keyCount) {
+          delete object[key];
         }
-      };
-      resolve({object:object, keyCount: (MAX-1)});
-    } else {
-      resolve({object:object, keyCount: keyCount});
-    }
-  });
+      }
+    };
+    let response = await setValue(object, "local");
+    return (MAX-1);
+  } else {
+    return keyCount;
+  }
 }
 
 // Assist function for making logs more readable in settings menu
@@ -755,24 +713,25 @@ function objectStringify(object) {
 
 // Function for getting all Torn Item data and saving it to local storage
 function getItemsAPI() {
-  getValue("re_api_key").then((response) => {
-    fetchAPI(response.re_api_key, 'torn', 'items,timestamp&comment=ReTorn').then((data) => { //API key is available, so get a fresh new list of Torn items from the API
-      logger("api", "torn", "Torn item data", {type: "torn", id: "", selection: "items,timestamp&comment=ReTorn", timestamp: Date.now()});
-      setValue({"re_item_data": data}, "local");
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  getValue("re_api_key")
+  //API key is available, so get a fresh new list of Torn items from the API
+  .then((response) => fetchAPI(response.re_api_key, 'torn', 'items,timestamp&comment=ReTorn'))
+  .then(async (data) => {
+    await logger("api", "torn", "Torn item data", {type: "torn", id: "", selection: "items,timestamp&comment=ReTorn", timestamp: Date.now()});
+    return data;
   })
+  .then((data) => setValue({"re_item_data": data}, "local"))
   .catch((error) => {
-    const url = chrome.runtime.getURL('/files/items.json'); //API key hasn't been set yet, so get old list of Torn items from file
+    console.error(error);
+    const url = chrome.runtime.getURL('/files/items.json');
+    //API key hasn't been set yet, so get old list of Torn items from file
     fetch(url).then((response) => response.json()).then((json) => setValue({"re_item_data": json}, "local"));
   });
 }
 
 // Listen for sent browser messages
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-
+  console.log("MESSAGE RECIEVED BY BACKGROUND:",msg.name, msg);
   switch (msg.name) {
     case "open_options":
       if (chrome.runtime.openOptionsPage) {
@@ -789,15 +748,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
     case "set_api":
       if (msg.apikey != undefined) {
-        validateAPIKEY(msg.apikey).then(() => {
-          setValue({"re_api_key": msg.apikey}).then(() => {
-            chrome.action.setPopup({popup: "pages/popup.html"});
-            sendResponse({status: true, message: "Your apikey has been saved."});
-            checkLogin();
-          })
-          .catch((error) => {
-            sendResponse(error);
-          });
+        validateAPIKEY(msg.apikey)
+        .then(() => {
+          checkLogin();
+          chrome.action.setPopup({popup: "pages/popup.html"});
+          sendResponse({status: true, message: "Your apikey has been saved."});
         })
         .catch((error) => {
           sendResponse(error);
@@ -838,12 +793,15 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
     case "set_value":
       if (msg.value_name != undefined && msg.value != undefined) {
-        setValue({[msg.value_name]: msg.value}, msg.type).then((response) => {
-          if (typeof msg.type == "undefined" || msg.type == "sync") {
-            logger("data", "set", objectStringify(msg.value) + " has been set in " + msg.value_name + ".", {data: msg.value, timestamp: Date.now()});
+        if (msg.type == undefined) {
+          msg.type = "sync";
+        }
+        setValue({[msg.value_name]: msg.value}, msg.type).then(async (response) => {
+          if (msg.type == "sync") {
+            await logger("data", "set", objectStringify(msg.value) + " has been set in " + msg.value_name + ".", {data: msg.value, timestamp: Date.now()});
           }
-          if (typeof msg.type != "undefined" && msg.type == "local") {
-            logger("data", "set_local", objectStringify(msg.value) + " has been set in " + msg.value_name + ".", {data: msg.value, timestamp: Date.now()});
+          if (msg.type != undefined && msg.type == "local") {
+            await logger("data", "set_local", objectStringify(msg.value) + " has been set in " + msg.value_name + ".", {data: msg.value, timestamp: Date.now()});
           }
           sendResponse(response);
         })
@@ -857,7 +815,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
     case "logout":
       logout();
-      sendResponse({status: true, value: "Logout success."});
+      sendResponse({status: true, value: "Logout successful."});
       return true;
     break;
 
@@ -880,14 +838,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     break;
 
     case "pull_tornstats":
-      console.log("PULL TORNSTATS", msg);
       if (msg.selection != undefined) {
         getValue("re_api_key").then((response) => {
-          fetchTSAPI(response.re_api_key, msg.selection).then((res) => {
-            logger("api", "tornstats", "Torn Stats API", {status: res.status, message: res.message, selection: msg.selection, timestamp: Date.now()});
+          fetchTSAPI(response.re_api_key, msg.selection).then(async (res) => {
+            await logger("api", "tornstats", "Torn Stats API", {status: res.status, message: res.message, selection: msg.selection, timestamp: Date.now()});
             sendResponse(res);
-          }).catch((error) => {
-            logger("api", "tornstats", "Torn Stats API Error", {status: error.status, message: error.message, selection: msg.selection, timestamp: Date.now()});
+          }).catch(async (error) => {
+            await logger("api", "tornstats", "Torn Stats API Error", {status: error.status, message: error.message, selection: msg.selection, timestamp: Date.now()});
             reject(error);
           })
         }).catch((error) => {
@@ -909,10 +866,10 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 // On changes to Storage, check for differences in data for notifications
-chrome.storage.onChanged.addListener((changes, areaName) => {
+chrome.storage.onChanged.addListener(async (changes, areaName) => {
   console.log({changes: changes, areaName: areaName});
   if (changes.re_user_data != undefined) {
-    getValue("re_settings").then((response) => {
+    getValue("re_settings").then(async (response) => {
       var notifications = response.re_settings.notifications;
       if (notifications != undefined && notifications.notifications.enabled == true) {
         let newValue = changes.re_user_data.newValue;
@@ -929,34 +886,37 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 
           // MESSAGES
           if (notifications.messages.enabled == true && newValue.notifications.messages != oldValue.notifications.messages && newValue.notifications.messages != 0) {
-            createNotification("new_message", "ReTorn: New Message", "You have " + newValue.notifications.messages + " new messages.", {action: 'Open', title: "View Messages"}, "https://www.torn.com/messages.php");
+            await createNotification("new_message", "ReTorn: New Message", "You have " + newValue.notifications.messages + " new messages.", {action: 'Open', title: "View Messages"}, "https://www.torn.com/messages.php");
           }
 
           // EVENTS
           if (notifications.events.enabled == true && newValue.notifications.events != oldValue.notifications.events && newValue.notifications.events != 0) {
-            createNotification("new_event", "ReTorn: New Event", "You have " + newValue.notifications.events + " new events.", {action: 'Open', title: "View Events"}, "https://www.torn.com/events.php");
+            await createNotification("new_event", "ReTorn: New Event", "You have " + newValue.notifications.events + " new events.", {action: 'Open', title: "View Events"}, "https://www.torn.com/events.php");
           }
 
           // COOLDOWNS - DRUGS
           if (notifications.drugs.enabled == true && oldValue.cooldowns.drug != 0 && newValue.cooldowns.drug == 0) {
-            createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#drugs-items");
+           await createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#drugs-items");
           }
 
           // COOLDOWNS - BOOSTERS
           if (notifications.boosters.enabled == true && oldValue.cooldowns.booster != 0 && newValue.cooldowns.booster == 0) {
-            createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#boosters-items");
+            await createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#boosters-items");
           }
 
           // COOLDOWNS - MEDICAL
           if (notifications.medical.enabled == true && oldValue.cooldowns.medical != 0 && newValue.cooldowns.medical == 0) {
-            createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#medical-items");
+            await createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#medical-items");
           }
 
           // ENERGY
           if (notifications.energy.enabled == true && newValue.energy.current != oldValue.energy.current) {
             let data = checkNotifyBars('energy', notifications, newValue, oldValue);
             if (data.notify == true) {
-              createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Visit Gym"}, "https://www.torn.com/gym.php");
+              console.log("ENERGY PROMISE");
+
+              await createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Visit Gym"}, "https://www.torn.com/gym.php");
+
             }
           }
 
@@ -964,7 +924,9 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
           if (notifications.nerve.enabled == true && newValue.nerve.current != oldValue.nerve.current) {
             let data = checkNotifyBars('nerve', notifications, newValue, oldValue);
             if (data.notify == true) {
-              createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Commit Crimes"}, "https://www.torn.com/crimes.php");
+              console.log("NERVE PROMISE");
+
+              await createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Commit Crimes"}, "https://www.torn.com/crimes.php");
             }
           }
 
@@ -972,7 +934,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
           if (notifications.happy.enabled == true && newValue.happy.current != oldValue.happy.current) {
             let data = checkNotifyBars('happy', notifications, newValue, oldValue);
             if (data.notify == true) {
-              createNotification("happy", "ReTorn: Happy", data.message, {action: 'Open', title: "Get Happy"}, "https://www.torn.com/item.php#candy-items");
+              await createNotification("happy", "ReTorn: Happy", data.message, {action: 'Open', title: "Get Happy"}, "https://www.torn.com/item.php#candy-items");
             }
           }
 
@@ -980,35 +942,48 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
           if (notifications.life.enabled == true && newValue.life.current != oldValue.life.current) {
             let data = checkNotifyBars('life', notifications, newValue, oldValue);
             if (data.notify == true) {
-              createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "Get a Life"}, "https://www.torn.com/item.php#medical-items");
+              await createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "Get a Life"}, "https://www.torn.com/item.php#medical-items");
             }
           }
 
           // EDUCATION
           if (notifications.education.enabled == true && oldValue.education_current != 0 && newValue.education_current == 0) {
-              createNotification("education", "ReTorn: Education", "Your education course has complete.", {action: 'Open', title: "Get Knowledge"}, "https://www.torn.com/education.php");
+              await createNotification("education", "ReTorn: Education", "Your education course has complete.", {action: 'Open', title: "Get Knowledge"}, "https://www.torn.com/education.php");
           }
 
           // TRAVEL
           if (notifications.travel.enabled == true && newValue.travel.time_left == 0 && newValue.travel.time_left != oldValue.travel.time_left) {
-            createNotification("new_message", "ReTorn: Travel Notification", "You have landed in "+newValue.travel.destination+".", {action: 'Open', title: newValue.travel.destination}, "https://www.torn.com/index.php");
+            await createNotification("new_message", "ReTorn: Travel Notification", "You have landed in "+newValue.travel.destination+".", {action: 'Open', title: newValue.travel.destination}, "https://www.torn.com/index.php");
           }
 
-          if (notifications.chain.enabled == true && newValue.chain.cooldown == 0 && newValue.chain.current >= 10) {
-            if (notifications.chain.alerts) {
-              if (notifications.chain.alerts.time) {
-                for (const [key, seconds] of Object.entries(notifications.chain.alerts.time)) {
+          // CHAINS
+          if (notifications.chain != undefined && newValue.chain.cooldown == 0 && newValue.chain.current >= 10) {
+            if (notifications.chain.alerts != undefined) {
+              // Notifications for chain time
+              if (notifications.chain.time != undefined && notifications.chain.time == true && notifications.chain.alerts.time != undefined && notifications.chain.alerts.time != "") {
+                let timeStr = notifications.chain.alerts.time;
+                timeStr = timeStr.replace(/ /g, '');
+                let times = timeStr.split(',');
+                times.forEach(async (seconds) => {
                   if (newValue.chain.timeout <= seconds && oldValue.chain.timeout >= seconds) {
-                    createNotification("chain", "ReTorn: Chain Alert", "The chain is about to drop in " + newValue.chain.timeout + " seconds!", {action: 'Open', title: "Chain"}, "https://www.torn.com/blacklist.php");
+                    await createNotification("chain_time_"+seconds, "ReTorn: Chain Alert", "The chain will drop in " + newValue.chain.timeout + " seconds!", {action: 'Open', title: "Enemy List"}, "https://www.torn.com/blacklist.php");
                   }
-                };
+                });
               }
-              if (notifications.chain.alerts.hit) {
 
+              // Notifications for chain total hits
+              if (notifications.chain.hit != undefined && notifications.chain.hit == true && notifications.chain.alerts.hit != undefined && notifications.chain.alerts.hit != "") {
+                let hitStr = notifications.chain.alerts.hit;
+                hitStr = hitStr.replace(/ /g, '');
+                let hits = hitStr.split(',');
+                hits.forEach(async (hit) => {
+                  if (newValue.chain.current >= hit && oldValue.chain.current < hit) {
+                    await createNotification("chain_hit_"+hit, "ReTorn: Chain Alert", "The chain has reached " + newValue.chain.current + " hits.", {action: 'Open', title: "Chain"}, "https://www.torn.com/factions.php?step=your#/war/chain");
+                  }
+                });
               }
             }
-          }
-
+          } // Chain
         }
       }
 
@@ -1027,8 +1002,6 @@ function checkNotifyBars(type, notifications, newValue, oldValue) {
   let perc = Math.floor(parseFloat(num) * 100) / 100;
   let eperc = Math.floor((newValue[type].current/newValue[type].maximum) * 100);
   let epercOld = Math.floor((oldValue[type].current/oldValue[type].maximum) * 100);
-
-  console.log(eperc, perc, num, value);
 
   // LESS THAN
   if (value.includes("<")) {
@@ -1088,24 +1061,26 @@ function checkNotifyBars(type, notifications, newValue, oldValue) {
   return data;
 }
 
-// Function for creating Notifications (Chrome/Firefox?)
-function createNotification(name, title, message, actions, openURL = "https://www.torn.com/") {
-  logger("notifications", "history", title, {title: title, message: message, timestamp: Date.now()});
-  //if actions parameter is passed, add close button to end of action buttons, else default to single close button
-  if (actions) {
-    actions = [actions, { action: 'Close', title: 'Close' }]
-  } else {
-    actions = [{ action: 'Close', title: 'Close' }]
-  }
 
-  registration.showNotification(title, {
-    body: message,
-    data: {name: name, url: openURL},
-    icon: '/images/ReTorn@Default.png',
-    badge: '/images/ReTorn@96px.png',
-    message,
-    actions: actions
-  })
+// Function for creating Notifications (Chrome/Firefox?)
+async function createNotification(name, title, message, actions, openURL = "https://www.torn.com/") {
+    await logger("notifications", "history", title, {title: title, message: message, timestamp: Date.now()});
+
+    //if actions parameter is passed, add close button to end of action buttons, else default to single close button
+    if (actions) {
+      actions = [actions, { action: 'Close', title: 'Close' }]
+    } else {
+      actions = [{ action: 'Close', title: 'Close' }]
+    }
+
+    registration.showNotification(title, {
+      body: message,
+      data: {name: name, url: openURL},
+      icon: '/images/ReTorn@Default.png',
+      badge: '/images/ReTorn@96px.png',
+      message,
+      actions: actions
+    });
 }
 
 // Event Listener for Notification Button Clicks
@@ -1122,21 +1097,21 @@ chrome.webRequest.onBeforeRequest.addListener(
   function(details) {
         let datenow = new Date();
         if (datenow.getMonth() == 3) { //Only trigger Egg events if it is April
-          getValue("re_settings", "sync").then((response) => {
+          getValue("re_settings", "sync").then(async (response) => {
             if (response.re_settings != undefined) {
               var settings = response.re_settings;
               if (settings.notifications.notifications && settings.notifications.notifications.enabled && settings.notifications.notifications.enabled == true) {
                 if (settings.events.eastereggs && settings.events.eastereggs.enabled && settings.events.eastereggs.enabled == true) {
                   console.log(details);
                   if (details.url && details.url.includes("step=eggImage") && details.url.includes("c=EasterEggs") && details.url.includes("access_token=")) {
-                    createNotification("egg", "ReTorn: Egg Alert", "Egg detected on the page, look around. It could be fake!");
+                    await createNotification("egg", "ReTorn: Egg Alert", "Egg detected on the page, look around. It could be fake!");
                   }
                 }
               }
             }
-          }).catch((error) => {
+          }).catch(async (error) => {
             console.log(error);
-            logger("error", "background", "There was a problem getting settings for Easter Egg Alerts. "+ error, {timestamp: Date.now()});
+            await logger("error", "background", "There was a problem getting settings for Easter Egg Alerts. "+ error, {timestamp: Date.now()});
           });
         }
   },
