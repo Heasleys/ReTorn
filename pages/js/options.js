@@ -1,11 +1,5 @@
 $(document).ready(function() {
 
-chrome.runtime.sendMessage({name: "get_value", value: "re_user"}, (response) => {
-  if (response.status == true) {
-    const user = response.value.re_user;
-  }
-});
-
 chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
   if (response.status == true) {
     const settings = response.value.re_settings;
@@ -254,7 +248,9 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
       if (confirm('This will completely reset your settings and ReTorn data, including sync settings and local ReTorn storage. There is no going back from this. Are you sure you would like to fully reset ReTorn?')) {
 
         chrome.runtime.sendMessage({name: "full_reset"});
-        location.reload();
+        setTimeout(function(){
+           window.location.reload();
+        }, 50);
       }
 
   });
@@ -295,14 +291,9 @@ function initChatUserHighlights() {
           <input type="button" class="addChatUserHighlight" value="+">
           </div>`);
       } else {
-        if (typeof user !== 'undefined' && user.player_id) {
-          var u = user.player_id;
-        } else {
-          var u = "";
-        }
         $('#highlightUsers').html(`<div>
           <input type="checkbox">
-          <input type="text" class="numOnly" value="`+u+`">
+          <input type="text" class="numOnly" value="">
           <input type="color" value="#E0CE00">
           <input type="button" class="addChatUserHighlight" value="+">
           </div>`);
