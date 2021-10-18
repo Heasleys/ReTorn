@@ -85,10 +85,6 @@ function logout() {
 
 // New Installation function for setting default settings
 function newInstall() {
-  getValue("re_settings").then((response) => {
-
-  })
-  .catch(async (error) => {
     let startup_settings = {
       re_settings: {
         darkmode: false,
@@ -187,13 +183,11 @@ function newInstall() {
         }
       }
     }
-    await setValue(re_logs, "local")
+    setValue(re_logs, "local")
     setValue(startup_settings, "sync")
     .catch((error) => {
       console.log(error);
     })
-
-  })
 }
 
 // Function for updating ReTorn settings in case user has older extension version
@@ -514,7 +508,6 @@ function setValue(value, type) {
 
 // function for pulling data from storage locations
 function getValue(value, type) {
-  console.log("GET VALUE", value, type);
   return new Promise((resolve, reject) => {
     if (type == undefined) {
       type = "sync";
@@ -554,8 +547,6 @@ function delValue(value, key, type) {
             await logger("error", "background", "Could not find value in storage. Value: " + value, {timestamp: Date.now()});
             reject({status: false, message: "Could not find value in storage.", value: value});
           }
-          console.log("Delete Value: ", value);
-          console.log(response);
 
           // Deleting Quick Crime Storage
           if (value == "re_qcrimes") {
@@ -635,16 +626,13 @@ function merge(a, b) {
 // Function for adding logs to log data
 async function logger(type, subtype, message, log) {
     await getValue("re_logs", "local")
-
     .then(async (response) => {
       //check if re_logs has type and subtype, if not, add them
       if (response.re_logs[type] == 'undefined') {
-        console.log(response)
         response.relogs[type] = {};
         response.relogs[type][subtype] = {};
       }
       if (response.re_logs[type][subtype] == 'undefined') {
-        console.log(response)
         response.relogs[type][subtype] = {};
       }
 
@@ -660,7 +648,6 @@ async function logger(type, subtype, message, log) {
         await getValue("re_logs", "local")
         .then(async (res) => {
           let keyCount2 = Object.keys(res.re_logs[type][subtype]).length; //Get length of object
-          console.log("await", res.re_logs[type][subtype], keyCount2);
           new_log.re_logs[type][subtype][keyCount2] = {log, message: message}
 
           await setValue(new_log, "local")
@@ -731,11 +718,9 @@ function getItemsAPI() {
 
 // Listen for sent browser messages
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  console.log("MESSAGE RECIEVED BY BACKGROUND:",msg.name, msg);
   switch (msg.name) {
     case "open_options":
       if (chrome.runtime.openOptionsPage) {
-        console.log("Open Options Page");
         chrome.runtime.openOptionsPage();
       } else {
         window.open(chrome.runtime.getURL('/pages/options.html'));
@@ -780,7 +765,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     case "del_value":
       if (msg.value != undefined && msg.key != undefined) {
         delValue(msg.value, msg.key, msg.type).then((response) => {
-          console.log(response);
           sendResponse({status: true, value: response});
         })
         .catch((error) => {
@@ -913,10 +897,7 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
           if (notifications.energy.enabled == true && newValue.energy.current != oldValue.energy.current) {
             let data = checkNotifyBars('energy', notifications, newValue, oldValue);
             if (data.notify == true) {
-              console.log("ENERGY PROMISE");
-
               await createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Visit Gym"}, "https://www.torn.com/gym.php");
-
             }
           }
 
@@ -924,8 +905,6 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
           if (notifications.nerve.enabled == true && newValue.nerve.current != oldValue.nerve.current) {
             let data = checkNotifyBars('nerve', notifications, newValue, oldValue);
             if (data.notify == true) {
-              console.log("NERVE PROMISE");
-
               await createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Commit Crimes"}, "https://www.torn.com/crimes.php");
             }
           }
