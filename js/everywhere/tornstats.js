@@ -2,7 +2,9 @@
 
   const tsobserver = new MutationObserver(function(mutations) {
     if ($('#mainContainer').length != 0) {
-      checkTornStatsCache();
+      if (settings && settings.tornstats != undefined && settings.tornstats == true) {
+        checkTornStatsCache();
+      }
       tsobserver.disconnect();
     }
   });
