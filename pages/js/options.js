@@ -250,7 +250,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
         chrome.runtime.sendMessage({name: "full_reset"});
         setTimeout(function(){
            window.location.reload();
-        }, 50);
+        }, 250);
       }
 
   });
