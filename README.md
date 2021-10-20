@@ -1,2 +1,2 @@
 # ReTorn
- Return of a great Torn extension
+The return of a great Torn extension
