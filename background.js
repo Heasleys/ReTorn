@@ -729,6 +729,10 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       fullReset();
     break;
 
+    case "force_torn_items":
+      getItemsAPI();
+    break;
+
     case "set_api":
       if (msg.apikey != undefined) {
         validateAPIKEY(msg.apikey)

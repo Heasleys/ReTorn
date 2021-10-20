@@ -255,6 +255,12 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 
   });
 
+  $("button#force_torn_items").click(function() {
+    // force api or items list doc to refill local items storage
+    chrome.runtime.sendMessage({name: "force_torn_items"});
+    alert("Items Cache have been refreshed.")
+  });
+
 }); //Document.ready
 
 function chatUserHighlight(parent) {
