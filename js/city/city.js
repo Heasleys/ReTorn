@@ -61,6 +61,7 @@ if ($('div.captcha').length == 0) {
     } else {
         cityHeader();
         $('#re_city_finds').text("There was an error loading item data. Please restart ReTorn.");
+        chrome.runtime.sendMessage({name: "set_logger", type: "error", subtype: "page", message: "There was an error loading item data for city map.", log: {timestamp: Date.now()}});
     }
   });
 

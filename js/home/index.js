@@ -91,5 +91,5 @@ if ($('#body').attr('data-traveling') != "true") {
     </div>
     `);
 } else {
-
+  
 }

@@ -148,6 +148,8 @@ function loadItems() {
             $("#re_quick_items_response").show();
 
           });
+      } else {
+        chrome.runtime.sendMessage({name: "set_logger", type: "error", subtype: "page", message: "Could not find re_qitems for quick items page.", log: {timestamp: Date.now()}});
       }
     }
   });
