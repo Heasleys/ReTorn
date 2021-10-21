@@ -1,6 +1,6 @@
 {
     "name": "ReTorn",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "Its the return of a great Torn extension",
     "manifest_version": 3,
     "icons": {
@@ -13,8 +13,7 @@
     },
     "action": {
       "default_title": "ReTorn",
-      "default_popup": "pages/popup_start.html",
-      "default_title": "ReTorn: Torn Browser Extension"
+      "default_popup": "pages/popup_start.html"
     },
     "permissions": [
       "management",
