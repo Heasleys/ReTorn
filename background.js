@@ -529,13 +529,13 @@ function getValue(value, type) {
 }
 
 // function for deleting nested values from storage (NOT fulling deleting values)
-function delValue(value, key, type) {
-  if (type == undefined) {
-    type = "sync";
+function delValue(value, key, storage, log) {
+  if (storage == undefined) {
+    storage = "sync";
   }
   return new Promise((resolve, reject) => {
-    if (type == "sync") {
-      chrome.storage.sync.get([value], async (response) => {
+    if (storage == "sync" || storage == "local") {
+      chrome.storage[storage].get([value], async (response) => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
           await logger("error", "background", "Chrome Runtime Error while getting storage for deletion: " + chrome.runtime.lastError.message, {timestamp: Date.now()});
@@ -577,18 +577,29 @@ function delValue(value, key, type) {
             delete response.re_settings.npclist;
           }
 
-          chrome.storage.sync.set(response, async () => {
+          if (value == "re_logs") {
+            if (key != undefined && log != undefined && log.type != undefined && log.subtype != undefined) {
+              delete response.re_logs[log.type][log.subtype][key];
+            }
+          }
+
+          chrome.storage[storage].set(response, async () => {
             if (chrome.runtime.lastError) {
               console.error(chrome.runtime.lastError.message);
               await logger("error", "background", "Chrome Runtime Error while deleting value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
               return reject({status: false, message: chrome.runtime.lastError.message});
             } else {
-              await logger("data", "deleted", key + " has been deleted from " + value + " storage.", {data: key, timestamp: Date.now()});
+              if (value != "re_logs") {
+                // If re_logs is asking to delete, it's because it's full, so trying to log something now means it will become a bad loop of death
+                await logger("data", "deleted", key + " has been deleted from " + value + " storage.", {data: key, timestamp: Date.now()});
+              }
               return resolve({status: true, message: "Value: " + key + " has been deleted."});
             }
           });
         }
       });
+    } else {
+      return reject({status: false, message: "Incorrect storage type: ", storage})
     }
 
   });
@@ -639,7 +650,7 @@ async function logger(type, subtype, message, log) {
       }
 
       //check if logs need shifted (max of 100 per subtype);
-        let key = await shiftObject(response.re_logs[type][subtype]);
+        let key = await shiftObject(response.re_logs[type][subtype], type, subtype);
         //create new log base
         let new_log = {re_logs: {}}
         new_log.re_logs[type] = {};
@@ -647,9 +658,7 @@ async function logger(type, subtype, message, log) {
 
         await getValue("re_logs", "local")
         .then(async (res) => {
-          let keyCount2 = Object.keys(res.re_logs[type][subtype]).length; //Get length of object
-          new_log.re_logs[type][subtype][keyCount2] = {log, message: message}
-
+          new_log.re_logs[type][subtype][key] = {log, message: message}
           await setValue(new_log, "local")
           .then(() => {
             chrome.runtime.sendMessage({name: "log"});
@@ -666,29 +675,36 @@ async function logger(type, subtype, message, log) {
 }
 
 // Assist function for logger to shift logger objects
-async function shiftObject(object) {
-  const MAX = 100;
-  if (object == null) {
-    return 0;
-  }
-  let keyCount = Object.keys(object).length; //Get length of object
-  //Only keep last 100 entries
-  if (keyCount >= MAX) {
-    for (const [key, value] of Object.entries(object)) {
-      let nextkey = parseInt(key)+1;
-      if (object[nextkey]) {
-        object[key] = object[nextkey];
-      } else{
-        if (nextkey == keyCount) {
-          delete object[key];
+async function shiftObject(object, type, subtype) {
+  return new Promise(async (resolve, reject) => {
+    let response = {"re_logs": {[type]: {[subtype]: object}}};
+    const MAX = 100;
+    if (object == null) {
+      return resolve(0);
+    }
+    let keyCount = Object.keys(object).length; //Get length of object
+    //Only keep last 100 entries
+    if (keyCount >= MAX) {
+      for (const [key, value] of Object.entries(object)) {
+        let nextkey = parseInt(key)+1;
+        if (object[nextkey]) {
+          response.re_logs[type][subtype][key] = object[nextkey];
+          if (nextkey == MAX) {
+            delete response.re_logs[type][subtype][nextkey];
+            await delValue("re_logs", nextkey, "local", {type: type, subtype: subtype}).then((res) => console.log(res))
+          }
         }
-      }
-    };
-    let response = await setValue(object, "local");
-    return (MAX-1);
-  } else {
-    return keyCount;
-  }
+        if (nextkey > MAX) {
+          delete response.re_logs[type][subtype][key];
+          await delValue("re_logs", key, "local", {type: type, subtype: subtype}).then((res) => console.log(res))
+        }
+      };
+      await setValue(response, "local").then((res) => console.log("RES", res));
+      return resolve(MAX-1);
+    } else {
+      return resolve(keyCount);
+    }
+  });
 }
 
 // Assist function for making logs more readable in settings menu
