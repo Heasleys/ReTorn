@@ -656,10 +656,6 @@ html.light .log-item:hover, html.light .dropdown-menu li:hover {
     display: none;
   }
 
-  .switch-holder {
-    width: auto;
-  }
-
   .tab_groups {
     margin-left: 0px;
   }
@@ -683,6 +679,22 @@ html.light .log-item:hover, html.light .dropdown-menu li:hover {
   }
   .card {
     min-width: 250px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .navbar ul.nav li.nav-item {
+    width: auto;
+    min-width: 85px;
+  }
+
+  .dropdown-menu {
+    width: auto;
+    min-width: 85px;
+  }
+
+  .nav-link {
+    padding: .5rem 1rem;
   }
 
 
