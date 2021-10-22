@@ -71,7 +71,7 @@
 [tooltip]:not([flow])::after,
 [tooltip][flow^="up"]::before,
 [tooltip][flow^="up"]::after {
-  left: 50%;
+  left: 100%;
   transform: translate(-50%, -.5em);
 }
 
