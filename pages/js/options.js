@@ -1,4 +1,7 @@
 $(document).ready(function() {
+  var manifestData = chrome.runtime.getManifest();
+  $('.version').text('ReTorn v'+manifestData.version);
+
 
 chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
   if (response.status == true) {

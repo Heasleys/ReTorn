@@ -129,7 +129,10 @@ html.light a:hover {
   border-bottom: 1px solid white;
 }
 
-
+.float-bottom {
+  position: absolute;
+  bottom: 10px;
+}
 
 ul.credits {
   list-style-type: "\2764";
