@@ -3,47 +3,57 @@
 // @author       Heasleys4hemp [1468764]
 
 (function() {
-
-var url = location.hash;
 var target = document.querySelector('.content-wrapper');
 var obsOptions = {attributes: false, childList: true, characterData: false, subtree:true};
 var tsData = {};
 
-var observer = new MutationObserver(function(mutations, observer) {
-  var hash = location.hash;
-
+var crimeObserver = new MutationObserver(function(mutations, observer) {
+  let hash = location.hash;
   if (hash.includes('tab=crimes') && $('.faction-crimes-wrap > .begin-wrap .crimes-list').length == 1) {
     if (tsData["crimes"] == undefined)  {
       tornstatsSync("crimes");
     } else {
       crimesTab();
     }
-    observer.disconnect();
   }
+});
 
+var rosterObserver = new MutationObserver(function(mutations, observer) {
+  let hash = location.hash;
   if (hash.includes('tab=controls') && $('ul.control-tabs').length == 1 && $('#tornstats-roster').length == 0) {
     if (tsData["roster"] == undefined)  {
       tornstatsSync("roster");
     } else {
       rosterTab();
     }
-
-    observer.disconnect();
+    rosterObserver.disconnect();
   }
-
 });
 
 
-if (url.includes('tab=crimes') || url.includes('tab=controls')) {
-   observer.observe(target, obsOptions);
-}
+
+
+urlHandler();
 window.addEventListener('hashchange', hashHandler, false);
 
 
 function hashHandler() {
   var hash = location.hash;
   if (hash.includes('tab=crimes') || hash.includes('tab=controls')) {
-     observer.observe(target, obsOptions);
+     urlHandler();
+  }
+}
+
+function urlHandler() {
+  let url = location.hash;
+  if (url.includes('tab=crimes')) {
+     crimeObserver.observe(target, obsOptions);
+  } else {
+    crimeObserver.disconnect();
+  }
+
+  if (url.includes('tab=controls')) {
+     rosterObserver.observe(target, obsOptions);
   }
 }
 
