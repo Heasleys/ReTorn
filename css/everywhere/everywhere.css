@@ -18,10 +18,13 @@
   font-size: 15px;
 }
 
-/* Torn Left Align */
-.d .container {
-  margin-left: var(--re-leftalign) !important;
+/* Torn Left Align only on large screen (not mobile view)*/
+@media screen and (min-width: 601px) {
+  .d .container {
+    margin-left: var(--re-leftalign) !important;
+  }
 }
+
 
 div.re_checkbox {
   float: right;
