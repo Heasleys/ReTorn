@@ -38,7 +38,7 @@ body.hospital .list_parent {
 }
 
 @media screen and (max-width: 1000px) {
-  .list_header > a span.svg {
+  html:not(.html-manual-desktop) .list_header > a span.svg {
     height: 34px !important;
   }
 }
