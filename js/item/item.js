@@ -24,7 +24,7 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
                   let itemID = element.dataset.item;
                   let itemCategory = element.dataset.category;
 
-                  if (itemCategory == 'Medical' || itemCategory == 'Drug' || itemCategory == 'Energy Drink' || itemCategory == 'Alcohol' || itemCategory == 'Candy' || itemCategory == 'Booster' || itemCategory == 'Supply Pack' || itemID == 283) { //Donator Packs = 283
+                  if (itemCategory == 'Medical' || itemCategory == 'Drug' || itemCategory == 'Energy Drink' || itemCategory == 'Alcohol' || itemCategory == 'Candy' || itemCategory == 'Booster' || itemCategory == 'Supply Pack' || itemID == 283 || itemCategory == 'Special') { //Donator Packs = 283
                     if ($(element).find('.re_add_qitem').length > 0) {
                       return;
                     }
@@ -65,8 +65,11 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
                                                   <span class="t-hide">to Quick Items</span>
                                               </span>
                                           </span>`);
-
-                      actionWrap.find('li').first().after(qitemButton);
+                      if (itemCategory == "Special" && itemID != 283) { // Keep buttons consistent so add button for donator pack doesn't look odd
+                        actionWrap.find('li').first().after(`<li class="left"></li>`);
+                      } else {
+                        actionWrap.find('li').first().after(qitemButton);
+                      }
                   }
 
                 }//for
