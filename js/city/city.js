@@ -17,6 +17,7 @@ if ($('div.captcha').length == 0) {
         i++;
         let src = $(this).attr("src");
         let itemID = src.replace(/\D/g, "");
+        $(this).attr("src", "https://www.torn.com/images/items/"+itemID+"/large.png");
         $(this).attr("data-cfid", i);
         $(this).attr("title", items[itemID].name);
         value += items[itemID].market_value;
