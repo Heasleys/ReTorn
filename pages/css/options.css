@@ -629,6 +629,11 @@ html.light .log-item:hover, html.light .dropdown-menu li:hover {
   background-color: #00000012;
 }
 
+
+.mb20 {
+  margin-bottom: 20px;
+}
+
 @media screen and (max-width: 360px) {
   .tab_groups {
     margin-left: 3px
