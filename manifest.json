@@ -51,9 +51,21 @@
                 "https://www.torn.com/api.html*",
                 "https://wiki.torn.com/*"
             ],
-        "css": ["css/everywhere/everywhere.css", "css/everywhere/npclist.css"],
-        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/npclist.js", "js/everywhere/tornstats.js"],
+        "css": ["css/everywhere/everywhere.css"],
+        "js": ["js/lib/jquery-3.6.0.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/tornstats.js"],
         "run_at": "document_start"
+      },
+      {
+        "matches": [
+          "https://www.torn.com/*"
+        ],
+        "exclude_matches": [
+                "https://www.torn.com/api.html*",
+                "https://wiki.torn.com/*"
+            ],
+        "css": ["css/everywhere/npclist.css", "css/everywhere/quicklinks.css"],
+        "js": ["js/everywhere/npclist.js", "js/everywhere/quicklinks.js"],
+        "run_at": "document_end"
       },
       {
         "matches": ["https://www.torn.com/api.html*"],

@@ -69,8 +69,8 @@ function insertHeader(element, where, classes) {
 
     $(".re_head").click(function() {
         $(this).toggleClass("expanded");
-        $("div.re_content").slideToggle("fast");
-        $("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
+        $(this).next("div.re_content").slideToggle("fast");
+        $(this).find("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
         let expanded = $(this).hasClass("expanded");
         if (loc != "gym") { //disable saving for header on gym because tornstats graph
           chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {headers: {[loc]: {expanded: expanded}}}});
