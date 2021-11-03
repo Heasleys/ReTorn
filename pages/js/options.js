@@ -200,49 +200,58 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
   });
 
   $("button#tornstats").click(function() {
-      // Enable TornStats
+      // Enable Tornstats
       if ($(this).val() == 0) {
-        if (confirm('By accepting, you are agreeing to allow your Torn API key to be transmitted to Torn Stats.')) {
-
-          chrome.runtime.sendMessage({name: "integrate_tornstats"}, (response) => {
-            if (response.status != undefined) {
-              message(response, "ts_message", response.status);
-              if (response.status == true) {
-                $('#ts_status').text("Enabled");
-                $(this).html("Unlink account");
-                $('button#tornstats').val(1);
-                $('#tornstats_features').show();
+        let key = $("#ts_apikey").val();
+        if (key != undefined && key.length == 16) {
+          if (confirm('By accepting, you are agreeing to allow your Torn API key to be transmitted to Torn Stats.')) {
+            chrome.runtime.sendMessage({name: "integrate_tornstats", apikey: key}, (response) => {
+              console.log(response);
+              if (response.status != undefined) {
+                message(response, "ts_message", response.status);
+                if (response.status == true) {
+                  $('#ts_status').text("Enabled");
+                  $(this).html("Unlink account");
+                  $('button#tornstats').val(1);
+                  $('#tornstats_features').show();
+                  $('#ts_link_wrap').hide();
+                } else {
+                  $('#ts_status').text("Disabled");
+                  $(this).html("Link account");
+                  $('button#tornstats').val(0);
+                  $('#tornstats_features').hide();
+                  $('#ts_link_wrap').show();
+                }
               } else {
-                $('#ts_status').text("Disabled");
-                $(this).html("Link account");
-                $('button#tornstats').val(0);
-                $('#tornstats_features').hide();
+                message("Unknown error.", "ts_message", false);
               }
-            } else {
-              message("Unknown error.", "ts_message", false);
-            }
-          });
-
+            });
+        }
+        } else {
+          message({message: "API Key field is empty."}, "ts_message", false);
         }
       }
 
       // Disabled TornStats
       if ($(this).val() == 1) {
-        chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"tornstats": false}}, (response) => {
+        chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"tornstats": false, "tornstats_apikey": ""}}, (response) => {
           message(response, "ts_message", response.status);
           if (response.status == true) {
             $('#ts_status').text("Disabled");
             $(this).html("Link account");
             $('button#tornstats').val(0);
             $('#tornstats_features').hide();
+            $('#ts_link_wrap').show();
           } else {
             $('#ts_status').text("Enabled");
             $(this).html("Unlink account");
             $('button#tornstats').val(1);
             $('#tornstats_features').show();
+            $('#ts_link_wrap').hide();
           }
         });
       }
+
     });
 
 
@@ -526,11 +535,13 @@ function initTornStatsTab(settings) {
     $('button#tornstats').html("Unlink account");
     $('button#tornstats').val(1);
     $('#tornstats_features').show();
+    $('#ts_link_wrap').hide();
   } else {
     $('#ts_status').text("Disabled");
     $('button#tornstats').html("Link account");
     $('button#tornstats').val(0);
     $('#tornstats_features').hide();
+    $('#ts_link_wrap').show();
   }
 }
 

@@ -334,9 +334,13 @@
                   In order to use these TornStats related features, you must have a <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats account</a></b> and then use the button below to link your Torn Stats account with ReTorn.
                 </p>
                 <div id="tornstats">
-                  <label><b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>: </b><b><span id="ts_status"></span></b></label>
+                  <p>Torn Stats Status: <b><span id="ts_status"></span></b></p>
+                  <span id="ts_link_wrap">
+                    <b><p>Please enter the API key you use for <a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>:</p></b>
+                    <input id="ts_apikey" type="text" maxlength="16" required></input>
+                  </span>
                   <button id="tornstats">Link Account</button>
-                  <span class="re_message" id="ts_message" hidden></span>
+                  <p class="re_message" id="ts_message" hidden></p>
                 </div>
               </div>
             </article>

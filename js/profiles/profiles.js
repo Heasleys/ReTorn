@@ -16,19 +16,15 @@ function loadTS() {
   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
     if (res.status != undefined) {
       if (res.value.re_settings.tornstats != undefined && res.value.re_settings.tornstats == true) {
-        chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) => {
-          if (response.status != undefined) {
-            if (response.status == true) {
-              tornstatsSync(response.value.re_api_key);
-            }
-          }
-        });
+        if (res.value.re_settings.tornstats_apikey != undefined && res.value.re_settings.tornstats_apikey != "") {
+            tornstatsSync();
+        }
       }
     }
   });
 }
 
-function tornstatsSync(apikey) {
+function tornstatsSync() {
   var uid = parseInt($('a[href*="/playerreport.php?step=add&userID="]').attr("href").replace(/\D/g, ""));
   if (uid) {
     chrome.runtime.sendMessage({name: "pull_tornstats", selection: "spy/"+uid}, (data) => {
