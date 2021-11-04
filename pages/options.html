@@ -313,7 +313,10 @@
             <article class="card">
               <div class="card-content">
                 <span>Join the ReTorn Discord to report bugs and request new features!</span>
-                <br><a href="https://discord.gg/SqKDND7FBA" target="_blank">https://discord.gg/SqKDND7FBA</a>
+                <div class="mb20"><a href="https://discord.gg/SqKDND7FBA" target="_blank">https://discord.gg/SqKDND7FBA</a></div>
+                <div>
+                  <iframe src="https://discord.com/widget?id=831237481771827211&theme=dark" width="350" height="250" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+                </div>
               </div>
             </article>
           </section>
@@ -331,9 +334,13 @@
                   In order to use these TornStats related features, you must have a <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats account</a></b> and then use the button below to link your Torn Stats account with ReTorn.
                 </p>
                 <div id="tornstats">
-                  <label><b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>: </b><b><span id="ts_status"></span></b></label>
+                  <p>Torn Stats Status: <b><span id="ts_status"></span></b></p>
+                  <span id="ts_link_wrap">
+                    <b><p>Please enter the API key you use for <a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>:</p></b>
+                    <input id="ts_apikey" type="text" maxlength="16" required></input>
+                  </span>
                   <button id="tornstats">Link Account</button>
-                  <span class="re_message" id="ts_message" hidden></span>
+                  <p class="re_message" id="ts_message" hidden></p>
                 </div>
               </div>
             </article>
@@ -389,8 +396,8 @@
             <article class="card">
               <div class="card-content">
                 <div class="version"></div>
-                <button id="reset" style="margin-bottom: 20px;">Reset ReTorn Settings</button>
-                <button id="force_torn_items" style="margin-bottom: 20px;" tooltip="Refresh Items Cache" flow="top">Force Refresh Items Cache</button>
+                <button id="reset" class="mb20">Reset ReTorn Settings</button>
+                <button id="force_torn_items" class="mb20" tooltip="Refresh Items Cache" flow="top">Force Refresh Items Cache</button>
                 <h4 class="card_title">Log:</h4>
                 <p>These are the internal logs of ReTorn. Check here if you are having issues.</p>
                 <p>Each sub-section holds a max of 100 logs for browser storage purposes.</p>

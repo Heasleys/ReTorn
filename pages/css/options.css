@@ -4,7 +4,6 @@ body {
   overflow: hidden;
 }
 
-
 .re_logo {
   font-family: "impact", "Arial Black";
   font-weight: normal;
@@ -264,7 +263,7 @@ div.input_wrap div {
   margin-bottom: 2px;
 }
 
-div.input_wrap input[type=text] {
+div.input_wrap input[type="text"] {
   height: 16px;
   width: 5em;
   text-align: right;
@@ -276,11 +275,11 @@ div.input_wrap input {
   margin-right: 6px;
 }
 
-div.input_wrap input[type=text] + input[type=color] {
+div.input_wrap input[type="text"] + input[type="color"] {
   height: 18px;
 }
 
-div.input_wrap input[type=text] + input[type=color] + input[type=button] {
+div.input_wrap input[type="text"] + input[type="color"] + input[type="button"] {
   width: 24px;
 }
 
@@ -333,6 +332,9 @@ html.dark .switch-holder {
 
 .switch-holder input[type="text"] {
   width: 50px;
+}
+
+input[type="text"] {
   height: 20px;
   font-size: 14px;
   border-radius: 4px;
@@ -627,6 +629,11 @@ html.dark .log-item:hover, html.dark .dropdown-menu li:hover {
 }
 html.light .log-item:hover, html.light .dropdown-menu li:hover {
   background-color: #00000012;
+}
+
+
+.mb20 {
+  margin-bottom: 20px;
 }
 
 @media screen and (max-width: 360px) {
