@@ -87,6 +87,21 @@ span.re_title {
   margin-bottom: 5px;
 }
 
+.re_content input[type="text"] {
+  border: 1px solid;
+  border-radius: 5px;
+  color: var(--input-color);
+  line-height: 14px;
+  height: 14px;
+  text-align: left;
+  padding: 5px;
+  display: inline-block;
+  vertical-align: top;
+  width: 178px;
+  border-color: var(--input-border-color);
+  background: var(--input-background-color);
+}
+
 .re_row {
   display: flex;
   margin: 0.75em;
@@ -164,6 +179,10 @@ div.re_button_wrap {
 div.re_button_wrap > button {
   margin-bottom: 5px;
   margin-right: 5px;
+}
+
+.re_button_wrap input[type="text"] {
+  margin-right: 8px;
 }
 
 .re_container.after::after {
