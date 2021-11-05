@@ -88,7 +88,6 @@ function crimesTab() {
 }
 
 function rosterTab() {
-
   if ($('ul.control-tabs.ui-tabs-nav').length == 1 && tsData["roster"]) {
 
     $('ul.control-tabs.ui-tabs-nav').append(`<li class="white-grad bold">Torn Stats:</li>`);
@@ -104,15 +103,20 @@ function rosterTab() {
 
     let roster_table = '<table><tr><th class="rank">Rank</th><th>Member</th><th>Total Stats</th><th>API Verified</th></tr>';
     let i = 1;
+    let avgI = 0;
 
     const members = Object.values(tsData["roster"].members).sort((a, b) => a.total - b.total).reverse();
-
+    var facTotal = 0;
     Object.entries(members).forEach(([key, value]) => {
       let verified = value.verified == 1 ? "Yes" : "No";
       let total = value.total == 0 ? "Hidden" : value.total.toLocaleString();
+      if (value.total != 0) {avgI++}
       roster_table += `<tr><td class="rank">#`+i+`</td><td class="member"><a href="https://www.torn.com/profiles.php?XID=`+value.userid+`" target="_blank">`+value.name+` <span class='userid'>[`+value.userid+`]</span></a></td><td class="stats">`+total+`</td><td class="verified" data-verified="`+value.verified+`">`+verified+`</td></tr>`;
       i++;
+      facTotal += value.total;
     });
+    let facAvg = Math.trunc(facTotal/avgI).toLocaleString();
+    roster_table += `<tfoot><tr><td class="rank"></td><td class="stats">Average Stats:</td><td class="stats">${facAvg}</td><td class="verified"></td></tr></tfoot>`;
     roster_table += "</table>";
 
     $('#tornstats-roster').html(roster_table);
@@ -120,11 +124,7 @@ function rosterTab() {
     $('td.verified[data-verified=1]').addClass('green');
 
     $('#ts-roster').click(function() {
-      $('div.control-tab-section').hide();
-      $(this).data('last-tab', $('ul.control-tabs li.ui-state-default[tabindex=0]').children('a').attr('href'));
-      $('li.ui-state-default[tabindex=0]').removeClass("ui-tabs-active ui-state-active").attr('tabindex', -1).attr('aria-selected', 'false');
-      $('div.control-tab-section[aria-expanded="true"]').attr('aria-expanded', 'false').attr('aria-hidden', 'true');
-      $('div#tornstats-roster').show();
+      rosterClick();
     });
 
     $('ul.control-tabs > li > a:not("#ts-roster")').click(function() {
@@ -135,9 +135,25 @@ function rosterTab() {
         $(last_tab).show();
       }
     });
+
+    if (location.hash.includes('option=tornstats')) {
+      rosterClick();
+    }
   }
 }
 
+function rosterClick() {
+  $('div.control-tab-section').hide();
+  $('#ts-roster').data('last-tab', $('ul.control-tabs li.ui-state-default[tabindex=0]').children('a').attr('href'));
+  $('li.ui-state-default[tabindex=0]').removeClass("ui-tabs-active ui-state-active").attr('tabindex', -1).attr('aria-selected', 'false');
+  $('div.control-tab-section[aria-expanded="true"]').attr('aria-expanded', 'false').attr('aria-hidden', 'true');
+  $('div#tornstats-roster').show();
+  if (location.hash.includes("option=")) {
+    location.replace(location.hash.replace(/(?<=option=).*$/, "tornstats"));
+  } else {
+    location.replace(location.hash.replace(/(?<=tab=).*$/, "controls&option=tornstats"));
+  }
+}
 
 function tornstatsSync(type) {
   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
