@@ -14,8 +14,8 @@ li.re_add_qitem {
   float: left;
 }
 
-li.re_add_qitem .wai-btn {
-  filter: sepia(50%) hue-rotate(144deg) saturate(100%);
+.qitem-btn {
+  filter: sepia(50%) hue-rotate(144deg) saturate(100%) !important;
 }
 
 #re_quick_items {

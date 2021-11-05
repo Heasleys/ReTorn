@@ -5,10 +5,11 @@ insertHeader($("div.content-wrapper"), 'append');
 $('#re_title').text("Sync");
 $('.re_content').html(`
   <div class="re_row">
-    <p id="re_signin_message">You are not signed into ReTorn. Please click below to sync apikey.</p>
+    <p id="re_signin_message">You are not signed into ReTorn. Please enter your api key then click sync.</p>
   </div>
   <div class="re_row">
     <div class="re_button_wrap">
+      <input id="re_apikey" type="text" maxlength="16" required></input>
       <button class="re_torn_button" id="re_sync">Sync</button>
       <button class="re_torn_button" id="re_options">Options</button>
       <button class="re_torn_button" id="re_logout" hidden>Logout</button>
@@ -28,6 +29,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) 
       $("#re_sync").text("Sync");
       $("#re_sync").attr("disabled", false);
       $("#re_logout").attr("hidden", true);
+      $("#re_apikey").show();
     }
   } else {
     errorMessage({status: false, message: "Unknown error."});
@@ -36,7 +38,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) 
 
 
   $("button#re_sync").click(() => {
-    let key = $("div#api > div > form > input#newapi").val();
+    let key = $("#re_apikey").val();
     chrome.runtime.sendMessage({name: "set_api", apikey: key}, (response) => {
       console.log(response);
       if (response.status != undefined) {
@@ -59,7 +61,8 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) 
         $("#re_sync").text("Sync");
         $("#re_sync").attr("disabled", false);
         $("#re_logout").attr("hidden", true);
-        $("p#re_signin_message").text(`You are not signed into ReTorn. Please click below to sync apikey.`);
+        $("#re_apikey").show();
+        $("p#re_signin_message").text(`You are not signed into ReTorn. Please enter your api key then click sync.`);
         errorMessage({message: "You have been logged out."});
       } else {
         errorMessage(response);
@@ -85,6 +88,7 @@ function synced(response) {
   $("#re_sync").attr("disabled", true);
   $("#re_sync").attr("hidden", false);
   $("#re_logout").attr("hidden", false);
+  $("#re_apikey").hide();
   chrome.runtime.sendMessage({name: "get_value", value: "re_user"}, (response) => {
     console.log(response);
     if (response.status == true && response.value.re_user.name != undefined) {

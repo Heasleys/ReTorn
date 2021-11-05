@@ -18,21 +18,27 @@ function insertNPCtimer() {
       if (response.value.re_npcs) {
         let re_npcs = response.value.re_npcs;
           if (re_npcs) {
-            console.log(re_npcs);
+            let attack_time;
+            let loot_time;
 
             if (re_npcs["data"][defenderID]) {
               const npc = re_npcs["data"][defenderID];
+              if (settings.npclist[defenderID] && settings.npclist[defenderID].loot_time) {
+                loot_time = settings.npclist[defenderID].loot_time;
+              } else {
+                loot_time = "loot_4";
+              }
+              let npc_time = npc[loot_time];
 
-              var d = npc.loot_4 - ((Math.floor(Date.now() / 1000)));
+              var d = npc_time - ((Math.floor(Date.now() / 1000)));
               if (d < 0) {
                 attack_time = "Now";
               } else {
                 attack_time = new Date(d * 1000).toISOString().substr(11, 8);
               }
 
-              let title = "<b>Loot Level 4 in:</b> " + attack_time;
+              let title = "<b>"+loot_time.replace("_", " ").replace("hosp out", "loot 1")+" in:</b> " + attack_time;
               $('#playername_'+npc.name).attr("title", title);
-              $('#playername_'+npc.name).text(npc.name + " ⏲");
               $('#playername_'+npc.name).css("cursor", "pointer");
 
               //$('div[id^="react-tooltip-Loot"]').find("[class*='tooltipText']")
@@ -46,7 +52,7 @@ function insertNPCtimer() {
                 } else {
                   attack_time = "Now";
                 }
-                let title = "<b>Loot Level 4 in:</b> " + attack_time;
+                let title = "<b>"+loot_time.replace("_", " ").replace("hosp out", "loot 1")+" in:</b> " + attack_time;
 
                 if ($('#playername_'+npc.name).attr('aria-describedby')) {
                   let aria = $('#playername_'+npc.name).attr('aria-describedby');
@@ -55,7 +61,6 @@ function insertNPCtimer() {
                 } else {
                   $('#playername_'+npc.name).attr("title", title);
                 }
-                $('#playername_'+npc.name).text(npc.name + " ⏲");
                 $('#playername_'+npc.name).css("cursor", "pointer");
 
                 if ($("div[id*='react-tooltip-Loot']").length != 0) {

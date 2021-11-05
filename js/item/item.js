@@ -7,7 +7,7 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
 
   $('#re_title').text("Quick Items");
   $('.re_content').html(`
-    <p>Click on an item's image to add it to this quick items list.</p>
+    <p>Click the <span class="option-equip wai-btn qitem-btn"></span> button on an item to add it to this quick items list.</p>
     <div class="re_row" id="re_quick_items"></div>
     <div class="re_row action-wrap use-act use-action" id="re_quick_items_response" style="display: none;"></div>
     `);
@@ -59,7 +59,7 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
                       qitemButton.data('itemID', itemID);
                       qitemButton.data('itemCategory', itemCategory);
                       qitemButton.append(`<span class="icon-h" title="Add to Quick Items">
-                                              <button aria-label="Add ${itemName} to Quick Items" class="option-equip wai-btn re_green"></button>
+                                              <button aria-label="Add ${itemName} to Quick Items" class="option-equip wai-btn qitem-btn"></button>
                                               <span class="opt-name">
                                                   Add
                                                   <span class="t-hide">to Quick Items</span>
@@ -120,7 +120,7 @@ function loadItems() {
           $.each(items, (index, item) => {
             x++;
             $('#re_quick_items').prepend(`
-              <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/medium.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="close"></span></button></div>
+              <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/medium.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span title="Remove from Quick Items" class="close"></span></button></div>
             `);
           });
           n = x;
