@@ -1,4 +1,9 @@
 (function() {
+    const quicklinks = {
+
+    }
+
+
   const target = document.getElementById('mainContainer');
   var obsOptions = {attributes: false, childList: true, characterData: false, subtree:true};
 
@@ -14,14 +19,7 @@
         </div>
       </div>
       <div class="re_qlinks_content" id="re_qlinks_content" style="display: none;">
-        <div class="re_qlinks_link">
-          <a href="/factions.php?step=profile&ID=35507#/">
-            <span class="re_qlinks_icon">
-              <svg xmlns="http://www.w3.org/2000/svg" class="default___3oPC0 " filter="url(#svg_sidebar_mobile)" fill="url(#sidebar_svg_gradient_regular_mobile)" stroke="transparent" stroke-width="0" width="12.47" height="17" viewBox="0 1 11.47 16"><path d="M3.46,17H9.12V12.29A6,6,0,0,0,10.59,9L9,9.06,6.61,8v1.1H5.44l2.34,1.11L6.61,13.49,6,10.79,2.32,8.46V7.83L5.44,8,6.61,6.85l-4.5-2L0,8.08l3.46,4.3Zm6.66-9,1.61-1.42-.58-1.63L9.46,7.61ZM9,6.85,10.43,4,8.81,3.21l-1,3.64ZM6.61,5.74,8.25,2.63,6.46,1.87l-.77,3ZM2.73,3.84l2,.9L5.8,1.62,4.41,1Z"></path></svg>
-              </span>
-            <span class="re_qlinks_name">The Nest</span>
-          </a>
-        </div>
+
       </div>
     </div>
   </div>
@@ -65,9 +63,14 @@
     }
   });
 
-function insertQuickLinks() {
 
+function insertQuickLinks() {
+  let qlStr = ``;
+  for (const [key, value] of Object.entries(quicklinks)) {
+    qlStr += `<div class="re_qlinks_link"><a href="${value.url}"><span class="re_qlinks_icon">${value.icon}</span><span class="re_qlinks_name">${value.name}</span></a></div>`;
   }
+  $('#re_qlinks_content').append(qlStr);
+}
 
   observer.observe(target, obsOptions);
 })();

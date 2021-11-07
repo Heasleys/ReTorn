@@ -74,6 +74,10 @@ body.dark-mode .re_qlinks_head {
   margin-bottom: 2px;
 }
 
+.re_qlinks_link:hover {
+  background-color: var(--default-bg-panel-active-color);
+}
+
 .re_qlinks_link a {
   display: block;
   color: var(--default-color);
@@ -98,10 +102,20 @@ body.dark-mode .re_qlinks_head {
   width: 17;
   height: 14;
 }
+.re_qlinks_icon > * {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.re_qlinks_icon > .property-option-vault {
+  height: 36px !important;
+}
 
 .re_qlinks_link a .re_qlinks_name {
   line-height: 22px;
   padding-top: 1px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 /* SVG Colors */

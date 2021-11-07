@@ -1,3 +1,46 @@
+const quicklinks = {
+  amarket: {
+    name: "Auction House",
+    url: "amarket.php",
+    icon: '<i class="cql-auction-house"></i>'
+  },
+  imarket: {
+    name: "Item Market",
+    url: "imarket.php",
+    icon: '<i class="cql-item-market"></i>'
+  },
+  pmarket: {
+    name: "Points Market",
+    url: "pmarket.php",
+    icon: '<i class="cql-points-market"></i>'
+  },
+  travelagency: {
+    name: "Travel Agency",
+    url: "travelagency.php",
+    icon: '<i class="cql-travel-agency"></i>'
+  },
+  racing: {
+    name: "Race Track",
+    url: "loader.php?sid=racing",
+    icon: '<i class="cql-race-track"></i>'
+  },
+  vault: {
+    name: "Property Vault",
+    url: "properties.php#/p=options&tab=vault",
+    icon: '<i class="property-option-vault"></i>'
+  },
+  stockmarket: {
+    name: "Stock Market",
+    url: "page.php?sid=stocks",
+    icon: '<i class="cql-stock-exchange"></i>'
+  },
+  museum: {
+    name: "Museum",
+    url: "museum.php",
+    icon: '<i class="cql-museum"></i>'
+  }
+}
+
 $(document).ready(function() {
   var manifestData = chrome.runtime.getManifest();
   $('.version').text('ReTorn v'+manifestData.version);
@@ -14,6 +57,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 
   initLogger();
   initChatUserHighlights();
+  initQuickLinksList();
 
   $(document).click(function(event) {
       if (!$(event.target).closest(".dropdown-menu, .dropdown .nav-link").length) {
@@ -394,6 +438,13 @@ function message(response, me, status) {
 }
 
 
+function initQuickLinksList() {
+  let optionStr = ``;
+  for (const [key, value] of Object.entries(quicklinks)) {
+    optionStr += `<option value="${value.url}">${value.name}</option>`;
+  }
+  $('#quicklinks').append(optionStr);
+}
 
 function initNotificationTab(settings) {
   const notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education", "travel"];
