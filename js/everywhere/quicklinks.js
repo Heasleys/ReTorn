@@ -1,7 +1,5 @@
 (function() {
-    const quicklinks = {
-
-    }
+  var quicklinks;
 
 
   const target = document.getElementById('mainContainer');

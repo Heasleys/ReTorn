@@ -439,11 +439,50 @@ function message(response, me, status) {
 
 
 function initQuickLinksList() {
-  let optionStr = ``;
-  for (const [key, value] of Object.entries(quicklinks)) {
-    optionStr += `<option value="${value.url}">${value.name}</option>`;
-  }
-  $('#quicklinks').append(optionStr);
+  chrome.runtime.sendMessage({name: "get_value", value: "re_quicklinks", type: "sync"}, (response) => {
+    console.log("Quick Links", response);
+    $("#quicklinks").empty();
+    if (response.value.re_quicklinks && Object.keys(response.value.re_quicklinks).length != 0) {
+      for (const [key, value] of Object.entries(response.value.re_quicklinks)) {
+        console.log(key, value);
+        
+      }
+    } else {
+      $("#quicklinks").append(`
+                            <div class="switch_wrap">
+                              <input type="checkbox">
+                              <select class="quicklinks">
+                                <option value="custom" selected>Custom...</option>
+                              </select>
+                            </div>
+                            `)
+    }
+
+    let optionStr = ``;
+    for (const [key, value] of Object.entries(quicklinks)) {
+      optionStr += `<option value="${value.url}">${value.name}</option>`;
+    }
+    $('.quicklinks').append(optionStr);
+
+
+    $("#quicklinks .quicklinks").off('change').change(function(e) {
+      let enabled = $(this).prev("input[type='checkbox']").is(":checked");
+      let index = $("#quicklinks .quicklinks").index(this);
+      let value = $(this).val();
+      let name = $(this).find("option:selected").text();
+
+      if (enabled != undefined && index != undefined && value != undefined && name != undefined) {
+        if (value == "custom") {
+
+        } else {
+          chrome.runtime.sendMessage({name: "set_value", value_name: "re_quicklinks", value: {[index]: {enabled: enabled, name: name, url: value}}}, (response) => {
+            console.log(response);
+            initQuickLinksList();
+          });
+        }
+      }
+    });
+  });
 }
 
 function initNotificationTab(settings) {
