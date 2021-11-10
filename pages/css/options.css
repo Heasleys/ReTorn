@@ -218,6 +218,7 @@ li.disabled,li:disabled,li:hover.disabled,li:hover:disabled {
 .switch_wrap {
   display: flex;
   flex-direction: row;
+  align-items: center;
   margin-bottom: 3px;
 }
 
@@ -238,8 +239,17 @@ label + .switch_wrap {
   font-size: 12px;
 }
 
-.switch_wrap input[type=checkbox] {
+.switch_wrap > * {
   margin-right: 8px;
+}
+
+#quicklinks .switch_wrap input[type=text][name=name] {
+  width: 20%;
+  max-width: 100px;
+}
+#quicklinks .switch_wrap input[type=text][name=url] {
+  width: 30%;
+  max-width: 150px;
 }
 
 .success {
@@ -334,14 +344,15 @@ html.dark .switch-holder {
   width: 50px;
 }
 
-input[type="text"] {
+input[type="text"], select {
   height: 20px;
   font-size: 14px;
   border-radius: 4px;
   margin-right: 10px;
+  padding: 1px 2px;
 }
 
-html.dark input[type="text"] {
+html.dark input[type="text"], html.dark select {
   background-color: #222;
   color: #CCC;
 }
@@ -714,9 +725,6 @@ html.light .log-item:hover, html.light .dropdown-menu li:hover {
 }
 
 @media screen and (min-width: 1000px) {
-  .card {
-    max-width: 400px;
-  }
   .card:only-child {
     max-width: 824px;
   }

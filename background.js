@@ -282,6 +282,16 @@ function checkUpdate() {
       setValue({"re_chatuserhighlight": {}}, "sync").catch((error) => {console.log(error);});
     });
   })
+  .then(() => {
+    getValue("re_quicklinks", "sync")
+    .then((response) => {
+      console.log("ReTorn: Checking for updates - Quick Links data found. No update needed.", response);
+    })
+    .catch((error) => {
+      console.log("ReTorn: Update found for Quick Links. Adding Quick Links data.", error);
+      setValue({"re_quicklinks": {}}, "sync").catch((error) => {console.log(error);});
+    });
+  })
 
   .catch((error) => {
     console.log("Error when updating settings: " + error);
@@ -574,6 +584,17 @@ function delValue(value, key, storage, log) {
 
           if (key == "npclist") {
             delete response.re_settings.npclist;
+          }
+
+          if (value == "re_quicklinks") {
+            delete response.re_quicklinks[key];
+            Object.keys(response.re_quicklinks).forEach(function(k) {
+              if (k > key) {
+                let newkey = parseInt(k) - 1;
+                response.re_quicklinks[newkey] = response.re_quicklinks[k];
+                delete response.re_quicklinks[k];
+              }
+            });
           }
 
           if (value == "re_logs") {

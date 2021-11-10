@@ -9,35 +9,35 @@ const quicklinks = {
     url: "imarket.php",
     icon: '<i class="cql-item-market"></i>'
   },
+  museum: {
+    name: "Museum",
+    url: "museum.php",
+    icon: '<i class="cql-museum"></i>'
+  },
   pmarket: {
     name: "Points Market",
     url: "pmarket.php",
     icon: '<i class="cql-points-market"></i>'
-  },
-  travelagency: {
-    name: "Travel Agency",
-    url: "travelagency.php",
-    icon: '<i class="cql-travel-agency"></i>'
   },
   racing: {
     name: "Race Track",
     url: "loader.php?sid=racing",
     icon: '<i class="cql-race-track"></i>'
   },
-  vault: {
-    name: "Property Vault",
-    url: "properties.php#/p=options&tab=vault",
-    icon: '<i class="property-option-vault"></i>'
-  },
   stockmarket: {
     name: "Stock Market",
     url: "page.php?sid=stocks",
     icon: '<i class="cql-stock-exchange"></i>'
   },
-  museum: {
-    name: "Museum",
-    url: "museum.php",
-    icon: '<i class="cql-museum"></i>'
+  travelagency: {
+    name: "Travel Agency",
+    url: "travelagency.php",
+    icon: '<i class="cql-travel-agency"></i>'
+  },
+  vault: {
+    name: "Property Vault",
+    url: "properties.php#/p=options&tab=vault",
+    icon: '<i class="property-option-vault"></i>'
   }
 }
 
@@ -440,49 +440,91 @@ function message(response, me, status) {
 
 function initQuickLinksList() {
   chrome.runtime.sendMessage({name: "get_value", value: "re_quicklinks", type: "sync"}, (response) => {
-    console.log("Quick Links", response);
-    $("#quicklinks").empty();
-    if (response.value.re_quicklinks && Object.keys(response.value.re_quicklinks).length != 0) {
-      for (const [key, value] of Object.entries(response.value.re_quicklinks)) {
-        console.log(key, value);
-        
-      }
-    } else {
-      $("#quicklinks").append(`
-                            <div class="switch_wrap">
-                              <input type="checkbox">
-                              <select class="quicklinks">
-                                <option value="custom" selected>Custom...</option>
-                              </select>
-                            </div>
-                            `)
-    }
 
+    $("#quicklinks").empty(); //Empty list
+
+    //Propogate quick links list with enough select boxes for each plus one
+    for (var i = 0; i <= Object.keys(response.value.re_quicklinks).length; i++) {
+      appendQuickLinks();
+    }
     let optionStr = ``;
+    //fill each select box with all of the options available from quicklinks const
     for (const [key, value] of Object.entries(quicklinks)) {
       optionStr += `<option value="${value.url}">${value.name}</option>`;
     }
     $('.quicklinks').append(optionStr);
 
+    //set each select box to the correct option
+    if (response.value.re_quicklinks && Object.keys(response.value.re_quicklinks).length != 0) {
+      for (const [key, value] of Object.entries(response.value.re_quicklinks)) {
+        console.log(key, value);
+        let qlink_wrap = $("#quicklinks > .switch_wrap").eq(key);
+        qlink_wrap.find("input[type='checkbox']").prop("checked", value.enabled);
 
-    $("#quicklinks .quicklinks").off('change').change(function(e) {
-      let enabled = $(this).prev("input[type='checkbox']").is(":checked");
-      let index = $("#quicklinks .quicklinks").index(this);
-      let value = $(this).val();
-      let name = $(this).find("option:selected").text();
-
-      if (enabled != undefined && index != undefined && value != undefined && name != undefined) {
-        if (value == "custom") {
-
-        } else {
-          chrome.runtime.sendMessage({name: "set_value", value_name: "re_quicklinks", value: {[index]: {enabled: enabled, name: name, url: value}}}, (response) => {
-            console.log(response);
-            initQuickLinksList();
-          });
+        if (value.type == "default") {
+          qlink_wrap.find(`option:contains("${value.name}")`).prop('selected', true);
+          qlink_wrap.find('input[type=text]').hide();
         }
+        if (value.type == "custom") {
+          qlink_wrap.find(`option:contains("Custom...")`).prop('selected', true);
+          qlink_wrap.find('input[type=text][name=name]').val(value.name);
+          qlink_wrap.find('input[type=text][name=url]').val(value.url);
+        }
+      }
+    }
+
+    //set change events to all inputs for quicklinks
+    $("#quicklinks input[type='checkbox'], #quicklinks .quicklinks, #quicklinks input[type='text']").off('change').change(function(e) {
+      let qlink_wrap = $(this).parent('.switch_wrap');
+      let enabled = qlink_wrap.find("input[type=checkbox]").is(":checked");
+      let index = $("#quicklinks .switch_wrap").index(qlink_wrap);
+      let value = qlink_wrap.find('.quicklinks').val();
+      let name;
+      let url;
+      let type;
+
+      if (value == "custom") {
+        type = "custom";
+        qlink_wrap.find('input[type=text]').show();
+        name = qlink_wrap.find('input[type=text][name=name]').val();
+        url = encodeURI(qlink_wrap.find('input[type=text][name=url]').val());
+      } else {
+        type = "default";
+        name  = qlink_wrap.find(".quicklinks option:selected").text();
+        url = encodeURI(value);
+      }
+
+
+      // if everything is in place and not undefined or blank, then send message to add to quick links
+      if (index != undefined && type != undefined && enabled != undefined && name != undefined && url != undefined && name != "" && url != "") {
+        chrome.runtime.sendMessage({name: "set_value", value_name: "re_quicklinks", value: {[index]: {type: type, enabled: enabled, name: name, url: url}}}, (response) => {
+          initQuickLinksList();
+        });
+      }
+
+      // if checkbox changed and select box is set to custom and is not the last child and checkbox is set to false, then delete quicklinks entry
+      if ($(this).is(':checkbox') && enabled == false && value == 'custom' && !$(qlink_wrap).is(':last-child') && name == "" && url == "") {
+        chrome.runtime.sendMessage({name: "del_value", value: "re_quicklinks", key: [index]}, (response) => {
+          initQuickLinksList();
+        });
       }
     });
   });
+}
+
+
+//function to insert base of quick links wrap
+function appendQuickLinks() {
+  $("#quicklinks").append(`
+    <div class="switch_wrap">
+      <input type="checkbox">
+      <select class="quicklinks">
+        <option value="custom" selected>Custom...</option>
+      </select>
+      <input type="text" name="name" placeholder="Name">
+      <input type="text" name="url" placeholder="URL">
+    </div>
+    `)
 }
 
 function initNotificationTab(settings) {
