@@ -8,7 +8,6 @@
   const observer = new MutationObserver(function(mutations) {
     if ($('h2[class^="header"]:contains("Lists")').siblings('div[class^="toggle-content"]').length != 0 && $('#nav-npcs').length == 0) {
       insertNPCList();
-      observer.disconnect();
     }
   });
 
