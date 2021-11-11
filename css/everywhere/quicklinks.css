@@ -12,12 +12,14 @@
   }
 }
 
-.re_qlinks_icon > .property-option-vault {
-  height: 36px !important;
+@media screen and (max-width: 600px) {
+  html:not(.html-manual-desktop) #re_qlinks {
+    display: none;
+  }
 }
 
-.re_sidebar_block {
-
+.re_qlinks_icon > .property-option-vault {
+  height: 36px !important;
 }
 
 .re_qlinks_block {
