@@ -250,7 +250,6 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
         if (key != undefined && key.length == 16) {
           if (confirm('By accepting, you are agreeing to allow your Torn API key to be transmitted to Torn Stats.')) {
             chrome.runtime.sendMessage({name: "integrate_tornstats", apikey: key}, (response) => {
-              console.log(response);
               if (response.status != undefined) {
                 message(response, "ts_message", response.status);
                 if (response.status == true) {
@@ -457,7 +456,6 @@ function initQuickLinksList() {
     //set each select box to the correct option
     if (response.value.re_quicklinks && Object.keys(response.value.re_quicklinks).length != 0) {
       for (const [key, value] of Object.entries(response.value.re_quicklinks)) {
-        console.log(key, value);
         let qlink_wrap = $("#quicklinks > .switch_wrap").eq(key);
         qlink_wrap.find("input[type='checkbox']").prop("checked", value.enabled);
 
