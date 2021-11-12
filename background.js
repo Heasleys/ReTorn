@@ -84,6 +84,7 @@ function logout() {
   removeValue("re_user", "sync")
   removeValue("re_user_data", "local")
   setValue({['re_settings']: {"tornstats": false}}, "sync")
+  setValue({['re_settings']: {"tornstats_apikey": ""}}, "sync")
   .catch((error) => {
     console.log({status: false, message: "Failed to delete apikey.", error: error});
     sendResponse({status: false, message: "Failed to delete apikey.", error: error});
@@ -97,6 +98,7 @@ async function newInstall() {
       re_settings: {
         darkmode: false,
         tornstats: false,
+        tornstats_apikey: "",
         npclist: {
           enabled: false
         },
@@ -252,6 +254,15 @@ function checkUpdate() {
     if (settings.notifications.travel == undefined) {
       console.log("ReTorn: Update found. Adding Travel Notification update.");
       await setValue({re_settings: {notifications: {travel: {enabled: true}}}}, "sync").then(res => console.log(res))
+    }
+
+    if (settings.tornstats_apikey == undefined) {
+      console.log("ReTorn: Update found. Adding Torn Stats API Key update.");
+      await setValue({re_settings: {"tornstats_apikey": ""}}, "sync").then(res => console.log(res))
+    }
+    if (settings.tornstats_apikey == "" && settings.tornstats.enabled == true) {
+      console.log("ReTorn: Update found. Torn Stats API Key update. Unlinking Torn Stats.");
+      await setValue({re_settings: {"tornstats": false}}, "sync").then(res => console.log(res))
     }
 
     //checking chain notifications
