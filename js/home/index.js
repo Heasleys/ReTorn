@@ -1,8 +1,5 @@
-// @version      1.0.0
-// @description  Small tweaks to homepage - total personal perks on tab
-// @author       Heasleys4hemp [1468764]
 
-if ($('#body').attr('data-traveling') != "true") {
+if ($('#body').attr('data-traveling') != "true" && $('#body').attr('data-abroad') != "true") {
   let totPP = $('div#personal-perks').find('ul > li.last').text().replace(/\D/g,'');
   $('h5.box-title:contains("Personal Perks")').text( 'Personal Perks: ' + totPP).prop('title', 'Total Personal Perks: ' + totPP);
 
@@ -90,6 +87,37 @@ if ($('#body').attr('data-traveling') != "true") {
 
     </div>
     `);
-} else {
-  
+}
+
+if ($('#body').attr('data-abroad') == "true" && $('#body').attr('data-traveling') != "true") {
+  addMaxButton();
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.target && mutation.target.className && mutation.target.className.includes("msg") && $('#re_max').length == 0 && $('#re_trav_wrap').length == 0) {
+        addMaxButton();
+      }
+    });
+  });
+
+  var target = document.querySelector('div.content-wrapper');
+  observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+
+  function addMaxButton() {
+    $('.user-info .delimiter .msg').wrapInner("<span id='re_trav_wrap'>");
+    $('.user-info .delimiter .msg').append(`<button class="re_torn_button" id="re_max" title="Fill Max Items">Max</button>`);
+    $('.user-info .delimiter .msg').addClass("re_trav");
+
+    $('#re_max').off("click").click(function() {
+      let available = $('input.availableItemsAmount').val();
+      let money = parseInt($('.delimiter > .msg').find('span.bold:contains("$")').text().replace("$", "").replace(",",""));
+
+      $('.travel-agency-market ul.users-list > li').each(function() {
+        let cost = parseInt($(this).find('.cost .c-price').text().replace("$", "").replace(",",""));
+        let max = (money/cost) > available ? available : Math.trunc(money/cost);
+
+        $(this).find("input[name=amount]").val(max);
+      })
+    });
+  }
 }

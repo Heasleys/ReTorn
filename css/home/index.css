@@ -70,3 +70,19 @@ body.dark-mode div.re_stats_list ul li span.re_divider, body.dark-mode div.re_st
 .green {
   color: #678c00;
 }
+
+
+
+
+/* CSS for Traveling */
+
+body[data-abroad="true"] .user-info .delimiter .msg.re_trav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#re_max {
+  margin-left: 10px;
+  margin-right: 10px;
+}
