@@ -139,6 +139,12 @@
         "matches": ["https://www.torn.com/loader.php?sid=attack*"],
         "js": ["js/loader/attack/npc.js"],
         "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/forums.php*"],
+        "js": ["js/forums/forums.js"],
+        "css": ["css/forums/forums.css"],
+        "run_at": "document_end"
       }
     ]
 
