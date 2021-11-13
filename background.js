@@ -470,6 +470,9 @@ function pullRequiredAPI(apikey) {
       console.log(error);
       return reject({status: false, message: "There was an error pulling required Torn API."});
     })
+    .catch(function (err) {
+    console.log(err)
+    });
   });
 }
 
