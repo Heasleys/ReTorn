@@ -97,7 +97,8 @@ function insertQuickLinks() {
 chrome.runtime.sendMessage({name: "get_value", value: "re_quicklinks", type: "sync"}, (response) => {
   if (response.value.re_quicklinks && Object.keys(response.value.re_quicklinks).length != 0) {
     quicklinks = response.value.re_quicklinks;
-    insertQuickLinksHead()
+    insertQuickLinksHead();
+    observer.observe(target, obsOptions);
   }
 });
 
