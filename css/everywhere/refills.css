@@ -1,0 +1,21 @@
+#sidebar a.re_refill {
+  font-weight: bold;
+}
+
+#sidebar #re_energy {
+  color: #6cad2b;
+}
+#sidebar #re_energy:hover {
+  color: #4d7c1e;
+}
+
+#sidebar #re_nerve {
+  color: #cc7032;
+}
+#sidebar #re_nerve:hover {
+  color: #b3382c;
+}
+
+#sidebar a.re_refill:visited {
+  color:inherit;
+}
