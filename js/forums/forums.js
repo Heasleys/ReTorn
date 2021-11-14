@@ -40,8 +40,8 @@ function insertDiscordButtons() {
     let forum_url = window.location + post_id;
 
 
-    let likes = forum_wrap.find(".like > span.value").text().replace(/\s/g, "");
-    let dislikes = forum_wrap.find(".dislike > span.value").text().replace(/\s/g, "");
+    let likes = parseInt(forum_wrap.find(".like > span.value").text().replace(/\s/g, "")).toLocaleString('en-US');
+    let dislikes = parseInt(forum_wrap.find(".dislike > span.value").text().replace(/\s/g, "")).toLocaleString('en-US');
 
     let poster_wrap = forum_wrap.find(".poster-wrap");
     let author = poster_wrap.find('.user.name.t-hide > span').prop("title");
