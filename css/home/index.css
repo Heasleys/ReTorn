@@ -9,6 +9,9 @@ div.re_stats_list ul {
 div.re_stats_list ul li {
   border-bottom: 1px solid;
 }
+div.re_stats_list ul li:last-child {
+  border-bottom: 0px;
+}
 
 div.re_stats_list ul li span.re_divider {
   line-height: 14px;
@@ -72,6 +75,10 @@ body.dark-mode div.re_stats_list ul li span.re_divider, body.dark-mode div.re_st
 }
 
 
+/* modified Torn CSS */
+.d .sortable-list .cont-gray.battle {
+  border-bottom: 0px;
+}
 
 
 /* CSS for Traveling */
