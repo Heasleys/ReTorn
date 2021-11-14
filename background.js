@@ -459,7 +459,7 @@ function parseAPI(data) {
 // Function for pulling the required API data
 function pullRequiredAPI(apikey) {
   return new Promise((resolve, reject) => {
-    fetchAPI(apikey, 'user', 'bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn')
+    fetchAPI(apikey, 'user', 'bars,icons,money,notifications,cooldowns,travel,education,networth,refills,timestamp&comment=ReTorn')
     .then(async (data) => {
       await logger("api", "torn", "Required API", {type: "user", id: "", selection: "bars,icons,money,notifications,cooldowns,travel,education,timestamp&comment=ReTorn", timestamp: Date.now()});
       chrome.runtime.sendMessage({name: "popup_data", data: data});
