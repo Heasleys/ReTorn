@@ -1,4 +1,4 @@
-(function() {
+$(function() {
   var quicklinks;
 
 
@@ -148,4 +148,4 @@ function getLinkIcon(url) {
   return icon;
 }
 
-})();
+});
