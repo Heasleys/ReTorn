@@ -49,6 +49,8 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
                 buttonWrap.data('img', imgURL);
                 buttonWrap.data('action', action);
                 $(this).wrap(buttonWrap);
+
+                checkSafeCrime(item);
               });
 
               $(".re_add_qcrime").off('click').click(function (event) {
@@ -127,4 +129,17 @@ function reloadCrimes() {
 
 
   });
+}
+
+function checkSafeCrime(item) {
+  let crime = item.find("li.bonus").text().toLowerCase().replace(/\s/g,'');
+  let safeCrime = false;
+
+  if (crime == "jacket" || crime == "thoroughrobbery" || crime == "stealthvirus" || crime == "mobboss" || crime == "warehouse" || crime == "stealaparkedcar") {
+    safeCrime = true;
+  }
+
+  if (safeCrime) {
+    item.find("li.bonus").append(`<span class="re_safe" title="Safe Crime">✔️<span>`);
+  }
 }
