@@ -64,7 +64,7 @@
                 "https://wiki.torn.com/*"
             ],
         "css": ["css/everywhere/npclist.css", "css/everywhere/quicklinks.css", "css/everywhere/refills.css"],
-        "js": ["js/everywhere/npclist.js", "js/everywhere/quicklinks.js", "js/everywhere/refills.js"],
+        "js": ["js/everywhere/other.js","js/everywhere/npclist.js", "js/everywhere/quicklinks.js", "js/everywhere/refills.js"],
         "run_at": "document_end"
       },
       {
