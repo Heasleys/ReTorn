@@ -37,7 +37,7 @@ function insertDiscordButtons() {
     let forum_wrap = $(this).closest(".column-wrap");
     let forum_title = $("#topic-title").text().replace(/(\r\n|\n|\r)/gm, "");
     let post_id = "&to=" + forum_wrap.find('.post-wrap').attr("data-post");
-    let forum_url = window.location + post_id;
+    let forum_url = window.location.toString().replace(/\&to=\d*/g, "") + post_id;
 
 
     let likes = parseInt(forum_wrap.find(".like > span.value").text().replace(/\s/g, "")).toLocaleString('en-US');
