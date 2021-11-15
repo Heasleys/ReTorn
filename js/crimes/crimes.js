@@ -12,7 +12,7 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
 
   $('#re_title').text("Quick Crimes");
   $('.re_content').html(`
-    <p>Click on a crime's image to add it to this quick crimes list.</p>
+    <p>Click on a crime's image to add it to this quick crimes list. Click the image in this list to remove it.</p>
     <div class="re_row" id="re_quick_crimes"></div>
     `);
   reloadCrimes();
