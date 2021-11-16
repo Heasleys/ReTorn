@@ -20,6 +20,15 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
           if (mutation.target && mutation.target.nodeName && mutation.target.nodeName === "UL") {
             if (mutation.target.parentElement && mutation.target.parentElement.id && mutation.target.parentElement.id == "category-wrap") {
               if (mutation.previousSibling == null) {
+
+                if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-placeholder") ) {
+                  return;
+                }
+                //update item qtys
+                if (mutation.target.dataset && mutation.target.dataset.info) {
+                  updateQtyCategory(mutation.target, mutation.target.dataset.info);
+                }
+
                 for (const element of mutation.addedNodes) {
                   let itemID = element.dataset.item;
                   let itemCategory = element.dataset.category;
@@ -38,20 +47,6 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
                     let itemQty = nameWrap.find('.qty.t-hide').text().replace('x', '');
                     if (itemQty === "") {itemQty = 1;}
 
-                    //Update Item Qty in quick item list if item is in list
-                    if ($('#re_quick_items').find('div[data-itemid='+itemID+']').length > 0) {
-                      let itemElement = $('#re_quick_items').find('div[data-itemid='+itemID+']');
-                      if (parseInt(itemElement.attr('data-qty')) != itemQty) {
-                        itemElement.attr('data-qty', itemQty);
-                        itemElement.find('.re_qty').text('x'+itemQty);
-                        chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemID: itemID, itemName: itemName, itemQty: itemQty, itemCategory: itemCategory}}}}, (response) => {
-                        //loadItems();
-                        });
-
-                      }
-
-
-                    }
                       var qitemButton = $('<li/>');
                       qitemButton.addClass('re_add_qitem');
                       qitemButton.data('itemName', itemName);
@@ -109,6 +104,28 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
 
 } //if captcha
 
+function updateQtyCategory(target, category) {
+  if ($('#re_quick_items').find('div[data-category="'+category+'"]').length > 0) {
+    $('#re_quick_items').find('div[data-category="'+category+'"]').each(function() {
+      let itemQty;
+      let itemID = $(this).attr('data-itemid');
+      let lastQty = $(this).attr("data-qty");
+
+      if ($(target).children(`li[data-item='${itemID}']`).length == 0) {
+        itemQty = 0;
+      } else {
+        itemQty = $(target).children(`li[data-item='${itemID}']`).attr("data-qty");
+      }
+
+      if (lastQty != itemQty) {
+        chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemQty: itemQty}}}})
+        $(this).attr("data-qty", itemQty);
+        $(this).find('.re_qty').text(`x${itemQty}`);
+      }
+    });
+  }
+}
+
 
 function loadItems() {
   chrome.runtime.sendMessage({name: "get_value", value: "re_qitems"}, (response) => {
@@ -120,7 +137,7 @@ function loadItems() {
           $.each(items, (index, item) => {
             x++;
             $('#re_quick_items').prepend(`
-              <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/medium.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span title="Remove from Quick Items" class="close"></span></button></div>
+              <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/medium.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span title="Remove from Quick Items" class="close"></span></button></div>
             `);
           });
           n = x;
@@ -142,13 +159,20 @@ function loadItems() {
 
           $(".re_quse").off('click').click(function (event) {
             event.preventDefault();
+            let parent = $(this).parent();
+            let itemID = parent.data('itemid');
 
-            let itemID = $(this).parent().data('itemid');
             $("#re_quick_items_response").append(`<p class="link-act" data-item="`+itemID+`"></p>`);
             //$("#re_quick_items_response").find('.link-act').attr('data-item', itemID);
 
             $("#re_quick_items_response").find('.link-act').click();
             $("#re_quick_items_response").show();
+
+            // Update Item Qty on use
+            // let itemQty = parseInt(parent.data('qty')) - 1;
+            // chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemQty: itemQty}}}})
+            // parent.attr("data-qty", itemQty);
+            // parent.find('.re_qty').text(`x${itemQty}`);
 
           });
       } else {
