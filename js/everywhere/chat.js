@@ -191,7 +191,7 @@ function getNamesInChatbox(chatbox) {
     getFormat: function(word, position) {
       return "@"+word
     },
-	select: true,
+	select: false,
   preventTabbing: true
   });
 }
