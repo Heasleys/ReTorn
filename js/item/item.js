@@ -9,7 +9,7 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
   $('.re_content').html(`
     <p>Click the <span class="option-equip wai-btn qitem-btn"></span> button on an item to add it to this quick items list.</p>
     <div class="re_row" id="re_quick_items"></div>
-    <div class="re_row" id="re_quick_items_response" style="display: none;"></div>
+    <div class="re_row action-wrap use-act use-action" id="re_quick_items_response" style="display: none;"></div>
     `);
     loadItems();
 
