@@ -188,15 +188,12 @@ function sendItemUseRequest(itemID) {
       type: "post",
       data: { step: "useItem", itemID: itemID, item: itemID },
       beforeSend: function(xhr) {
-        console.log(xhr);
         $("#re_quick_items_response").html('<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10">');
       },
       success: function(str) {
-        console.log(str);
         $("#re_quick_items_response").empty();
         try {
             var msg = JSON.parse(str);
-            console.log(msg);
 
             if (msg.success) {
                 let item = $('#re_quick_items').find(`[data-itemid="${itemID}"]`);
