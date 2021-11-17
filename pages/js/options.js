@@ -58,6 +58,7 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
   initLogger();
   initChatUserHighlights();
   initQuickLinksList();
+  initChatHighlights();
 
   $(document).click(function(event) {
       if (!$(event.target).closest(".dropdown-menu, .dropdown .nav-link").length) {
@@ -510,7 +511,6 @@ function initQuickLinksList() {
   });
 }
 
-
 //function to insert base of quick links wrap
 function appendQuickLinks() {
   $("#quicklinks").append(`
@@ -524,6 +524,72 @@ function appendQuickLinks() {
     </div>
     `)
 }
+
+function initChatHighlights() {
+  chrome.runtime.sendMessage({name: "get_value", value: "re_chathighlights", type: "sync"}, (response) => {
+    $("#chat_highlights").empty(); //Empty list
+    console.log(response.value.re_chathighlights)
+    //Propogate quick links list with enough select boxes for each plus one
+    for (var i = 0; i <= Object.keys(response.value.re_chathighlights).length; i++) {
+      appendChatHighlights();
+    }
+
+    //recognize all new color inputs
+    jscolor.install();
+
+
+    //propogate chat Highlights
+    if (response.value.re_chathighlights && Object.keys(response.value.re_chathighlights).length != 0) {
+      for (const [key, value] of Object.entries(response.value.re_chathighlights)) {
+        let wrap = $("#chat_highlights > .switch_wrap").eq(key);
+        wrap.find("input[type='checkbox']").prop("checked", value.enabled);
+        wrap.find("input[name='text']").val(value.value);
+        wrap.find("input[name='color']").val(value.color);
+        wrap.find("input[name='color']")[0].jscolor.fromString(value.color);
+      }
+    }
+
+    //set change events to all inputs for quicklinks
+    $("#chat_highlights input[type='checkbox'], #chat_highlights input[type='text']").off('change').change(function(e) {
+      let wrap = $(this).parent('.switch_wrap');
+      let enabled = wrap.find("input[type=checkbox]").is(":checked");
+      let index = $("#chat_highlights .switch_wrap").index(wrap);
+      let value = wrap.find("input[name='text']").val();
+      let color = wrap.find("input[name='color']").val();
+
+      // if everything is in place and not undefined or blank, then send message to add to chat highlights
+      if (index != undefined && enabled != undefined && value != undefined && value != "" && color != "") {
+        chrome.runtime.sendMessage({name: "set_value", value_name: "re_chathighlights", value: {[index]: {enabled: enabled, value: value, color: color}}}, (response) => {
+          //Only reload list if it's not the color input
+          if (!$(this).is(wrap.find("input[name='color']"))) {
+            initChatHighlights();
+          }
+        });
+      }
+
+      // if checkbox changed and select box is set to custom and is not the last child and checkbox is set to false, then delete quicklinks entry
+      if (enabled == false && value == "" && !$(wrap).is(':last-child')) {
+        chrome.runtime.sendMessage({name: "del_value", value: "re_chathighlights", key: [index]}, (response) => {
+          initChatHighlights();
+        });
+      }
+    });
+
+
+  });
+}
+
+//function to insert base of chat highlights wrap
+function appendChatHighlights() {
+  $("#chat_highlights").append(`
+    <div class="switch_wrap">
+      <input type="checkbox">
+      <input type="text" name="text" placeholder="@username or words">
+      <input type="text" name="color" data-jscolor="{}" value="#E0CE00">
+    </div>
+    `)
+}
+
 
 function initNotificationTab(settings) {
   const notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education", "travel"];

@@ -1,5 +1,11 @@
 (function() {
 
+// Case-Insensitive JQuery contains found here https://stackoverflow.com/questions/8746882/jquery-contains-selector-uppercase-and-lower-case-issue
+jQuery.expr[':'].icontains = function(a, i, m) {
+  return jQuery(a).text().toUpperCase()
+      .indexOf(m[3].toUpperCase()) >= 0;
+};
+
 //Create Observer for start of Chat Functions - Add Filter Textbox/Check Highlights
 const tradeObserver = new MutationObserver(function(mutations) {
   if ($('#chatRoot').length == 1) {
@@ -57,21 +63,21 @@ const nameHighlightObserver = new MutationObserver(function(mutations) {
     if (mutation.addedNodes && mutation.addedNodes.length > 0) {
       if (mutation.addedNodes[0] && mutation.addedNodes[0].className) {
         if (mutation.addedNodes[0].className.includes('message')) {
-          highlightAllNames();
+          highlightAll();
         }
       }
     }
     //opening chatboxes
     if (mutation.target && mutation.target.className) {
       if (mutation.target.className.includes('chat-active')) {
-        highlightAllNames();
+        highlightAll();
       }
     }
   });
 
   //Already opened chats
   if ($("#chatRoot [class*='chat-active']").length != 0) {
-    highlightAllNames();
+    highlightAll();
   }
 });
 
@@ -108,35 +114,40 @@ function insertChatSearch() {
   });
 }
 
-function highlightAllNames() {
-   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
-     if (res.status && res.status == true) {
-       if (res.value.re_settings) {
-         let settings = res.value.re_settings;
-         if (settings && settings.chatuserhighlight != undefined && settings.chatuserhighlight == true) {
+function highlightAll() {
+  chrome.runtime.sendMessage({name: "get_value", value: "re_chathighlights"}, (response) => {
+    if (response.status && response.status == true && response.value) {
+      if (response.value.re_chathighlights && !jQuery.isEmptyObject(response.value.re_chathighlights)) {
+        for (const [key, value] of Object.entries(response.value.re_chathighlights)) {
+          //Check for Name Highlights
+          if (value.value && value.value.includes("@")) {
+            let name = value.value.replace("@", "").toLowerCase();
+            if (value.enabled) {
+               $(`#chatRoot div[class^="message"] > a`).filter(function() {
+                 return $.trim($(this).text()).replace(":", "").toLowerCase() == name;
+               }).css("color", value.color);
+            } else {
+              $(`#chatRoot div[class^="message"] > a`).filter(function() {
+                return $.trim($(this).text()).replace(":", "").toLowerCase() == name;
+              }).css("color", "");
+            }
+          }
 
-           chrome.runtime.sendMessage({name: "get_value", value: "re_chatuserhighlight"}, (response) => {
-             if (response.status && response.status == true && response.value) {
-               if (response.value.re_chatuserhighlight && !jQuery.isEmptyObject(response.value.re_chatuserhighlight)) {
-                 var userHighlights = response.value.re_chatuserhighlight;
-                 Object.keys(userHighlights).forEach(userid => {
-                   if (userHighlights[userid].enabled) {
-                      $('#chatRoot div[class^="message"] > a[href="/profiles.php?XID='+userid+'"]').css("color", userHighlights[userid].color);
-                   } else {
-                     $('#chatRoot div[class^="message"] > a[href="/profiles.php?XID='+userid+'"]').css("color", "");
-                   }
-                 });
-               }
-             }
-           });
-
-         } else {
-           removeHighlights();
-         }
-       }
-     }
-   });
+          //Check for text values
+          else {
+            let text = value.value.toLowerCase();
+            if (value.enabled) {
+               $(`#chatRoot div[class^="message"] > span:icontains(${text})`).css("background-color", value.color + "4D").css("font-weight", "bold");
+            } else {
+              $(`#chatRoot div[class^="message"] > span:icontains(${text})`).css("background-color", "").css("font-weight", "normal");
+            }
+          }
+        };
+      }
+    }
+  });
 }
+
 
 function removeHighlights() {
  $('#chatRoot div[class^="message"] > a').css("color", "");

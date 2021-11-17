@@ -647,6 +647,10 @@ html.light .log-item:hover, html.light .dropdown-menu li:hover {
   margin-bottom: 20px;
 }
 
+#chat_highlights input[name='color'] {
+  width: 70px;
+}
+
 @media screen and (max-width: 360px) {
   .tab_groups {
     margin-left: 3px

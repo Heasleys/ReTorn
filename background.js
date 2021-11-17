@@ -168,6 +168,9 @@ async function newInstall() {
       },
       re_quicklinks: {
 
+      },
+      re_chathighlights: {
+
       }
     }
 
@@ -301,6 +304,16 @@ function checkUpdate() {
     .catch((error) => {
       console.log("ReTorn: Update found for Quick Links. Adding Quick Links data.", error);
       setValue({"re_quicklinks": {}}, "sync").catch((error) => {console.log(error);});
+    });
+  })
+  .then(() => {
+    getValue("re_chathighlights", "sync")
+    .then((response) => {
+      console.log("ReTorn: Checking for updates - Chat Highlights data found. No update needed.", response);
+    })
+    .catch((error) => {
+      console.log("ReTorn: Update found for Chat Highlights. Adding Chat Highlights data.", error);
+      setValue({"re_chathighlights": {}}, "sync").catch((error) => {console.log(error);});
     });
   })
 
