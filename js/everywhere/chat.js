@@ -137,9 +137,9 @@ function highlightAll() {
           else {
             let text = value.value.toLowerCase();
             if (value.enabled) {
-               $(`#chatRoot div[class^="message"] > span:icontains(${text})`).css("background-color", value.color + "4D").css("font-weight", "bold");
+               $(`#chatRoot div[class^="message"] > span:icontains(${text})`).parent(`div[class^="message"]`).css("background-color", value.color + "4D").css("font-weight", "bold");
             } else {
-              $(`#chatRoot div[class^="message"] > span:icontains(${text})`).css("background-color", "").css("font-weight", "normal");
+              $(`#chatRoot div[class^="message"] > span:icontains(${text})`).parent(`div[class^="message"]`).css("background-color", "").css("font-weight", "normal");
             }
           }
         };
