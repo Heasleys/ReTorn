@@ -1,5 +1,7 @@
 (function() {
 
+var namesList = {}
+
 // Case-Insensitive JQuery contains found here https://stackoverflow.com/questions/8746882/jquery-contains-selector-uppercase-and-lower-case-issue
 jQuery.expr[':'].icontains = function(a, i, m) {
   return jQuery(a).text().toUpperCase()
@@ -63,21 +65,25 @@ const nameHighlightObserver = new MutationObserver(function(mutations) {
     if (mutation.addedNodes && mutation.addedNodes.length > 0) {
       if (mutation.addedNodes[0] && mutation.addedNodes[0].className) {
         if (mutation.addedNodes[0].className.includes('message')) {
-          highlightAll();
+          monitorChats($(mutation.addedNodes[0]).closest(`div[class^="chat-box_"]`)[0]);
         }
       }
     }
     //opening chatboxes
     if (mutation.target && mutation.target.className) {
       if (mutation.target.className.includes('chat-active')) {
-        highlightAll();
+        monitorChats(mutation.target);
       }
     }
   });
 
   //Already opened chats
   if ($("#chatRoot [class*='chat-active']").length != 0) {
-    highlightAll();
+    monitorChats();
+  }
+
+  if (Object.keys(namesList).length === 0) {
+    getNamesInAllChats();
   }
 });
 
@@ -114,7 +120,8 @@ function insertChatSearch() {
   });
 }
 
-function highlightAll() {
+function monitorChats(target) {
+  // Check for highlights
   chrome.runtime.sendMessage({name: "get_value", value: "re_chathighlights"}, (response) => {
     if (response.status && response.status == true && response.value) {
       if (response.value.re_chathighlights && !jQuery.isEmptyObject(response.value.re_chathighlights)) {
@@ -146,8 +153,48 @@ function highlightAll() {
       }
     }
   });
+
+  // Check for names
+  if (target != undefined) {
+    getNamesInChatbox($(target));
+  }
 }
 
+
+function getNamesInAllChats() {
+  $(`#chatRoot div[class^="chat-box_"]`).not(`[class^="chat-box-settings"]`).each(function() {
+    getNamesInChatbox($(this));
+  })
+}
+
+function getNamesInChatbox(chatbox) {
+  let title = chatbox.find(`[class^="chat-box-title"]`).attr("title").toLowerCase();
+  if (!namesList[title]) {
+    namesList[title] = [];
+  }
+
+  chatbox.find(`div[class^="message"] > a`).each(function() {
+    let name = $.trim($(this).text()).replace(":", "");
+    if (!namesList[title].includes(name)) {
+      namesList[title].push(name);
+    }
+  });
+
+  // tabComplete using plugin from: https://www.jqueryscript.net/form/Simple-jQuery-Tab-Completion-Plugin-Tab-Complete.html
+  // Not sure why, but it requires a character like @ to cycle if tabComplete was inserted later into page load
+  let textarea = chatbox.find(`[class^="chat-box-input"] textarea`);
+  textarea.tabComplete("reset", []);
+  textarea.tabComplete({
+    getOptions:function() {
+      return namesList[title]
+    },
+    getFormat: function(word, position) {
+      return "@"+word
+    },
+	select: true,
+  preventTabbing: true
+  });
+}
 
 function removeHighlights() {
  $('#chatRoot div[class^="message"] > a').css("color", "");
