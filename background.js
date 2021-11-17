@@ -600,13 +600,14 @@ function delValue(value, key, storage, log) {
             delete response.re_settings.npclist;
           }
 
-          if (value == "re_quicklinks") {
-            delete response.re_quicklinks[key];
-            Object.keys(response.re_quicklinks).forEach(function(k) {
-              if (k > key) {
-                let newkey = parseInt(k) - 1;
-                response.re_quicklinks[newkey] = response.re_quicklinks[k];
-                delete response.re_quicklinks[k];
+          if (value == "re_quicklinks" || value == "re_chathighlights") {
+            delete response[value][key];
+            Object.keys(response[value]).forEach(function(k) {
+              if (parseInt(k) > parseInt(key)) {
+                let newkey = parseInt(k);
+                newkey--;
+                response[value][newkey] = response[value][k];
+                delete response[value][k];
               }
             });
           }
