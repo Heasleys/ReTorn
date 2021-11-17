@@ -9,7 +9,7 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
   $('.re_content').html(`
     <p>Click the <span class="option-equip wai-btn qitem-btn"></span> button on an item to add it to this quick items list.</p>
     <div class="re_row" id="re_quick_items"></div>
-    <div class="re_row action-wrap use-act use-action" id="re_quick_items_response" style="display: none;"></div>
+    <div class="re_row" id="re_quick_items_response" style="display: none;"></div>
     `);
     loadItems();
 
@@ -137,7 +137,7 @@ function loadItems() {
           $.each(items, (index, item) => {
             x++;
             $('#re_quick_items').prepend(`
-              <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/medium.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span title="Remove from Quick Items" class="close"></span></button></div>
+              <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/medium.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="close"></span></button></div>
             `);
           });
           n = x;
@@ -162,17 +162,11 @@ function loadItems() {
             let parent = $(this).parent();
             let itemID = parent.data('itemid');
 
-            $("#re_quick_items_response").append(`<p class="link-act" data-item="`+itemID+`"></p>`);
-            //$("#re_quick_items_response").find('.link-act').attr('data-item', itemID);
+            sendItemUseRequest(itemID);
 
-            $("#re_quick_items_response").find('.link-act').click();
             $("#re_quick_items_response").show();
 
-            // Update Item Qty on use
-            // let itemQty = parseInt(parent.data('qty')) - 1;
-            // chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemQty: itemQty}}}})
-            // parent.attr("data-qty", itemQty);
-            // parent.find('.re_qty').text(`x${itemQty}`);
+
 
           });
       } else {
@@ -187,3 +181,69 @@ function loadItems() {
 $('#re_quick_items_response').on('click', '.close-act', function() {
   $('#re_quick_items_response').hide();
 });
+
+function sendItemUseRequest(itemID) {
+  var options = {
+      url: "item.php",
+      type: "post",
+      data: { step: "useItem", itemID: itemID, item: itemID },
+      beforeSend: function(xhr) {
+        console.log(xhr);
+        $("#re_quick_items_response").html('<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10">');
+      },
+      success: function(str) {
+        console.log(str);
+        $("#re_quick_items_response").empty();
+        try {
+            var msg = JSON.parse(str);
+            console.log(msg);
+
+            if (msg.success) {
+                let item = $('#re_quick_items').find(`[data-itemid="${itemID}"]`);
+                let itemQty = parseInt(item.data("qty"));
+                itemQty--;
+                if (itemQty < 0) {
+                  itemQty = 0;
+                }
+
+                chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemQty: itemQty}}}})
+                item.attr("data-qty", itemQty);
+                item.find('.re_qty').text(`x${itemQty}`);
+            }
+
+            let linksHTML = `<p><a class="close-act t-blue h">Close</a>`;
+            if (msg.links) {
+              for (const [key, link] of Object.entries(msg.links)) {
+                linksHTML+= `<a class="t-blue h m-left10 ${link.class}" href="${link.url}" ${link.attr}>${link.title}</a>`
+              }
+            }
+            linksHTML+= `</p>`;
+
+            $("#re_quick_items_response").append(`<div>
+            <p>${msg.text}</p>
+            ${linksHTML}
+            </div>`);
+
+
+
+            // If response includes a countdown
+            if ($("#re_quick_items_response").find('.counter-wrap').length > 0) {
+              let seconds = $("#re_quick_items_response").find('.counter-wrap').data('time');
+              var date = new Date().getTime() + (seconds*1000);
+              //using jquery.countdown plugin
+              $("#re_quick_items_response").find('.counter-wrap')
+              .countdown(date, function(event) {
+                var totalHours = event.offset.totalDays * 24 + event.offset.hours;
+                $(this).text(
+                  event.strftime(`${totalHours}:%M:%S`)
+                );
+              })
+            }
+        } catch (e) {
+            console.error(e);
+        }
+      }
+  };
+
+  $.ajax(options);
+}

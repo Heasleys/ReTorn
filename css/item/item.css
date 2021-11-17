@@ -33,6 +33,10 @@ li.re_add_qitem {
   margin-left: 0px;
 }
 
+#re_quick_items_response .close-act {
+  cursor: pointer;
+}
+
 #re_quick_items div {
   padding: 0px;
   align-self: stretch;

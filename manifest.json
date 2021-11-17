@@ -97,7 +97,7 @@
       },
       {
         "matches": ["https://www.torn.com/item.php*"],
-        "js": ["js/item/item.js"],
+        "js": ["js/lib/jquery.countdown.min.js","js/item/item.js"],
         "css": ["css/item/item.css"],
         "run_at": "document_end"
       },
