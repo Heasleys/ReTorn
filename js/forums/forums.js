@@ -1,7 +1,6 @@
 (function() {
 insertDiscordButtons();
   var observer = new MutationObserver(function(mutations, observer) {
-    console.log(mutations);
     mutations.forEach(function(mutation) {
       if (mutation.target && mutation.target && mutation.target.id && mutation.target.id == "forums-page-wrap") {
         if (mutation.addedNodes && mutation.addedNodes.length > 0) {
