@@ -1,30 +1,30 @@
 @media screen and (max-width: 1000px) {
-  #ts .plans-list .item>li.nnb, #ts .plan-list-scrollbar .title>li.nnb {
+  html:not(.html-manual-desktop) #ts .plans-list .item>li.nnb, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.nnb {
     width: 45px !important;
   }
 
-  #ts .plans-list .item>li.level, #ts .plan-list-scrollbar .title>li.level {
+  html:not(.html-manual-desktop) #ts .plans-list .item>li.level, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.level {
     width: 25px !important;
   }
 
-  #ts .plans-list .item>li.offences, #ts .plan-list-scrollbar .title>li.offences {
+  html:not(.html-manual-desktop) #ts .plans-list .item>li.offences, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.offences {
     width: 60px !important;
   }
 }
 
 @media screen and (max-width: 600px) {
-  #ts .plans-list .item>li.nnb, #ts .plan-list-scrollbar .title>li.nnb {
+  html:not(.html-manual-desktop) #ts .plans-list .item>li.nnb, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.nnb {
     width: 40px !important;
     padding-left: 2px;
     padding-right: 2px;
   }
 
-  #ts .plans-list .item>li.level, #ts .plan-list-scrollbar .title>li.level {
+  html:not(.html-manual-desktop) #ts .plans-list .item>li.level, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.level {
     width: 25px !important;
     display: none;
   }
 
-  #ts .plans-list .item>li.offences, #ts .plan-list-scrollbar .title>li.offences {
+  html:not(.html-manual-desktop) #ts .plans-list .item>li.offences, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.offences {
     width: 60px !important;
   }
 }
@@ -87,13 +87,13 @@
 }
 
 @media screen and (max-width: 600px) {
-  #tornstats-roster th.rank, #tornstats-roster td.rank, #tornstats-roster td a span.userid {
+html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual-desktop) #tornstats-roster td.rank, html:not(.html-manual-desktop) #tornstats-roster td a span.userid {
     display: none;
   }
 }
 
 @media screen and (max-width: 1000px) {
-  #tornstats-roster th.rank, #tornstats-roster td.rank {
+html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual-desktop) #tornstats-roster td.rank {
     display: none;
   }
 }
