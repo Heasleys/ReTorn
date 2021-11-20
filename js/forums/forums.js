@@ -23,6 +23,7 @@ function insertDiscordButtons() {
         <li class="re_discord forum-button" title="Copy post for Discord">
         <i class="re_discord_icon white"></i>
         <span class="button-text">Discord</span>
+        <span class="confirmation">Copied!</span>
         </li>
       `);
     }
@@ -82,6 +83,12 @@ function insertDiscordButtons() {
     discordFormat += `**${author}**:\n${codeblock}md\n${quote}${formattedText}\n${codeblock}`;
 
     copy_internal(discordFormat);
+    var confirmation = $(this).find('.confirmation');
+
+    confirmation.toggleClass("copied");
+    setTimeout(function(){
+      confirmation.toggleClass('copied');
+    }, 2000);
   });
 }
 

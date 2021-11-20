@@ -1,3 +1,50 @@
+.confirmation {
+  z-index: 2147483647;
+  display: none;
+  top: -60px;
+  position: relative;
+  background: var(--default-panel-gradient);
+  border: 1px solid;
+  border-color: var(--default-panel-divider-outer-side-color);
+  padding: 5px;
+  border-radius: 5px;
+  width: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.confirmation.copied:after {
+  content:'';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-top: solid 5px var(--default-bg-panel-color);
+  border-left: solid 5px transparent;
+  border-right: solid 5px transparent;
+}
+
+.confirmation.copied {
+  display: block;
+}
+.confirmation.copied, .confirmation.copied:after {
+-webkit-animation: fadeinout 2s; /* Safari, Chrome and Opera > 12.1 */
+   -moz-animation: fadeinout 2s; /* Firefox < 16 */
+    -ms-animation: fadeinout 2s; /* Internet Explorer */
+     -o-animation: fadeinout 2s; /* Opera < 12.1 */
+        animation: fadeinout 2s;
+}
+
+@keyframes fadeinout {
+  0%   { opacity:0; }
+  50%  { opacity:1; }
+  100% { opacity:0; }
+}
+
+
+
 .re_discord_icon {
   padding-top: 4px;
   height: 24px !important;
@@ -119,6 +166,4 @@
   .r .content .content-wrapper .forums-thread-wrap .thread-list>li .confirm-wrap>ul.action-wrap>li:nth-child(n+7):not(.ban)+.right-part .forum-button {
     width: 34px;
   }
-
-
 }
