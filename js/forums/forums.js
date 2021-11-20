@@ -19,8 +19,8 @@ insertDiscordButtons();
 function insertDiscordButtons() {
   $('ul.thread-list > li ul.action-wrap').each(function() {
     if ($(this).find('.re_discord').length == 0) {
-      $(this).find('li.report').after(`
-        <li class="re_discord" title="Copy post for Discord">
+      $(this).find('li.right-part').before(`
+        <li class="re_discord forum-button" title="Copy post for Discord">
         <i class="re_discord_icon white"></i>
         <span class="button-text">Discord</span>
         </li>
