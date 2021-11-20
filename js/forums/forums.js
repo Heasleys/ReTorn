@@ -29,7 +29,9 @@ function insertDiscordButtons() {
     }
   });
 
-  $(".re_discord").click(function() {
+  $(".re_discord").click(function(e) {
+    e.preventDefault();
+    e.stopPropagation();
     let discordFormat = "";
     let codeblock = "```";
     let quote = "";
@@ -85,11 +87,15 @@ function insertDiscordButtons() {
     copy_internal(discordFormat);
     var confirmation = $(this).find('.confirmation');
 
-    confirmation.toggleClass("copied");
-    setTimeout(function(){
-      confirmation.toggleClass('copied');
-    }, 2000);
+    if (!confirmation.is(":visible")) {
+      confirmation.toggleClass("copied");
+      setTimeout(function(){
+        confirmation.toggleClass('copied');
+      }, 2000);
+    }
+
   });
+
 }
 
   //copy to clipboard function taken from internet -> https://pastebin.com/ikVzSiq9
