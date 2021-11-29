@@ -871,3 +871,11 @@ $('#torn3d').change(function() {
      chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"torn3d": v}}, (response) => {
      });
 });
+
+
+$('.color_code').click(function() {
+  let val = $(this).text();
+  $('#header_color').val(val);
+  $('#header_color')[0].jscolor.fromString(val);
+  $('#header_color').trigger("change");
+});

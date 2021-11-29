@@ -36,7 +36,18 @@ body {
   color: white;
 }
 
+.colorcodes {
+  display: grid;
+  grid-template-columns: 85px 100px;
+}
 
+.color_code {
+  font-weight: bold;
+  width: 95px;
+}
+.color_code:hover {
+  cursor: pointer;
+}
 
 ul {
   list-style-type: none;
