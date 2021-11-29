@@ -1,7 +1,7 @@
 // @version      1.0.0
 // @description  Add stat spies and profile info from torn stats to profile
 // @author       Heasleys4hemp [1468764]
-if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length == 0) {
+if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.travelling').length == 0) {
   var observer = new MutationObserver(function(mutations) {
     if ($("div.profile-wrapper.medals-wrapper").length == 1 && $('div.re_container').length == 0) {
       loadTS();
