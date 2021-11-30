@@ -77,6 +77,39 @@ li.re_add_qitem {
   font-size: 15px;
 }
 
+.re-pack-open-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.re-pack-open-result .cache-item {
+  background: url(/images/v2/items/gentleman/100x50.svg) left top no-repeat;
+  background-size: 100% 100%;
+  margin: 5px;
+  width: 100px;
+  height: 50px;
+}
+
+.re-pack-open-result .item-image-container {
+    position: relative;
+}
+
+.re-pack-open-result .item-amount {
+    position: absolute;
+    right: 10px;
+    bottom: 12px;
+    font-weight: 700;
+    font-size: 11px;
+    line-height: 11px;
+    color: var(--items-plate-qty-color);
+    text-shadow: var(--items-plate-qty-text-shadow);
+    opacity: 0;
+    animation: fadeIn 1ms;
+    animation-fill-mode: forwards;
+}
+
 
 
 /* Modified Torn CSS */

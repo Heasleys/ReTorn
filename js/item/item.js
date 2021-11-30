@@ -194,7 +194,7 @@ function sendItemUseRequest(itemID) {
         $("#re_quick_items_response").empty();
         try {
             var msg = JSON.parse(str);
-
+            let itemsHTML;
             if (msg.success) {
                 let item = $('#re_quick_items').find(`[data-itemid="${itemID}"]`);
                 let itemQty = parseInt(item.data("qty"));
@@ -206,6 +206,32 @@ function sendItemUseRequest(itemID) {
                 chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemQty: itemQty}}}})
                 item.attr("data-qty", itemQty);
                 item.find('.re_qty').text(`x${itemQty}`);
+
+                if (msg.items && msg.items.itemAppear) {
+                  itemsHTML = `<div><div class="re-pack-open-result">`;
+                  for (const [key, item] of Object.entries(msg.items.itemAppear)) {
+
+                    if (item.type && item.ID) {
+                      itemsHTML += `<div class="item-image-container">
+                            <div`;
+                            if (item.name) {
+                              itemsHTML += ` title="${item.name}"`;
+                            }
+                            itemsHTML += `>
+                                <img width="100" height="50" src="/images/items/${item.ID}/large.png" class="cache-item">
+                            </div>
+                            `;
+                      if (parseInt(item.qty) > 1) {
+                        itemsHTML += `<div class="item-amount">${item.qty}</div></div>`;
+                      } else {
+                        itemsHTML += `</div>`;
+                      }
+                    }
+
+                  } //for loop
+                  itemsHTML += `</div></div>`;
+                }
+
             }
 
             let linksHTML = `<p><a class="close-act t-blue h">Close</a>`;
@@ -214,12 +240,15 @@ function sendItemUseRequest(itemID) {
                 linksHTML+= `<a class="t-blue h m-left10 ${link.class}" href="${link.url}" ${link.attr}>${link.title}</a>`
               }
             }
-            linksHTML+= `</p>`;
+            linksHTML += `</p>`;
 
-            $("#re_quick_items_response").append(`<div>
-            <p>${msg.text}</p>
-            ${linksHTML}
-            </div>`);
+            let responseHTML = `<div>`;
+            if (itemsHTML) {
+              responseHTML += itemsHTML;
+            }
+            responseHTML += `<p>${msg.text}</p>${linksHTML}</div>`;
+
+            $("#re_quick_items_response").append(responseHTML);
 
 
 
