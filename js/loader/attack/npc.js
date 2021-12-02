@@ -37,11 +37,10 @@ function insertNPCtimer() {
                 attack_time = new Date(d * 1000).toISOString().substr(11, 8);
               }
 
-              let title = "<b>"+loot_time.replace("_", " ").replace("hosp out", "loot 1")+" in:</b> " + attack_time;
-              $('#playername_'+npc.name).attr("title", title);
-              $('#playername_'+npc.name).css("cursor", "pointer");
+              let title = `<b>${loot_time.replace("_", " ").replace("hosp out", "loot 1")}:</b> ${attack_time}`;
 
-              //$('div[id^="react-tooltip-Loot"]').find("[class*='tooltipText']")
+              $('#playername_'+npc.name).wrap(`<span class="re_lootwrap">`);
+              $('#playername_'+npc.name).after(`<span id="re_loot_time">${title}</span>`);
 
               var t = 0;
               setInterval(function() {
@@ -52,16 +51,15 @@ function insertNPCtimer() {
                 } else {
                   attack_time = "Now";
                 }
-                let title = "<b>"+loot_time.replace("_", " ").replace("hosp out", "loot 1")+" in:</b> " + attack_time;
 
-                if ($('#playername_'+npc.name).attr('aria-describedby')) {
-                  let aria = $('#playername_'+npc.name).attr('aria-describedby');
+                let title = `<b>${loot_time.replace("_", " ").replace("hosp out", "loot 1")}:</b> ${attack_time}`;
 
-                  $('#'+aria + " > .ui-tooltip-content").html(title);
+                if ($('.re_lootwrap').length > 0) {
+                  $('#re_loot_time').html(title);
                 } else {
-                  $('#playername_'+npc.name).attr("title", title);
+                  $('#playername_'+npc.name).wrap(`<span class="re_lootwrap">`);
+                  $('#playername_'+npc.name).after(`<span id="re_loot_time">${title}</span>`);
                 }
-                $('#playername_'+npc.name).css("cursor", "pointer");
 
                 if ($("div[id*='react-tooltip-Loot']").length != 0) {
 

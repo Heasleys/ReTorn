@@ -138,6 +138,7 @@
       {
         "matches": ["https://www.torn.com/loader.php?sid=attack*"],
         "js": ["js/loader/attack/npc.js"],
+        "css": ["css/loader/attack/npc.css"],
         "run_at": "document_end"
       },
       {

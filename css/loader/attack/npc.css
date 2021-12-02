@@ -1,0 +1,28 @@
+#re_loot_time {
+  text-transform: capitalize;
+}
+
+.re_lootwrap {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+  #re_loot_time {
+    margin-top: 2px;
+  }
+
+  .re_lootwrap {
+    flex-direction: column;
+  }
+
+  /* modified Torn styles */
+div[class^="playersModelWrap"] div[class^="boxTitle"] {
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 10px 0;
+  }
+}
