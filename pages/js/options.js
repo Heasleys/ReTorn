@@ -453,11 +453,40 @@ function initQuickLinksList() {
       optionStr += `<option value="${value.url}">${value.name}</option>`;
     }
     $('.quicklinks').append(optionStr);
+    $( "#quicklinks" ).sortable({axis: "y", items: "> li:not(:last-child)", deactivate: function( event, ui ) {
+      var message = {};
+      $('#quicklinks > li:not(:last-child) .switch_wrap').each(function() {
+
+        let qlink_wrap = $(this);
+        let enabled = qlink_wrap.find("input[type=checkbox]").is(":checked");
+        let index = $("#quicklinks .switch_wrap").index(qlink_wrap);
+        let value = qlink_wrap.find('.quicklinks').val();
+        let name;
+        let url;
+        let type;
+
+        if (value == "custom") {
+          type = "custom";
+          qlink_wrap.find('input[type=text]').show();
+          name = qlink_wrap.find('input[type=text][name=name]').val();
+          url = encodeURI(qlink_wrap.find('input[type=text][name=url]').val());
+        } else {
+          type = "default";
+          name  = qlink_wrap.find(".quicklinks option:selected").text();
+          url = encodeURI(value);
+        }
+
+        message[index] = {"type": type, "enabled": enabled, "name": name, "url": url}
+      });
+      chrome.runtime.sendMessage({name: "set_value", value_name: "re_quicklinks", value: message}, (response) => {
+        initQuickLinksList();
+      });
+    }});
 
     //set each select box to the correct option
     if (response.value.re_quicklinks && Object.keys(response.value.re_quicklinks).length != 0) {
       for (const [key, value] of Object.entries(response.value.re_quicklinks)) {
-        let qlink_wrap = $("#quicklinks > .switch_wrap").eq(key);
+        let qlink_wrap = $("#quicklinks .switch_wrap").eq(key);
         qlink_wrap.find("input[type='checkbox']").prop("checked", value.enabled);
 
         if (value.type == "default") {
@@ -474,54 +503,58 @@ function initQuickLinksList() {
 
     //set change events to all inputs for quicklinks
     $("#quicklinks input[type='checkbox'], #quicklinks .quicklinks, #quicklinks input[type='text']").off('change').change(function(e) {
-      let qlink_wrap = $(this).parent('.switch_wrap');
-      let enabled = qlink_wrap.find("input[type=checkbox]").is(":checked");
-      let index = $("#quicklinks .switch_wrap").index(qlink_wrap);
-      let value = qlink_wrap.find('.quicklinks').val();
-      let name;
-      let url;
-      let type;
-
-      if (value == "custom") {
-        type = "custom";
-        qlink_wrap.find('input[type=text]').show();
-        name = qlink_wrap.find('input[type=text][name=name]').val();
-        url = encodeURI(qlink_wrap.find('input[type=text][name=url]').val());
-      } else {
-        type = "default";
-        name  = qlink_wrap.find(".quicklinks option:selected").text();
-        url = encodeURI(value);
-      }
-
-
-      // if everything is in place and not undefined or blank, then send message to add to quick links
-      if (index != undefined && type != undefined && enabled != undefined && name != undefined && url != undefined && name != "" && url != "") {
-        chrome.runtime.sendMessage({name: "set_value", value_name: "re_quicklinks", value: {[index]: {type: type, enabled: enabled, name: name, url: url}}}, (response) => {
-          initQuickLinksList();
-        });
-      }
-
-      // if checkbox changed and select box is set to custom and is not the last child and checkbox is set to false, then delete quicklinks entry
-      if ($(this).is(':checkbox') && enabled == false && value == 'custom' && !$(qlink_wrap).is(':last-child') && name == "" && url == "") {
-        chrome.runtime.sendMessage({name: "del_value", value: "re_quicklinks", key: [index]}, (response) => {
-          initQuickLinksList();
-        });
-      }
+      sendQuickLinks($(this));
     });
   });
+}
+
+
+function sendQuickLinks(el) {
+  let qlink_wrap = el.parent('.switch_wrap');
+  let enabled = qlink_wrap.find("input[type=checkbox]").is(":checked");
+  let index = $("#quicklinks .switch_wrap").index(qlink_wrap);
+  let value = qlink_wrap.find('.quicklinks').val();
+  let name;
+  let url;
+  let type;
+
+  if (value == "custom") {
+    type = "custom";
+    qlink_wrap.find('input[type=text]').show();
+    name = qlink_wrap.find('input[type=text][name=name]').val();
+    url = encodeURI(qlink_wrap.find('input[type=text][name=url]').val());
+  } else {
+    type = "default";
+    name  = qlink_wrap.find(".quicklinks option:selected").text();
+    url = encodeURI(value);
+  }
+
+  // if everything is in place and not undefined or blank, then send message to add to quick links
+  if (index != undefined && type != undefined && enabled != undefined && name != undefined && url != undefined && name != "" && url != "") {
+    chrome.runtime.sendMessage({name: "set_value", value_name: "re_quicklinks", value: {[index]: {type: type, enabled: enabled, name: name, url: url}}}, (response) => {
+      initQuickLinksList();
+    });
+  }
+
+  // if checkbox changed and select box is set to custom and is not the last child and checkbox is set to false, then delete quicklinks entry
+  if (el.is(':checkbox') && enabled == false && value == 'custom' && !$(qlink_wrap).is(':last-child') == false && name == "" && url == "") {
+    chrome.runtime.sendMessage({name: "del_value", value: "re_quicklinks", key: [index]}, (response) => {
+      initQuickLinksList();
+    });
+  }
 }
 
 //function to insert base of quick links wrap
 function appendQuickLinks() {
   $("#quicklinks").append(`
-    <div class="switch_wrap">
+    <li><span class="fa-li"><i class="fas fa-grip-lines"></i></span><div class="switch_wrap">
       <input type="checkbox">
       <select class="quicklinks">
         <option value="custom" selected>Custom...</option>
       </select>
       <input type="text" name="name" placeholder="Name">
       <input type="text" name="url" placeholder="URL">
-    </div>
+    </div></li>
     `)
 }
 

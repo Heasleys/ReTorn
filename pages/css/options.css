@@ -44,9 +44,21 @@ body {
 .color_code {
   font-weight: bold;
   width: 95px;
+  margin-bottom: 2px;
+  border-radius: 3px;
+  text-align: center;
 }
 .color_code:hover {
   cursor: pointer;
+}
+
+html.light .color_code {
+  border: 1px solid #111;
+  background-color: #fafafa;
+}
+html.dark .color_code {
+  border: 1px solid #333;
+  background-color: #0c0c0c;
 }
 
 ul {
@@ -261,6 +273,27 @@ label + .switch_wrap {
 #quicklinks .switch_wrap input[type=text][name=url] {
   width: 30%;
   max-width: 150px;
+}
+
+ul#quicklinks {
+  list-style: none;
+  padding: 0;
+  position: relative;
+}
+
+ul#quicklinks li {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  left: 0;
+}
+
+ul#quicklinks li .fa-li {
+  cursor: row-resize;
+}
+
+ul#quicklinks li:last-child .fa-li {
+  display: none;
 }
 
 .success {
