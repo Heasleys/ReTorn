@@ -157,12 +157,12 @@ if ($('#body').attr('data-abroad') == "true" && $('#body').attr('data-traveling'
     $('.user-info .delimiter .msg').addClass("re_trav");
 
     $('#re_max').off("click").click(function() {
-      let available = $('input.availableItemsAmount').val();
-      let money = parseInt($('.delimiter > .msg').find('span.bold:contains("$")').text().replace("$", "").replace(",",""));
+      var available = $('input.availableItemsAmount').val();
+      var money = parseInt($('.delimiter > .msg').find('span.bold:contains("$")').text().replaceAll("$", "").replaceAll(",",""));
 
       $('.travel-agency-market ul.users-list > li').each(function() {
-        let cost = parseInt($(this).find('.cost .c-price').text().replace("$", "").replace(",",""));
-        let max = (money/cost) > available ? available : Math.trunc(money/cost);
+        let cost = parseInt($(this).find('.cost .c-price').text().replaceAll("$", "").replaceAll(",",""));
+        let max = (money/cost) >= available ? available : Math.trunc((money/cost));
 
         $(this).find("input[name=amount]").val(max);
       })
