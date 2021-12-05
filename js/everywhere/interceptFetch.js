@@ -13,13 +13,17 @@ function interceptFetch(url,q, callback) {
 }
 
 interceptFetch("torn.com","torn.com", (response, url) => {
- console.log("Found a fetch from: " + url);
+ console.log("Found a fetch from: " + url, response);
 
 /* Mini Profiles */
  if (url.includes('step=getUserNameContextMenu')) {
-   console.log("Mini Profiles:", response);
    miniProfiles(response);
  }
+
+ /* Christmas Town */
+  if (url.includes('christmas_town.php?q=move') || url.includes('christmas_town.php?q=initMap')) {
+    christmas_town(response);
+  }
 
 });
 
@@ -63,6 +67,42 @@ function miniProfiles(response) {
         }
     }
 }
+
+
+/* Christmas Town */
+var ct_friends;
+
+function christmas_town(response) {
+  if (response && response.mapData) {
+    if (response.mapData.user) {
+      if (response.mapData.user.user_id) {
+        let user_id = response.mapData.user.user_id;
+        $(`#ctUser${user_id}`).addClass("re_self");
+      }
+    }
+  }
+
+  // Friend Colors
+  if (ct_friends && ct_friends.length != 0) {
+    for (const [userid, friend] of Object.entries(ct_friends)) {
+      if ($(`.users-layer #ctUser${userid}`).length != 0 && friend.color) {
+        $(`.users-layer #ctUser${userid}`).addClass('re_friend');
+        $(`.users-layer #ctUser${userid}`).find('svg').css('fill', friend.color);
+      }
+    }
+  }
+}
+
+
+document.addEventListener("ct_friends", function(msg) {
+  if (msg.detail && msg.detail.re_ct) {
+    let re_ct = msg.detail.re_ct;
+    if (re_ct.friends) {
+      ct_friends = re_ct.friends;
+      christmas_town();
+    }
+  }
+});
 
 
 function secondsToHms(d) {

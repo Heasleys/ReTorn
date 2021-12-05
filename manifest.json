@@ -148,6 +148,12 @@
         "run_at": "document_end"
       },
       {
+        "matches": ["https://www.torn.com/christmas_town.php"],
+        "js": ["js/competitions/christmastown.js"],
+        "css": ["css/competitions/christmastown.css"],
+        "run_at": "document_end"
+      },
+      {
         "matches": ["https://www.torn.com/calendar.php"],
         "js": ["js/calendar/calendar.js"],
         "css": ["css/calendar/calendar.css"],

@@ -171,6 +171,9 @@ async function newInstall() {
       },
       re_chathighlights: {
 
+      },
+      re_ct: {
+        friends: {}
       }
     }
 
@@ -314,6 +317,16 @@ function checkUpdate() {
     .catch((error) => {
       console.log("ReTorn: Update found for Chat Highlights. Adding Chat Highlights data.", error);
       setValue({"re_chathighlights": {}}, "sync").catch((error) => {console.log(error);});
+    });
+  })
+  .then(() => {
+    getValue("re_ct", "sync")
+    .then((response) => {
+      console.log("ReTorn: Checking for updates - Christmas Town data found. No update needed.", response);
+    })
+    .catch((error) => {
+      console.log("ReTorn: Update found for Christmas Town. Adding Christmas Town data.", error);
+      setValue({"re_ct": {friends: {}}}, "sync").catch((error) => {console.log(error);});
     });
   })
 
@@ -623,6 +636,10 @@ function delValue(value, key, storage, log) {
                 delete response[value][k];
               }
             });
+          }
+
+          if (value == "re_ct" && !isNaN(key)) {
+            delete response.re_ct.friends[key];
           }
 
           if (value == "re_logs") {
