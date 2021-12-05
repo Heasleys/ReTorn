@@ -4,11 +4,12 @@
 $(document).ready(function() {
   insertHeader($("div.content-title"), 'after');
   $('#re_title').text("Jail");
+  $('.re_content').addClass('re_jail');
   $('.re_content').html(`
 
     <div class="re_row">
       <div class="switch_wrap">
-        <p class="title">Toggles</p>
+        <p class="re_ptitle">Toggles</p>
         <div class="re_checkbox">
           <input type="checkbox" id="re_jail_qbust" name='bust'>
           <label class="noselect" title="Instantly bust someone">Quick Bust</label>
@@ -28,7 +29,7 @@ $(document).ready(function() {
       </div>
 
       <div class="re_input_wrap">
-        <p class="title">Filters</p>
+        <p class="re_ptitle">Filters</p>
         <input id='re_jail_level' name='level' type='number' min='0' max='100' placeholder="Max Level">
         <input id='re_jail_time' name='time' type='number' min='0' placeholder="Max Minutes">
         <input id='re_jail_score' name='score' type='number' min='0' placeholder="Max Score">
@@ -100,7 +101,7 @@ $(document).ready(function() {
   });
 
   $('.re_checkbox > label').click(function() {
-    $(this).parent().find('input[type="checkbox"]').click();
+    $(this).parent('.re_checkbox').find('input[type="checkbox"]').click();
   });
 
 

@@ -10,10 +10,9 @@
   -moz-appearance: textfield;
 }
 
-.re_content input[type='number'] {
+.re_content.re_jail input[type='number'] {
   width: 100px;
-  margin-left: 5px;
-  padding-left: 3px;
+  padding: 0 0 0 3px;
   border-radius: 3px;
   height: 18px;
 }
@@ -29,10 +28,6 @@
 }
 .re_row > div:last-child {
   margin-left: 25px;
-}
-
-.re_checkbox > label, .re_checkbox > input[type="checkbox"] {
-  cursor: pointer;
 }
 
 .qbust-icon {
