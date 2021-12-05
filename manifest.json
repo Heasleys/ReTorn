@@ -146,6 +146,12 @@
         "js": ["js/forums/forums.js"],
         "css": ["css/forums/forums.css"],
         "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/calendar.php"],
+        "js": ["js/calendar/calendar.js"],
+        "css": ["css/calendar/calendar.css"],
+        "run_at": "document_end"
       }
     ]
 

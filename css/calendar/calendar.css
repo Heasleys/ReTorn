@@ -1,0 +1,10 @@
+.re_link {
+  color: var(--calendar-title-color);
+  padding-left: 5px;
+  display: inline-block;
+  line-height: 30px;
+}
+
+.re_link:hover {
+  color: var(--calendar-disabled-day-color);
+}
