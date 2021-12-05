@@ -6,7 +6,15 @@
   --re-header-background: repeating-linear-gradient(90deg,var(--re-header-color),var(--re-header-color) 2px,var(--re-header-color-two) 0,var(--re-header-color-two) 4px);
 }
 
-
+.mb2 {
+  margin-bottom: 10px !important;
+}
+.mb3 {
+  margin-bottom: 15px !important;
+}
+.mb4 {
+  margin-bottom: 20px !important;
+}
 
 .re_logo {
   font-family: "impact", "Arial Black";
@@ -47,10 +55,16 @@ div.re_checkbox > label {
     margin-right: 15px;
 }
 
+.re_checkbox > label, .re_checkbox > input[type="checkbox"] {
+  cursor: pointer;
+}
+
+
 div.re_container {
 margin-top: 10px;
 display: flex;
 flex-direction: column;
+box-size: border-box;
 }
 
 div.re_head {
@@ -90,12 +104,15 @@ span.re_title {
   margin-bottom: 5px;
 }
 
-.re_content input[type="text"] {
+.re_content input[type="text"], .re_content input[type="number"] {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   border: 1px solid;
   border-radius: 5px;
   color: var(--input-color);
   line-height: 14px;
-  height: 14px;
+  height: 26px;
   text-align: left;
   padding: 5px;
   display: inline-block;
@@ -109,13 +126,14 @@ span.re_title {
   display: flex;
   margin: 0.75em;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .re_row[hidden] {
   margin: 0px !important;
 }
 
-.re_row > div > p.title {
+div > p.re_ptitle {
   font-weight: 700;
   font-size: 16px;
   border-bottom: 1px solid;
@@ -137,6 +155,12 @@ div.re_input_wrap {
 div.re_input_wrap input[type='number'] {
   margin: 2px 0px;
   display: inline-block;
+}
+
+.re_grid_wrap {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
 }
 
 .switch_wrap {
@@ -393,7 +417,7 @@ body.dark-mode span.re_title {
 
 .re_content {
   background-color: #F2F2F2;
-  border: 1px solid rgba(0, 0, 0, .5);
+  border: 1px solid rgba(0, 0, 0, 0.5);
   border-top: none;
 }
 
@@ -406,7 +430,7 @@ body.dark-mode .re_content {
 .re_content * {
   color: #333;
 }
-body.dark-mode .re_content *:not(button.re_torn_button) {
+body.dark-mode .re_content *:not(button.re_torn_button):not(a) {
   color: #DDD;
 }
 
@@ -450,11 +474,11 @@ input[type="number"]:focus, input[type="text"]:focus {
   box-shadow: rgba(28, 126, 214, 0.65) 0px 0px 2px 0px
 }
 
-.re_row > div > p.title {
+div > p.re_ptitle {
   border-color: #363636;
 }
 
-body.dark-mode .re_row > div > p.title {
+body.dark-mode div > p.re_ptitle {
   border-color: #ddd;
 }
 
