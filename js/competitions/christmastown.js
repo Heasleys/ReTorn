@@ -88,6 +88,25 @@ function insertHead() {
 
   updateFriendsList();
 
+  $('.negative-coordinates').append(`
+    <div>
+      <div id="re_walls">
+        <div class="lefttop"></div>
+        <div class="lefttop2"></div>
+        <div class="top"></div>
+        <div class="righttop"></div>
+        <div class="righttop2"></div>
+        <div class="right"></div>
+        <div class="rightbottom"></div>
+        <div class="rightbottom2"></div>
+        <div class="bottom"></div>
+        <div class="leftbottom"></div>
+        <div class="leftbottom2"></div>
+        <div class="left"></div>
+      </div>
+    </div>
+    `);
+
   $('.re_content input[type="checkbox"]').change(function() {
     let checked = this.checked;
     let name = $(this).attr('name');

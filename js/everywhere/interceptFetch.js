@@ -80,6 +80,25 @@ function christmas_town(response) {
         $(`#ctUser${user_id}`).addClass("re_self");
       }
     }
+
+    if (response.mapData.position) {
+      if (response.mapData.position.x != undefined && response.mapData.position.y != undefined) {
+        let x = (parseInt(response.mapData.position.x) * 30);
+        let y = (parseInt(response.mapData.position.y) * -30);
+        $('#re_walls').css('left', `${x}px`);
+        $('#re_walls').css('top', `${y}px`);
+      }
+    }
+
+    if (response.mapData.currentBlocking) {
+      for (const [dir, val] of Object.entries(response.mapData.currentBlocking)) {
+        if (val) {
+          $('#re_walls').addClass(dir);
+        } else {
+          $('#re_walls').removeClass(dir);
+        }
+      }
+    }
   }
 
   // Friend Colors
