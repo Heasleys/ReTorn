@@ -51,8 +51,8 @@
                 "https://www.torn.com/api.html*",
                 "https://wiki.torn.com/*"
             ],
-        "css": ["css/everywhere/everywhere.css"],
-        "js": ["js/lib/jquery-3.6.0.min.js","js/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/tornstats.js"],
+        "css": ["/lib/fontawesome/css/modified-all.min.css","css/everywhere/everywhere.css"],
+        "js": ["/lib/jquery-3.6.0.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/tornstats.js"],
         "run_at": "document_start"
       },
       {
@@ -69,7 +69,7 @@
       },
       {
         "matches": ["https://www.torn.com/api.html*"],
-        "js": ["js/lib/jquery-3.6.0.min.js","js/api/api.js"],
+        "js": ["/lib/jquery-3.6.0.min.js","js/api/api.js"],
         "run_at": "document_end"
       },
       {
@@ -85,7 +85,7 @@
       },
       {
         "matches": ["https://www.torn.com/gym.php"],
-        "js": ["js/lib/highcharts.js", "js/gym/gym.js"],
+        "js": ["/lib/highcharts.js", "js/gym/gym.js"],
         "css": ["css/gym/gym.css"],
         "run_at": "document_end"
       },
@@ -97,7 +97,7 @@
       },
       {
         "matches": ["https://www.torn.com/item.php*"],
-        "js": ["js/lib/jquery.countdown.min.js","js/item/item.js"],
+        "js": ["/lib/jquery.countdown.min.js","js/item/item.js"],
         "css": ["css/item/item.css"],
         "run_at": "document_end"
       },
