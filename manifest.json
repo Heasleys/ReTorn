@@ -38,7 +38,25 @@
   	},
     "web_accessible_resources": [
       {
-        "resources": [ "/js/everywhere/interceptFetch.js", "/js/everywhere/torn3d.js" ],
+        "resources": [
+          "/js/everywhere/interceptFetch.js",
+          "/js/everywhere/torn3d.js",
+          "/lib/fontawesome/webfonts/fa-solid-900.eot",
+          "/lib/fontawesome/webfonts/fa-solid-900.svg",
+          "/lib/fontawesome/webfonts/fa-solid-900.ttf",
+          "/lib/fontawesome/webfonts/fa-solid-900.woff",
+          "/lib/fontawesome/webfonts/fa-solid-900.woff2",
+          "/lib/fontawesome/webfonts/fa-brands-400.eot",
+          "/lib/fontawesome/webfonts/fa-brands-400.svg",
+          "/lib/fontawesome/webfonts/fa-brands-400.ttf",
+          "/lib/fontawesome/webfonts/fa-brands-400.woff",
+          "/lib/fontawesome/webfonts/fa-brands-400.woff2",
+          "/lib/fontawesome/webfonts/fa-regular-400.eot",
+          "/lib/fontawesome/webfonts/fa-regular-400.svg",
+          "/lib/fontawesome/webfonts/fa-regular-400.ttf",
+          "/lib/fontawesome/webfonts/fa-regular-400.woff",
+          "/lib/fontawesome/webfonts/fa-regular-400.woff2"
+         ],
         "matches": [ "https://www.torn.com/*" ]
       }
     ],
