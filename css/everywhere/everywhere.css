@@ -16,6 +16,16 @@
   margin-bottom: 20px !important;
 }
 
+.mt2 {
+  margin-top: 10px !important;
+}
+.mt3 {
+  margin-top: 15px !important;
+}
+.mt4 {
+  margin-top: 20px !important;
+}
+
 .re_logo {
   font-family: "impact", "Arial Black";
   font-weight: normal;
