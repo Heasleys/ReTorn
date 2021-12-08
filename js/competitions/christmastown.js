@@ -80,16 +80,20 @@ function insertHead() {
       <div class="switch_wrap mb4" name="cheats">
         <p class="re_ptitle">Cheats</p>
         <div class="re_checkbox">
-          <input type="checkbox" name='cheat1'>
-          <label class="noselect" title="Highlight items">Snow</label>
+          <input type="checkbox" name='wreath'>
+          <label class="noselect" title="Hide the wreath">Christmas Wreath</label>
         </div>
         <div class="re_checkbox">
-          <input type="checkbox" name='cheat2'>
-          <label class="noselect" title="Highlight NPCs">Footsteps</label>
+          <input type="checkbox" name='snowshooter'>
+          <label class="noselect" title="Hide santas and show grinch">Snowball Shooter</label>
         </div>
         <div class="re_checkbox">
-          <input type="checkbox" name='cheat3'>
-          <label class="noselect" title="Highlight wall boundaries">Grid</label>
+          <input type="checkbox" name='santaclaws'>
+          <label class="noselect" title="Hide non-animals">Santa Claws</label>
+        </div>
+      </div>
+    </div>
+
     <div class="re_row" style="display: none;" id="re_ct_giftview">
       <div class="switch_wrap">
         <p class="re_ptitle">Item/Gift History</p>
@@ -141,9 +145,9 @@ function insertHead() {
     let category = $(this).closest('.switch_wrap').attr('name');
 
     if (checked) {
-      $("#user-map").addClass(`re_ct_${name}`);
+      $("#ct-wrap").addClass(`re_ct_${name}`);
     } else {
-      $("#user-map").removeClass(`re_ct_${name}`);
+      $("#ct-wrap").removeClass(`re_ct_${name}`);
     }
 
     chrome.runtime.sendMessage({name: "set_value", value_name: "re_ct", value: {[category]: {[name]: {"enabled": checked}}}});
@@ -205,7 +209,7 @@ function updateFriendsList() {
         $('#friends_list').empty();
         for (const [userid, value] of Object.entries(re_ct.friends)) {
           if (userid && value && value.color) {
-            $('#friends_list').append(`<li data-userid="${userid}"><div class="re_list_x"><a class="remove-link"> <i class="delete-subscribed-icon"></i> </a></div><div class="re_list_item name"><a href="/profiles.php?XID=${userid}" target="_blank">${userid}</a></div><div class="re_list_item color" title="Change friend's character color"><input data-userid="${userid}" type="color" value="${value.color}"></div></li>`);
+            $('#friends_list').append(`<li data-userid="${userid}"><div class="re_list_item x"><a class="remove-link"> <i class="delete-subscribed-icon"></i> </a></div><div class="re_list_item name"><a href="/profiles.php?XID=${userid}" target="_blank">${userid}</a></div><div class="re_list_item color" title="Change friend's character color"><input data-userid="${userid}" type="color" value="${value.color}"></div></li>`);
           }
         }
 

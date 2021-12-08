@@ -68,6 +68,31 @@
   }
 }
 
+
+/* hide wreath for christmas wreath mini game */
+.re_ct_wreath [class^="christmas-wreath"] [class^="wreath"] > img[alt="christmas wreath"] {
+  display: none;
+}
+
+/* hide santas, easy grinch */
+.re_ct_snowshooter [class^="moving-block"] [style*="data:image/png;base64"] {
+  left: -200px !important;
+}
+.re_ct_snowshooter [class^="moving-block"] [style*="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA44AAABcCAYAAAAh6estAAAgAElEQVR4Xuy9eZBd1Z3n+TvLXd7+8uW+KJWbFiQwAgQI"], .re_ct_snowshooter [class^="moving-block"] [style*="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAq4AAABbCAYAAACyPweFAAAgAElEQVR4Xuy9eXBdx5XmeTLzrm8F3sNKgiBIgvsmidpI"], .re_ct_snowshooter [class^="moving-block"] [style*="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABG4AAABcCAYAAAA/MPPfAAAgAElEQVR4Xuy9CZCdV3bfd+7ybW/t13sDaKABY"], .re_ct_snowshooter [class^="moving-block"] [style*="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA4AAAABbCAYAAAAiJesmAAAgAElEQVR4Xuy9d7Bd15XeuXY44ebwckDOAAEmUBRBMICUR"], .re_ct_snowshooter [class^="moving-block"] [style*="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAApIAAABbCAYAAADA8GUzAAAgAElEQVR4Xuy9B5Cd13XneW740gv9+nVuoJEjARAMAME"], .re_ct_snowshooter [class^="moving-block"] [style*="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA7gAAABbCAYAAABZASnqAAAgAElEQVR4Xuy9CXCdV3bnd+693/7294CHHSTAfSdFaqcWqq"] {
+  left: 300px !important;
+  opacity: 1 !important;
+}
+
+/* santa clawz  */
+.re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="iVBORw0K"] {
+  opacity: 0.1;
+}
+
+.re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="VBMVEUAAABQTGmzpq+lbH/n6u7s7vK6ssC+t8OTRG3h4+rc2+PCuMPl5"], .re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="VBMVEUAAAC4tMJxaYONi56XjaSin6+no7S3s8BOQWK3tMCVj6NXRmafma"], .re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="AFBMVEUAAAClhYu4lZmdgIedf4i3hoqseoKUf4XBY3/GtbSLdX3j2tehl6CvnaGhh"], .re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="FBMVEUAAACQcYLa2de5mJibe4Tp1LyneoTu6eRGYGbJpaCXVXDh0cqyeoXq4t2XcH/5"], .re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="VEUAAACdm7GEfpi7utOMiKK1ssa4tsiYlqy1ssasqMDU0N2qqLx2b4ysp8DAv9BmW3qemrGzr8"], .re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="BMVEUAAADBspy4hIi1iYJjWm+3loRxW2zBZotnU2a8m4i3T4C4XX63WX/Ov6/CXYy4oIHBV"], .re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="VBMVEUAAACQfpGlnqpsW3WFbYaon6uclKGQZYLQxs1EO1ydUHi1rra7tb1NQWBlU25URGOcUnl"], .re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="AFBMVEUAAADaycvb09Xg19isbHqxpKa+rrDs6erSyMjj3N+5Znfk3N6+t7zWzM+1rK/q5efg"], .re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="VBMVEUAAADGvcO+sLfKwcXPyMy5sbjSy866c4KklJ2hiZTBuL7b1tnSysvc19q0qa62qa+JhZG2q7LEvM"], .re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="4+GW3rq7fPo6/GrW4uaU37Z2uCnU4Tk5e3r7vTj5ezr7vXGwsmTTXijWIeVUnvKxs6vgKRsWn"], .re_ct_santaclaws [class^="ctMiniGameWrapper"] [class^="cell"] img[src*="xruskIa/ZIfIu6/FZIqbgIO9VIXVgKTn4uW+WYfHZZm+rJOsk5HCsJyWen5sWm3BUYnj3uDd087Pw7qTdnzn5"] {
+  opacity: 1 !important;
+}
+
+
 /* Show Walls/Boundaries */
 .re_ct_walls #re_walls {
   position: absolute;
