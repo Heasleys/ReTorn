@@ -6,6 +6,9 @@
   --re-header-background: repeating-linear-gradient(90deg,var(--re-header-color),var(--re-header-color) 2px,var(--re-header-color-two) 0,var(--re-header-color-two) 4px);
 }
 
+.mb1 {
+  margin-bottom: 5px !important;
+}
 .mb2 {
   margin-bottom: 10px !important;
 }
@@ -16,6 +19,9 @@
   margin-bottom: 20px !important;
 }
 
+.mt1 {
+  margin-top: 5px !important;
+}
 .mt2 {
   margin-top: 10px !important;
 }
@@ -24,6 +30,32 @@
 }
 .mt4 {
   margin-top: 20px !important;
+}
+
+.ml1 {
+  margin-left: 5px !important;
+}
+.ml2 {
+  margin-left: 10px !important;
+}
+.ml3 {
+  margin-left: 15px !important;
+}
+.ml4 {
+  margin-left: 20px !important;
+}
+
+.mr1 {
+  margin-right: 5px !important;
+}
+.mr2 {
+  margin-right: 10px !important;
+}
+.mr3 {
+  margin-right: 15px !important;
+}
+.mr4 {
+  margin-right: 20px !important;
 }
 
 .re_logo {
@@ -37,6 +69,10 @@
 }
 .re_title .re_logo {
   font-size: 15px;
+}
+
+.re_title .fas {
+  color: var(--re-dm-title-color);
 }
 
 /* Torn Left Align only on large screen (not mobile view)*/
