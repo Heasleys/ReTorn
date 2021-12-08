@@ -9,6 +9,12 @@
   animation: glow 1.5s ease-out infinite alternate;
 }
 
+.switch_wrap div.re_nearby_items {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 /* highlight npcs */
 .re_ct_npcs .users-layer .ct-user.npc::before {
   content: '';
@@ -289,6 +295,7 @@ input[type=number]::-webkit-outer-spin-button {
   overflow-y: scroll;
   width: 100%;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
 
@@ -324,14 +331,35 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   list-style: none;
   border-radius: 5px;
 }
+.re_list.small {
+  font-size: 11px;
+}
 
 .re_list > li {
   display: flex;
   height: 40px;
 }
 
-.re_list > li:not(:last-child) {
+.re_list > li:hover {
+  background: #fff;
+}
+body.dark-mode .re_list > li:hover {
+  background: #444;
+}
+
+.re_list.small > li {
+  height: 20px;
+}
+
+.re_list > li:not(:last-child) .re_list_item {
   border-bottom: 1px solid #ccc;
+}
+
+.re_list > li:first-child {
+  border-top-left-radius: 5px;
+}
+.re_list > li:last-child {
+  border-bottom-left-radius: 5px;
 }
 
 body.dark-mode .re_list > li {
@@ -348,11 +376,10 @@ body.dark-mode input[type="color"] {
   background-color: #333;
 }
 
-.re_list .re_list_x {
+.re_list .re_list_item.x {
     padding-left: 10px;
     width: 20px;
     min-width: 20px;
-    height: 100%;
     line-height: 40px;
     border-right: 1px solid #ccc;
 }
@@ -367,6 +394,7 @@ body.dark-mode input[type="color"] {
   line-height: 24px;
   border-left: 1px solid #fff;
   border-right: 1px solid #ccc;
+  padding-left: 5px;
 }
 
 body.dark-mode .re_list .re_list_item, body.dark-mode .re_list .re_list_x {
@@ -374,19 +402,23 @@ body.dark-mode .re_list .re_list_item, body.dark-mode .re_list .re_list_x {
   border-left-color: #444;
 }
 
+.delete-subscribed-icon {
+  cursor: pointer;
+}
 
 .re_list_item.name {
-  width: 69px;
+  width: 62px;
 }
 .re_list_item.color {
-  width: 50px;
+  width: 44px;
+}
+.re_list_item.item {
+  width: 145px;
+  white-space: nowrap;
 }
 
-.re_list_item.name > a {
-  margin-left: 5px;
-}
+
 .re_list_item.color > * {
-  margin-left: 5px;
   margin-right: 5px;
 }
 
@@ -401,11 +433,17 @@ body.dark-mode .re_scrollbox {
     width: 144px;
     max-width: 144px;
   }
+  .re_list.small {
+    font-size: 10px;
+  }
 
   .re_list_item.name {
-    width: 56px;
+    width: 51px;
   }
   .re_list_item.color {
-    width: 43px;
+    width: 38px;
+  }
+  .re_list_item.item {
+    width: 127px;
   }
 }

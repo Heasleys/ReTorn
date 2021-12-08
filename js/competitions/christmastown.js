@@ -32,6 +32,14 @@ function insertHead() {
           <input type="checkbox" name='walls'>
           <label class="noselect" title="Highlight wall boundaries">Walls</label>
         </div>
+        <div class="re_nearby_items mt3">
+          <span><b>Nearby Items: </b><span id="item_qty">0</span></span>
+          <div class="re_scrollbox">
+            <ul class="re_list small" id="nearby_items">
+
+            </ul>
+          </div>
+        </div>
       </div>
 
       <div class="switch_wrap mb4" name="friendslist">
@@ -133,7 +141,9 @@ function insertHead() {
   });
 
   $('.re_checkbox > label').click(function() {
-    $(this).parent('.re_checkbox').find('input[type="checkbox"]').click();
+    let checkbox = $(this).parent('.re_checkbox').find('input[type="checkbox"]');
+    checkbox.prop("checked", !checkbox.prop("checked"));
+    checkbox.trigger("change");
   });
 
   chrome.runtime.sendMessage({name: "get_value", value: "re_ct"}, (response) => {
@@ -181,7 +191,7 @@ function updateFriendsList() {
           }
         });
 
-        $('#friends_list .re_list_x .remove-link .delete-subscribed-icon').click(function() {
+        $('#friends_list .re_list_item.x .remove-link .delete-subscribed-icon').click(function() {
           let parent = $(this).closest('li');
           let userid = parent.attr('data-userid');
 

@@ -99,6 +99,22 @@ function christmas_town(response) {
         }
       }
     }
+
+    if (response.mapData.items) {
+      $('ul#nearby_items').empty();
+      let qty = response.mapData.items.length;
+      $('.re_nearby_items #item_qty').text(qty);
+      if (qty > 0) {
+        for (const [index, item] of Object.entries(response.mapData.items)) {
+          if (item.image && item.image.url && item.position && item.position.x != undefined && item.position.y != undefined) {
+            let name = itemURLtoName(item.image.url);
+            let pos = `(${item.position.x}, ${item.position.y})`;
+            $('ul#nearby_items').append(`<li><div class="re_list_item item">${name} ${pos}</div></li>`);
+          }
+        }
+      }
+    }
+
   }
 
   // Friend Colors
@@ -154,4 +170,43 @@ function secondsToHmsShort(d) {
     }
 
     return dayDisplay + hDisplay + mDisplay + sDisplay;
+}
+
+
+function itemURLtoName(url) {
+  let name = "Unknown Item";
+
+  //Keys
+  if (url.includes('/images/items/christmas_town/keys/animated/bronze/')) {
+    name = "Bronze Key";
+  }
+  if (url.includes('/images/items/christmas_town/keys/animated/silver/')) {
+    name = "Silver Key";
+  }
+  if (url.includes('/images/items/christmas_town/keys/animated/gold/')) {
+    name = "Gold Key";
+  }
+
+  //Key Chests
+  if (url.includes('/images/items/christmas_town/chests/animated/1.gif')) {
+    name = "Gold Chest";
+  }
+  if (url.includes('/images/items/christmas_town/chests/animated/2.gif')) {
+    name = "Silver Chest";
+  }
+  if (url.includes('/images/items/christmas_town/chests/animated/3.gif')) {
+    name = "Bronze Chest";
+  }
+
+  //Combo Chest
+  if (url.includes('/images/items/christmas_town/combinationChest/animated/')) {
+    name = "Combo Chest";
+  }
+
+  //Gifts
+  if (url.includes('/images/items/christmas_town/gifts/animated/')) {
+    name = "Mystery Gift";
+  }
+
+  return name;
 }
