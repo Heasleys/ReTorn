@@ -21,7 +21,7 @@ interceptFetch("torn.com","torn.com", (response, url) => {
  }
 
  /* Christmas Town */
-  if (url.includes('christmas_town.php?q=move') || url.includes('christmas_town.php?q=initMap')) {
+  if (url.includes('christmas_town.php?q=move') || url.includes('christmas_town.php?q=initMap') || url.includes('christmas_town.php?q=miniGameAction')) {
     christmas_town(response);
   }
 
@@ -71,6 +71,7 @@ function miniProfiles(response) {
 
 /* Christmas Town */
 var ct_friends;
+var ct_itemlist;
 
 function christmas_town(response) {
   if (response && response.mapData) {
@@ -115,6 +116,46 @@ function christmas_town(response) {
       }
     }
 
+    // Logging obtaining items
+    if (response.mapData.trigger && response.mapData.trigger.item) {
+      let newitems = [];
+      console.log("ITEMS trigger", response);
+      let item = response.mapData.trigger.item;
+      let item_id = item.image.url.match(/(?<=\/)(\d*)(?=\/)/g);
+      console.log(item_id);
+      if (item_id != undefined) {
+        let gift = new Object();
+        gift.timestamp = Date.now();
+        gift.market_value = ct_itemlist[item_id].market_value;
+        gift.category = "tornItems";
+        gift.name = ct_itemlist[item_id].name;
+
+        newitems.push(gift);
+
+        let event = new CustomEvent("re_ct_additems", {detail: {items: newitems}});
+        document.dispatchEvent(event);
+      }
+    }
+
+    if (response.mapData.cellEvent) {
+      if (response.mapData.cellEvent.type && response.mapData.cellEvent.type == "itemSpawn") {
+        if (response.mapData.cellEvent.prizes.length > 0) {
+          parseCTPrizes(response.mapData.cellEvent.prizes);
+        }
+      }
+    }
+
+    if (response.mapData.trigger && response.mapData.trigger.prizes) {
+      if (response.mapData.trigger.prizes.length > 0) {
+        parseCTPrizes(response.mapData.trigger.prizes);
+      }
+    }
+  }
+
+  if (response && response.prizes) {
+    if (response.prizes.length > 0) {
+      parseCTPrizes(response.prizes);
+    }
   }
 
   // Friend Colors
@@ -129,12 +170,54 @@ function christmas_town(response) {
 }
 
 
-document.addEventListener("ct_friends", function(msg) {
+
+function parseCTPrizes(prizes) {
+  let newitems = [];
+  for (const [index, item] of Object.entries(prizes)) {
+    let newitem = new Object();
+    newitem.timestamp = Date.now();
+
+    if (item.category && item.name) {
+      newitem.category = item.category;
+      newitem.name = item.name;
+
+      // Torn Item with a real value
+      if (item.category == "tornItems") {
+        newitem.item_id = item.type;
+        let item_id = item.type;
+
+        if (ct_itemlist) {
+          let market_value = ct_itemlist[item_id].market_value;
+          newitem.market_value = market_value;
+        } else {
+          newitem.market_value = 0;
+        }
+      }
+    }
+    if (newitem) {
+      newitems.push(newitem);
+    }
+  }
+  let event = new CustomEvent("re_ct_additems", {detail: {items: newitems}});
+  document.dispatchEvent(event);
+}
+
+
+document.addEventListener("re_ct_friends", function(msg) {
   if (msg.detail && msg.detail.re_ct) {
     let re_ct = msg.detail.re_ct;
     if (re_ct.friends) {
       ct_friends = re_ct.friends;
       christmas_town();
+    }
+  }
+});
+
+document.addEventListener("re_ct_itemlist", function(msg) {
+  if (msg.detail && msg.detail.items) {
+    let items = msg.detail.items;
+    if (items) {
+      ct_itemlist = items;
     }
   }
 });

@@ -1,3 +1,5 @@
+var itemCount = 0;
+
 $(document).ready(function() {
   if ($('div.captcha').length == 0) {
     var observer = new MutationObserver(function(mutations) {
@@ -16,8 +18,7 @@ function insertHead() {
   insertHeader($("#ct-wrap"), 'after', 'mb2');
   $('#re_title').text("Christmas Town");
   $('.re_content').html(`
-
-    <div class="re_row">
+    <div class="re_row" id="re_ct_main">
       <div class="switch_wrap mb4" name="highlight">
         <p class="re_ptitle">Highlights</p>
         <div class="re_checkbox">
@@ -89,11 +90,24 @@ function insertHead() {
         <div class="re_checkbox">
           <input type="checkbox" name='cheat3'>
           <label class="noselect" title="Highlight wall boundaries">Grid</label>
+    <div class="re_row" style="display: none;" id="re_ct_giftview">
+      <div class="switch_wrap">
+        <p class="re_ptitle">Item/Gift History</p>
+        <div class="re_scrollbox">
+          <ul class="re_list small" id="gifts_list">
+
+          </ul>
         </div>
+      </div>
+
+      <div class="switch_wrap ml2">
+        <p class="re_ptitle">Item Values</p>
+        <span><b>Total: </b><span id="re_items_value">$0</span></span>
       </div>
     </div>
     `);
 
+  $('.re_head .re_title').after(`<i class="fas fa-gift" id="re_ct_gifts" title="Toggle item/gift history"></i>`);
   updateFriendsList();
 
   $('.negative-coordinates').append(`
@@ -114,6 +128,12 @@ function insertHead() {
       </div>
     </div>
     `);
+
+  $('#re_ct_gifts').click(function(e) {
+    e.stopPropagation();
+    $('#re_ct_main').toggle();
+    $('#re_ct_giftview').toggle();
+  });
 
   $('.re_content input[type="checkbox"]').change(function() {
     let checked = this.checked;
@@ -164,6 +184,14 @@ function insertHead() {
     }
   });
 
+  chrome.runtime.sendMessage({name: "get_value", value: "re_item_data", type: "local"}, (response) => {
+    if (response && response.status != undefined && response.status == true) {
+      items = response.value.re_item_data.items;
+      sendCTItemListEvent(items);
+    }
+  });
+
+  updateGiftsList();
 }
 
 
@@ -211,7 +239,60 @@ function updateFriendsList() {
   });
 }
 
+function updateGiftsList() {
+  chrome.runtime.sendMessage({name: "get_value", value: "re_ct_items", type: "local"}, (response) => {
+    if (response && response.status) {
+      $('#gifts_list').empty();
+      console.log(response.value.re_ct_items);
+      let items = response.value.re_ct_items.items;
+      itemCount = Object.keys(items).length;
+      let itemHTML = ``;
+      let totalValue = 0;
+      for (const [index, item] of Object.entries(items).reverse()) {
+        if (item.market_value) {
+          totalValue += item.market_value;
+        }
+        itemHTML += `<li><div class="re_list_item item">${item.name}</div></li>`;
+      }
+      $('#gifts_list').html(itemHTML);
+      $('#re_items_value').text(`$${totalValue.toLocaleString('en-US')}`)
+    } else {
+      chrome.runtime.sendMessage({name: "set_value", value_name: "re_ct_items", value: {items: {}}, type: "local"});
+    }
+  });
+}
+
+
 function sendCTFriendEvent(re_ct) {
-  let event = new CustomEvent("ct_friends", {detail: {re_ct: re_ct}});
+  let event = new CustomEvent("re_ct_friends", {detail: {re_ct: re_ct}});
   document.dispatchEvent(event);
 }
+
+function sendCTItemListEvent(items) {
+  let event = new CustomEvent("re_ct_itemlist", {detail: {items: items}});
+  document.dispatchEvent(event);
+}
+
+document.addEventListener("re_ct_additems", function(msg) {
+  if (msg.detail && msg.detail.items) {
+    let items = {};
+
+    let newitems = msg.detail.items;
+    console.log("NEW ITEM", newitems);
+    for (const [i, item] of Object.entries(newitems)) {
+      if (item) {
+        let index = itemCount;
+        console.log(index);
+        if (index != undefined) {
+          items[index] = item;
+          itemCount++;
+        }
+      }
+    }
+    console.log(items);
+    chrome.runtime.sendMessage({name: "set_value", value_name: "re_ct_items", value: {items}, type: "local"}, (response) => {
+      console.log(response);
+      updateGiftsList();
+    });
+  }
+});

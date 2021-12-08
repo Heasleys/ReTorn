@@ -407,6 +407,24 @@ body.dark-mode .re_list .re_list_item, body.dark-mode .re_list .re_list_x {
   cursor: pointer;
 }
 
+.re_head .fas {
+  font-size: 14px;
+  color: var(--re-title-color);
+}
+
+#re_ct_gifts {
+  margin-left: 10px;
+}
+
+#re_ct_gifts:hover {
+  cursor: pointer;
+  color: #ccc;
+}
+
+#re_ct_giftview {
+  justify-content: flex-start;
+}
+
 .re_list_item.name {
   width: 62px;
 }
