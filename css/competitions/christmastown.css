@@ -45,7 +45,7 @@
 }
 
 /* hide HUD */
-.d #ct-wrap .user-map-container .re_ct_hud.user-map::before {
+.d #ct-wrap.re_ct_hud .user-map-container .user-map::before {
   background: unset;
 }
 .re_ct_hud .map-directions {
@@ -75,6 +75,7 @@
   width: 30px;
   z-index: 10000;
   box-sizing: border-box;
+  border: 2px solid transparent;
 }
 #re_walls > div{
   background: #ff00f9;
