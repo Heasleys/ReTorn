@@ -4,7 +4,7 @@ $(document).ready(function() {
   if ($('div.captcha').length == 0) {
     var observer = new MutationObserver(function(mutations) {
       if ($("#ct-wrap").length == 1 && $('div.re_container').length == 0) {
-        insertHead();
+        initCT();
         observer.disconnect();
       }
     });
@@ -12,6 +12,40 @@ $(document).ready(function() {
     observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
   }
 });
+
+function initCT() {
+  insertHead();
+  updateFriendsList();
+  insertWalls();
+
+  chrome.runtime.sendMessage({name: "get_value", value: "re_ct"}, (response) => {
+    if (response && response.value && response.value.re_ct) {
+      let re_ct = response.value.re_ct;
+
+      for (const [category, cat_value] of Object.entries(re_ct)) {
+        for (const [index, value] of Object.entries(cat_value)) {
+          if (value.enabled) {
+            $(`.switch_wrap[name="${category}"] input[type="checkbox"][name="${index}"]`).prop( "checked", value.enabled).trigger("change");
+          }
+        }
+      }
+
+      // Friends list Event
+      sendCTFriendEvent(re_ct);
+
+    }
+  });
+
+  chrome.runtime.sendMessage({name: "get_value", value: "re_item_data", type: "local"}, (response) => {
+    if (response && response.status != undefined && response.status == true) {
+      items = response.value.re_item_data.items;
+      sendCTItemListEvent(items);
+    }
+  });
+
+  updateGiftsList();
+}
+
 
 
 function insertHead() {
@@ -45,7 +79,7 @@ function insertHead() {
 
       <div class="switch_wrap mb4" name="friendslist">
         <p class="re_ptitle">Friend List</p>
-        <input id='re_ct_friends' name='friend' type='number' title="Enter user ID to add a friend" placeholder="Enter friend's User ID">
+        <input id='re_ct_friendsTextbox' name='friend' type='number' title="Enter user ID to add a friend" placeholder="Enter friend's User ID">
         <div class="re_scrollbox">
           <ul class="re_list" id="friends_list">
 
@@ -120,26 +154,6 @@ function insertHead() {
     `);
 
   $('.re_head .re_title').after(`<i class="fas fa-gift" id="re_ct_gifts" title="Toggle item/gift history"></i>`);
-  updateFriendsList();
-
-  $('.negative-coordinates').append(`
-    <div>
-      <div id="re_walls">
-        <div class="lefttop"></div>
-        <div class="lefttop2"></div>
-        <div class="top"></div>
-        <div class="righttop"></div>
-        <div class="righttop2"></div>
-        <div class="right"></div>
-        <div class="rightbottom"></div>
-        <div class="rightbottom2"></div>
-        <div class="bottom"></div>
-        <div class="leftbottom"></div>
-        <div class="leftbottom2"></div>
-        <div class="left"></div>
-      </div>
-    </div>
-    `);
 
   $('#re_ct_gifts').click(function(e) {
     e.stopPropagation();
@@ -162,12 +176,12 @@ function insertHead() {
 
   });
 
-  $('.re_content #re_ct_friends').change(function() {
+  $('.re_content #re_ct_friendsTextbox').change(function() {
     let userid = $(this).val();
     if (!isNaN(userid)) {
       chrome.runtime.sendMessage({name: "set_value", value_name: "re_ct", value: {friends: {[userid]: {color: "#8ABEEF"}}}}, (response) => {
         updateFriendsList();
-        $('#re_ct_friends').val('');
+        $('#re_ct_friendsTextbox').val('');
       });
     }
   });
@@ -177,35 +191,30 @@ function insertHead() {
     checkbox.prop("checked", !checkbox.prop("checked"));
     checkbox.trigger("change");
   });
-
-  chrome.runtime.sendMessage({name: "get_value", value: "re_ct"}, (response) => {
-    if (response && response.value && response.value.re_ct) {
-      let re_ct = response.value.re_ct;
-
-      for (const [category, cat_value] of Object.entries(re_ct)) {
-        for (const [index, value] of Object.entries(cat_value)) {
-          if (value.enabled) {
-            $(`.switch_wrap[name="${category}"] input[type="checkbox"][name="${index}"]`).prop( "checked", value.enabled).trigger("change");
-          }
-        }
-      }
-
-      // Friends list Event
-      sendCTFriendEvent(re_ct);
-
-    }
-  });
-
-  chrome.runtime.sendMessage({name: "get_value", value: "re_item_data", type: "local"}, (response) => {
-    if (response && response.status != undefined && response.status == true) {
-      items = response.value.re_item_data.items;
-      sendCTItemListEvent(items);
-    }
-  });
-
-  updateGiftsList();
 }
 
+function insertWalls() {
+  if ($('#re_walls').length == 0) {
+    $('.negative-coordinates').append(`
+      <div>
+        <div id="re_walls">
+          <div class="lefttop"></div>
+          <div class="lefttop2"></div>
+          <div class="top"></div>
+          <div class="righttop"></div>
+          <div class="righttop2"></div>
+          <div class="right"></div>
+          <div class="rightbottom"></div>
+          <div class="rightbottom2"></div>
+          <div class="bottom"></div>
+          <div class="leftbottom"></div>
+          <div class="leftbottom2"></div>
+          <div class="left"></div>
+        </div>
+      </div>
+      `);
+  }
+}
 
 function updateFriendsList() {
   chrome.runtime.sendMessage({name: "get_value", value: "re_ct"}, (response) => {
