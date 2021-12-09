@@ -1,14 +1,14 @@
 var itemCount = 0;
+var observer = new MutationObserver(function(mutations) {
+  if ($("#ct-wrap").length == 1 && $('div.re_container').length == 0) {
+    initCT();
+    observer.disconnect();
+  }
+});
+
 
 $(document).ready(function() {
   if ($('div.captcha').length == 0) {
-    var observer = new MutationObserver(function(mutations) {
-      if ($("#ct-wrap").length == 1 && $('div.re_container').length == 0) {
-        initCT();
-        observer.disconnect();
-      }
-    });
-
     observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
   }
 });
@@ -312,3 +312,11 @@ document.addEventListener("re_ct_additems", function(msg) {
     });
   }
 });
+
+window.addEventListener('hashchange', function() {
+  if (window.location.hash != "#/") {
+    $('.re_container').remove();
+  } else {
+    observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+  }
+}, false);
