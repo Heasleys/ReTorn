@@ -91,6 +91,14 @@ function insertHead() {
           <input type="checkbox" name='santaclaws'>
           <label class="noselect" title="Hide non-animals">Santa Claws</label>
         </div>
+        <div class="re_checkbox">
+          <input type="checkbox" name='wordfixer'>
+          <label class="noselect" title="Unscramble words">Word Fixer</label>
+        </div>
+        <div class="re_checkbox">
+          <input type="checkbox" name='hangman'>
+          <label class="noselect" title="List possible solutions">Hangman</label>
+        </div>
       </div>
     </div>
 
@@ -247,7 +255,6 @@ function updateGiftsList() {
   chrome.runtime.sendMessage({name: "get_value", value: "re_ct_items", type: "local"}, (response) => {
     if (response && response.status) {
       $('#gifts_list').empty();
-      console.log(response.value.re_ct_items);
       let items = response.value.re_ct_items.items;
       itemCount = Object.keys(items).length;
       let itemHTML = ``;
@@ -282,20 +289,16 @@ document.addEventListener("re_ct_additems", function(msg) {
     let items = {};
 
     let newitems = msg.detail.items;
-    console.log("NEW ITEM", newitems);
     for (const [i, item] of Object.entries(newitems)) {
       if (item) {
         let index = itemCount;
-        console.log(index);
         if (index != undefined) {
           items[index] = item;
           itemCount++;
         }
       }
     }
-    console.log(items);
     chrome.runtime.sendMessage({name: "set_value", value_name: "re_ct_items", value: {items}, type: "local"}, (response) => {
-      console.log(response);
       updateGiftsList();
     });
   }

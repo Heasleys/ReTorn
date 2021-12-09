@@ -73,8 +73,16 @@ function miniProfiles(response) {
 var ct_friends;
 var ct_itemlist;
 
+var wordFixer = false;
+var hangman = false;
+var hangmanPossibleSolutions = [];
+
+//Thank you to Helcostr and Ahab for originally providing the list of words.
+const CT_WORDLIST = ["elf","eve","fir","ham","icy","ivy","joy","pie","toy","gift","gold","list","love","nice","sled","star","wish","wrap","xmas","yule","angel","bells","cider","elves","goose","holly","jesus","merry","myrrh","party","skate","visit","candle","creche","cookie","eggnog","family","frosty","icicle","joyful","manger","season","spirit","tinsel","turkey","unwrap","wonder","winter","wreath","charity","chimney","festive","holiday","krampus","mittens","naughty","package","pageant","rejoice","rudolph","scrooge","snowman","sweater","tidings","firewood","nativity","reindeer","shopping","snowball","stocking","toboggan","trimming","vacation","wise men","workshop","yuletide","chestnuts","christmas","fruitcake","greetings","mince pie","mistletoe","ornaments","snowflake","tradition","candy cane","decoration","ice skates","jack frost","north pole","nutcracker","saint nick","yule log","card","jolly","hope","scarf","candy","sleigh","parade","snowy","wassail","blizzard","noel","partridge","give","carols","tree","fireplace","socks","lights","kings","goodwill","sugarplum","bonus","coal","snow","happy","presents","pinecone"];
+
 function christmas_town(response) {
   if (response && response.mapData) {
+    resetCTMiniGameCheats();
     if (response.mapData.user) {
       if (response.mapData.user.user_id) {
         let user_id = response.mapData.user.user_id;
@@ -119,10 +127,8 @@ function christmas_town(response) {
     // Logging obtaining items
     if (response.mapData.trigger && response.mapData.trigger.item) {
       let newitems = [];
-      console.log("ITEMS trigger", response);
       let item = response.mapData.trigger.item;
       let item_id = item.image.url.match(/(?<=\/)(\d*)(?=\/)/g);
-      console.log(item_id);
       if (item_id != undefined) {
         let gift = new Object();
         gift.timestamp = Date.now();
@@ -167,9 +173,123 @@ function christmas_town(response) {
       }
     }
   }
+
+
+  if (response && response.miniGameType) {
+    if (response.miniGameType == "WordFixer") {
+      wordFixer = true;
+    }
+    if (response.miniGameType == "Hangman") {
+      hangman = true;
+    }
+  }
+
+  if (wordFixer) {
+    if ($('#ct-wrap.re_ct_wordfixer').length != 0) {
+      if ($("#re_wordFixer").length == 0) {
+        $("#ct-wrap").after(`<div class="re_minigame_cheatwrap" id="re_wordFixer"></div>`);
+      }
+
+      if (response.progress && response.progress.word) {
+        wordSolver(response.progress.word);
+      }
+
+      if (response.prizes) {
+        resetCTMiniGameCheats();
+      }
+    } else {
+      $("#re_wordFixer").remove();
+    }
+  }
+
+  if (hangman) {
+    if ($('#ct-wrap.re_ct_hangman').length != 0) {
+      if ($("#re_hangman").length == 0) {
+        $("#ct-wrap").after(`<div class="re_minigame_cheatwrap" id="re_hangman"></div>`);
+      }
+
+      if (response.progress && response.progress.words && response.progress.words[0] != undefined) {
+        let length = response.progress.words[0];
+        for (let word of CT_WORDLIST) {
+          if (word.length == length) {
+            hangmanPossibleSolutions.push(word.toLowerCase());
+          }
+        }
+        checkHangman();
+      }
+
+      if (response.positions) {
+        //Remove words if wrong letters
+        $('[class^="ctMiniGameWrapper"] [class^="alphabet"] > li[class^="wrong-letter"]').each(function() {
+          let letter = $(this).text().toLowerCase().trim();
+
+          for (var i = hangmanPossibleSolutions.length - 1; i >= 0; i--) {
+            let word = hangmanPossibleSolutions[i];
+            if (word.indexOf(letter) != -1) {
+              let i = hangmanPossibleSolutions.indexOf(word);
+              if (i > -1) {
+                hangmanPossibleSolutions.splice(i,1);
+              }
+            }
+          }
+        });
+
+        //Remove words if words don't have letter in correct positions
+        $('[class^="ctMiniGameWrapper"] [class^="word"] > li[class^="cell"]').each(function() {
+          let letter = $(this).text().toLowerCase();
+          if (letter) {
+            let index = $('[class^="ctMiniGameWrapper"] [class^="word"] > li[class^="cell"]').index($(this));
+
+            for (var i = hangmanPossibleSolutions.length - 1; i >= 0; i--) {
+              let word = hangmanPossibleSolutions[i];
+              if (word.charAt(index) != letter) {
+                let i = hangmanPossibleSolutions.indexOf(word);
+                if (i > -1) {
+                  hangmanPossibleSolutions.splice(i,1);
+                }
+              }
+            }
+          }
+        });
+
+
+        checkHangman();
+      }
+    }
+  }
 }
 
 
+function checkHangman() {
+  let solutionsText = "";
+  for (let word of hangmanPossibleSolutions) {
+    solutionsText += `${word.toUpperCase()}, `;
+  }
+
+  solutionsText = solutionsText.replace(/,\s*$/, "");
+  $(`#re_hangman`).html(`<span>Possible Solution: <b>${solutionsText}</b></span>`);
+}
+
+
+function sortWord(word) {
+    var chars = word.toUpperCase().trim().split("");
+    chars.sort();
+    return chars.join("");
+}
+function wordSolver(jumbled) {
+    let solution;
+    for (var word of CT_WORDLIST) {
+        if (sortWord(word) == sortWord(jumbled)) {
+            solution = word.toUpperCase();
+        }
+    }
+    $(`#re_wordFixer`).empty();
+    if (solution) {
+      $(`#re_wordFixer`).html(`<span>Solution: <b>${solution}</b></span>`);
+    } else {
+      $(`#re_wordFixer`).html(`<span>Could not find solution.</span>`);
+    }
+}
 
 function parseCTPrizes(prizes) {
   let newitems = [];
@@ -202,6 +322,12 @@ function parseCTPrizes(prizes) {
   document.dispatchEvent(event);
 }
 
+function resetCTMiniGameCheats() {
+  wordFixer = false;
+  hangman = false;
+  hangmanPossibleSolutions = [];
+  $('.re_minigame_cheatwrap').remove();
+}
 
 document.addEventListener("re_ct_friends", function(msg) {
   if (msg.detail && msg.detail.re_ct) {

@@ -93,6 +93,29 @@
 }
 
 
+/* Minigame Cheat Wrap */
+.re_minigame_cheatwrap {
+  width: auto;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  box-sizing: border-box;
+  border-radius: 5px;
+  margin-top: 10px;
+  padding: 10px;
+}
+body.dark-mode .re_minigame_cheatwrap {
+  background-color: #333;
+}
+
+#re_wordFixer {
+  font-size: 14px;
+}
+
+
+
 /* Show Walls/Boundaries */
 .re_ct_walls #re_walls {
   position: absolute;
