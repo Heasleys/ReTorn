@@ -126,20 +126,22 @@ function christmas_town(response) {
 
     // Logging obtaining items
     if (response.mapData.trigger && response.mapData.trigger.item) {
-      let newitems = [];
       let item = response.mapData.trigger.item;
-      let item_id = item.image.url.match(/(?<=\/)(\d*)(?=\/)/g);
-      if (item_id != undefined) {
-        let gift = new Object();
-        gift.timestamp = Date.now();
-        gift.market_value = ct_itemlist[item_id].market_value;
-        gift.category = "tornItems";
-        gift.name = ct_itemlist[item_id].name;
+      if (item.isReceived) {
+        let newitems = [];
+        let item_id = item.image.url.match(/(?<=\/)(\d*)(?=\/)/g);
+        if (item_id != undefined) {
+          let gift = new Object();
+          gift.timestamp = Date.now();
+          gift.market_value = ct_itemlist[item_id].market_value;
+          gift.category = "tornItems";
+          gift.name = ct_itemlist[item_id].name;
 
-        newitems.push(gift);
+          newitems.push(gift);
 
-        let event = new CustomEvent("re_ct_additems", {detail: {items: newitems}});
-        document.dispatchEvent(event);
+          let event = new CustomEvent("re_ct_additems", {detail: {items: newitems}});
+          document.dispatchEvent(event);
+        }
       }
     }
 
@@ -294,32 +296,37 @@ function wordSolver(jumbled) {
 function parseCTPrizes(prizes) {
   let newitems = [];
   for (const [index, item] of Object.entries(prizes)) {
-    let newitem = new Object();
-    newitem.timestamp = Date.now();
+    if (item.isReceived) {
+      let newitem = new Object();
+      newitem.timestamp = Date.now();
 
-    if (item.category && item.name) {
-      newitem.category = item.category;
-      newitem.name = item.name;
+      if (item.category && item.name) {
+        newitem.category = item.category;
+        newitem.name = item.name;
 
-      // Torn Item with a real value
-      if (item.category == "tornItems") {
-        newitem.item_id = item.type;
-        let item_id = item.type;
+        // Torn Item with a real value
+        if (item.category == "tornItems") {
+          newitem.item_id = item.type;
+          let item_id = item.type;
 
-        if (ct_itemlist) {
-          let market_value = ct_itemlist[item_id].market_value;
-          newitem.market_value = market_value;
-        } else {
-          newitem.market_value = 0;
+          if (ct_itemlist) {
+            let market_value = ct_itemlist[item_id].market_value;
+            newitem.market_value = market_value;
+          } else {
+            newitem.market_value = 0;
+          }
         }
       }
-    }
-    if (newitem) {
-      newitems.push(newitem);
+      if (newitem) {
+        newitems.push(newitem);
+      }
     }
   }
-  let event = new CustomEvent("re_ct_additems", {detail: {items: newitems}});
-  document.dispatchEvent(event);
+
+  if (newitems.length != 0) {
+    let event = new CustomEvent("re_ct_additems", {detail: {items: newitems}});
+    document.dispatchEvent(event);
+  }
 }
 
 function resetCTMiniGameCheats() {
