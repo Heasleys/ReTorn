@@ -78,7 +78,7 @@ var hangman = false;
 var hangmanPossibleSolutions = [];
 
 //Thank you to Helcostr and Ahab for originally providing the list of words.
-const CT_WORDLIST = ["elf","eve","fir","ham","icy","ivy","joy","pie","toy","gift","gold","list","love","nice","sled","star","wish","wrap","xmas","yule","angel","bells","cider","elves","goose","holly","jesus","merry","myrrh","party","skate","visit","candle","creche","cookie","eggnog","family","frosty","icicle","joyful","manger","season","spirit","tinsel","turkey","unwrap","wonder","winter","wreath","charity","chimney","festive","holiday","krampus","mittens","naughty","package","pageant","rejoice","rudolph","scrooge","snowman","sweater","tidings","firewood","nativity","reindeer","shopping","snowball","stocking","toboggan","trimming","vacation","wise men","workshop","yuletide","chestnuts","christmas","fruitcake","greetings","mince pie","mistletoe","ornaments","snowflake","tradition","candy cane","decoration","ice skates","jack frost","north pole","nutcracker","saint nick","yule log","card","jolly","hope","scarf","candy","sleigh","parade","snowy","wassail","blizzard","noel","partridge","give","carols","tree","fireplace","socks","lights","kings","goodwill","sugarplum","bonus","coal","snow","happy","presents","pinecone"];
+const CT_WORDLIST = ["elf","eve","fir","ham","icy","ivy","joy","pie","toy","gift","gold","list","love","nice","sled","star","wish","wrap","xmas","yule","angel","bells","cider","elves","goose","holly","jesus","merry","myrrh","party","skate","visit","candle","creche","cookie","eggnog","family","frosty","icicle","joyful","manger","season","spirit","tinsel","turkey","unwrap","wonder","winter","wreath","charity","chimney","festive","holiday","krampus","mittens","naughty","package","pageant","rejoice","rudolph","scrooge","snowman","sweater","tidings","firewood","nativity","reindeer","shopping","snowball","stocking","toboggan","trimming","vacation","wise men","workshop","yuletide","chestnuts","christmas","fruitcake","greetings","mince pie","mistletoe","ornaments","snowflake","tradition","candy cane","decoration","ice skates","jack frost","north pole","nutcracker","saint nick","yule log","card","jolly","hope","scarf","candy","sleigh","parade","snowy","wassail","blizzard","noel","partridge","give","carols","tree","fireplace","socks","lights","kings","goodwill","sugarplum","bonus","coal","snow","happy","presents","pinecone","holly and ivy"];
 
 function christmas_town(response) {
   if (response && response.mapData) {
@@ -211,51 +211,28 @@ function christmas_town(response) {
       }
 
       if (response.progress && response.progress.words && response.progress.words[0] != undefined) {
-        let length = response.progress.words[0];
+        let length = 0;
+
+        if (response.progress.words.length > 1) {
+          for (let i = 0; i < response.progress.words.length; i++) {
+            length += response.progress.words[i];
+          }
+          length += (response.progress.words.length - 1);
+        } else {
+          length = response.progress.words[0];
+        }
+
         for (let word of CT_WORDLIST) {
           if (word.length == length) {
             hangmanPossibleSolutions.push(word.toLowerCase());
           }
         }
-        checkHangman();
+
+        checkHangmanPositions();
       }
 
       if (response.positions) {
-        //Remove words if wrong letters
-        $('[class^="ctMiniGameWrapper"] [class^="alphabet"] > li[class^="wrong-letter"]').each(function() {
-          let letter = $(this).text().toLowerCase().trim();
-
-          for (var i = hangmanPossibleSolutions.length - 1; i >= 0; i--) {
-            let word = hangmanPossibleSolutions[i];
-            if (word.indexOf(letter) != -1) {
-              let i = hangmanPossibleSolutions.indexOf(word);
-              if (i > -1) {
-                hangmanPossibleSolutions.splice(i,1);
-              }
-            }
-          }
-        });
-
-        //Remove words if words don't have letter in correct positions
-        $('[class^="ctMiniGameWrapper"] [class^="word"] > li[class^="cell"]').each(function() {
-          let letter = $(this).text().toLowerCase();
-          if (letter) {
-            let index = $('[class^="ctMiniGameWrapper"] [class^="word"] > li[class^="cell"]').index($(this));
-
-            for (var i = hangmanPossibleSolutions.length - 1; i >= 0; i--) {
-              let word = hangmanPossibleSolutions[i];
-              if (word.charAt(index) != letter) {
-                let i = hangmanPossibleSolutions.indexOf(word);
-                if (i > -1) {
-                  hangmanPossibleSolutions.splice(i,1);
-                }
-              }
-            }
-          }
-        });
-
-
-        checkHangman();
+        checkHangmanPositions();
       }
     }
   }
@@ -272,6 +249,59 @@ function checkHangman() {
   $(`#re_hangman`).html(`<span>Possible Solution: <b>${solutionsText}</b></span>`);
 }
 
+function checkHangmanPositions() {
+  //Remove words if wrong letters
+  $('[class^="ctMiniGameWrapper"] [class^="alphabet"] > li[class^="wrong-letter"]').each(function() {
+    let letter = $(this).text().toLowerCase().trim();
+    checkHangmanLetter(letter);
+  });
+
+  //Remove words if words don't have letter in correct positions
+  $('[class^="ctMiniGameWrapper"] [class^="word"] > li[class^="cell"]').each(function() {
+    let letter = $(this).text().toLowerCase();
+    if (letter) {
+      let index = $('[class^="ctMiniGameWrapper"] [class^="word"] > li').index($(this));
+      checkHangmanLetterPosition(letter, index);
+    }
+  });
+
+  //Remove words if words don't have space in correct position
+  $('[class^="ctMiniGameWrapper"] [class^="word"] > li[class^="empty-cell"]').each(function() {
+    let index = $('[class^="ctMiniGameWrapper"] [class^="word"] > li').index($(this));
+    checkHangmanLetterPosition(" ", index)
+  });
+
+  //Remove words with spaces if no spaces on board
+  if ($('[class^="ctMiniGameWrapper"] [class^="word"] > li[class^="empty-cell"]').length == 0) {
+    checkHangmanLetter(" ");
+  }
+
+  checkHangman();
+}
+
+function checkHangmanLetter(letter) {
+  for (var i = hangmanPossibleSolutions.length - 1; i >= 0; i--) {
+    let word = hangmanPossibleSolutions[i];
+    if (word.indexOf(letter) != -1) {
+      let i = hangmanPossibleSolutions.indexOf(word);
+      if (i > -1) {
+        hangmanPossibleSolutions.splice(i,1);
+      }
+    }
+  }
+}
+
+function checkHangmanLetterPosition(letter, index) {
+  for (var i = hangmanPossibleSolutions.length - 1; i >= 0; i--) {
+    let word = hangmanPossibleSolutions[i];
+    if (word.charAt(index) != letter) {
+      let i = hangmanPossibleSolutions.indexOf(word);
+      if (i > -1) {
+        hangmanPossibleSolutions.splice(i,1);
+      }
+    }
+  }
+}
 
 function sortWord(word) {
     var chars = word.toUpperCase().trim().split("");
