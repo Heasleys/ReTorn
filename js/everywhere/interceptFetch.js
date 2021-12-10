@@ -81,6 +81,7 @@ var hangmanPossibleSolutions = [];
 const CT_WORDLIST = ["elf","eve","fir","ham","icy","ivy","joy","pie","toy","gift","gold","list","love","nice","sled","star","wish","wrap","xmas","yule","angel","bells","cider","elves","goose","holly","jesus","merry","myrrh","party","skate","visit","candle","creche","cookie","eggnog","family","frosty","icicle","joyful","manger","season","spirit","tinsel","turkey","unwrap","wonder","winter","wreath","charity","chimney","festive","holiday","krampus","mittens","naughty","package","pageant","rejoice","rudolph","scrooge","snowman","sweater","tidings","firewood","nativity","reindeer","shopping","snowball","stocking","toboggan","trimming","vacation","wise men","workshop","yuletide","chestnuts","christmas","fruitcake","greetings","mince pie","mistletoe","ornaments","snowflake","tradition","candy cane","decoration","ice skates","jack frost","north pole","nutcracker","saint nick","yule log","card","jolly","hope","scarf","candy","sleigh","parade","snowy","wassail","blizzard","noel","partridge","give","carols","tree","fireplace","socks","lights","kings","goodwill","sugarplum","bonus","coal","snow","happy","presents","pinecone","holly and ivy"];
 
 function christmas_town(response) {
+  insertCTWalls();
   if (response && response.mapData) {
     resetCTMiniGameCheats();
     if (response.mapData.user) {
@@ -364,6 +365,29 @@ function resetCTMiniGameCheats() {
   hangman = false;
   hangmanPossibleSolutions = [];
   $('.re_minigame_cheatwrap').remove();
+}
+
+function insertCTWalls() {
+  if ($('#re_walls').length == 0) {
+    $('.negative-coordinates').append(`
+      <div>
+        <div id="re_walls">
+          <div class="lefttop"></div>
+          <div class="lefttop2"></div>
+          <div class="top"></div>
+          <div class="righttop"></div>
+          <div class="righttop2"></div>
+          <div class="right"></div>
+          <div class="rightbottom"></div>
+          <div class="rightbottom2"></div>
+          <div class="bottom"></div>
+          <div class="leftbottom"></div>
+          <div class="leftbottom2"></div>
+          <div class="left"></div>
+        </div>
+      </div>
+      `);
+  }
 }
 
 document.addEventListener("re_ct_friends", function(msg) {
