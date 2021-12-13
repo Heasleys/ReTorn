@@ -254,15 +254,17 @@ function sendItemUseRequest(itemID) {
 
             // If response includes a countdown
             if ($("#re_quick_items_response").find('.counter-wrap').length > 0) {
-              let seconds = $("#re_quick_items_response").find('.counter-wrap').data('time');
-              var date = new Date().getTime() + (seconds*1000);
-              //using jquery.countdown plugin
-              $("#re_quick_items_response").find('.counter-wrap')
-              .countdown(date, function(event) {
-                var totalHours = event.offset.totalDays * 24 + event.offset.hours;
-                $(this).text(
-                  event.strftime(`${totalHours}:%M:%S`)
-                );
+              $("#re_quick_items_response").find('.counter-wrap').each(function() {
+                let seconds = $(this).data('time');
+                var date = new Date().getTime() + (seconds*1000);
+                //using jquery.countdown plugin
+                $(this)
+                .countdown(date, function(event) {
+                  var totalHours = event.offset.totalDays * 24 + event.offset.hours;
+                  $(this).text(
+                    event.strftime(`${totalHours}:%M:%S`)
+                  );
+                })
               })
             }
         } catch (e) {
