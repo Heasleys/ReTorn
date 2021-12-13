@@ -203,6 +203,9 @@ function sendItemUseRequest(itemID) {
                   itemQty = 0;
                 }
 
+                item.data("qty", itemQty);
+                item.find('.re_qty').text(`x${itemQty}`);
+
                 chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemQty: itemQty}}}})
                 item.attr("data-qty", itemQty);
                 item.find('.re_qty').text(`x${itemQty}`);
