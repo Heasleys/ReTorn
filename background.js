@@ -163,9 +163,6 @@ async function newInstall() {
           }
         }
       },
-      re_chatuserhighlight: {
-
-      },
       re_quicklinks: {
 
       },
@@ -287,16 +284,6 @@ function checkUpdate() {
       console.log("ReTorn: Update found for Logs. Adding Logs data.", error);
       const re_logs = { re_logs: { error: { api: { }, page: { }, background: { } }, data: {deleted: { }, set: { }, set_local:{} }, api: {torn:{}, tornstats:{} }, notifications: {history: {}} } }
       setValue(re_logs, "local").catch((error) => {console.log(error);});
-    });
-  })
-  .then(() => {
-    getValue("re_chatuserhighlight", "sync")
-    .then((response) => {
-      console.log("ReTorn: Checking for updates - Chat User Highlights data found. No update needed.", response);
-    })
-    .catch((error) => {
-      console.log("ReTorn: Update found for Chat User Highlights. Adding Chat User Highlights data.", error);
-      setValue({"re_chatuserhighlight": {}}, "sync").catch((error) => {console.log(error);});
     });
   })
   .then(() => {
