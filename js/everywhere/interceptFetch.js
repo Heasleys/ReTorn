@@ -173,6 +173,7 @@ function christmas_town(response) {
       if ($(`.users-layer #ctUser${userid}`).length != 0 && friend.color) {
         $(`.users-layer #ctUser${userid}`).addClass('re_friend');
         $(`.users-layer #ctUser${userid}`).find('svg').css('fill', friend.color);
+        $(`.users-layer #ctUser${userid}`).find('path.iconPath').css('fill', friend.color);
       }
     }
   }
