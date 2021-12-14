@@ -133,6 +133,10 @@ function insertHead() {
           <input type="checkbox" name='hangman'>
           <label class="noselect" title="List possible solutions">Hangman</label>
         </div>
+        <div class="re_checkbox">
+        <input type="checkbox" name='typocalypse'>
+        <label class="noselect" title="Ignore typos">Typocalypse</label>
+      </div>
       </div>
     </div>
 

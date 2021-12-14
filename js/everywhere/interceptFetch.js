@@ -185,6 +185,9 @@ function christmas_town(response) {
     if (response.miniGameType == "Hangman") {
       hangman = true;
     }
+    if (response.miniGameType == "Typocalypse") {
+      typocalypse();
+    }
   }
 
   if (wordFixer) {
@@ -301,6 +304,22 @@ function checkHangmanLetterPosition(letter, index) {
         hangmanPossibleSolutions.splice(i,1);
       }
     }
+  }
+}
+
+function typocalypse() {
+  if ($('#ct-wrap.re_ct_typocalypse').length != 0) {
+    $("div[class^='board'] input[class^='input']").off("keydown").on("keydown", function (evt, reEvent) {
+      if (evt.which) {
+        let text = $(this).val();
+        let word = $("div[class^='board'] div[class^='gift']:not([class*='hide']):last div[class^='text']").text();
+        let curText = word.replace(text, "");
+        let char = curText.toUpperCase().charAt(0);
+        if (evt.keyCode != char.charCodeAt(0)) {
+          evt.preventDefault();
+        }
+      }
+    });
   }
 }
 
