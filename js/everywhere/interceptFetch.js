@@ -21,7 +21,7 @@ interceptFetch("torn.com","torn.com", (response, url) => {
  }
 
  /* Christmas Town */
-  if (url.includes('christmas_town.php?q=move') || url.includes('christmas_town.php?q=initMap') || url.includes('christmas_town.php?q=miniGameAction')) {
+  if (url.includes('christmas_town.php?q=move') || url.includes('christmas_town.php?q=initMap') || url.includes('christmas_town.php?q=miniGameAction') || url.includes('christmas_town.php?q=exchangePrizeCoupons')) {
     christmas_town(response);
   }
 
@@ -164,6 +164,12 @@ function christmas_town(response) {
   if (response && response.prizes) {
     if (response.prizes.length > 0) {
       parseCTPrizes(response.prizes);
+    }
+  }
+
+  if (response && response.rewards) {
+    if (response.rewards.length > 0) {
+      parseCTPrizes(response.rewards);
     }
   }
 
