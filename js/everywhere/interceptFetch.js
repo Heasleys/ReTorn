@@ -21,7 +21,7 @@ interceptFetch("torn.com","torn.com", (response, url) => {
  }
 
  /* Christmas Town */
-  if (url.includes('christmas_town.php?q=move') || url.includes('christmas_town.php?q=initMap') || url.includes('christmas_town.php?q=miniGameAction') || url.includes('christmas_town.php?q=exchangePrizeCoupons')) {
+  if (url.includes('christmas_town.php')) {
     christmas_town(response);
   }
 
