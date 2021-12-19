@@ -129,17 +129,22 @@ function christmas_town(response) {
     if (response.mapData.trigger && response.mapData.trigger.item) {
       let item = response.mapData.trigger.item;
       if (item.isReceived) {
+        let gift = new Object();
+        gift.timestamp = Date.now();
+
         let newitems = [];
         let item_id = item.image.url.match(/(?<=\/)(\d*)(?=\/)/g);
         if (item_id != undefined) {
-          let gift = new Object();
-          gift.timestamp = Date.now();
           gift.market_value = ct_itemlist[item_id].market_value;
           gift.category = "tornItems";
           gift.name = ct_itemlist[item_id].name;
+        } else {
+          gift.name = item.message.replace("You find a ", "").replace("You find an ", "").replace("You found a ", "").replace("You found an ", "");
+        }
 
+        if (gift && gift.name) {
           newitems.push(gift);
-
+          
           let event = new CustomEvent("re_ct_additems", {detail: {items: newitems}});
           document.dispatchEvent(event);
         }
