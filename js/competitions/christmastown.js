@@ -137,7 +137,7 @@ function insertHead() {
     </div>
 
     <div class="re_row" id="re_ct_giftview">
-      <div class="switch_wrap">
+      <div class="switch_wrap mb4">
       <p class="re_ptitle">Nearby Items: <span id="item_qty">0</span></p>
         <div class="re_scrollbox">
           <ul class="re_list small" id="nearby_items">
@@ -145,7 +145,7 @@ function insertHead() {
           </ul>
         </div>
       </div>
-      <div class="switch_wrap ml2">
+      <div class="switch_wrap mb4">
       <p class="re_ptitle">Nearby Chests: <span id="chests_qty">0</span></p>
         <div class="re_scrollbox">
           <ul class="re_list small" id="nearby_chests">
@@ -153,7 +153,7 @@ function insertHead() {
           </ul>
         </div>
       </div>
-      <div class="switch_wrap ml2">
+      <div class="switch_wrap mb4">
         <p class="re_ptitle">Item/Gift History</p>
         <div class="re_scrollbox">
           <ul class="re_list small" id="gifts_list">
@@ -162,7 +162,7 @@ function insertHead() {
         </div>
       </div>
 
-      <div class="switch_wrap ml2">
+      <div class="switch_wrap mb4">
         <p class="re_ptitle">Item Values</p>
         <span><b>Total: </b><span id="re_items_value">$0</span></span>
       </div>
