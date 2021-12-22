@@ -1,5 +1,5 @@
 /* highlight items */
-.re_ct_items .items-layer .ct-item::before {
+.re_ct_items .items-layer .ct-item.re_item::before {
   content: "";
   display: block;
   position: absolute;
@@ -9,10 +9,16 @@
   animation: glow 1.5s ease-out infinite alternate;
 }
 
-.switch_wrap div.re_nearby_items {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+
+/* highlight chests */
+.re_ct_chests .items-layer .ct-item.re_chest::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 0 0 50px rgba(193, 138, 239, 0.5);
 }
 
 /* highlight npcs */

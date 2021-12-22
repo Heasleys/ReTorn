@@ -112,17 +112,28 @@ function christmas_town(response) {
 
     if (response.mapData.items) {
       $('ul#nearby_items').empty();
-      let qty = response.mapData.items.length;
-      $('.re_nearby_items #item_qty').text(qty);
-      if (qty > 0) {
+      $('ul#nearby_chests').empty();
+      let itemqty = 0;
+      let chestqty = 0;
+      if (response.mapData.items.length > 0) {
         for (const [index, item] of Object.entries(response.mapData.items)) {
           if (item.image && item.image.url && item.position && item.position.x != undefined && item.position.y != undefined) {
             let name = itemURLtoName(item.image.url);
             let pos = `(${item.position.x}, ${item.position.y})`;
-            $('ul#nearby_items').append(`<li><div class="re_list_item item">${name} ${pos}</div></li>`);
+            if (item.image.url.includes('chests/animated')) {
+              chestqty++;
+              $('ul#nearby_chests').append(`<li><div class="re_list_item item">${name} ${pos}</div></li>`);
+              $(`.items-layer .ct-item img[src="${item.image.url}"]`).parent('.ct-item').addClass('re_chest');
+            } else {
+              itemqty++;
+              $('ul#nearby_items').append(`<li><div class="re_list_item item">${name} ${pos}</div></li>`);
+              $(`.items-layer .ct-item img[src="${item.image.url}"]`).parent('.ct-item').addClass('re_item');
+            }
           }
         }
       }
+      $('#re_ct_giftview #item_qty').text(itemqty);
+      $('#re_ct_giftview #chests_qty').text(chestqty);
     }
 
     // Logging obtaining items

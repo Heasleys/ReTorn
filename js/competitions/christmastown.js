@@ -60,20 +60,16 @@ function insertHead() {
           <label class="noselect" title="Highlight items">Items</label>
         </div>
         <div class="re_checkbox">
+        <input type="checkbox" name='chests'>
+        <label class="noselect" title="Highlight key chests">Chests</label>
+      </div>
+        <div class="re_checkbox">
           <input type="checkbox" name='npcs'>
           <label class="noselect" title="Highlight NPCs">NPCs</label>
         </div>
         <div class="re_checkbox">
           <input type="checkbox" name='walls'>
           <label class="noselect" title="Highlight wall boundaries">Walls</label>
-        </div>
-        <div class="re_nearby_items mt3">
-          <span><b>Nearby Items: </b><span id="item_qty">0</span></span>
-          <div class="re_scrollbox">
-            <ul class="re_list small" id="nearby_items">
-
-            </ul>
-          </div>
         </div>
       </div>
 
@@ -142,6 +138,22 @@ function insertHead() {
 
     <div class="re_row" style="display: none;" id="re_ct_giftview">
       <div class="switch_wrap">
+      <p class="re_ptitle">Nearby Items: <span id="item_qty">0</span></p>
+        <div class="re_scrollbox">
+          <ul class="re_list small" id="nearby_items">
+
+          </ul>
+        </div>
+      </div>
+      <div class="switch_wrap ml2">
+      <p class="re_ptitle">Nearby Chests: <span id="chests_qty">0</span></p>
+        <div class="re_scrollbox">
+          <ul class="re_list small" id="nearby_chests">
+
+          </ul>
+        </div>
+      </div>
+      <div class="switch_wrap ml2">
         <p class="re_ptitle">Item/Gift History</p>
         <div class="re_scrollbox">
           <ul class="re_list small" id="gifts_list">
