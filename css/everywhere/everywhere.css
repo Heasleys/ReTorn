@@ -87,12 +87,6 @@ div.re_checkbox {
   float: right;
 }
 
-div.re_checkbox > input:[type='checkbox'] {
-    position: relative;
-    top: 6px;
-    cursor: pointer;
-}
-
 div.re_checkbox > label {
     display: inline-block;
     vertical-align: top;
@@ -110,7 +104,7 @@ div.re_container {
 margin-top: 10px;
 display: flex;
 flex-direction: column;
-box-size: border-box;
+box-sizing: border-box;
 }
 
 div.re_head {
@@ -237,11 +231,11 @@ margin-right: auto;
 }
 
 span.re_icon.arrow_right svg path {
-d: path('M4 6l-4 4 6 6-6 6 4 4 10-10L4 6z');
+  d: path('M4 6l-4 4 6 6-6 6 4 4 10-10L4 6z');
 }
 
 span.re_icon.arrow_down svg path {
-d: path('M16 10l-6 6-6-6-4 4 10 10 10-10-4-4z');
+  d: path('M16 10l-6 6-6-6-4 4 10 10 10-10-4-4z');
 }
 
 div.re_button_wrap {

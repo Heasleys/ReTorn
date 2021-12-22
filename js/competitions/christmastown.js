@@ -52,7 +52,7 @@ function insertHead() {
   insertHeader($("#ct-wrap"), 'after', 'mb2');
   $('#re_title').text("Christmas Town");
   $('.re_content').html(`
-    <div class="re_row" id="re_ct_main">
+    <div class="re_row" style="display: none;" id="re_ct_main">
       <div class="switch_wrap mb4" name="highlight">
         <p class="re_ptitle">Highlights</p>
         <div class="re_checkbox">
@@ -136,7 +136,7 @@ function insertHead() {
       </div>
     </div>
 
-    <div class="re_row" style="display: none;" id="re_ct_giftview">
+    <div class="re_row" id="re_ct_giftview">
       <div class="switch_wrap">
       <p class="re_ptitle">Nearby Items: <span id="item_qty">0</span></p>
         <div class="re_scrollbox">
@@ -169,7 +169,7 @@ function insertHead() {
     </div>
     `);
 
-  $('.re_head .re_title').after(`<i class="fas fa-gift" id="re_ct_gifts" title="Toggle item/gift history"></i>`);
+  $('.re_head .re_title').after(`<i class="fas fa-cog" id="re_ct_gifts" title="Toggle settings view"></i>`);
 
   $('#re_ct_gifts').click(function(e) {
     e.stopPropagation();

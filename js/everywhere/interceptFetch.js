@@ -150,7 +150,7 @@ function christmas_town(response) {
           gift.category = "tornItems";
           gift.name = ct_itemlist[item_id].name;
         } else {
-          gift.name = item.message.replace("You find a ", "").replace("You find an ", "").replace("You found a ", "").replace("You found an ", "");
+          gift.name = response.mapData.trigger.message.replace("You find a ", "").replace("You find an ", "").replace("You found a ", "").replace("You found an ", "");
         }
 
         if (gift && gift.name) {
