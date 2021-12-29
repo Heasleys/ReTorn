@@ -1,7 +1,35 @@
 // @version      1.0.0
 // @description  Add quick busts, quick bail, jail filter, law firm speed busts
 // @author       Heasleys4hemp [1468764]
+
+//Changing jail pages
+var jailPageObserver = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    if (mutation.addedNodes && mutation.addedNodes.length > 1) {
+      //console.log(mutation);
+      if (mutation.target && mutation.target && mutation.target.className && mutation.target.className.includes('users-list')) {
+        setQuickActions();
+        filterJail();
+        setBustBailButtons();
+      }
+    }
+  })
+});
+
+var startupObserver = new MutationObserver(function(mutations) {
+  if ($(".userlist-wrapper").length == 1 && $('div.re_container').length == 0) {
+    initJail();
+    observer.disconnect();
+  }
+});
+
 $(document).ready(function() {
+  if ($('div.captcha').length == 0) {
+    startupObserver.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+  }
+});
+
+function initJail() {
   insertHeader($("div.content-title"), 'after');
   $('#re_title').text("Jail");
   $('.re_content').addClass('re_jail');
@@ -73,6 +101,8 @@ $(document).ready(function() {
           }
         }
       }
+      setQuickActions();
+      filterJail();
     }
 
   });
@@ -101,59 +131,16 @@ $(document).ready(function() {
   });
 
   $('.re_checkbox > label').click(function() {
-    $(this).parent('.re_checkbox').find('input[type="checkbox"]').click();
+    let checkbox = $(this).parent('.re_checkbox').find('input[type="checkbox"]');
+    checkbox.prop("checked", !checkbox.prop("checked"));
+    checkbox.trigger("change");
   });
 
+    //mutationObserver on jail wrap
+    var target = document.querySelector('div.userlist-wrapper');
+    jailPageObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+}
 
-
-
-  //Changing jail pages
-  var observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-      if (mutation.addedNodes && mutation.addedNodes.length > 1) {
-        //console.log(mutation);
-        if (mutation.target && mutation.target && mutation.target.className && mutation.target.className.includes('users-list')) {
-          setQuickActions();
-          filterJail();
-          $('a.bust').click(function() {
-            let a = $(this);
-            let sbust = $('#re_jail_sbust').prop("checked");
-            if (sbust == true) {
-              let hrefbust = a.attr("href");
-              if (hrefbust) {
-                const regex = /breakout$/;
-                hrefbust = hrefbust.replace(regex, 'breakout1');
-                a.find('.bust-icon').addClass('qbust-icon').removeClass('bust-icon');
-                //Wait 100ms because for some reason click is triggering after changing the href
-                setTimeout(function() {
-                  a.attr("href", hrefbust);
-                  a.parent().find('.confirm-bust').show();
-                 }, 100);
-              }
-            }
-          });
-
-          $('a.bye').click(function() {
-            let a = $(this);
-            let sbail = $('#re_jail_sbail').prop("checked");
-            if (sbail == true) {
-              let hrefbail = a.attr("href");
-              if (hrefbail) {
-                const regex = /buy$/;
-                hrefbail = hrefbail.replace(regex, 'buy1');
-                a.find('.bye-icon').addClass('qbye-icon').removeClass('bye-icon');
-                //Wait 100ms because for some reason click is triggering after changing the href
-                setTimeout(function() {
-                  a.attr("href", hrefbail);
-                  a.parent().find('.confirm-bye').show();
-                 }, 100);
-              }
-            }
-          });
-        }
-      }
-    })
-  });
 
 
   //Filter Jail Captives Function
@@ -246,10 +233,46 @@ $(document).ready(function() {
       }
     });
 
+    setBustBailButtons();
+  }
+
+  function setBustBailButtons() {
+    $('a.bust').click(function() {
+      let a = $(this);
+      let sbust = $('#re_jail_sbust').prop("checked");
+      if (sbust == true) {
+        let hrefbust = a.attr("href");
+        if (hrefbust) {
+          const regex = /breakout$/;
+          hrefbust = hrefbust.replace(regex, 'breakout1');
+          a.find('.bust-icon').addClass('qbust-icon').removeClass('bust-icon');
+          //Wait 100ms because for some reason click is triggering after changing the href
+          setTimeout(function() {
+            a.attr("href", hrefbust);
+            a.parent().find('.confirm-bust').show();
+           }, 100);
+        }
+      }
+    });
+
+    $('a.bye').click(function() {
+      let a = $(this);
+      let sbail = $('#re_jail_sbail').prop("checked");
+      if (sbail == true) {
+        let hrefbail = a.attr("href");
+        if (hrefbail) {
+          const regex = /buy$/;
+          hrefbail = hrefbail.replace(regex, 'buy1');
+          a.find('.bye-icon').addClass('qbye-icon').removeClass('bye-icon');
+          //Wait 100ms because for some reason click is triggering after changing the href
+          setTimeout(function() {
+            a.attr("href", hrefbail);
+            a.parent().find('.confirm-bye').show();
+           }, 100);
+        }
+      }
+    });
   }
 
 
-  //mutationObserver on jail wrap
-  var target = document.querySelector('div.userlist-wrapper');
-  observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
-});
+
