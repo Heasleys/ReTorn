@@ -77,6 +77,9 @@ async function checkLogin() {
     console.log(error);
     getItemsAPI();
   });
+
+
+  cleanLogs();
 }
 
 function logout() {
@@ -89,6 +92,25 @@ function logout() {
     console.log({status: false, message: "Failed to delete apikey.", error: error});
     sendResponse({status: false, message: "Failed to delete apikey.", error: error});
   });
+}
+
+function cleanLogs() {
+  getValue("re_logs", "local")
+    .then(async (response) => {
+      let re_logs = response.re_logs;
+      for (const [type, value] of Object.entries(re_logs)) {
+        //subtypes
+        for (const [subtype, subval] of Object.entries(value)) {
+          //check if logs need shifted (max of 25 per subtype);
+          await shiftObject(subval, type, subtype);
+        }
+      }
+
+
+    })
+    .catch((error) => {
+      console.log(error);
+    })
 }
 
 // New Installation function for setting default settings
@@ -177,14 +199,7 @@ async function newInstall() {
     const re_logs = {
       re_logs: {
         error: {
-          api: {},
-          page: {},
-          background: {}
-        },
-        data: {
-          deleted: {},
-          set: {},
-          set_local: {}
+          api: {}
         },
         api: {
           torn: {},
@@ -282,10 +297,11 @@ function checkUpdate() {
     })
     .catch((error) => {
       console.log("ReTorn: Update found for Logs. Adding Logs data.", error);
-      const re_logs = { re_logs: { error: { api: { }, page: { }, background: { } }, data: {deleted: { }, set: { }, set_local:{} }, api: {torn:{}, tornstats:{} }, notifications: {history: {}} } }
+      const re_logs = { re_logs: { error: { api: { }}, api: {torn:{}, tornstats:{} }, notifications: {history: {}} } }
       setValue(re_logs, "local").catch((error) => {console.log(error);});
     });
   })
+
   .then(() => {
     getValue("re_quicklinks", "sync")
     .then((response) => {
@@ -296,6 +312,7 @@ function checkUpdate() {
       setValue({"re_quicklinks": {}}, "sync").catch((error) => {console.log(error);});
     });
   })
+
   .then(() => {
     getValue("re_chathighlights", "sync")
     .then((response) => {
@@ -306,6 +323,7 @@ function checkUpdate() {
       setValue({"re_chathighlights": {}}, "sync").catch((error) => {console.log(error);});
     });
   })
+
   .then(() => {
     getValue("re_ct", "sync")
     .then((response) => {
@@ -315,6 +333,33 @@ function checkUpdate() {
       console.log("ReTorn: Update found for Christmas Town. Adding Christmas Town data.", error);
       setValue({"re_ct": {friends: {}}}, "sync").catch((error) => {console.log(error);});
     });
+  })
+
+  .then(() => {
+    getValue("re_logs", "local")
+    .then(async (response) => {
+      if (response && response.re_logs) {
+        let re_logs = response.re_logs;
+        if (re_logs.data) {
+              //if data logs exist, delete them (no longer wanted v0.1.14)
+            console.log("ReTorn: Update found. Removing data logs.");
+            await delValue("re_logs", "del_type", "local", {type: "data"}).then((res) => console.log(res));
+        }
+
+        if (re_logs.error) {
+          if (re_logs.error.page) {
+              //if data logs exist, delete them (no longer wanted v0.1.14)
+              console.log("ReTorn: Update found. Removing page logs.");
+              await delValue("re_logs", "del_subtype", "local", {type: "error", subtype: "page"}).then((res) => console.log(res));
+          }
+          if (re_logs.error.background) {
+              //if data logs exist, delete them (no longer wanted v0.1.14)
+              console.log("ReTorn: Update found. Removing background logs.");
+              await delValue("re_logs", "del_subtype", "local", {type: "error", subtype: "background"}).then((res) => console.log(res));
+          }
+        }
+      }
+    })
   })
 
   .catch((error) => {
@@ -386,7 +431,6 @@ function fetchAPI(apikey, type, selection, id) {
     fetch('https://api.torn.com/'+type+'/'+id+'?selections='+selection+'&key='+apikey+'&comment=ReTorn')
     .then((response) => {
       if (response.status !== 200) {
-        logger("error", "background", "There was a problem connecting to the Torn servers. Status Code: "+ response.status, {timestamp: Date.now()});
         console.log("There was a problem connecting to Torn servers. Status Code: " + response.status);
         reject({status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status});
       } else {
@@ -399,7 +443,6 @@ function fetchAPI(apikey, type, selection, id) {
         return resolve(res);
     })
     .catch((error) => {
-      logger("error", "background", "There was a Fetch Error: "+ error, {timestamp: Date.now()});
       console.log('Fetch Error: ', error);
       return reject({status: false, message: "Fetch Error: " + error});
     });
@@ -411,11 +454,9 @@ function fetchAPI(apikey, type, selection, id) {
 function fetchTSAPI(apikey, selection) {
   return new Promise((resolve, reject) => {
     if (apikey == undefined || apikey.length > 16) {
-      logger("error", "background", "Invalid apikey attempting to fetch Torn Stats API.", {timestamp: Date.now()});
       return reject({status: false, message: "Invalid apikey."})
     }
     if (selection == undefined) {
-      logger("error", "background", "No selection given attempting to fetch Torn Stats API.", {timestamp: Date.now()});
       return reject({status: false, message: "No selection given."});
     }
     fetch('https://www.tornstats.com/api/v1/' + apikey + '/' + selection)
@@ -423,12 +464,10 @@ function fetchTSAPI(apikey, selection) {
     .then((response) => {
       if (response.status !== 200) {
         console.log("There was a problem connecting to Torn Stats servers. Status Code: " + response.status);
-        logger("error", "background", "There was a problem connecting to Torn Stats servers. Status Code: " + response.status, {timestamp: Date.now()});
         return reject({status: false, message: "There was a problem connecting to Torn Stats servers. Status Code: " + response.status});
       } else {
         response.json().then((data) => {
           if (data.status == undefined) {
-            logger("error", "background", "No status detected from Torn Stats. Rejecting.", {timestamp: Date.now()});
             console.log({status: false, message: "No status detected from Torn Stats. Rejecting.", TSData: data});
             return reject({status: false, message: "No status detected from Torn Stats. Rejecting.", TSData: data});
           }
@@ -552,7 +591,6 @@ function getValue(value, type) {
         if (Object.keys(response).length === 0 && response.constructor === Object) {
           if (value != "re_logs") {
             // If re_logs doesn't exist yet, trying to log something means it will become a bad loop of death
-            await logger("error", "background", "Could not find value in "+type+" storage. Value: " + value, {timestamp: Date.now()});
           }
           return reject({status: false, message: "Could not find value in storage.", value: value});
         } else {
@@ -575,11 +613,9 @@ function delValue(value, key, storage, log) {
       chrome.storage[storage].get([value], async (response) => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
-          await logger("error", "background", "Chrome Runtime Error while getting storage for deletion: " + chrome.runtime.lastError.message, {timestamp: Date.now()});
           return reject({status: false, message: chrome.runtime.lastError.message});
         } else {
           if (Object.keys(response).length === 0 && response.constructor === Object) {
-            await logger("error", "background", "Could not find value in storage. Value: " + value, {timestamp: Date.now()});
             return reject({status: false, message: "Could not find value in storage.", value: value});
           }
 
@@ -631,20 +667,33 @@ function delValue(value, key, storage, log) {
           }
 
           if (value == "re_logs") {
-            if (key != undefined && log != undefined && log.type != undefined && log.subtype != undefined) {
-              delete response.re_logs[log.type][log.subtype][key];
+            if (key == "del_type" || key == "del_subtype") {
+              if (key == "del_type") {
+                if (log != undefined && log.type != undefined) {
+                  delete response.re_logs[log.type];
+                }
+              }
+              if (key == "del_subtype") {
+                if (log != undefined && log.type != undefined && log.subtype != undefined) {
+                  delete response.re_logs[log.type][log.subtype];
+                }
+              } 
+            } else {
+              if (key != undefined && log != undefined && log.type != undefined && log.subtype != undefined) {
+                delete response.re_logs[log.type][log.subtype][key];
+              }
             }
           }
+
+
 
           chrome.storage[storage].set(response, async () => {
             if (chrome.runtime.lastError) {
               console.error(chrome.runtime.lastError.message);
-              await logger("error", "background", "Chrome Runtime Error while deleting value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
               return reject({status: false, message: chrome.runtime.lastError.message});
             } else {
               if (value != "re_logs") {
                 // If re_logs is asking to delete, it's because it's full, so trying to log something now means it will become a bad loop of death
-                await logger("data", "deleted", key + " has been deleted from " + value + " storage.", {data: key, timestamp: Date.now()});
               }
               return resolve({status: true, message: "Value: " + key + " has been deleted."});
             }
@@ -665,10 +714,8 @@ function removeValue(value, type) {
       chrome.storage[type].remove(value, async () => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError.message);
-          await logger("error", "background", "Chrome Runtime Error while deleting "+type+" value "+ key + " from "+value+":  " + chrome.runtime.lastError.message, {timestamp: Date.now()});
           return reject({status: false, message: chrome.runtime.lastError.message});
         } else {
-          await logger("data", "deleted", value + " has been deleted from " + type + " storage.", {data: value, timestamp: Date.now()});
           return resolve({status: true, message: type+" value: " + value + " has been removed."});
         }
       });
@@ -731,7 +778,7 @@ async function logger(type, subtype, message, log) {
 async function shiftObject(object, type, subtype) {
   return new Promise(async (resolve, reject) => {
     let response = {"re_logs": {[type]: {[subtype]: object}}};
-    const MAX = 100;
+    const MAX = 25;
     if (object == null) {
       return resolve(0);
     }
@@ -813,7 +860,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           sendResponse(error);
         });
       } else {
-        logger("error", "background", "The apikey entered was invalid.", {timestamp: Date.now()});
         sendResponse({status: false, message: "The apikey entered was invalid."});
       }
       return true;
@@ -854,12 +900,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         }
         setValue({[msg.value_name]: msg.value}, msg.type)
         .then(async (response) => {
-          if (msg.type == "sync") {
-            await logger("data", "set", objectStringify(msg.value) + " has been set in " + msg.value_name + ".", {data: msg.value, timestamp: Date.now()});
-          }
-          if (msg.type != undefined && msg.type == "local") {
-            await logger("data", "set_local", objectStringify(msg.value) + " has been set in " + msg.value_name + ".", {data: msg.value, timestamp: Date.now()});
-          }
           sendResponse(response);
         })
         .catch((error) => {
@@ -918,7 +958,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     break;
 
     default:
-    logger("error", "background", "Message received does not exist: " + msg.name, {timestamp: Date.now()});
     sendResponse({status: false, message: "Message received does not exist."});
     return true;
     break;
@@ -1168,7 +1207,6 @@ chrome.webRequest.onBeforeRequest.addListener(
             }
           }).catch(async (error) => {
             console.log(error);
-            await logger("error", "background", "There was a problem getting settings for Easter Egg Alerts. "+ error, {timestamp: Date.now()});
           });
         }
   },

@@ -421,27 +421,14 @@
                 <button id="force_torn_items" class="mb20" tooltip="Refresh Items Cache" flow="top">Force Refresh Items Cache</button>
                 <h4 class="card_title">Log:</h4>
                 <p>These are the internal logs of ReTorn. Check here if you are having issues. <a href="https://cdn.discordapp.com/attachments/899472962187579392/910317546073362432/reee.jpg">REEEEEE</a></p>
-                <p>Each sub-section holds a max of 100 logs for browser storage purposes.</p>
+                <p>Each section holds a max of 25 logs for browser storage purposes.</p>
                 <div class="navbar">
                   <ul class="nav nav-tabs" id="nav-logs" tab-target="#logs-tabContent">
-                    <li class="nav-item dropdown">
-                      <a class="nav-link active" data="#logs-error">Error</a>
-                      <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" data-target="#logs-error-api">API</a></li>
-                        <li><a class="dropdown-item" data-target="#logs-error-page">Page</a></li>
-                        <li><a class="dropdown-item" data-target="#logs-error-background">Background</a></li>
-                      </ul>
+                    <li class="nav-item">
+                      <a class="nav-link active" data-target="#logs-error-api">API Errors</a>
                     </li>
                     <li class="nav-item dropdown">
-                      <a class="nav-link">Data</a>
-                      <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" data-target="#logs-data-set">Set</a></li>
-                        <li><a class="dropdown-item" data-target="#logs-data-set_local">Set Local</a></li>
-                        <li><a class="dropdown-item" data-target="#logs-data-deleted">Deleted</a></li>
-                      </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                      <a class="nav-link">API</a>
+                      <a class="nav-link">API Usage</a>
                       <ul class="dropdown-menu">
                         <li><a class="dropdown-item" data-target="#logs-api-torn">Torn</a></li>
                         <li><a class="dropdown-item" data-target="#logs-api-tornstats">Torn Stats</a></li>
