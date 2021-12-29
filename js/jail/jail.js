@@ -19,7 +19,7 @@ var jailPageObserver = new MutationObserver(function(mutations) {
 var startupObserver = new MutationObserver(function(mutations) {
   if ($(".userlist-wrapper").length == 1 && $('div.re_container').length == 0) {
     initJail();
-    observer.disconnect();
+    startupObserver.disconnect();
   }
 });
 
