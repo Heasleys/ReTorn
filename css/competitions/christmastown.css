@@ -77,7 +77,7 @@
 
 /* hide wreath for christmas wreath mini game */
 .re_ct_wreath [class^="christmas-wreath"] [class^="wreath"] > img[alt="christmas wreath"] {
-  display: none;
+  opacity: 10%;
 }
 
 /* hide santas, easy grinch */
