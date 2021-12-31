@@ -371,9 +371,8 @@ function parseCTPrizes(prizes) {
   for (const [index, item] of Object.entries(prizes)) {
     if (item.isReceived) {
       let newitem = new Object();
-      newitem.timestamp = Date.now();
-
       if (item.category && item.name) {
+        newitem.timestamp = Date.now();
         newitem.category = item.category;
         newitem.name = item.name;
 
@@ -391,7 +390,13 @@ function parseCTPrizes(prizes) {
         }
       }
       if (newitem) {
-        newitems.push(newitem);
+        if (item.quantity && item.quantity > 0) {
+          for (let i = 0; i < item.quantity; i++) {
+            newitems.push(newitem);
+          }
+        } else {
+          newitems.push(newitem);
+        }
       }
     }
   }
