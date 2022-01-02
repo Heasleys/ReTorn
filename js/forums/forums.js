@@ -55,7 +55,7 @@ function insertDiscordButtons() {
     let post_container = forum_wrap.find(".post-container");
     let text = post_container.children('.origin-post-content').text();
 
-    let formattedText = text.replace(/\[\/?(?:b|i|u|url|quote|code|img|color|size)*?.*?\]/img, "");
+    let formattedText = text.replace(/\[\/?(?:quote|code|img|color|size|li|ul|center|right|left|justify|background|b|i|s)+?.*?\]|\[\/?(?:u)\]/img, "");
 
     let timestamp = post_container.find('.time-wrap > div:first-child').text();
 
@@ -78,11 +78,22 @@ function insertDiscordButtons() {
       formattedText = formattedText.substring(0, max) + "...";
     }
 
+    //Extract any URLs to add to bottom of Discord post
+    var urls = text.match(/(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])/igm);
+
     //Title for discord format
     discordFormat = `:speech_left: **${forum_title}** ${forum_url}\n${codeblock}diff\n--- ${timestamp}\n+ ${likes} upvotes\n- ${dislikes} downvotes\n${codeblock}\n`;
 
     //content
     discordFormat += `**${author}**:\n${codeblock}md\n${quote}${formattedText}\n${codeblock}`;
+
+    if (urls && urls.length > 0) {
+      discordFormat += `\n`;
+      urls.forEach((url,index) => {
+        index++;
+        discordFormat += `${index}: ${url}\n`;
+      })
+    }
 
     copy_internal(discordFormat);
     var confirmation = $(this).find('.confirmation');
