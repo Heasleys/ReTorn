@@ -59,31 +59,56 @@ function urlHandler() {
 
 function crimesTab() {
 
-  if ($('.faction-crimes-wrap > .begin-wrap .crimes-list').length == 1 && tsData["crimes"]) {
-      var crimeList = $('.faction-crimes-wrap > .begin-wrap .crimes-list');
-      if (crimeList.attr('id') != 'ts') {
-        crimeList.attr('id', 'ts');
+  if ($('.faction-crimes-wrap > .begin-wrap .crimes-list').length == 1 && $('.faction-crimes-wrap > .organize-wrap .crimes-list').length == 1 && tsData["crimes"]) {
+    $('.faction-crimes-wrap > .begin-wrap .crimes-list, .faction-crimes-wrap > .organize-wrap .crimes-list').each(function() {
+      var crimeList = $(this);
+      console.log(crimeList);
+      if (!crimeList.hasClass("re_nnb")) {
+        crimeList.addClass("re_nnb");
         crimeList.find('li.item-wrap').each(function(index) {
-          $(this).find('.plans-wrap ul.title > li.offences').after(`<li class="nnb" title="Natural Nerve Bar">NNB<div class="t-delimiter white"></div></li>`);
-          $(this).find('.plans-wrap .viewport ul.plans-list>li').each(function() {
-            let id = $(this).find('li.member > a').attr('href').replace(/\D/g, "");
-            let wrap = "";
-            if (tsData["crimes"].members[id]) {
-              if (tsData["crimes"].members[id].natural_nerve) {
-                wrap += tsData["crimes"].members[id].natural_nerve;
+          let itemWrap = $(this);
+          // Find the column to insert NNB after (offences for planning, level for already planned OCs)
+          let titleInsert = itemWrap.find('ul.title > li.offences');
+          if (titleInsert.length == 0) {
+            titleInsert = itemWrap.find('ul.title > li.level');
+          }
+
+          if (titleInsert.length != 0) {
+            titleInsert.after(`<li class="nnb" title="Natural Nerve Bar">NNB<div class="t-delimiter white"></div></li>`);
+            itemWrap.find('.viewport ul.plans-list>li, .details-wrap ul.details-list>li').each(function() {
+              let item = $(this).find('ul.item');
+              if (item.length != 0) {
+                let id = item.find('li.member > a').attr('href').replace(/\D/g, "");
+                let wrap = "";
+                if (tsData["crimes"].members[id]) {
+                  if (tsData["crimes"].members[id].natural_nerve) {
+                    wrap += tsData["crimes"].members[id].natural_nerve;
+                  }
+                  if (tsData["crimes"].members[id].verified == 1) {
+                    wrap += ` <span title="API Verified">✔️</span>`;
+                  } else {
+                    wrap += ` <span title="API Not Verified">❌</span>`;
+                  }
+                } else {
+                  wrap = `<span title="Not in Torn Stats">--</span>`;
+                }
+
+                // Look for column to insert NNB into (offense for planning, level for already planned OCs)
+                let itemInsert = item.find('li.offences');
+                if (itemInsert.length == 0) {
+                  itemInsert = item.find('li.level');
+                }
+                if (itemInsert.length != 0) {
+                  itemInsert.after(`<li class="nnb"><span class="t-hide"></span>`+wrap+`</li>`);
+                }
+
               }
-              if (tsData["crimes"].members[id].verified == 1) {
-                wrap += ` <span title="API Verified">✔️</span>`;
-              } else {
-                wrap += ` <span title="API Not Verified">❌</span>`;
-              }
-            } else {
-              wrap = `<span title="Not in Torn Stats">--</span>`;
-            }
-            $(this).find('li.offences').after(`<li class="nnb"><span class="t-hide"></span>`+wrap+`</li>`);
-          });
+            });
+          }
         });
       }
+    });
+
   }
 }
 
@@ -184,5 +209,7 @@ function tornstatsSync(type) {
     }
   });
 }
+
+
 
 })();

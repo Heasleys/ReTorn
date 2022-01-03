@@ -1,52 +1,90 @@
 @media screen and (max-width: 1000px) {
-  html:not(.html-manual-desktop) #ts .plans-list .item>li.nnb, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.nnb {
+  html:not(.html-manual-desktop) .re_nnb .plans-list .item>li.nnb, html:not(.html-manual-desktop) .re_nnb .plan-list-scrollbar .title>li.nnb {
     width: 45px !important;
   }
 
-  html:not(.html-manual-desktop) #ts .plans-list .item>li.level, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.level {
+  html:not(.html-manual-desktop) .re_nnb .plans-list .item>li.level, html:not(.html-manual-desktop) .re_nnb .plan-list-scrollbar .title>li.level {
     width: 25px !important;
   }
 
-  html:not(.html-manual-desktop) #ts .plans-list .item>li.offences, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.offences {
+  html:not(.html-manual-desktop) .re_nnb .plans-list .item>li.offences, html:not(.html-manual-desktop) .re_nnb .plan-list-scrollbar .title>li.offences {
     width: 60px !important;
+  }
+
+  /* Already Planned Teams */
+  html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .title>li.nnb, html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .item>li.nnb {
+  width: 42px;
+  }
+
+  html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .title>li.level, html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .item>li.level {
+    width: 42px;
+  }
+
+  html:not(.html-manual-desktop) .r .faction-crimes-wrap .re_nnb .details-list .title>li.member, html:not(.html-manual-desktop) .r .faction-crimes-wrap .re_nnb .details-list .item>li.member {
+    width: 167px;
   }
 }
 
 @media screen and (max-width: 600px) {
-  html:not(.html-manual-desktop) #ts .plans-list .item>li.nnb, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.nnb {
+  html:not(.html-manual-desktop) .re_nnb .plans-list .item>li.nnb, html:not(.html-manual-desktop) .re_nnb .plan-list-scrollbar .title>li.nnb {
     width: 40px !important;
-    padding-left: 2px;
-    padding-right: 2px;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
   }
 
-  html:not(.html-manual-desktop) #ts .plans-list .item>li.level, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.level {
+  html:not(.html-manual-desktop) .re_nnb .plans-list .item>li.level, html:not(.html-manual-desktop) .re_nnb .plan-list-scrollbar .title>li.level {
     width: 25px !important;
     display: none;
   }
 
-  html:not(.html-manual-desktop) #ts .plans-list .item>li.offences, html:not(.html-manual-desktop) #ts .plan-list-scrollbar .title>li.offences {
+  html:not(.html-manual-desktop) .re_nnb .plans-list .item>li.offences, html:not(.html-manual-desktop) .re_nnb .plan-list-scrollbar .title>li.offences {
     width: 60px !important;
   }
+
+  /* Already Planned Teams */
+  html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .title>li.nnb, html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .item>li.nnb {
+    width: 42px !important;
+    }
+  
+    html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .title>li.level, html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .item>li.level {
+      width: 42px;
+      display: none;
+    }
+  
+    html:not(.html-manual-desktop) .r .faction-crimes-wrap .re_nnb .details-list .title>li.member, html:not(.html-manual-desktop) .r .faction-crimes-wrap .re_nnb .details-list .item>li.member {
+      width: 164px;
+    }
 }
 
-#ts .plans-list .item>li.nnb, #ts .plan-list-scrollbar .title>li.nnb {
+/* Planning OCs */
+.re_nnb .plans-list .item>li.nnb, .re_nnb .plan-list-scrollbar .title>li.nnb {
+  width: 60px !important;
+  text-align: center !important;
+}
+
+.re_nnb .plans-list .item>li.level, .re_nnb .plan-list-scrollbar .title>li.level {
+  width: 30px !important;
+}
+
+.re_nnb .plans-list .item>li.stat, .re_nnb .plan-list-scrollbar .title>li.stat {
+  width: 100px !important;
+}
+
+.re_nnb .plans-list .item>li.offences, .re_nnb .plan-list-scrollbar .title>li.offences {
+  width: 142px !important;
+}
+
+/* Already Planned Teams */
+.d .faction-crimes-wrap .re_nnb .details-list .title>li.nnb, .d .faction-crimes-wrap .re_nnb .details-list .item>li.nnb {
   width: 60px;
+  text-align: center;
 }
 
-#ts .plans-list .item>li.level, #ts .plan-list-scrollbar .title>li.level {
-  width: 30px;
+.d .faction-crimes-wrap .re_nnb .details-list .title>li.level, .d .faction-crimes-wrap .re_nnb .details-list .item>li.level {
+  width: 194px;
 }
 
-#ts .plans-list .item>li.stat, #ts .plan-list-scrollbar .title>li.stat {
-  width: 100px;
-}
-
-#ts .plans-list .item>li.offences, #ts .plan-list-scrollbar .title>li.offences {
-  width: 142px;
-}
-
-
-#ts-roster {
+.re_nnb-roster {
   cursor: pointer;
 }
 
@@ -82,7 +120,7 @@
   text-decoration: none;
 }
 
-#ts .plans-list .item>li.nnb, #ts .plan-list-scrollbar .title>li.nnb {
+.re_nnb .plans-list .item>li.nnb, .re_nnb .plan-list-scrollbar .title>li.nnb {
   text-align: center;
 }
 
