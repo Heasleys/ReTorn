@@ -576,6 +576,25 @@ function setValue(value, type) {
   })
 }
 
+// function for overwriting data to storage locations
+function overwriteValue(value, type) {
+  return new Promise((resolve, reject) => {
+    var keys = Object.keys(value);
+    if (type == "sync" || type == "local") {
+      chrome.storage[type].set(value, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError.message);
+          return reject({status: false, message: chrome.runtime.lastError.message});
+        } else {
+          return resolve({status: true, message: "Value: " + keys[0] + " has been set."});
+        }
+      });
+    } else {
+      return reject({status: false, message: "Type not sync or local when setting value.", value: value});
+    }
+  })
+}
+
 // function for pulling data from storage locations
 function getValue(value, type) {
   return new Promise((resolve, reject) => {
@@ -899,6 +918,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           msg.type = "sync";
         }
         setValue({[msg.value_name]: msg.value}, msg.type)
+        .then(async (response) => {
+          sendResponse(response);
+        })
+        .catch((error) => {
+          sendResponse(error);
+        });
+      }
+      return true;
+    break;
+
+    case "overwrite_value":
+      if (msg.value_name != undefined && msg.value != undefined && msg.type != undefined) {
+        overwriteValue({[msg.value_name]: msg.value}, msg.type)
         .then(async (response) => {
           sendResponse(response);
         })

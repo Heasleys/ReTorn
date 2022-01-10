@@ -86,7 +86,8 @@
             var timestamp = Math.floor(Date.now() / 1000);
             delete data.status;
             delete data.message;
-            chrome.runtime.sendMessage({name: "set_value", value_name: "re_npcs", value: {timestamp: timestamp, data}, type: "local"}, (response) => {
+            chrome.runtime.sendMessage({name: "overwrite_value", value_name: "re_npcs", value: {timestamp: timestamp, data}, type: "local"}, (response) => {
+              console.log(response);
               setNPCs();
             });
           }
