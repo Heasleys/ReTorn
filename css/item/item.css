@@ -111,6 +111,42 @@ li.re_add_qitem {
 }
 
 
+.re-pack-open-result .cache-item.single-unique {
+  background: url(/images/v2/items/gentleman/weapon_box.svg) left top no-repeat;
+  background-size: 100% 100%;
+  display: flex;
+  flex-direction: column;
+  width: 110px;
+  height: 88px;
+}
+
+.re-pack-open-result .item-bonuses {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.re-pack-open-result .item-bonuses {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.re-pack-open-result .cache-item .bonuses-holder {
+    display: flex;
+    justify-content: end;
+    width: 100%;
+    align-items: center;
+}
+
+.re-pack-open-result .cache-item .bonuses-holder>* {
+    margin-left: 3px;
+}
+
 
 /* Modified Torn CSS */
 .d .items-cont .re_qitemWrap.actions {
