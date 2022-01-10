@@ -148,7 +148,7 @@
         "run_at": "document_end"
       },
       {
-        "matches": ["https://www.torn.com/factions.php?step=your*"],
+        "matches": ["https://www.torn.com/factions.php*"],
         "js": ["js/factions/factions.js"],
         "css": ["css/factions/factions.css"],
         "run_at": "document_end"
