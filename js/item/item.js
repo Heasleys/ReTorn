@@ -211,7 +211,8 @@ function sendItemUseRequest(itemID) {
                   itemsHTML = `<div><div class="re-pack-open-result">`;
                   for (const [key, item] of Object.entries(msg.items.itemAppear)) {
 
-                    if (item.type && item.type == "Weapon") {
+                    if (item.type) {
+                      if (item.type == "Armor" || item.type == "Weapon") {
                       itemsHTML += `
                       <div class="re-pack-open-content expanded"><div class="re-pack-open-result">
 
@@ -245,6 +246,7 @@ function sendItemUseRequest(itemID) {
                                   itemsHTML += `</div>`;
 
                       itemsHTML += `</div></div>`;
+                    }
                     }
 
                     if (item.type && item.ID) {
