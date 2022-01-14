@@ -341,130 +341,15 @@ input[type=number]::-webkit-outer-spin-button {
   max-width: 164px;
 }
 
-.re_scrollbox {
-  margin-top: 5px;
-  height: 100px;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  background-color: #F2F2F2;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  width: 100%;
-  border-radius: 5px;
-  box-sizing: border-box;
+@media screen and (max-width: 600px) {
+  .switch_wrap {
+    width: 144px;
+    max-width: 144px;
+  }
 }
 
 
 
-.re_scrollbox::-webkit-scrollbar {
-  width: 10px;
-}
-
-.re_scrollbox::-webkit-scrollbar-track {
-  background: #DDD;
-  border-radius: 0px 5px 5px 0px;
-}
-body.dark-mode .re_scrollbox::-webkit-scrollbar-track {
-  background: #444;
-}
-
-.re_scrollbox::-webkit-scrollbar-thumb {
-    background-color: #f2f2f2;
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 8px;
-    border-color: #DDD;
-}
-body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
-    background-color: #888;
-    border-color: #444;
-}
-
-
-
-.re_list {
-  height: 100%;
-  list-style: none;
-  border-radius: 5px;
-}
-.re_list.small {
-  font-size: 11px;
-}
-
-.re_list > li {
-  display: flex;
-  height: 40px;
-}
-
-.re_list > li:hover {
-  background: #fff;
-}
-body.dark-mode .re_list > li:hover {
-  background: #444;
-}
-
-.re_list.small > li {
-  height: 20px;
-}
-
-.re_list > li:not(:last-child) .re_list_item {
-  border-bottom: 1px solid #ccc;
-}
-
-.re_list > li:first-child {
-  border-top-left-radius: 5px;
-}
-.re_list > li:last-child {
-  border-bottom-left-radius: 5px;
-}
-
-body.dark-mode .re_list > li {
-  border-color: #222;
-}
-
-.re_list input[type="color"] {
-  width: 50px;
-  height: 30px;
-  cursor: pointer;
-}
-
-body.dark-mode input[type="color"] {
-  background-color: #333;
-}
-
-.re_list .re_list_item.x {
-    padding-left: 10px;
-    width: 20px;
-    min-width: 20px;
-    line-height: 40px;
-    border-right: 1px solid #ccc;
-}
-
-.re_list .re_list_x .delete-subscribed-icon {
-  cursor: pointer;
-}
-
-.re_list .re_list_item {
-  display: flex;
-  align-items: center;
-  line-height: 24px;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #ccc;
-  padding-left: 5px;
-}
-
-body.dark-mode .re_list .re_list_item, body.dark-mode .re_list .re_list_x {
-  border-right-color: #222;
-  border-left-color: #444;
-}
-
-.delete-subscribed-icon {
-  cursor: pointer;
-}
-
-.re_head .fas {
-  font-size: 14px;
-  color: var(--re-title-color);
-}
 
 #re_ct_gifts {
   margin-left: 10px;
@@ -473,46 +358,4 @@ body.dark-mode .re_list .re_list_item, body.dark-mode .re_list .re_list_x {
 #re_ct_gifts:hover {
   cursor: pointer;
   color: #ccc;
-}
-
-.re_list_item.name {
-  width: 62px;
-}
-.re_list_item.color {
-  width: 44px;
-}
-.re_list_item.item {
-  width: 145px;
-  white-space: nowrap;
-}
-
-
-.re_list_item.color > * {
-  margin-right: 5px;
-}
-
-body.dark-mode .re_scrollbox {
-  background-color: #333333;
-  border-color: #222;
-}
-
-
-@media screen and (max-width: 600px) {
-  .switch_wrap {
-    width: 144px;
-    max-width: 144px;
-  }
-  .re_list.small {
-    font-size: 10px;
-  }
-
-  .re_list_item.name {
-    width: 51px;
-  }
-  .re_list_item.color {
-    width: 38px;
-  }
-  .re_list_item.item {
-    width: 127px;
-  }
 }
