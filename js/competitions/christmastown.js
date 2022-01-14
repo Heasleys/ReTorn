@@ -60,9 +60,9 @@ function insertHead() {
           <label class="noselect" title="Highlight items">Items</label>
         </div>
         <div class="re_checkbox">
-        <input type="checkbox" name='chests'>
-        <label class="noselect" title="Highlight key chests">Chests</label>
-      </div>
+          <input type="checkbox" name='chests'>
+          <label class="noselect" title="Highlight key chests">Chests</label>
+        </div>
         <div class="re_checkbox">
           <input type="checkbox" name='npcs'>
           <label class="noselect" title="Highlight NPCs">NPCs</label>

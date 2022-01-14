@@ -111,6 +111,13 @@
   text-align: center;
 }
 
+/* ranked war divs should be half and half in desktop view*/
+.re_row > div {
+  box-sizing: border-box;
+  width: 45%;
+  max-width: 45%;
+}
+
 @media screen and (max-width: 600px) {
 html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual-desktop) #tornstats-roster td.rank, html:not(.html-manual-desktop) #tornstats-roster td a span.userid {
     display: none;
@@ -118,8 +125,18 @@ html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual
 }
 
 @media screen and (max-width: 1000px) {
-html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual-desktop) #tornstats-roster td.rank {
+  html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual-desktop) #tornstats-roster td.rank {
     display: none;
+  }
+
+  html:not(.html-manual-desktop) .re_row > div {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  html:not(.html-manual-desktop) .re_row > div:not(:last-child) {
+    margin-bottom: 20px;
   }
 }
 
@@ -191,18 +208,6 @@ html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual
       padding-left: 1px !important;
       padding-right: 0px !important;
     }
-}
-
-.re_row > div {
-  box-sizing: border-box;
-  width: 45%;
-  max-width: 45%;
-}
-
-/* Filter Scrollbox */
-.switch_wrap {
-  width: 50%;
-  max-width: 50%;
 }
 
 

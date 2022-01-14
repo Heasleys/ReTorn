@@ -85,7 +85,10 @@
     margin-left: var(--re-leftalign) !important;
   }
 }
-
+div.re_checkbox {
+  display: flex;
+  align-items: center;
+}
 
 div.re_checkbox {
   float: right;
@@ -176,7 +179,7 @@ span.re_title {
   margin: 0px !important;
 }
 
-div > p.re_ptitle {
+.re_ptitle {
   font-weight: 700;
   font-size: 16px;
   border-bottom: 1px solid;
@@ -311,6 +314,7 @@ div[class*="chat-active"] > div > div > input.re_chat_search {
   height: 100%;
   list-style: none;
   border-radius: 5px;
+  width: inherit;
 }
 .re_list.small {
   font-size: 11px;
@@ -332,7 +336,7 @@ body.dark-mode .re_list > li:hover {
   height: 20px;
 }
 
-.re_list > li:not(:last-child) .re_list_item {
+.re_list > li .re_list_item {
   border-bottom: 1px solid #ccc;
 }
 
@@ -401,6 +405,7 @@ body.dark-mode .re_list .re_list_item, body.dark-mode .re_list .re_list_x {
 .re_list_item.item {
   width: 145px;
   white-space: nowrap;
+  flex-grow: 1;
 }
 
 
@@ -691,11 +696,17 @@ input[type="number"]:focus, input[type="text"]:focus, .re_content select:focus {
   box-shadow: rgba(28, 126, 214, 0.65) 0px 0px 2px 0px
 }
 
-div > p.re_ptitle {
+input[type="number"].error, input[type="text"].error, .re_content select.error {
+  animation-duration: .5s;
+  animation-iteration-count: infinite;
+  animation-name: error;
+}
+
+.re_ptitle {
   border-color: #363636;
 }
 
-body.dark-mode div > p.re_ptitle {
+body.dark-mode .re_ptitle {
   border-color: #ddd;
 }
 
@@ -740,4 +751,22 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+
+@keyframes error {
+  from {
+    border-color: #ab181880;
+    box-shadow: rgba(214, 28, 28, 0.65) 0px 0px 2px 0px
+  }
+
+  50% {
+    border-color: #1864ab80;
+    box-shadow: rgba(28, 126, 214, 0.65) 0px 0px 2px 0px
+  }
+
+  to {
+    border-color: #ab181880;
+    box-shadow: rgba(214, 28, 28, 0.65) 0px 0px 2px 0px
+  }
 }

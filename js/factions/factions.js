@@ -39,7 +39,6 @@ window.addEventListener('hashchange', hashHandler, false);
 
 function hashHandler() {
   var hash = location.hash;
-  console.log(hash)
   if (hash.includes('tab=crimes') || hash.includes('tab=controls') || hash.includes('war/rank')) {
      urlHandler();
   }
@@ -69,8 +68,6 @@ function urlHandler() {
 function crimesTab() {
   tornstatsSync("crimes")
   .then((data) => {
-    console.log(data);
-    //tsData["crimes"] = data;
     if ($('.faction-crimes-wrap > .begin-wrap .crimes-list').length == 1 && $('.faction-crimes-wrap > .organize-wrap .crimes-list').length == 1 && tsData["crimes"]) {
       $('.faction-crimes-wrap > .begin-wrap .crimes-list, .faction-crimes-wrap > .organize-wrap .crimes-list').each(function() {
         var crimeList = $(this);
@@ -213,7 +210,6 @@ function rankedWar(warID) {
   .then((warID) => tornstatsSync("rankedwar", warID))
   //add data to members lists
   .then((data) => {
-    console.log(data);
     let players = {};
     if (data.faction_a && data.faction_a.members) {
       for (const [index, value] of Object.entries(data.faction_a.members)) {
@@ -296,20 +292,20 @@ function rankedWar(warID) {
       if (spyTitle) {
         member.find(".re_spy_spy").attr("title", spyTitle);
       }
-
-      member.click(function(e) {e.preventDefault();console.log(member.data("Refills"))});
     });
-    console.log(psList)
     return psList;
   })
-  //insert information into header (buttons/text)
+  //insert information into header (buttons/text) and input functions
   .then((psList) => {
-    console.log(psList);
-    let psStr = `<select class="mb1" id="re_ps_select"><option selected value="">Personal Stats...</option>`;
+    let psStr = `<select class="mb1" id="re_ps_select"><option selected value="">Hide user if...</option>`;
     for (var i = 0; i < psList.length; i++) {
        psStr += `<option value="${psList[i]}">${psList[i]}</option>`;
     }
-    psStr += `</select>`;
+    psStr += `<option value="strength">Strength</option><option value="defense">Defense</option><option value="speed">Speed</option><option value="dexterity">Dexterity</option><option value="total">Total Stats</option></select>`;
+
+    let enemyFac = $('.faction-names .name.enemy [class*="text"]').text();
+    let friendlyFac = $('.faction-names .name.your [class*="text"]').text();
+
 
     $('#re_loader').remove();
     $('.re_content').prepend(`
@@ -318,21 +314,16 @@ function rankedWar(warID) {
         ${psStr}
         <div class="switch_wrap switch_row" id="re_ps_wrap" style="display: none;">
           <select>
-            <option selected></option>
+            <option value="" selected></option>
             <option value="<">Less than</option>
             <option value=">">Greater than</option>
           </select>
-          <input type="number" placeholder="value">
+          <input type="text" placeholder="value">
           <button class="re_torn_button" type="button">Add</button>
         </div>
       </div>
-        <div style="display: none;">
-          <label for="re_rw_xanax">Xanax Taken</label>
-          <input type="range" min="0" max="10000" id="re_rw_xanax">
-          <span id="re_rw_xanax_val">0</span>
-        </div>
-        <div class="switch_wrap mb4" id="re_rw_rules">
-        <p class="re_ptitle">Filter Rules</p>
+      <div class="switch_wrap" id="re_rw_rules">
+        <p class="re_ptitle">Filter Rules</p><input type="checkbox" id='re_rw_filter' title="Disable filters" style="position: absolute; transform: translate(700%, 10%);">
           <div class="re_scrollbox">
             <ul class="re_list" id="re_filter_rules">
             <li><div class="re_list_item item">No filter rules being applied.</div></li>
@@ -340,23 +331,19 @@ function rankedWar(warID) {
           </div>
         </div>
       </div>
+      <div class="re_row">
+        <div class="re_enemy_count">
+          <p>Showing <span class="re_enemy">0</span> of <span class="re_enemy_max">0</span> ${enemyFac} members.</p>
+        </div>
+        <div class="re_your_count">
+        <p>Showing <span class="re_your">0</span> of <span class="re_your_max">0</span> ${friendlyFac} members.</p>
+      </div>
+      </div>
       `);
 
-      $('#re_rw_xanax').on('input', function() {
-        let v = $(this).val();
-        $('#re_rw_xanax_val').text(v.toLocaleString());
-      });
-
-      $('#re_rw_xanax').change(function() {
-        let max = $(this).val();
-        $('ul.members-list > li').each(function() {
-          if ($(this).data("Xanax Taken") >= max) {
-            $(this).hide();
-          } else {
-            $(this).show();
-          }
-        });
-      });
+      $('#re_rw_filter').on('change, click',function() {
+        rankedWarFilters();
+      })
 
       $('#re_ps_select').change(function() {
         if ($(this).val()) {
@@ -366,20 +353,51 @@ function rankedWar(warID) {
         }
       })
 
+      $('#re_ps_wrap input').on('change, keyup', function() {
+        var currentInput = $(this).val();
+        var fixedInput = currentInput.replace(/[A-Za-z!@#$%^&*(),]/g, '');
+        $(this).val(parseInt(fixedInput).toLocaleString());
+    });
+
       $('#re_ps_wrap button').click(function() {
-        alert($( "#re_ps_select" ).find(":selected").val());
         let ps = $( "#re_ps_select" ).find(":selected").val();
         let inequalities = $('#re_ps_wrap select').val();
-        let num = $('#re_ps_wrap input[type="number"]').val();
+        let num = $('#re_ps_wrap input').val().replaceAll(",", "");
 
-        console.log(ps, inequalities, num);
         if (ps && inequalities && num != undefined) {
           $('#re_ps_select').prop("selectedIndex", 0);
           $('#re_ps_wrap select').prop("selectedIndex", 0);
-          $('#re_ps_wrap input[type="number"]').val("");
+          $('#re_ps_wrap input').val("");
           $('#re_ps_wrap').hide();
+
+          chrome.runtime.sendMessage({name: "set_value", value_name: "re_rankedwar", value: {filters: {[ps]: {"eq": inequalities, "value": num}}}}, (response) => {
+            rankedWarFilters();
+          });
+        } else {
+          if (!ps) {
+            $('#re_ps_select').addClass("error");
+            setTimeout(function() { 
+              $('#re_ps_select').removeClass("error");
+            }, 2000);
+          }
+          if (!inequalities) {
+            $('#re_ps_wrap select').addClass("error");
+            setTimeout(function() { 
+              $('#re_ps_wrap select').removeClass("error");
+            }, 2000);
+          }
+          if (!num) {
+            $('#re_ps_wrap input[type="number"]').addClass("error");
+            setTimeout(function() { 
+              $('#re_ps_wrap input[type="number"]').removeClass("error");
+            }, 2000);
+          }
         }
       })
+  })
+  //pull filters and apply filters
+  .then(() => {
+    rankedWarFilters();
   })
   .catch((err) => {
     console.log(err);
@@ -391,7 +409,6 @@ function rankedWar(warID) {
 function tornstatsSync(type, ID) {
   return new Promise((resolve, reject) => {
     if (tsData[type] != undefined) {
-      console.log("Data already exists, no need to pull.")
       return resolve(tsData[type]);
     }
     chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
@@ -431,7 +448,7 @@ function tornstatsSync(type, ID) {
                       }
                     });
                   }
-                  console.log(data);
+                  console.log("Torn Stats Data", data);
                   tsData[type] = data;
                   return resolve(data);
                 } else {
@@ -468,7 +485,6 @@ function getWarID() {
       return reject("Could not find faction IDs on page.")
     }
     chrome.runtime.sendMessage({name: "pull_api", selection: "rankedwars", type: "torn", id: ""}, (response) => {
-      console.log(response);
       if (response && response.rankedwars) {
         for (const [warID, warData] of Object.entries(response.rankedwars)) {
           if (warData["factions"]) {
@@ -480,6 +496,71 @@ function getWarID() {
         return reject(`Could not find a ranked war for factions: ${fac_a} & ${fac_b}`)
       } else {
         return reject("Ranked War Data not found.")
+      }
+    });
+  });
+}
+
+function rankedWarFilters() {
+  chrome.runtime.sendMessage({name: "get_value", value: "re_rankedwar"}, (response) => {
+    if (response && response.value && response.value.re_rankedwar && response.value.re_rankedwar.filters) {
+      $('#re_filter_rules').empty();
+      if (Object.keys(response.value.re_rankedwar.filters).length > 0) {
+        $('ul.members-list > li').each(function() {
+          $(this).show();
+          $(this).addClass("re_show");
+          if (!$('#re_rw_filter').is(":checked")) { //if filter rules checkbox is not checked, proceed
+            for (const [ps, data] of Object.entries(response.value.re_rankedwar.filters)) {
+              if (data.eq == "<") {
+                if ($(this).data(ps) != undefined) {
+                  if ($(this).data(ps) < data.value) {
+                    $(this).hide();
+                    $(this).removeClass("re_show");
+                  }
+                }
+              }
+              if (data.eq == ">") {
+                if ($(this).data(ps)  != undefined) {
+                  if ($(this).data(ps) > data.value) {
+                    $(this).hide();
+                    $(this).removeClass("re_show");
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        let yourCount = $('ul.members-list > li.your.re_show').length;
+        let enemyCount = $('ul.members-list > li.enemy.re_show').length;
+
+        $('.re_enemy_count .re_enemy').text(enemyCount);
+        $('.re_enemy_count .re_enemy_max').text($('ul.members-list > li.enemy').length);
+
+        $('.re_your_count .re_your').text(yourCount);
+        $('.re_your_count .re_your_max').text($('ul.members-list > li.your').length);
+
+
+
+        for (const [ps, data] of Object.entries(response.value.re_rankedwar.filters)) {
+          $('#re_filter_rules').prepend(`<li data-ps="${ps}"><div class="re_list_item x"><a class="remove-link"> <i class="delete-subscribed-icon"></i> </a></div><div class="re_list_item item">Hide user if ${ps} ${data.eq} ${parseInt(data.value).toLocaleString()}</div></li>`);
+        }
+      } else {
+        $('#re_filter_rules').prepend(`<li><div class="re_list_item item">No filter rules being applied.</div></li>`);
+      }
+    }
+
+    $('#re_filter_rules .re_list_item.x .remove-link .delete-subscribed-icon').off("click").click(function() {
+      let parent = $(this).closest('li');
+      let ps = parent.attr('data-ps');
+
+      if (ps && parent.length > 0) {
+        chrome.runtime.sendMessage({name: "del_value", value: "re_rankedwar", key: ps}, (response) => {
+          if (response.status) {
+            parent.remove();
+            rankedWarFilters();
+          }
+        })
       }
     });
   });

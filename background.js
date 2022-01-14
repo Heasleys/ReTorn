@@ -685,6 +685,10 @@ function delValue(value, key, storage, log) {
             delete response.re_ct.friends[key];
           }
 
+          if (value == "re_rankedwar" && key != undefined) {
+            delete response.re_rankedwar.filters[key];
+          }
+
           if (value == "re_logs") {
             if (key == "del_type" || key == "del_subtype") {
               if (key == "del_type") {
