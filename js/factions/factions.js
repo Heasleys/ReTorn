@@ -505,7 +505,7 @@ function rankedWarFilters() {
   chrome.runtime.sendMessage({name: "get_value", value: "re_rankedwar"}, (response) => {
     if (response && response.value && response.value.re_rankedwar && response.value.re_rankedwar.filters) {
       $('#re_filter_rules').empty();
-      if (Object.keys(response.value.re_rankedwar.filters).length > 0) {
+      
         $('ul.members-list > li').each(function() {
           $(this).show();
           $(this).addClass("re_show");
@@ -545,9 +545,10 @@ function rankedWarFilters() {
         for (const [ps, data] of Object.entries(response.value.re_rankedwar.filters)) {
           $('#re_filter_rules').prepend(`<li data-ps="${ps}"><div class="re_list_item x"><a class="remove-link"> <i class="delete-subscribed-icon"></i> </a></div><div class="re_list_item item">Hide user if ${ps} ${data.eq} ${parseInt(data.value).toLocaleString()}</div></li>`);
         }
-      } else {
-        $('#re_filter_rules').prepend(`<li><div class="re_list_item item">No filter rules being applied.</div></li>`);
-      }
+        
+        if (Object.keys(response.value.re_rankedwar.filters).length == 0) {
+          $('#re_filter_rules').prepend(`<li><div class="re_list_item item">No filter rules being applied.</div></li>`);
+        }
     }
 
     $('#re_filter_rules .re_list_item.x .remove-link .delete-subscribed-icon').off("click").click(function() {
