@@ -25,7 +25,7 @@ var rosterObserver = new MutationObserver(function(mutations, observer) {
 var rankedWarObserver = new MutationObserver(function(mutations, observer) {
   let hash = location.hash;
   if (hash.includes('war/rank') && $('div.faction-war').length == 1 && $('#re_faction_filter').length == 0) {
-    rankedWar(256);
+    rankedWar();
     rankedWarObserver.disconnect();
   }
 });
@@ -83,7 +83,7 @@ function crimesTab() {
             if (titleInsert.length == 0) {
               titleInsert = itemWrap.find('ul.title > li.level');
             }
-  
+
             if (titleInsert.length != 0) {
               titleInsert.after(`<li class="nnb" title="Natural Nerve Bar">NNB<div class="t-delimiter white"></div></li>`);
               itemWrap.find('.viewport ul.plans-list>li, .details-wrap ul.details-list>li').each(function() {
@@ -103,7 +103,7 @@ function crimesTab() {
                   } else {
                     wrap = `<span title="Not in Torn Stats">--</span>`;
                   }
-  
+
                   // Look for column to insert NNB into (offense for planning, level for already planned OCs)
                   let itemInsert = item.find('li.offences');
                   if (itemInsert.length == 0) {
@@ -112,14 +112,14 @@ function crimesTab() {
                   if (itemInsert.length != 0) {
                     itemInsert.after(`<li class="nnb"><span class="t-hide"></span>`+wrap+`</li>`);
                   }
-  
+
                 }
               });
             }
           });
         }
       });
-  
+
     }
   })
   .catch((err) => {
@@ -141,13 +141,13 @@ function rosterTab() {
             </a>
           </li>
           `);
-    
+
         $('div.faction-controls-wrap').append(`<div id="tornstats-roster" class="tornstats-roster cont-gray control-tab-section ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-50" role="tabpanel" aria-expanded="false" aria-hidden="true" style="display: none;"></div>`);
-    
+
         let roster_table = '<table><tr><th class="rank">Rank</th><th>Member</th><th>Total Stats</th><th>API Verified</th></tr>';
         let i = 1;
         let avgI = 0;
-    
+
         const members = Object.values(tsData["roster"].members).sort((a, b) => a.total - b.total).reverse();
         var facTotal = 0;
         Object.entries(members).forEach(([key, value]) => {
@@ -161,15 +161,15 @@ function rosterTab() {
         let facAvg = Math.trunc(facTotal/avgI).toLocaleString();
         roster_table += `<tfoot><tr><td class="rank"></td><td class="stats">Average Stats:</td><td class="stats">${facAvg}</td><td class="verified"></td></tr></tfoot>`;
         roster_table += "</table>";
-    
+
         $('#tornstats-roster').html(roster_table);
         $('td.verified[data-verified=0]').addClass('red');
         $('td.verified[data-verified=1]').addClass('green');
-    
+
         $('#ts-roster').click(function() {
           rosterClick();
         });
-    
+
         $('ul.control-tabs > li > a:not("#ts-roster")').click(function() {
           $('div#tornstats-roster').hide();
           let last_tab = $('#ts-roster').data('last-tab');
@@ -178,7 +178,7 @@ function rosterTab() {
             $(last_tab).show();
           }
         });
-    
+
         if (location.hash.includes('option=tornstats')) {
           rosterClick();
         }
@@ -203,8 +203,14 @@ function rosterClick() {
 }
 
 function rankedWar(warID) {
-  console.log(warID);
-  tornstatsSync("rankedwar", warID)
+  //Insert Header
+  insertHeader($("ul.f-war-list"), 'before');
+  $('#re_title').text("Ranked War Filter");
+  $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
+  <p id="re_message" style="display: none;"></p>`);
+  getWarID()
+  //pull ranked war data from Torn Stats
+  .then((warID) => tornstatsSync("rankedwar", warID))
   //add data to members lists
   .then((data) => {
     console.log(data);
@@ -221,9 +227,11 @@ function rankedWar(warID) {
     }
     $('.f-war-list .faction-war').addClass('re_rankedwar'); //Used for CSS styling for less jumpy pages
     $('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy</div>`);
+    var psList = [];
 
     $('ul.members-list > li').each(function() {
       let member = $(this);
+
 
       let url = member.find('div.member div[class*="userWrap"] a').attr("href");
       let userid = url.replace("/profiles.php?XID=", "");
@@ -244,8 +252,12 @@ function rankedWar(warID) {
             } else {
               psTitle += `<br><b>${index}: </b>${value.toLocaleString()}`;
             }
+
+            if (!psList.includes(index)) {
+              psList.push(index);
+            }
           }
-          
+
         }
       }
       //if spy exists, add to title
@@ -263,7 +275,7 @@ function rankedWar(warID) {
               spyTitle += `<br><b>${index[0].toUpperCase()}${index.slice(1)}: </b>${value.toLocaleString()}`;
             }
           }
-          
+
         }
         spyTitle += timestampStr;
       }
@@ -285,43 +297,94 @@ function rankedWar(warID) {
         member.find(".re_spy_spy").attr("title", spyTitle);
       }
 
-      member.click(function(e) {e.preventDefault();console.log(member.data("Refills"))})
+      member.click(function(e) {e.preventDefault();console.log(member.data("Refills"))});
     });
+    console.log(psList)
+    return psList;
   })
-  //Add header after adding data
-  .then(() => {
-    insertHeader($("ul.f-war-list"), 'before');
-    $('#re_title').text("Ranked War Filter");
-    $('.re_content').html(`
+  //insert information into header (buttons/text)
+  .then((psList) => {
+    console.log(psList);
+    let psStr = `<select class="mb1" id="re_ps_select"><option selected value="">Personal Stats...</option>`;
+    for (var i = 0; i < psList.length; i++) {
+       psStr += `<option value="${psList[i]}">${psList[i]}</option>`;
+    }
+    psStr += `</select>`;
 
+    $('#re_loader').remove();
+    $('.re_content').prepend(`
       <div class="re_row">
       <div>
-      <label for="re_rw_xanax">Xanax Taken</label>
-        <input type="range" min="0" max="10000" id="re_rw_xanax">
-        <span id="re_rw_xanax_val">0</span>
+        ${psStr}
+        <div class="switch_wrap switch_row" id="re_ps_wrap" style="display: none;">
+          <select>
+            <option selected></option>
+            <option value="<">Less than</option>
+            <option value=">">Greater than</option>
+          </select>
+          <input type="number" placeholder="value">
+          <button class="re_torn_button" type="button">Add</button>
+        </div>
       </div>
+        <div style="display: none;">
+          <label for="re_rw_xanax">Xanax Taken</label>
+          <input type="range" min="0" max="10000" id="re_rw_xanax">
+          <span id="re_rw_xanax_val">0</span>
+        </div>
+        <div class="switch_wrap mb4" id="re_rw_rules">
+        <p class="re_ptitle">Filter Rules</p>
+          <div class="re_scrollbox">
+            <ul class="re_list" id="re_filter_rules">
+            <li><div class="re_list_item item">No filter rules being applied.</div></li>
+            </ul>
+          </div>
+        </div>
       </div>
-    `);
+      `);
 
-    $('#re_rw_xanax').on('input', function() {
-      let max = $(this).val();
-      $('#re_rw_xanax_val').text(max.toLocaleString());
-    });
-
-    $('#re_rw_xanax').change(function() {
-      let max = $(this).val();
-      $('ul.members-list > li').each(function() {
-        if ($(this).data("Xanax Taken") >= max) {
-          $(this).hide();
-        } else {
-          $(this).show();
-        }
+      $('#re_rw_xanax').on('input', function() {
+        let v = $(this).val();
+        $('#re_rw_xanax_val').text(v.toLocaleString());
       });
-    });
-    
-  }) //then
+
+      $('#re_rw_xanax').change(function() {
+        let max = $(this).val();
+        $('ul.members-list > li').each(function() {
+          if ($(this).data("Xanax Taken") >= max) {
+            $(this).hide();
+          } else {
+            $(this).show();
+          }
+        });
+      });
+
+      $('#re_ps_select').change(function() {
+        if ($(this).val()) {
+          $('#re_ps_wrap').show();
+        } else {
+          $('#re_ps_wrap').hide();
+        }
+      })
+
+      $('#re_ps_wrap button').click(function() {
+        alert($( "#re_ps_select" ).find(":selected").val());
+        let ps = $( "#re_ps_select" ).find(":selected").val();
+        let inequalities = $('#re_ps_wrap select').val();
+        let num = $('#re_ps_wrap input[type="number"]').val();
+
+        console.log(ps, inequalities, num);
+        if (ps && inequalities && num != undefined) {
+          $('#re_ps_select').prop("selectedIndex", 0);
+          $('#re_ps_wrap select').prop("selectedIndex", 0);
+          $('#re_ps_wrap input[type="number"]').val("");
+          $('#re_ps_wrap').hide();
+        }
+      })
+  })
   .catch((err) => {
     console.log(err);
+    $('#re_message').html(`<span class="re_error">${err}</span>`);
+    $('#re_message').show();
   });
 }
 
@@ -332,11 +395,11 @@ function tornstatsSync(type, ID) {
       return resolve(tsData[type]);
     }
     chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
-      if (res.status != undefined) {
+      if (res.status) {
         if (res.value.re_settings.tornstats != undefined && res.value.re_settings.tornstats == true) {
           if (type != undefined) {
             var selection = "";
-  
+
             switch (type) {
               case "roster":
                 selection = "faction/roster";
@@ -351,7 +414,7 @@ function tornstatsSync(type, ID) {
                   reject("Ranked War ID was not provided.")
                 }
               break;
-            
+
               default:
                 return reject("Request type ("+type+") not found.");
               break;
@@ -386,12 +449,40 @@ function tornstatsSync(type, ID) {
           reject("Torn Stats integration disabled or invalid.");
         }
       } else {
-        reject("Undefined Torn Stats status.")
+        console.log("ReTorn Response:", res)
+        reject(res.message);
       }
     });
   });
 }
 
-
+function getWarID() {
+  return new Promise((resolve, reject) => {
+    let fac_a;
+    let fac_b;
+    let facLinks = $('.f-war-list [class*="rankBox"] [class*="titleBlock"] [class*="nameWp"] a');
+    if (facLinks.length == 2) {
+      fac_a = $(facLinks[0]).attr("href").replace("/factions.php?step=profile&ID=", "")
+      fac_b = $(facLinks[1]).attr("href").replace("/factions.php?step=profile&ID=", "")
+    } else {
+      return reject("Could not find faction IDs on page.")
+    }
+    chrome.runtime.sendMessage({name: "pull_api", selection: "rankedwars", type: "torn", id: ""}, (response) => {
+      console.log(response);
+      if (response && response.rankedwars) {
+        for (const [warID, warData] of Object.entries(response.rankedwars)) {
+          if (warData["factions"]) {
+            if (warData["factions"][fac_a] && warData["factions"][fac_b]) {
+              return resolve(warID);
+            }
+          }
+        }
+        return reject(`Could not find a ranked war for factions: ${fac_a} & ${fac_b}`)
+      } else {
+        return reject("Ranked War Data not found.")
+      }
+    });
+  });
+}
 
 })();

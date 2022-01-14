@@ -33,6 +33,14 @@
   width: 30px !important;
 }
 
+/* ranked war member level column */
+.d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .attack, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .attack {
+  width: 30px !important;
+  text-align: center;
+  padding-left: 5px;
+  padding-right:5px;
+}
+
 /* Planning OCs */
 .re_nnb .plans-list .item>li.nnb, .re_nnb .plan-list-scrollbar .title>li.nnb {
   width: 60px !important;
@@ -185,8 +193,17 @@ html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual
     }
 }
 
+.re_row > div {
+  box-sizing: border-box;
+  width: 45%;
+  max-width: 45%;
+}
 
-
+/* Filter Scrollbox */
+.switch_wrap {
+  width: 50%;
+  max-width: 50%;
+}
 
 
 
