@@ -696,7 +696,7 @@ function delValue(value, key, storage, log) {
                 if (log != undefined && log.type != undefined && log.subtype != undefined) {
                   delete response.re_logs[log.type][log.subtype];
                 }
-              } 
+              }
             } else {
               if (key != undefined && log != undefined && log.type != undefined && log.subtype != undefined) {
                 delete response.re_logs[log.type][log.subtype][key];
@@ -984,8 +984,27 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           sendResponse({response: false, message: "Error getting value for Torn Stats pull."});
         })
 
+      } else {
+        sendResponse({response: false, message: "No selection given."});
       }
 
+      return true;
+    break;
+
+    case "pull_api":
+      if (msg.selection != undefined && msg.type != undefined && msg.id != undefined) {
+        getValue("re_api_key")
+        .then(response => fetchAPI(response.re_api_key, msg.type , msg.selection + '&comment=ReTorn', msg.id))
+        .then(async (data) => {
+          await logger("api", "torn", "Page Specific Pull", {type: msg.type, id: msg.id, selection: msg.selection+"&comment=ReTorn", timestamp: Date.now()});
+          sendResponse(data);
+        })
+        .catch((error) => {
+          sendResponse({response: false, message: error});
+        })
+      } else {
+        sendResponse({response: false, message: "Error with selection, id or type."});
+      }
       return true;
     break;
 
