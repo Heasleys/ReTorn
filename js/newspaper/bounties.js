@@ -9,7 +9,6 @@ var startupObserver = new MutationObserver(function(mutations) {
 
 var bountyPageObserver = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
-    console.log(mutation);
     if (mutation.addedNodes && mutation.addedNodes.length > 0) {
       mutation.addedNodes.forEach(function(node) {
         if (node && node.className && node.className.includes("newspaper-wrap")) {
