@@ -176,6 +176,12 @@
         "js": ["js/calendar/calendar.js"],
         "css": ["css/calendar/calendar.css"],
         "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/bounties.php*"],
+        "js": ["js/newspaper/bounties.js"],
+        "css": ["css/newspaper/bounties.css"],
+        "run_at": "document_end"
       }
     ]
 

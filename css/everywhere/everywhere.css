@@ -85,16 +85,16 @@
     margin-left: var(--re-leftalign) !important;
   }
 }
-div.re_checkbox {
+.re_checkbox {
   display: flex;
   align-items: center;
 }
 
-div.re_checkbox {
+.re_checkbox {
   float: right;
 }
 
-div.re_checkbox > label {
+.re_checkbox > label {
     display: inline-block;
     vertical-align: top;
     margin-top: 7px;
@@ -104,6 +104,31 @@ div.re_checkbox > label {
 
 .re_checkbox > label, .re_checkbox > input[type="checkbox"], .re_content select {
   cursor: pointer;
+}
+
+.re_head .re_checkbox > input[type="checkbox"] {
+  appearance: none;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.25);
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 2px 1px inset, rgba(255, 255, 255, 0.25) 0px 1px 2px 0px;
+  font-size: 14px;
+  text-align: center;
+  border-radius: 4px;
+  padding: 9px;
+  color: var(--re-dm-title-color);
+}
+
+.re_head .re_checkbox > input[type="checkbox"]:checked::after {
+    box-sizing: border-box;
+    content: "✔";
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
 }
 
 div.re_container {
@@ -133,7 +158,7 @@ border-top-left-radius: 0px;
 border-top-right-radius: 0px;
 }
 
-span.re_title {
+.re_title {
   font-size: 13px;
   letter-spacing: 1px;
   font-weight: 700;
@@ -627,12 +652,12 @@ body.dark-mode span.re_icon svg {
   fill: #CCC;
 }
 
-span.re_title {
+.re_title {
   color: var(--re-title-color);
   text-shadow: rgba(0, 0, 0, 0.65) 1px 1px 2px;
 }
 
-body.dark-mode span.re_title {
+body.dark-mode .re_title {
   color: var(--re-dm-title-color);
   text-shadow: rgba(0, 0, 0, 0.65) 1px 1px 2px;
 }
