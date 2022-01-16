@@ -84,10 +84,9 @@ async function checkLogin() {
 
 function logout() {
   removeValue("re_api_key", "sync")
-  removeValue("re_user", "sync")
-  removeValue("re_user_data", "local")
-  setValue({['re_settings']: {"tornstats": false}}, "sync")
-  setValue({['re_settings']: {"tornstats_apikey": ""}}, "sync")
+  .then(() => removeValue("re_user", "sync"))
+  .then(() => removeValue("re_user_data", "local"))
+  .then(() => setValue({re_settings: {tornstats: false, tornstats_apikey: ""}}, "sync"))
   .catch((error) => {
     console.log({status: false, message: "Failed to delete apikey.", error: error});
     sendResponse({status: false, message: "Failed to delete apikey.", error: error});
