@@ -40,7 +40,7 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.tr
     return new Promise((resolve, reject) => {
       var uid = parseInt($('a[href*="/playerreport.php?step=add&userID="]').attr("href").replace(/\D/g, ""));
       if (uid) {
-        chrome.runtime.sendMessage({name: "pull_tornstats", selection: "spy/"+uid}, (data) => {
+        chrome.runtime.sendMessage({name: "pull_tornstats", selection: "spy/user/"+uid, version: "v2"}, (data) => {
           if (data) {
             if (data.status) {
               console.log("ReTorn requesting data from Torn Stats:", data);

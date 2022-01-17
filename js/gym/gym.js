@@ -53,7 +53,7 @@ if ($('div.captcha').length == 0) {
       $('div#buttons').show();
 
     $("button#re_tornstats_stats").click(function() {
-      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "battlestats/record"}, (data) => {
+      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "battlestats/record", version: "v2"}, (data) => {
         if (data) {
           if (data.status == true) {
             $('#re_message').text(data.message);
@@ -66,7 +66,7 @@ if ($('div.captcha').length == 0) {
 
     $("button#re_tornstats_hof").click(function() {
       let num = $(this).val();
-      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "hof/" + num}, (data) => {
+      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "hof/" + num, version: "v2"}, (data) => {
         if (data) {
           if (data.status == true) {
             $('#re_message').text(data.message);
@@ -85,7 +85,7 @@ if ($('div.captcha').length == 0) {
     });
 
     //Load Torn Stats Battlestats graphs after header is opened
-    chrome.runtime.sendMessage({name: "pull_tornstats", selection: "battlestats/graph"}, (data) => {
+    chrome.runtime.sendMessage({name: "pull_tornstats", selection: "battlestats/graph", version: "v2"}, (data) => {
         if (data) {
           if (data.status == true) {
               insertGraph(data.data);

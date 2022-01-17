@@ -32,7 +32,7 @@
   function tornstatsSync() {
     // Check ReTorn settings for if tornstats setting is enabled
     if (settings && settings.tornstats != undefined && settings.tornstats == true && settings.tsevents != undefined && settings.tsevents == true) {
-      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "events"}, (data) => {
+      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "events", version: "v2"}, (data) => {
         if (data) {
           if (data.status == true) {
             console.log(data);

@@ -454,17 +454,21 @@ function tornstatsSync(type, ID) {
         if (res.value.re_settings.tornstats != undefined && res.value.re_settings.tornstats == true) {
           if (type != undefined) {
             var selection = "";
+            var version = "";
 
             switch (type) {
               case "roster":
                 selection = "faction/roster";
+                version = "v2";
               break;
               case "crimes":
                 selection = "faction/crimes";
+                version = "v2";
               break;
               case "rankedwar":
                 if (ID != undefined) {
                   selection = "wars/"+ID;
+                  version = "v2";
                 } else {
                   reject("Ranked War ID was not provided.")
                 }
@@ -474,7 +478,7 @@ function tornstatsSync(type, ID) {
                 return reject("Request type ("+type+") not found.");
               break;
             }
-            chrome.runtime.sendMessage({"name": "pull_tornstats", "selection": selection}, (data) => {
+            chrome.runtime.sendMessage({"name": "pull_tornstats", "selection": selection, "version": version}, (data) => {
               if (data) {
                 if (data.status == true) {
                   //modify roster data to be 0 instead of N/A for easier totals and sorting

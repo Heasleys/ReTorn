@@ -450,7 +450,7 @@ function fetchAPI(apikey, type, selection, id) {
 }
 
 // Function for fetching TornStats API data
-function fetchTSAPI(apikey, selection) {
+function fetchTSAPI(version, apikey, selection) {
   return new Promise((resolve, reject) => {
     if (apikey == undefined || apikey.length > 16) {
       return reject({status: false, message: "Invalid apikey."})
@@ -458,7 +458,10 @@ function fetchTSAPI(apikey, selection) {
     if (selection == undefined) {
       return reject({status: false, message: "No selection given."});
     }
-    fetch('https://www.tornstats.com/api/v1/' + apikey + '/' + selection)
+    if (version == undefined) {
+      return reject({status: false, message: "No TS version given."});
+    }
+    fetch('https://www.tornstats.com/api/' + version + '/' + apikey + '/' + selection)
 
     .then((response) => {
       if (response.status !== 200) {
@@ -532,7 +535,7 @@ function pullRequiredAPI(apikey) {
 function integrateTornStats(apikey) {
   return new Promise((resolve, reject) => {
     fetchAPI(apikey, 'torn', 'timestamp&comment=ReTorn')
-    .then(response => fetchTSAPI(apikey, ""))
+    .then(response => fetchTSAPI("v1", apikey, ""))
     .then(async (res) => {
       await logger("api", "tornstats", "Integrate Torn Stats", {status: res.status, message: res.message, selection: "", timestamp: Date.now()});
       setValue({"re_settings": {"tornstats": true, "tornstats_apikey": apikey}});
@@ -970,26 +973,28 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     break;
 
     case "pull_tornstats":
-      if (msg.selection != undefined) {
-        getValue("re_settings").then((response) => {
-          let settings = response.re_settings;
-          if (settings && settings.tornstats && settings.tornstats == true && settings.tornstats_apikey != undefined && settings.tornstats_apikey != "") {
-            let apikey = settings.tornstats_apikey;
-            fetchTSAPI(apikey, msg.selection).then(async (res) => {
-              await logger("api", "tornstats", "Torn Stats API", {status: res.status, message: res.message, selection: msg.selection, timestamp: Date.now()});
-              sendResponse(res);
-            }).catch(async (error) => {
-              await logger("api", "tornstats", "Torn Stats API Error", {status: error.status, message: error.message, selection: msg.selection, timestamp: Date.now()});
-              sendResponse({response: false, message: "Torn Stats API ERROR"});
-            })
-          }
-        }).catch((error) => {
-          sendResponse({response: false, message: "Error getting value for Torn Stats pull."});
-        })
-
-      } else {
+      if (msg.selection == undefined) {
         sendResponse({response: false, message: "No selection given."});
       }
+      if (msg.version == undefined) {
+        sendResponse({response: false, message: "No version given."});
+      }
+
+      getValue("re_settings").then((response) => {
+        let settings = response.re_settings;
+        if (settings && settings.tornstats && settings.tornstats == true && settings.tornstats_apikey != undefined && settings.tornstats_apikey != "") {
+          let apikey = settings.tornstats_apikey;
+          fetchTSAPI(msg.version, apikey, msg.selection).then(async (res) => {
+            await logger("api", "tornstats", "Torn Stats API", {status: res.status, message: res.message, selection: msg.selection, timestamp: Date.now()});
+            sendResponse(res);
+          }).catch(async (error) => {
+            await logger("api", "tornstats", "Torn Stats API Error", {status: error.status, message: error.message, selection: msg.selection, timestamp: Date.now()});
+            sendResponse({response: false, message: "Torn Stats API ERROR"});
+          })
+        }
+      }).catch((error) => {
+        sendResponse({response: false, message: "Error getting value for Torn Stats pull."});
+      })
 
       return true;
     break;

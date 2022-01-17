@@ -80,7 +80,7 @@
   function tornstatsSync() {
     //check ReTorn settings for Torn Stats integration, if so, continue
     if (settings && settings.tornstats != undefined && settings.tornstats == true) {
-      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "loot"}, (data) => {
+      chrome.runtime.sendMessage({name: "pull_tornstats", selection: "loot", version: "v2"}, (data) => {
         if (data) {
           if (data.status == true) {
             var timestamp = Math.floor(Date.now() / 1000);
