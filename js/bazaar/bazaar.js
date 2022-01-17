@@ -1,6 +1,5 @@
 var observer = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
-    console.log(mutation);
     if (mutation.addedNodes && mutation.addedNodes.length > 0) {
       if (mutation.target && mutation.target.className) {
         //startup added nodes (on first page load)
@@ -11,6 +10,10 @@ var observer = new MutationObserver(function(mutations) {
               $('[class^="itemDescription_"] [class^="description_"]').each(function() {
                 addBuyAllTitle($(this)[0]);
               });
+
+              $(node).find('.ReactVirtualized__Grid__innerScrollContainer [class^="item_"] > [class^="itemDescription_"]').each(function() {
+                addBuyMaxButton($(this)[0]);
+              })
             }
           });
         }
@@ -35,9 +38,14 @@ var observer = new MutationObserver(function(mutations) {
             if (node.className && node.className.includes('row_')) {
               $(node).find('[class^="rowItems_"] [class^="item_"]').each(function() {
                 addBuyAllTitle($(this).find('[class^="description_"]')[0]);
+                addBuyMaxButton($(this).find('[class^="itemDescription_"]')[0]);
               })
             }
           });
+        }
+
+        if (mutation.target.className.includes('itemDescription_')) {
+          addBuyMaxButton(mutation.target);
         }
       }
     }
@@ -70,30 +78,41 @@ function addBuyAllTitle(element) {
 
 function addBuyMaxButton(node) {
   let parent = $(node);
-  parent.find('[class^="amount"]').each(function() {
-    let qty = parseInt($(this).text().replace(/\D/g, ''));
+  if (parent.find('.re_max_buy').length == 0) {
+    parent.find('[class^="amount_"]').each(function() {
+      let qty = parseInt($(this).text().replace(/\D/g, ''));
 
-    if (qty > 1) {//no need to add max button if only one item
-      $('[class^="buyForm"] [class^="field"] button[class^="buy"]').each(function() {
-        $(this).before(`<button class="re_max_buy">Max</button>`);
-      })
-    }
-  });
+      if (qty > 1) {//no need to add max button if only one item
+        parent.find('[class^="buyForm"] [class^="field_"] button[class^="buy_"]').each(function() {
+          $(this).before(`<button class="re_max_buy">Max</button>`);
+        })
+      }
+    });
 
-  $('.re_max_buy').off('click').click(function(e) {
-    let qty = parseInt(parent.find('[class^="amount"]').text().replace(/\D/g, ''));
-    let price = parseInt(parent.find('[class^="price"]').text().replace(/\D/g, ''));
-    let money = parseInt($('#user-money').data('money'));
+    $('.re_max_buy').off('click').click(function(e) {
+      let parent = $(this).closest('[class^="item_"]');
+      let max = getMax(parent);
+      let input = parent.find('[class^="buyForm"] input[class^="numberInput"]');
+      input.val(max);
+      input.attr('value', max);
+      input[0].dispatchEvent(new Event("input", { bubbles: true }));
+    });
 
-    let max = Math.floor(money/price) < qty ? Math.floor(money/price) : qty;
+    //also add buyAll title if adding max button
+    parent.find('[class^="info_"]').each(function() {
+      addBuyAllTitle($(this)[0]);
+    });
+  } else {
+    return;
+  }
+}
 
-    parent.find('[class^="buyForm"] input[class^="numberInput"]').val(max);
-    parent.find('[class^="buyForm"] input[class^="numberInput"]').attr('value', max);
-    parent.find('[class^="buyForm"] input[class^="numberInput"]')[0].dispatchEvent(new Event("input", { bubbles: true }));
-  });
 
-  //also add buyAll title if adding max button
-  parent.find('[class^="info_"]').each(function() {
-    addBuyAllTitle($(this)[0]);
-  });
+function getMax(parent) {
+  let qty = parseInt(parent.find('[class^="amount_"]').text().replace(/\D/g, ''));
+  let price = parseInt(parent.find('[class^="price_"]').text().replace(/\D/g, ''));
+  let money = parseInt($('#user-money').attr('data-money'));
+
+  let max = Math.floor(money/price) < qty ? Math.floor(money/price) : qty;
+  return max;
 }
