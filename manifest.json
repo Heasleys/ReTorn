@@ -182,6 +182,12 @@
         "js": ["js/newspaper/bounties.js"],
         "css": ["css/newspaper/bounties.css"],
         "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.torn.com/bazaar.php*"],
+        "js": ["js/bazaar/bazaar.js"],
+        "css": ["css/bazaar/bazaar.css"],
+        "run_at": "document_end"
       }
     ]
 

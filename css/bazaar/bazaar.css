@@ -1,0 +1,19 @@
+[class^="buyForm"] [class^="field"] .re_max_buy+button[class^="buy"] {
+  height: 50%;
+  padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.re_max_buy {
+  height: 50%;
+  width: 100%;
+  background: 0;
+  border: 0;
+  color: var(--default-blue-color);
+  cursor: pointer;
+  font-size: 12px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--default-panel-divider-outer-side-color);
+  padding-bottom: 0px;
+    padding-top: 0px;
+}
