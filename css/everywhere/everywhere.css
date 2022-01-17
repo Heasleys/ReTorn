@@ -131,6 +131,13 @@
     left: 0px;
 }
 
+.re_head .re_checkbox > label {
+  font-weight:bold;
+  margin-top: 0;
+  margin-right: 0.5em;
+}
+
+
 div.re_container {
 margin-top: 10px;
 display: flex;

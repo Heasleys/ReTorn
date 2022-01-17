@@ -66,6 +66,38 @@ function urlHandler() {
 }
 
 function crimesTab() {
+  if ($('#re_ready_ocs').length == 0) {
+    $('#faction-crimes').prepend(`
+      <div class="re_head mt2">
+        <span class="re_title"><span class="re_logo"><span class="re_yellow">Re</span>Torn</span></span>
+        <span class="re_checkbox">
+          <label class="re_title noselect" >Open ready OCs</label>
+          <input type="checkbox" id="re_ready_ocs" name="ready">
+        </span>
+      </div>
+    `);
+
+    chrome.runtime.sendMessage({name: "get_value", value: "re_ocs"}, (response) => {
+      if (response.status) {
+        if (response.value && response.value.re_ocs) {
+          if (response.value.re_ocs.showready) {
+            $('#re_ready_ocs').prop( "checked", response.value.re_ocs.showready);
+            showReadyOCs(response.value.re_ocs.showready);
+          }
+        }
+      }
+    });
+
+    $('#re_ready_ocs').change(function() {
+      let checked = this.checked;
+      let name = $(this).attr('name');
+      chrome.runtime.sendMessage({name: "set_value", value_name: "re_ocs", value: {showready: checked}}, (response) => {
+        showReadyOCs(checked);
+      });
+    });
+  }
+
+
   tornstatsSync("crimes")
   .then((data) => {
     if ($('.faction-crimes-wrap > .begin-wrap .crimes-list').length == 1 && $('.faction-crimes-wrap > .organize-wrap .crimes-list').length == 1 && tsData["crimes"]) {
@@ -376,19 +408,19 @@ function rankedWar(warID) {
         } else {
           if (!ps) {
             $('#re_ps_select').addClass("error");
-            setTimeout(function() { 
+            setTimeout(function() {
               $('#re_ps_select').removeClass("error");
             }, 2000);
           }
           if (!inequalities) {
             $('#re_ps_wrap select').addClass("error");
-            setTimeout(function() { 
+            setTimeout(function() {
               $('#re_ps_wrap select').removeClass("error");
             }, 2000);
           }
           if (!num) {
             $('#re_ps_wrap input[type="number"]').addClass("error");
-            setTimeout(function() { 
+            setTimeout(function() {
               $('#re_ps_wrap input[type="number"]').removeClass("error");
             }, 2000);
           }
@@ -505,7 +537,7 @@ function rankedWarFilters() {
   chrome.runtime.sendMessage({name: "get_value", value: "re_rankedwar"}, (response) => {
     if (response && response.value && response.value.re_rankedwar && response.value.re_rankedwar.filters) {
       $('#re_filter_rules').empty();
-      
+
         $('ul.members-list > li').each(function() {
           $(this).show();
           $(this).addClass("re_show");
@@ -545,7 +577,7 @@ function rankedWarFilters() {
         for (const [ps, data] of Object.entries(response.value.re_rankedwar.filters)) {
           $('#re_filter_rules').prepend(`<li data-ps="${ps}"><div class="re_list_item x"><a class="remove-link"> <i class="delete-subscribed-icon"></i> </a></div><div class="re_list_item item">Hide user if ${ps} ${data.eq} ${parseInt(data.value).toLocaleString()}</div></li>`);
         }
-        
+
         if (Object.keys(response.value.re_rankedwar.filters).length == 0) {
           $('#re_filter_rules').prepend(`<li><div class="re_list_item item">No filter rules being applied.</div></li>`);
         }
@@ -567,4 +599,19 @@ function rankedWarFilters() {
   });
 }
 
+function showReadyOCs(checked) {
+  $('ul.crimes-list > li.item-wrap').each(function() {
+    if ($(this).find('ul.item li.status:contains("Ready")').length > 0) {
+      if ($(this).find('.stat.stat-red').length == 0) {
+        if (checked) {
+          $(this).addClass('active');
+        } else {
+          $(this).removeClass('active');
+        }
+      } else {
+        $(this).find('ul.item li.status').html(`<span class="bold t-red">${$(this).find('.stat.stat-red').length} Not Ready</span>`)
+      }
+    }
+  });
+}
 })();
