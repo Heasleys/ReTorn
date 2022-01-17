@@ -60,6 +60,12 @@ function insertHead() {
     });
   });
 
+  $('.re_checkbox > label').click(function() {
+    let checkbox = $(this).parent('.re_checkbox').find('input[type="checkbox"]');
+    checkbox.prop("checked", !checkbox.prop("checked"));
+    checkbox.trigger("change");
+  });
+
   //mutationObserver on bounty wrap
   var target = document.querySelector('div.content-wrapper');
   bountyPageObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});

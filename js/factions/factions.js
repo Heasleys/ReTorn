@@ -95,6 +95,12 @@ function crimesTab() {
         showReadyOCs(checked);
       });
     });
+
+    $('.re_checkbox > label').click(function() {
+      let checkbox = $(this).parent('.re_checkbox').find('input[type="checkbox"]');
+      checkbox.prop("checked", !checkbox.prop("checked"));
+      checkbox.trigger("change");
+    });
   }
 
 
