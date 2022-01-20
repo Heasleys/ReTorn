@@ -238,6 +238,15 @@ function rosterClick() {
 }
 
 function rankedWar(warID) {
+  //ignore territory wars
+  if ($('.faction-war-info').find('a[href*="#terrName"]').length > 0) {
+    return;
+  }
+  //ignore raids
+  if ($('.desc-wrap.raid-members-list').length > 0) {
+    return;
+  }
+  
   //Insert Header
   insertHeader($("ul.f-war-list"), 'before');
   $('#re_title').text("Ranked War Filter");
@@ -259,6 +268,7 @@ function rankedWar(warID) {
         players[index] = value;
       }
     }
+
     $('.f-war-list .faction-war').addClass('re_rankedwar'); //Used for CSS styling for less jumpy pages
     $('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy</div>`);
     var psList = [];
