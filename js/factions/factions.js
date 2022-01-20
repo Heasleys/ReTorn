@@ -402,10 +402,20 @@ function rankedWar(warID) {
       })
 
       $('#re_ps_wrap input').on('change, keyup', function() {
-        var currentInput = $(this).val();
-        var fixedInput = currentInput.replace(/[A-Za-z!@#$%^&*(),]/g, '');
-        $(this).val(parseInt(fixedInput).toLocaleString());
-    });
+        var currentInput = $(this).val().toLowerCase();
+        currentInput = currentInput.replace('k', '000');
+        currentInput = currentInput.replace('m', '000000');
+        currentInput = currentInput.replace('b', '000000000');
+        currentInput = currentInput.replace('t', '000000000000');
+
+        let fixedInput = currentInput.replace(/[A-Za-z!@#$%^&*(),]/g, '');
+
+        if (fixedInput != '') {
+          $(this).val(parseInt(fixedInput).toLocaleString());
+        } else {
+          $(this).val('');
+        }
+      });
 
       $('#re_ps_wrap button').click(function() {
         let ps = $( "#re_ps_select" ).find(":selected").val();
