@@ -23,7 +23,9 @@ const observer = new MutationObserver(function(mutations) {
     const chatRoot = document.getElementById("chatRoot");
     chatobserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
     nameHighlightObserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
+    hideChatsObserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
     observer.disconnect();
+    console.log(settings);
   }
 });
 
@@ -87,6 +89,29 @@ const nameHighlightObserver = new MutationObserver(function(mutations) {
   }
 });
 
+
+//Chat Hiding Observer
+const hideChatsObserver = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+  if (mutation.target && mutation.target.className) {
+    if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+      //opening settings chatboxes
+      if (mutation.target.className.includes('overview_')) {
+        mutation.addedNodes.forEach(function(node) {
+          if (node && node.className && node.className.includes('chat-settings-opts') && $('#re_hidechats').length == 0) {
+            insertChatHide();
+          }
+        });
+      }
+    }
+  }
+  });
+
+  //Already opened chats
+  if ($("#chatRoot [class*='chat-active']").length != 0) {
+    
+  }
+});
 
 //Actually Start Observer
 tradeObserver.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
@@ -196,8 +221,23 @@ function getNamesInChatbox(chatbox) {
   });
 }
 
-function removeHighlights() {
- $('#chatRoot div[class^="message"] > a').css("color", "");
+function insertChatHide() {
+  if ($('#chatRoot [class*="chat-settings-opts_"]').length > 0) {
+    $('#chatRoot [class*="chat-settings-opts_"]:first').prepend(`
+    <div id="re_hidechats" class="mt1">
+      <div class="chat-opt-label_1b2O3 t-gray-9 bold">Hide Chats</div>
+      <div class="chat-opt-value_2LUK2 notify_2LcNu">
+        <div class="dropdown-root_h7xTo">
+          <div class="dropdown-control_PxWGB">
+            <div class="dropdown-placeholder_2vSP4">All Chats</div>
+            <span class="dropdown-arrow_3dw44"></span>
+          </div
+        div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    `);
+  }
 }
 
 })();
