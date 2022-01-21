@@ -158,8 +158,14 @@ function initJail() {
       let level = 0;
       let score = 0;
 
-      time = $(this).find('span.info-wrap > span.time').prop("textContent").replace(/\s+/g, '').replace('TIME:', '');
-      level = parseInt($(this).find('span.info-wrap > span.level').prop("textContent").replace(/\s+/g, '').replace('LEVEL:', ''));
+      let info_wrap = $(this).find('span.info-wrap');
+
+      if (info_wrap.length == 0) {
+        return;
+      }
+
+      time = info_wrap.find('span.time')[0].textContent.replace(/\s+/g, '').replace('TIME:', '');
+      level = parseInt(info_wrap.find('span.level')[0].textContent.replace(/\s+/g, '').replace('LEVEL:', ''));
 
       let hours = parseInt(time.split('h').shift());
       let mins = parseInt(time.split('h').pop().replace('m', ''));
@@ -167,25 +173,21 @@ function initJail() {
       time = ((hours * 60) + mins);
       score = time * level;
 
-      $(this).find('.info-wrap').attr("title", "<b>Time: </b>" + time.toLocaleString() + "<br><b>Score: </b>"+score.toLocaleString());
+      info_wrap.attr("title", "<b>Time: </b>" + time.toLocaleString() + "<br><b>Score: </b>"+score.toLocaleString());
 
       if (levelFilter && level > levelFilter && levelFilter != 0) {
         $(this).hide();
-        //console.log("LEVEL: ", levelFilter, level, "Hidden");
       } else
 
       if (timeFilter && time > timeFilter && timeFilter != 0) {
         $(this).hide();
-        //console.log("TIME: ",timeFilter, time, "Hidden");
       } else
 
       if (scoreFilter && score > scoreFilter && scoreFilter != 0) {
         $(this).hide();
-        //console.log("SCORE: ",scoreFilter, score, "Hidden");
       } else {
         $(this).show();
         shown++;
-        //console.log(levelFilter,timeFilter,scoreFilter," - ", level, time, score, "Shown");
       }
 
     });
