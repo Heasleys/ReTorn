@@ -537,6 +537,13 @@ function tornstatsSync(type, ID) {
 
 function getWarID() {
   return new Promise((resolve, reject) => {
+    if ($('.f-war-list [class*="rankBox"]').length == 1) {
+      if ($('.f-war-list [class*="rankBox"]').data("warid")) {
+        let warID = $('.f-war-list [class*="rankBox"]').data("warid");
+        return resolve(warID);
+      }
+    }
+
     let fac_a;
     let fac_b;
     let facLinks = $('.f-war-list [class*="rankBox"] [class*="titleBlock"] [class*="nameWp"] a');
