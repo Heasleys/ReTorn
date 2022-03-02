@@ -17,9 +17,9 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.tr
       if (res.status != undefined) {
         if (res.value.re_settings.tornstats != undefined && res.value.re_settings.tornstats == true) {
           if (res.value.re_settings.tornstats_apikey != undefined && res.value.re_settings.tornstats_apikey != "") {
+              profileHeader();
               tornstatsSync()
               .then((data) => {
-                profileHeader();
                 return data;
               })
               .then((data) => {
