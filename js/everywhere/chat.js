@@ -8,31 +8,30 @@ jQuery.expr[':'].icontains = function(a, i, m) {
       .indexOf(m[3].toUpperCase()) >= 0;
 };
 
-//Create Observer for start of Chat Functions - Add Filter Textbox/Check Highlights
-const tradeObserver = new MutationObserver(function(mutations) {
+//Observers Observer
+const observer = new MutationObserver(function(mutations) {
   if ($('#chatRoot').length == 1) {
+    //Start other observers
+    const chatRoot = document.getElementById("chatRoot")
+    tradeObserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
+    tradeChatFilterObserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
+    chatboxObserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
+    hideChatsObserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
+    observer.disconnect();
+  }
+});
+
+
+//Trade Chat Search insert Observer
+const tradeObserver = new MutationObserver(function(mutations) {
     if ($('div[class^="chat-box"][class*="trade"]').length != 0 && $('input.re_chat_search').length == 0) {
       insertChatSearch();
       tradeObserver.disconnect();
     }
-  }
-});
-const observer = new MutationObserver(function(mutations) {
-  if ($('#chatRoot').length == 1) {
-    //Start other observers
-    const chatRoot = document.getElementById("chatRoot");
-    chatobserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
-    nameHighlightObserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
-    hideChatsObserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
-    observer.disconnect();
-    console.log(settings);
-  }
 });
 
-
-
-//Trade Chat Filter - New Messages (Create Observer)
-const chatobserver = new MutationObserver(function(mutations) {
+//Trade Chat Filter - New Messages Observer
+const tradeChatFilterObserver = new MutationObserver(function(mutations) {
   if ($('input.re_chat_search').length == 1) {
     if ($('input.re_chat_search').val() != "") {
       var v = $('input.re_chat_search').val().toLowerCase();
@@ -60,8 +59,8 @@ const chatobserver = new MutationObserver(function(mutations) {
   }
 });
 
-//Create highlight Observer
-const nameHighlightObserver = new MutationObserver(function(mutations) {
+//Chatbox Observer
+const chatboxObserver = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
     //new messages
     if (mutation.addedNodes && mutation.addedNodes.length > 0) {
@@ -84,6 +83,7 @@ const nameHighlightObserver = new MutationObserver(function(mutations) {
     monitorChats();
   }
 
+  //If namesList hasn't been filled, add the chatbox names to the namesList
   if (Object.keys(namesList).length === 0) {
     getNamesInAllChats();
   }
@@ -113,9 +113,11 @@ const hideChatsObserver = new MutationObserver(function(mutations) {
   }
 });
 
-//Actually Start Observer
-tradeObserver.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+
+//Actually Start the Main Observer
 observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+
+
 
 function insertChatSearch() {
   $('div[class^="chat-box-head"] > div[class^="chat-box-title"][title="Trade"]').append(`
@@ -205,20 +207,7 @@ function getNamesInChatbox(chatbox) {
     }
   });
 
-  // tabComplete using plugin from: https://www.jqueryscript.net/form/Simple-jQuery-Tab-Completion-Plugin-Tab-Complete.html
-  // Not sure why, but it requires a character like @ to cycle if tabComplete was inserted later into page load
-  let textarea = chatbox.find(`[class^="chat-box-input"] textarea`);
-  textarea.tabComplete("reset", []);
-  textarea.tabComplete({
-    getOptions:function() {
-      return namesList[title]
-    },
-    getFormat: function(word, position) {
-      return "@"+word
-    },
-	select: false,
-  preventTabbing: true
-  });
+  addTabComplete(chatbox, title);
 }
 
 function insertChatHide() {
@@ -237,6 +226,31 @@ function insertChatHide() {
       <div class="clear"></div>
     </div>
     `);
+  }
+}
+
+function addTabComplete(chatbox, title) {
+    // tabComplete using plugin from: https://www.jqueryscript.net/form/Simple-jQuery-Tab-Completion-Plugin-Tab-Complete.html
+
+  let textarea = chatbox.find(`[class^="chat-box-input"] textarea`);
+  if (textarea.length != 0) {
+    
+    //remove previous event listeners and reset tabcomplete list (in case of new names added from chat)
+    textarea.off("keydown");
+    textarea.tabComplete("reset", []);
+
+    //add tabComplete functionality
+    textarea.tabComplete({
+      getOptions:function() {
+        return namesList[title]; //namesList for specific chatbox
+      },
+      getFormat: function(word, position) {
+        return word.toString();
+      },
+    select: false,
+    preventTabbing: true
+    });
+
   }
 }
 

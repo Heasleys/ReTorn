@@ -70,7 +70,7 @@
                 "https://wiki.torn.com/*"
             ],
         "css": ["/lib/fontawesome/css/modified-all.min.css","css/everywhere/everywhere.css"],
-        "js": ["/lib/jquery-3.6.0.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/tornstats.js"],
+        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/tornstats.js"],
         "run_at": "document_start"
       },
       {
