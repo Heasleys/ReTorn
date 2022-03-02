@@ -193,7 +193,7 @@ function rosterTab() {
           i++;
           facTotal += value.total;
         });
-        let facAvg = Math.trunc(facTotal/avgI).toLocaleString();
+        let facAvg = Math.trunc(facTotal/avgI).toLocaleString("en-US");
         roster_table += `<tfoot><tr><td class="rank"></td><td class="stats">Average Stats:</td><td class="stats">${facAvg}</td><td class="verified"></td></tr></tfoot>`;
         roster_table += "</table>";
 
@@ -294,7 +294,7 @@ function rankedWar(warID) {
             if (isNaN(value)) {
               psTitle += `<br><b>${index}: </b>${value}`;
             } else {
-              psTitle += `<br><b>${index}: </b>${value.toLocaleString()}`;
+              psTitle += `<br><b>${index}: </b>${value.toLocaleString("en-US")}`;
             }
 
             if (!psList.includes(index)) {
@@ -411,7 +411,7 @@ function rankedWar(warID) {
         let fixedInput = currentInput.replace(/[A-Za-z!@#$%^&*(),]/g, '');
 
         if (fixedInput != '') {
-          $(this).val(parseInt(fixedInput).toLocaleString());
+          $(this).val(parseInt(fixedInput).toLocaleString("en-US"));
         } else {
           $(this).val('');
         }
@@ -612,7 +612,7 @@ function rankedWarFilters() {
 
 
         for (const [ps, data] of Object.entries(response.value.re_rankedwar.filters)) {
-          $('#re_filter_rules').prepend(`<li data-ps="${ps}"><div class="re_list_item x"><a class="remove-link"> <i class="delete-subscribed-icon"></i> </a></div><div class="re_list_item item">Hide user if ${ps} ${data.eq} ${parseInt(data.value).toLocaleString()}</div></li>`);
+          $('#re_filter_rules').prepend(`<li data-ps="${ps}"><div class="re_list_item x"><a class="remove-link"> <i class="delete-subscribed-icon"></i> </a></div><div class="re_list_item item">Hide user if ${ps} ${data.eq} ${parseInt(data.value).toLocaleString("en-US")}</div></li>`);
         }
 
         if (Object.keys(response.value.re_rankedwar.filters).length == 0) {
