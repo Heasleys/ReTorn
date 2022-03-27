@@ -16,7 +16,6 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
     $(document).on('click', '.re_add_qitem', function(event){
       event.stopPropagation();
       event.preventDefault();
-      alert('click');
       
       let thisButton = $(event.currentTarget);
 
