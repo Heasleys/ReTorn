@@ -13,6 +13,25 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
     `);
     loadItems();
 
+    $(document).on('click', '.re_add_qitem', function(event){
+      event.stopPropagation();
+      event.preventDefault();
+      alert('click');
+      
+      let thisButton = $(event.currentTarget);
+
+      var itemName = thisButton.data("itemname");
+      var itemQty = thisButton.data("itemqty");
+      var itemID = thisButton.data("itemid");
+      var itemCategory = thisButton.data("itemcategory");
+
+      if ($('#re_quick_items').find('div[data-itemID='+itemID+']').length == 0) {
+        chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemID: itemID, order: n, itemName: itemName, itemQty: itemQty, itemCategory: itemCategory}}}}, (response) => {
+          loadItems();
+        });
+      }
+    });
+
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
 
@@ -47,19 +66,18 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
                     let itemQty = nameWrap.find('.qty.t-hide').text().replace('x', '');
                     if (itemQty === "") {itemQty = 1;}
 
-                      var qitemButton = $('<li/>');
-                      qitemButton.addClass('re_add_qitem');
-                      qitemButton.data('itemName', itemName);
-                      qitemButton.data('itemQty', parseInt(itemQty));
-                      qitemButton.data('itemID', itemID);
-                      qitemButton.data('itemCategory', itemCategory);
-                      qitemButton.append(`<span class="icon-h" title="Add to Quick Items">
-                                              <button aria-label="Add ${itemName} to Quick Items" class="option-equip wai-btn qitem-btn"></button>
-                                              <span class="opt-name">
-                                                  Add
-                                                  <span class="t-hide">to Quick Items</span>
-                                              </span>
-                                          </span>`);
+                      let qitemButton = `
+                      <li class="re_add_qitem" data-itemname="${itemName}" data-itemqty="${itemQty}" data-itemid="${itemID}" data-itemcategory="${itemCategory}">
+                        <span class="icon-h" title="Add to Quick Items">
+                          <button aria-label="Add ${itemName} to Quick Items" class="option-equip wai-btn qitem-btn"></button>
+                          <span class="opt-name">
+                              Add
+                              <span class="t-hide">to Quick Items</span>
+                          </span>
+                        </span>
+                      </li>
+                      `
+
                       if (itemCategory == "Special" || itemCategory == "Other" && itemID != 403 && itemID != 283) { // Keep buttons consistent so add button for donator pack doesn't look odd
                         actionWrap.find('li').first().after(`<li class="left"></li>`);
                       } else {
@@ -69,22 +87,6 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
 
                 }//for
 
-                $(".re_add_qitem").off('click').click(function (event) {
-                  event.stopPropagation();
-                  event.preventDefault();
-
-                  var itemName = $(this).data("itemName");
-                  var itemQty = $(this).data("itemQty");
-                  var itemID = $(this).data("itemID");
-                  var itemCategory = $(this).data("itemCategory");
-
-                  if ($('#re_quick_items').find('div[data-itemID='+itemID+']').length == 0) {
-                    chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemID: itemID, order: n, itemName: itemName, itemQty: itemQty, itemCategory: itemCategory}}}}, (response) => {
-                      loadItems();
-                    });
-                  }
-
-                });
               }
             }
           }
