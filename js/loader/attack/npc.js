@@ -38,9 +38,9 @@ function insertNPCtimer() {
               }
 
               let title = `<b>${loot_time.replace("_", " ").replace("hosp out", "loot 1")}:</b> ${attack_time}`;
-
-              $('#playername_'+npc.name).wrap(`<span class="re_lootwrap">`);
-              $('#playername_'+npc.name).after(`<span id="re_loot_time">${title}</span>`);
+              
+              $("[id='playername_"+npc.name+"']").wrap(`<span class="re_lootwrap">`);
+              $("[id='playername_"+npc.name+"']").after(`<span id="re_loot_time">${title}</span>`);
 
               var t = 0;
               setInterval(function() {
