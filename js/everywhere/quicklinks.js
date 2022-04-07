@@ -122,11 +122,11 @@ function getLinkIcon(url) {
   }
 
   if (url.includes("loader.php?sid=racing")) {
-    icon = `<i class="cql-race-track"></i>`;
+    icon = `<i class="cql-raceway"></i>`;
   }
 
   if (url.includes("page.php?sid=stocks")) {
-    icon = `<i class="cql-stock-exchange"></i>`;
+    icon = `<i class="cql-stock-market"></i>`;
   }
 
   if (url.includes("travelagency.php")) {
