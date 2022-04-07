@@ -124,15 +124,20 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.tr
             totSign = "+";
           }
 
-          let spy_table = "<table><tr><th>Battle Stats</th><th>"+data.spy.player_name+"</th><th>You</th><th>Difference</th></tr>";
-          spy_table += "<tr><td>Strength:</td><td>"+data.spy.strength.toLocaleString()+"</td><td>"+Math.trunc((data.spy.strength + data.spy.deltaStrength)).toLocaleString()+"</td><td"+strCol+">"+Math.trunc(strSign+data.spy.deltaStrength).toLocaleString()+"</td></tr>";
-          spy_table += "<tr><td>Defense:</td><td>"+data.spy.defense.toLocaleString()+"</td><td>"+Math.trunc((data.spy.defense + data.spy.deltaDefense)).toLocaleString()+"</td><td"+defCol+">"+Math.trunc(defSign+data.spy.deltaDefense).toLocaleString()+"</td></tr>";
-          spy_table += "<tr><td>Speed:</td><td>"+data.spy.speed.toLocaleString()+"</td><td>"+Math.trunc((data.spy.speed + data.spy.deltaSpeed)).toLocaleString()+"</td><td"+speCol+">"+Math.trunc(speSign+data.spy.deltaSpeed).toLocaleString()+"</td></tr>";
-          spy_table += "<tr><td>Dexterity:</td><td>"+data.spy.dexterity.toLocaleString()+"</td><td>"+Math.trunc((data.spy.dexterity + data.spy.deltaDexterity)).toLocaleString()+"</td><td"+dexCol+">"+Math.trunc(dexSign+data.spy.deltaDexterity).toLocaleString()+"</td></tr>";
-          spy_table += "<tr><td>Total:</td><td>"+data.spy.total.toLocaleString()+"</td><td>"+Math.trunc((data.spy.total + data.spy.deltaTotal)).toLocaleString()+"</td><td"+totCol+">"+Math.trunc(totSign+data.spy.deltaTotal).toLocaleString()+"</td></tr>";
-          spy_table += "<tr><td>Last Spy: </td><td><b>"+data.spy.difference+"</b></td><td colspan='2'>Fair Fight Bonus: <b>x"+data.spy.fair_fight_bonus.toFixed(2)+"</b></td></tr>";
+          let deltaStrength = isNaN(data.spy.strength) ? data.spy.deltaStrength.toLocaleString() : Math.trunc((data.spy.strength + data.spy.deltaStrength)).toLocaleString();
+          let deltaDefense = isNaN(data.spy.defense) ? data.spy.deltaDefense.toLocaleString() : Math.trunc((data.spy.defense + data.spy.deltaDefense)).toLocaleString();
+          let deltaSpeed = isNaN(data.spy.speed) ? data.spy.deltaSpeed.toLocaleString() : Math.trunc((data.spy.speed + data.spy.deltaSpeed)).toLocaleString();
+          let deltaDexterity = isNaN(data.spy.dexterity) ? data.spy.deltaDexterity.toLocaleString() : Math.trunc((data.spy.dexterity + data.spy.deltaDexterity)).toLocaleString();
+          let deltaTotal = isNaN(data.spy.total) ? data.spy.deltaTotal.toLocaleString() : Math.trunc((data.spy.total + data.spy.deltaTotal)).toLocaleString();
 
-          spy_table += "</table>";
+          let spy_table = `<table><tr><th>Battle Stats</th><th>${data.spy.player_name}</th><th>You</th><th>Difference</th></tr>
+          <tr><td>Strength:</td><td>${data.spy.strength.toLocaleString()}</td><td>${deltaStrength}</td><td${strCol}>${Math.trunc(strSign+data.spy.deltaStrength).toLocaleString()}</td></tr>
+          <tr><td>Defense:</td><td>${data.spy.defense.toLocaleString()}</td><td>${deltaDefense}</td><td${defCol}>${Math.trunc(defSign+data.spy.deltaDefense).toLocaleString()}</td></tr>
+          <tr><td>Speed:</td><td>${data.spy.speed.toLocaleString()}</td><td>${deltaSpeed}</td><td${speCol}>${Math.trunc(speSign+data.spy.deltaSpeed).toLocaleString()}</td></tr>
+          <tr><td>Dexterity:</td><td>${data.spy.dexterity.toLocaleString()}</td><td>${deltaDexterity}</td><td${dexCol}>${Math.trunc(dexSign+data.spy.deltaDexterity).toLocaleString()}</td></tr>
+          <tr><td>Total:</td><td>${data.spy.total.toLocaleString()}</td><td>${deltaTotal}</td><td${totCol}>${Math.trunc(totSign+data.spy.deltaTotal).toLocaleString()}</td></tr>
+          <tr><td>Last Spy: </td><td><b>${data.spy.difference}</b></td><td colspan='2'>Fair Fight Bonus: <b>x${data.spy.fair_fight_bonus.toFixed(2)}</b></td></tr></table>
+          `;
 
           $('#re_spy').html(spy_table);
           $('#re_spy').parent().show();
