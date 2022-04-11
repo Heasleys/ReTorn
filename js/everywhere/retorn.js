@@ -109,6 +109,14 @@ ss.onload = function(){
 
 
 
+function getScreenType() {
+  let element = document.querySelector('body');
+  let styles = window.getComputedStyle(element,':before')
+  let content = styles['content'];
+  return content.replaceAll(`"`,``);
+}
+
+
 
 //Function to return colors darker/lighter/blended - https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
 //Version 4.0
@@ -157,26 +165,26 @@ function timeDifference(current, previous) {
   var elapsed = current - previous;
 
   if (elapsed < msPerMinute) {
-       return Math.round(elapsed/1000) + ' seconds ago';   
+       return Math.round(elapsed/1000) + ' seconds ago';
   }
 
   else if (elapsed < msPerHour) {
-       return Math.round(elapsed/msPerMinute) + ' minutes ago';   
+       return Math.round(elapsed/msPerMinute) + ' minutes ago';
   }
 
   else if (elapsed < msPerDay ) {
-       return Math.round(elapsed/msPerHour ) + ' hours ago';   
+       return Math.round(elapsed/msPerHour ) + ' hours ago';
   }
 
   else if (elapsed < msPerMonth) {
-      return '' + Math.round(elapsed/msPerDay) + ' days ago';   
+      return '' + Math.round(elapsed/msPerDay) + ' days ago';
   }
 
   else if (elapsed < msPerYear) {
-      return '' + Math.round(elapsed/msPerMonth) + ' months ago';   
+      return '' + Math.round(elapsed/msPerMonth) + ' months ago';
   }
 
   else {
-      return '' + Math.round(elapsed/msPerYear ) + ' years ago';   
+      return '' + Math.round(elapsed/msPerYear ) + ' years ago';
   }
 }
