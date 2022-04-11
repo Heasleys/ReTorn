@@ -248,7 +248,8 @@ div.header-navigation.right > div.header-buttons-wrapper > ul.toolbar #nav-npcs 
 }
 
 div.header-navigation.right > div.header-buttons-wrapper > ul.toolbar #nav-npcs:not(.active).highlight svg {
-  fill: url("#sidebar_svg_gradient_regular_green_mobile");
+  filter: drop-shadow(0px 0px 1.3px #000);
+  fill: #94A857;
 }
 
 

@@ -6,7 +6,7 @@
 
 
   const npcobserver = new MutationObserver(function(mutations) {
-    if ($('h2[class^="header"]:contains("Lists")').siblings('div[class^="toggle-content"]').length != 0 || $('#sidebarroot > div.mobile').length != 0) {
+    if ($('h2[class^="header"]:contains("Lists")').siblings('div[class^="toggle-content"]').length != 0 || getScreenType() == "mobile") {
       if ($('#nav-npcs').length == 0) {
         insertNPCList();
       }
@@ -29,7 +29,7 @@
 
   // function to insert NPC list underneath enemy/friends list
   function insertNPCList() {
-    if ($('#sidebarroot > div.mobile').length != 0) {
+    if (getScreenType() == "mobile") {
       $('div.header-navigation.right > div.header-buttons-wrapper > ul.toolbar').prepend(`
         <li id="nav-npcs" class="">
           <button type="button" class="top_header_button" aria-label="Open NPC List">
