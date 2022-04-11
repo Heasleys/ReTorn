@@ -93,6 +93,7 @@
       {
         "matches": ["https://www.torn.com/page.php?sid=stocks"],
         "js": ["js/stocks/stocks.js"],
+        "css": ["css/stocks/stocks.css"],
         "run_at": "document_end"
       },
       {

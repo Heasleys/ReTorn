@@ -1,0 +1,10 @@
+.re-acro {
+  margin-left: auto;
+  color: #999;
+}
+
+@media screen and (max-width: 1000px) {
+  .re-acro {
+    display: none;
+  }
+}
