@@ -195,7 +195,7 @@
       }
       if ((d-t) < (10*60) && !$('li#npc_'+npc.torn_id).hasClass('highlight')) {
         $('li#npc_'+npc.torn_id).addClass('highlight');
-        $('.list_header').addClass('highlight');
+        $('#nav-npcs').addClass('highlight');
       }
 
       $('li#npc_'+npc.torn_id+' span.attack_time').text(loot_time.replace("_", " ").replace("hosp out", "loot 1") + ": " + attack_time);
