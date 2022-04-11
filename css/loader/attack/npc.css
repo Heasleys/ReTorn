@@ -11,6 +11,7 @@
 @media screen and (max-width: 600px) {
   #re_loot_time {
     margin-top: 2px;
+    display: none;
   }
 
   .re_lootwrap {
