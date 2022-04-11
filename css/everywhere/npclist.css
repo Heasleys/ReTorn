@@ -188,6 +188,69 @@ ul.npc_list span.attack_time {
 
 
 
+/* mobile list */
+@media screen and (min-width: 601px) {
+ div.header-navigation.right > div.header-buttons-wrapper > ul.toolbar #nav-npcs {
+   visibility: hidden;
+   display: none;
+ }
+}
+
+
+#nav-npcs.active .re-npclist-tooltip {
+  visibility: visible;
+}
+
+#nav-npcs.active > button:before {
+  content: '';
+    width: 46px;
+    height: 34px;
+    top: 7px;
+    left: -6px;
+    display: block;
+    position: absolute;
+    background: url(/images/v2/svg_icons/top_header/dropdown_slices/regular/dropdown_centre.svg) 0 0 no-repeat;
+    background-size: 100% 100%;
+}
+
+#nav-npcs .re-npclist-tooltip {
+  visibility: hidden;
+  top: 35px;
+  position: absolute;
+  width: 190px;
+  text-align: center;
+  line-height: 20px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background: #333;
+  left: -89px;
+  z-index: -1;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 45%);
+}
+
+#nav-npcs .re-npclist-tooltip ul.npc_list li {
+  float: none;
+}
+
+#nav-npcs .re-npclist-tooltip ul.npc_list a {
+  color: #74c0fc;
+  float: left;
+}
+#nav-npcs .re-npclist-tooltip ul.npc_list a:hover {
+  color: #d0ebff;
+}
+
+div.header-navigation.right > div.header-buttons-wrapper > ul.toolbar #nav-npcs ul.npc_list li.highlight {
+  background-color: #4b5738;
+}
+
+
+
+
+
 
 /* Color CSS */
 .list_header {
@@ -242,10 +305,10 @@ body.dark-mode .list_parent .npc_area {
 }
 
 ul.npc_list li a, ul.npc_list li a:visited {
-  color: #069 !important;
+  color: #069;
 }
 ul.npc_list li a:hover {
-  color: #999 !important;
+  color: #999;
 }
 
 ul.npc_list span.attack_time:hover {
@@ -253,10 +316,10 @@ ul.npc_list span.attack_time:hover {
 }
 
 body.dark-mode ul.npc_list li a, body.dark-mode ul.npc_list li a:visited {
-  color: #74c0fc !important;
+  color: #74c0fc;
 }
 body.dark-mode ul.npc_list li a:hover {
-  color: #a5d8ff !important;
+  color: #a5d8ff;
 }
 
 ul.npc_list li.highlight {
