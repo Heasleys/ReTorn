@@ -117,6 +117,9 @@ async function newInstall() {
   console.log("NEW INSTALL")
     const startup_settings = {
       re_settings: {
+        chat: {
+          hide: "none"
+        },
         tts: {
           enabled: false
         },

@@ -8,9 +8,23 @@ jQuery.expr[':'].icontains = function(a, i, m) {
       .indexOf(m[3].toUpperCase()) >= 0;
 };
 
+
+// Hide Chats Select
+$(document).on('change', '#re_hidechats', function(event){
+  let value = $(this).find(":selected").val();
+  if (value != undefined) {
+    chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {chat: {hide: value}}}, (response) => {
+      settings.chat.hide = value;
+      setChatHide();
+    });
+  }
+});
+
+
 //Observers Observer
 const observer = new MutationObserver(function(mutations) {
   if ($('#chatRoot').length == 1) {
+    setChatHide();
     //Start other observers
     const chatRoot = document.getElementById("chatRoot")
     tradeObserver.observe(chatRoot, {attributes: false, childList: true, characterData: false, subtree:true});
@@ -109,7 +123,7 @@ const hideChatsObserver = new MutationObserver(function(mutations) {
 
   //Already opened chats
   if ($("#chatRoot [class*='chat-active']").length != 0) {
-    
+
   }
 });
 
@@ -213,19 +227,43 @@ function getNamesInChatbox(chatbox) {
 function insertChatHide() {
   if ($('#chatRoot [class*="chat-settings-opts_"]').length > 0) {
     $('#chatRoot [class*="chat-settings-opts_"]:first').prepend(`
-    <div id="re_hidechats" class="mt1">
-      <div class="chat-opt-label_1b2O3 t-gray-9 bold">Hide Chats</div>
-      <div class="chat-opt-value_2LUK2 notify_2LcNu">
-        <div class="dropdown-root_h7xTo">
-          <div class="dropdown-control_PxWGB">
-            <div class="dropdown-placeholder_2vSP4">All Chats</div>
-            <span class="dropdown-arrow_3dw44"></span>
-          </div
-        div>
+    <div class="mt1">
+      <div class="re-chat-label bold">Hide Chats</div>
+      <div class="re-chat-select-wrap">
+        <select id="re_hidechats" class="re-chat-select">
+          <option value="all">All Chats</option>
+          <option value="players">Player Chats</option>
+          <option value="none" selected>None</option>
+        </select>
       </div>
       <div class="clear"></div>
     </div>
     `);
+  }
+  if (settings && settings.chat && settings.chat.hide != undefined) {
+    $('#re_hidechats').val(settings.chat.hide);
+  } else {
+    $('#re_hidechats').val("none").change();
+  }
+}
+
+function setChatHide() {
+  let root = document.documentElement;
+  if (settings && settings.chat && settings.chat.hide != undefined) {
+    switch (settings.chat.hide) {
+      case "none":
+      root.style.setProperty('--re-chat-hide-players', "block");
+      root.style.setProperty('--re-chat-hide-all', "block");
+      break;
+      case "players":
+      root.style.setProperty('--re-chat-hide-players', "none");
+      root.style.setProperty('--re-chat-hide-all', "block");
+      break;
+      case "all":
+        root.style.setProperty('--re-chat-hide-players', "none");
+        root.style.setProperty('--re-chat-hide-all', "none");
+      break;
+    }
   }
 }
 
@@ -234,7 +272,7 @@ function addTabComplete(chatbox, title) {
 
   let textarea = chatbox.find(`[class^="chat-box-input"] textarea`);
   if (textarea.length != 0) {
-    
+
     //remove previous event listeners and reset tabcomplete list (in case of new names added from chat)
     textarea.off("keydown");
     textarea.tabComplete("reset", []);
