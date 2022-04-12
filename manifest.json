@@ -21,7 +21,8 @@
       "storage",
       "background",
       "alarms",
-      "webRequest"
+      "webRequest",
+      "tts"
     ],
     "host_permissions": [
       "https://www.torn.com/*",

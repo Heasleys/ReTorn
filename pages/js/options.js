@@ -124,7 +124,11 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
           $('#darkmode').prop("checked", false);
         }
 
-
+        if (settings.tts != undefined && settings.tts.enabled && settings.tts.enabled == true) {
+          $('#tts').prop("checked", true);
+        } else {
+          $('#tts').prop("checked", false);
+        }
 
         if (settings.npclist != undefined && settings.npclist.enabled && settings.npclist.enabled == true) {
           $('#npclist').prop("checked", true);
@@ -198,6 +202,12 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
             $("html").removeClass('light');
             $("html").addClass('dark');
           }
+      });
+  });
+
+  $('#tts').change(function() {
+     let v = $(this).is(":checked");
+     chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"tts": {enabled: v}}}, (response) => {
       });
   });
 
