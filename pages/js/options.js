@@ -896,6 +896,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.name == "log") {
     updateLogger();
   }
+  return true
 });
 
 

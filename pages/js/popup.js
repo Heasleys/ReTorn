@@ -7,6 +7,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             console.log(msg.data);
             updatePopup(msg.data);
         }
+        return true
     }
 );
 
