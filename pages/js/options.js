@@ -311,6 +311,19 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 
   });
 
+  $("button#test_notification").click(function() {
+    chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
+      if (response.status == true) {
+        const settings = response.value.re_settings;
+        if (settings.notifications && settings.notifications.notifications && settings.notifications.notifications.enabled) {
+          chrome.runtime.sendMessage({name: "test_notification"});
+        } else {
+          alert("You have notifications turned off.")
+        }
+      }
+    });
+  });
+
   $("button#force_torn_items").click(function() {
     // force api or items list doc to refill local items storage
     chrome.runtime.sendMessage({name: "force_torn_items"});
