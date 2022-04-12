@@ -288,7 +288,7 @@ ul#quicklinks li {
   left: 0;
 }
 
-ul#quicklinks li .fa-li {
+ul#quicklinks li .fa-li:hover {
   cursor: row-resize;
 }
 
@@ -359,6 +359,7 @@ html.dark .jscolor-picker {
 
 .switch-holder {
     display: flex;
+    flex-wrap: wrap;
     width: 300px;
     padding: 10px 20px;
     border-radius: 10px;
@@ -376,12 +377,30 @@ html.dark .switch-holder {
 }
 
 .switch-label {
-    font-size: 16px;
-    width: 140px;
+  display: flex;
+  flex: 1;
+  font-size: 16px;
+  width: 140px;
 }
 
-.switch-label span {
+.switch-holder .switch-menu-button {
+  margin-right: 5px;
+}
+.switch-holder .switch-menu-button:hover {
+  cursor: pointer;
+}
 
+.switch-holder .switch-menu-button > i {
+  font-size: 14px;
+}
+
+.switch-holder .switch-menu {
+  display: none;
+  flex: 0 1 100%;
+}
+
+.switch-holder .switch-menu.show {
+  display: block;
 }
 
 .switch-holder input[type="text"] {

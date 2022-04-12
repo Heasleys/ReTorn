@@ -64,7 +64,8 @@ html.dark .progress_bars > a:hover, html.dark .wealth div:hover, html.dark .cool
 }
 
 .wealth > a {
-  min-width: 135px;
+  min-width: 132px;
+  max-width: 132px;
   text-align: center;
 }
 
