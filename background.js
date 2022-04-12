@@ -409,7 +409,7 @@ function createAPIAlarm(minutes) {
 // Function for Validating APIKEY before storing in settings
 function validateAPIKEY(apikey) {
   return new Promise((resolve, reject) => {
-    fetchAPI(apikey, 'user', 'basic,timestamp&comment=ReTorn')
+    fetchAPI(apikey, 'user', 'basic,timestamp')
     .then(async (response) => {
       await logger("api", "torn", "Validating User", {type: "user", id: "", selection: "basic,timestamp&comment=ReTorn", timestamp: Date.now()});
       await setValue({"re_api_key": apikey});
@@ -522,7 +522,7 @@ function parseAPI(data) {
 // Function for pulling the required API data
 function pullRequiredAPI(apikey) {
   return new Promise((resolve, reject) => {
-    fetchAPI(apikey, 'user', 'basic,bars,icons,money,notifications,cooldowns,travel,education,networth,refills,timestamp&comment=ReTorn')
+    fetchAPI(apikey, 'user', 'basic,bars,icons,money,notifications,cooldowns,travel,education,networth,refills,timestamp')
     .then(async (data) => {
       await logger("api", "torn", "Required API", {type: "user", id: "", selection: "basic,bars,icons,money,notifications,cooldowns,travel,education,networth,refills,timestamp&comment=ReTorn", timestamp: Date.now()});
       chrome.runtime.sendMessage({name: "popup_data", data: data});
@@ -543,7 +543,7 @@ function pullRequiredAPI(apikey) {
 // Function for integrating Torn Stats features into ReTorn
 function integrateTornStats(apikey) {
   return new Promise((resolve, reject) => {
-    fetchAPI(apikey, 'torn', 'timestamp&comment=ReTorn')
+    fetchAPI(apikey, 'torn', 'timestamp')
     .then(response => fetchTSAPI("v1", apikey, ""))
     .then(async (res) => {
       await logger("api", "tornstats", "Integrate Torn Stats", {status: res.status, message: res.message, selection: "", timestamp: Date.now()});
@@ -850,7 +850,7 @@ function objectStringify(object) {
 function getItemsAPI() {
   getValue("re_api_key")
   //API key is available, so get a fresh new list of Torn items from the API
-  .then(response => fetchAPI(response.re_api_key, 'torn', 'items,timestamp&comment=ReTorn'))
+  .then(response => fetchAPI(response.re_api_key, 'torn', 'items,timestamp'))
   .then(async (data) => {
     await logger("api", "torn", "Torn item data", {type: "torn", id: "", selection: "items,timestamp&comment=ReTorn", timestamp: Date.now()});
     return data;
@@ -1015,7 +1015,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     case "pull_api":
       if (msg.selection != undefined && msg.type != undefined && msg.id != undefined) {
         getValue("re_api_key")
-        .then(response => fetchAPI(response.re_api_key, msg.type , msg.selection + '&comment=ReTorn', msg.id))
+        .then(response => fetchAPI(response.re_api_key, msg.type , msg.selection, msg.id))
         .then(async (data) => {
           await logger("api", "torn", "Page Specific Pull", {type: msg.type, id: msg.id, selection: msg.selection+"&comment=ReTorn", timestamp: Date.now()});
           sendResponse(data);
