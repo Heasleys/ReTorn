@@ -528,7 +528,7 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   padding: 10px 0 10px 5px;
   float: left;
   text-decoration: none;
-  color: #999;
+  color: var(--chat-setting-label-color);
 }
 
 .re-chat-select-wrap {
