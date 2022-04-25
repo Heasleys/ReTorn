@@ -250,6 +250,22 @@ function rankedWar(warID) {
   //Insert Header
   insertHeader($("ul.f-war-list"), 'before');
   $('#re_title').text("Ranked War Filter");
+  $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
+  <label class="re_title noselect" >Disable filters</label>
+    <input type="checkbox">
+  </span>`);
+  $('#re_disable_filters').click(function(event) {
+    event.stopPropagation();
+    let checkbox = $(this).find('input[type="checkbox"]');
+    checkbox.prop("checked", checkbox.prop("checked"));
+    rankedWarFilters();
+  });
+  $('.re_checkbox > label').click(function() {
+    let checkbox = $(this).parent('.re_checkbox').find('input[type="checkbox"]');
+    checkbox.prop("checked", !checkbox.prop("checked"));
+    checkbox.trigger("change");
+  });
+  
   $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
   <p id="re_message" style="display: none;"></p>`);
   getWarID()
@@ -371,7 +387,7 @@ function rankedWar(warID) {
         </div>
       </div>
       <div class="switch_wrap" id="re_rw_rules">
-        <p class="re_ptitle">Filter Rules</p><input type="checkbox" id='re_rw_filter' title="Disable filters" style="position: absolute; transform: translate(700%, 10%);">
+        <p class="re_ptitle">Filter Rules</p>
           <div class="re_scrollbox">
             <ul class="re_list" id="re_filter_rules">
             <li><div class="re_list_item item">No filter rules being applied.</div></li>
@@ -388,10 +404,6 @@ function rankedWar(warID) {
       </div>
       </div>
       `);
-
-      $('#re_rw_filter').on('change, click',function() {
-        rankedWarFilters();
-      })
 
       $('#re_ps_select').change(function() {
         if ($(this).val()) {
@@ -578,7 +590,7 @@ function rankedWarFilters() {
         $('ul.members-list > li').each(function() {
           $(this).show();
           $(this).addClass("re_show");
-          if (!$('#re_rw_filter').is(":checked")) { //if filter rules checkbox is not checked, proceed
+          if (!$('#re_disable_filters input[type="checkbox"]').is(":checked")) { //if filter rules checkbox is not checked, proceed
             for (const [ps, data] of Object.entries(response.value.re_rankedwar.filters)) {
               if (data.eq == "<") {
                 if ($(this).data(ps) != undefined) {
