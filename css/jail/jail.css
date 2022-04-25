@@ -11,24 +11,91 @@
 }
 
 .re_content.re_jail input[type='number'] {
-  width: 100px;
+  width: 90px;
   padding: 0 0 0 3px;
   border-radius: 3px;
   height: 18px;
 }
 
 .re_row {
-  display: flex;
-  margin: 0.75em;
   justify-content: center;
 }
 
-.re_row > div {
-  margin-right: 25px;
+
+.re_jail .grid_wrap {
+  display: grid;
+  width: 100%;
+  grid-gap: 10px;
+  justify-items: flex-start;
 }
-.re_row > div:last-child {
-  margin-left: 25px;
+
+
+
+
+/* forced desktop */
+html.html-manual-desktop .re_jail .grid_wrap {
+  grid-template-columns: repeat(3, auto) 200px repeat(2, 90px);
 }
+
+/* desktop view */
+@media screen and (min-width: 1001px) {
+  .re_jail .grid_wrap {
+    grid-template-columns: repeat(3, auto) 200px repeat(2, 90px);
+  }
+}
+
+/* tablet view */
+@media screen and (max-width: 1000px) and (min-width: 601px) {
+  html:not(.html-manual-desktop) .re_jail .re_row {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+  html:not(.html-manual-desktop) .re_jail .grid_wrap {
+    grid-template-columns: repeat(12, 30px);
+    column-gap: 0px;
+    grid-template-areas: 
+    "b1 b1 b1 b2 b2 b2 b3 b3 b3 b4 b4 b4"
+    ". . b5 b5 b5 . . b6 b6 b6 . .";
+  }
+  .box1 {
+    grid-area: b1;
+  }
+  .box2 {
+    grid-area: b2;
+  }
+  .box3 {
+    grid-area: b3;
+  }
+  .box4 {
+    grid-area: b4;
+  }
+  .box5 {
+    grid-area: b5;
+  }
+  .box6 {
+    grid-area: b6;
+  }
+}
+
+/* mobile view */
+@media screen and (max-width: 600px) {
+  html:not(.html-manual-desktop) .re_row {
+    justify-content: center;
+  }
+  html:not(.html-manual-desktop) .re_jail .grid_wrap {
+    grid-template-columns: auto auto;
+  }
+}
+
+
+.grid_box .re_checkbox > label {
+  margin-top: 0px;
+}
+
+.re_content.re_jail input[type="number"] {
+  margin-top: -2px;
+}
+
 
 .qbust-icon {
   background-position: -20px 0px;

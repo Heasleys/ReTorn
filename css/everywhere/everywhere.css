@@ -100,8 +100,7 @@
     display: inline-block;
     vertical-align: top;
     margin-top: 7px;
-    margin-left: 2px;
-    margin-right: 15px;
+    margin-left: 3px;
 }
 
 .re_checkbox > label, .re_checkbox > input[type="checkbox"], .re_content select {
@@ -153,6 +152,7 @@ div.re_head {
   padding: 6px 10px;
   background-size: 4px;
   cursor: pointer;
+  display: flex;
 }
 
 div.re_head.expanded {
@@ -172,6 +172,7 @@ border-top-right-radius: 0px;
   letter-spacing: 1px;
   font-weight: 700;
   line-height: 16px;
+  flex-grow: 2;
 }
 
 .re_content {
@@ -205,8 +206,12 @@ border-top-right-radius: 0px;
 .re_row {
   display: flex;
   margin: 0.75em;
-  justify-content: space-between;
   flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.re_row.re_message {
+  justify-content: center;
 }
 
 .re_row[hidden] {
@@ -266,7 +271,10 @@ div.re_icon_wrap {
 align-items: center;
 justify-content: center;
 width: 16px;
-float: right;
+}
+
+.re_checkbox+div.re_icon_wrap {
+  margin-left: 15px;
 }
 
 span.re_icon svg {
@@ -426,7 +434,7 @@ body.dark-mode .re_list .re_list_item, body.dark-mode .re_list .re_list_x {
 }
 
 .re_head .fas {
-  font-size: 14px;
+  font-size: 18px;
   color: var(--re-title-color);
 }
 

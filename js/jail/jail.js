@@ -32,42 +32,63 @@ $(document).ready(function() {
 function initJail() {
   insertHeader($("div.content-title"), 'after');
   $('#re_title').text("Jail");
+  $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
+  <label class="re_title noselect" >Disable filters</label>
+    <input type="checkbox">
+  </span>`)
   $('.re_content').addClass('re_jail');
+
   $('.re_content').html(`
-
     <div class="re_row">
-      <div class="switch_wrap">
-        <p class="re_ptitle">Toggles</p>
-        <div class="re_checkbox">
-          <input type="checkbox" id="re_jail_qbust" name='bust'>
-          <label class="noselect" title="Instantly bust someone">Quick Bust</label>
+      <div class="re_col">
+        <div class="grid_wrap">
+          <div class="grid_box box1">
+            <div class="re_checkbox">
+              <input type="checkbox" id="re_jail_qbust" name='bust'>
+              <label class="noselect" title="Instantly bust someone">Quick Bust</label>
+            </div>
+          </div>
+          <div class="grid_box box2">
+            <div class="re_checkbox">
+              <input type="checkbox" id="re_jail_sbust" name='bust'>
+              <label class="noselect" title="Sets bust icon to quick confirm button after first click">Speed Bust</label>
+            </div>
+          </div>
+          
+          <div class="grid_box box3">
+            <div class="re_checkbox">
+              <input type="checkbox" id="re_jail_qbail" name='bail'>
+              <label class="noselect" title="Instantly bail someone">Quick Bail</label>
+            </div>
+          </div>
+          <div class="grid_box box4">
+            <div class="re_checkbox">
+              <input type="checkbox" id="re_jail_sbail" name='bail'>
+              <label class="noselect" title="Sets bail icon to quick confirm button after first click">Speed Bail</label>
+            </div>
+          </div>
+          <div class="grid_box box5">
+            <input id='re_jail_level' name='level' type='number' min='0' max='100' placeholder="Max level" title="Max level">
+          </div>
+          <div class="grid_box box6">
+            <input id='re_jail_score' name='score' type='number' min='0' placeholder="Max score" title="Max score">
+          </div>
         </div>
-        <div class="re_checkbox">
-          <input type="checkbox" id="re_jail_qbail" name='bail'>
-          <label class="noselect" title="Instantly bail someone">Quick Bail</label>
-        </div>
-        <div class="re_checkbox">
-          <input type="checkbox" id="re_jail_sbust" name='bust'>
-          <label class="noselect" title="Sets bust icon to quick confirm button after first click">Speed Busting</label>
-        </div>
-        <div class="re_checkbox">
-          <input type="checkbox" id="re_jail_sbail" name='bail'>
-          <label class="noselect" title="Sets bail icon to quick confirm button after first click">Speed Bailing</label>
-        </div>
-      </div>
-
-      <div class="re_input_wrap">
-        <p class="re_ptitle">Filters</p>
-        <input id='re_jail_level' name='level' type='number' min='0' max='100' placeholder="Max Level">
-        <input id='re_jail_time' name='time' type='number' min='0' placeholder="Max Minutes">
-        <input id='re_jail_score' name='score' type='number' min='0' placeholder="Max Score">
       </div>
     </div>
-    <div class="re_row">
+
+
+    <div class="re_row re_message">
       <p>Showing <b><span id="shown">0</span></b> out of <b><span id="total">0</span></b> people.
     </div>
-    `);
+  `);
 
+  $('#re_disable_filters').click(function(event) {
+    event.stopPropagation();
+    let checkbox = $(this).find('input[type="checkbox"]');
+    checkbox.prop("checked", checkbox.prop("checked"));
+    filterJail(checkbox.prop("checked"));
+  });
 
   //start up - set filters and checkboxes
   chrome.runtime.sendMessage({name: "get_value", value: "re_jail"}, (response) => {
@@ -76,9 +97,6 @@ function initJail() {
         if (response.value.re_jail.filters) {
           if (response.value.re_jail.filters.level) {
             $('#re_jail_level').val(response.value.re_jail.filters.level);
-          }
-          if (response.value.re_jail.filters.time) {
-            $('#re_jail_time').val(response.value.re_jail.filters.time);
           }
           if (response.value.re_jail.filters.score) {
             $('#re_jail_score').val(response.value.re_jail.filters.score);
@@ -108,11 +126,11 @@ function initJail() {
   });
 
 
-  $('#re_jail_level,#re_jail_time,#re_jail_score').on('input', function() {
+  $('#re_jail_level,#re_jail_score').on('input', function() {
     let input = $(this).val();
     let name = $(this).attr('name');
     chrome.runtime.sendMessage({name: "set_value", value_name: "re_jail", value: {filters: {[name]: parseInt(input)}}}, (response) => {
-      filterJail();
+      filterJail($('#re_disable_filters input[type="checkbox"]').prop("checked"));
     });
   });
 
@@ -144,10 +162,14 @@ function initJail() {
 
 
   //Filter Jail Captives Function
-  function filterJail() {
+  function filterJail(disable = false) {
     var levelFilter = $('#re_jail_level').val();
-    var timeFilter = $('#re_jail_time').val();
     var scoreFilter = $('#re_jail_score').val();
+
+    if (disable) {
+      levelFilter = 0;
+      scoreFilter = 0;
+    }
 
     var total = 0;
     var shown = 0;
@@ -173,13 +195,9 @@ function initJail() {
       time = ((hours * 60) + mins);
       score = time * level;
 
-      info_wrap.attr("title", "<b>Time: </b>" + time.toLocaleString() + "<br><b>Score: </b>"+score.toLocaleString());
+      info_wrap.attr("title", "<b>Minutes: </b>" + time.toLocaleString() + "<br><b>Score: </b>"+score.toLocaleString());
 
       if (levelFilter && level > levelFilter && levelFilter != 0) {
-        $(this).hide();
-      } else
-
-      if (timeFilter && time > timeFilter && timeFilter != 0) {
         $(this).hide();
       } else
 
