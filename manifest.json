@@ -21,7 +21,6 @@
       "storage",
       "background",
       "alarms",
-      "webRequest",
       "tts"
     ],
     "host_permissions": [

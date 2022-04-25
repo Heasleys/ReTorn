@@ -169,21 +169,6 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
           $('.re_head').css("background-color", settings.header_color);
         }
 
-        $('div#events input#eastereggs').val(settings.events["eastereggs"].enabled);
-        if (settings.events["eastereggs"].enabled == true) {
-          $('div#events input#eastereggs').prop("checked", true);
-        } else {
-          $('div#events input#eastereggs').prop("checked", false);
-        }
-
-        $('div#events input#eastereggs').change(function() {
-          let value = $(this).val() == "false" ? true : false;
-          chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {events: {eastereggs: {enabled: value}}}}, (response) => {
-            $(this).val(value);
-          });
-         });
-
-
       }
   });
 

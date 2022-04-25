@@ -183,11 +183,6 @@ async function newInstall() {
               hit: "4975,9975,24975"
             }
           }
-        },
-        events: {
-          eastereggs: {
-            enabled: false
-          }
         }
       },
       re_quicklinks: {
@@ -1277,28 +1272,3 @@ self.addEventListener('notificationclick', function (event) {
   chrome.tts.stop();
 });
 
-
-/* Watch for Easter Egg Competition images being loaded in WebRequest */
-chrome.webRequest.onBeforeRequest.addListener(
-  function(details) {
-        let datenow = new Date();
-        if (datenow.getMonth() == 3) { //Only trigger Egg events if it is April
-          getValue("re_settings", "sync").then(async (response) => {
-            if (response.re_settings != undefined) {
-              var settings = response.re_settings;
-              if (settings.notifications.notifications && settings.notifications.notifications.enabled && settings.notifications.notifications.enabled == true) {
-                if (settings.events.eastereggs && settings.events.eastereggs.enabled && settings.events.eastereggs.enabled == true) {
-                  console.log(details);
-                  if (details.url && details.url.includes("step=eggImage") && details.url.includes("c=EasterEggs") && details.url.includes("access_token=")) {
-                    await createNotification("egg", "ReTorn: Egg Alert", "Egg detected on the page, look around. It could be fake!", settings.tts.enabled);
-                  }
-                }
-              }
-            }
-          }).catch(async (error) => {
-            console.log(error);
-          });
-        }
-  },
-  {urls: ["https://www.torn.com/competition.php*"], types: ["image"]}
-);
