@@ -87,7 +87,7 @@ function initJail() {
     event.stopPropagation();
     let checkbox = $(this).find('input[type="checkbox"]');
     checkbox.prop("checked", checkbox.prop("checked"));
-    filterJail(checkbox.prop("checked"));
+    filterJail();
   });
 
   //start up - set filters and checkboxes
@@ -130,7 +130,7 @@ function initJail() {
     let input = $(this).val();
     let name = $(this).attr('name');
     chrome.runtime.sendMessage({name: "set_value", value_name: "re_jail", value: {filters: {[name]: parseInt(input)}}}, (response) => {
-      filterJail($('#re_disable_filters input[type="checkbox"]').prop("checked"));
+      filterJail();
     });
   });
 
@@ -162,11 +162,11 @@ function initJail() {
 
 
   //Filter Jail Captives Function
-  function filterJail(disable = false) {
+  function filterJail() {
     var levelFilter = $('#re_jail_level').val();
     var scoreFilter = $('#re_jail_score').val();
 
-    if (disable) {
+    if ($('#re_disable_filters input[type="checkbox"]').prop("checked")) { //if disable filters checkbox is checked, set levelfilter and score filter to 0
       levelFilter = 0;
       scoreFilter = 0;
     }
