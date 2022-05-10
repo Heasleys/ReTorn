@@ -3,7 +3,10 @@ if ($('#body').attr('data-traveling') != "true" && $('#body').attr('data-abroad'
 
   //Personal Perk total
   if ($('div#personal-perks').length != 0) {
-    let totPP = $('div#personal-perks').find('ul > li.last').text().replace(/\D/g,'');
+    let totPP = 0;
+    $('#personal-perks .perk-category-buttons > li').each(function() {
+      totPP += parseInt($(this).find('.perk-category-button').attr('title').replace(/\D/g, ''));
+    });
     $('h5.box-title:contains("Personal Perks")').text( 'Personal Perks: ' + totPP).prop('title', 'Total Personal Perks: ' + totPP);
   }
 
