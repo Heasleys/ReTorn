@@ -38,7 +38,7 @@ const observer = new MutationObserver(function(mutations) {
 
 //Trade Chat Search insert Observer
 const tradeObserver = new MutationObserver(function(mutations) {
-    if ($('div[class^="chat-box"][class*="trade"]').length != 0 && $('input.re_chat_search').length == 0) {
+    if ($('div[class*="chat-box"][class*="trade"]').length != 0 && $('input.re_chat_search').length == 0) {
       insertChatSearch();
       tradeObserver.disconnect();
     }
@@ -80,7 +80,7 @@ const chatboxObserver = new MutationObserver(function(mutations) {
     if (mutation.addedNodes && mutation.addedNodes.length > 0) {
       if (mutation.addedNodes[0] && mutation.addedNodes[0].className) {
         if (mutation.addedNodes[0].className.includes('message')) {
-          monitorChats($(mutation.addedNodes[0]).closest(`div[class^="chat-box_"]`)[0]);
+          monitorChats($(mutation.addedNodes[0]).closest(`div[class*="chat-box_"]`)[0]);
         }
       }
     }
@@ -134,7 +134,7 @@ observer.observe(document, {attributes: false, childList: true, characterData: f
 
 
 function insertChatSearch() {
-  $('div[class^="chat-box-head"] > div[class^="chat-box-title"][title="Trade"]').append(`
+  $('div[class*="chat-box-head"] > div[class*="chat-box-title"][title="Trade"]').append(`
   <input type="text" class="re_chat_search" title="Filter Chat">
   `);
 
@@ -144,7 +144,7 @@ function insertChatSearch() {
 
   $('input.re_chat_search').on('input', function() {
     var v = $(this).val().toLowerCase();
-    var chats = $('div[class^="chat-box"][class*="trade"]').find('div[class^="overview"] > div[class^="message"]');
+    var chats = $('div[class*="chat-box"][class*="trade"]').find('div[class*="overview"] > div[class*="message"]');
     chats.each(function() {
       if (v == "") {
         $(this).show();
@@ -171,11 +171,11 @@ function monitorChats(target) {
           if (value.value && value.value.includes("@")) {
             let name = value.value.replace("@", "").toLowerCase();
             if (value.enabled) {
-               $(`#chatRoot div[class^="message"] > a`).filter(function() {
+               $(`#chatRoot div[class*="overview"] div[class*="message_"] > a`).filter(function() {
                  return $.trim($(this).text()).replace(":", "").toLowerCase() == name;
                }).css("color", value.color);
             } else {
-              $(`#chatRoot div[class^="message"] > a`).filter(function() {
+              $(`#chatRoot div[class*="overview"] div[class*="message_"] > a`).filter(function() {
                 return $.trim($(this).text()).replace(":", "").toLowerCase() == name;
               }).css("color", "");
             }
@@ -185,9 +185,9 @@ function monitorChats(target) {
           else {
             let text = value.value.toLowerCase();
             if (value.enabled) {
-               $(`#chatRoot div[class^="message"] > span:icontains(${text})`).parent(`div[class^="message"]`).css("background-color", value.color + "4D").css("font-weight", "bold");
+               $(`#chatRoot div[class*="overview"] div[class*="message_"] > span:icontains(${text})`).parent(`div[class*="message_"]`).css("background-color", value.color + "4D").css("font-weight", "bold");
             } else {
-              $(`#chatRoot div[class^="message"] > span:icontains(${text})`).parent(`div[class^="message"]`).css("background-color", "").css("font-weight", "normal");
+              $(`#chatRoot div[class*="overview"] div[class*="message_"] > span:icontains(${text})`).parent(`div[class*="message_"]`).css("background-color", "").css("font-weight", "normal");
             }
           }
         };
@@ -203,18 +203,18 @@ function monitorChats(target) {
 
 
 function getNamesInAllChats() {
-  $(`#chatRoot div[class^="chat-box_"]`).not(`[class^="chat-box-settings"]`).each(function() {
+  $(`#chatRoot div[class*="chat-box_"]`).not(`[class*="chat-box-settings"]`).each(function() {
     getNamesInChatbox($(this));
   })
 }
 
 function getNamesInChatbox(chatbox) {
-  let title = chatbox.find(`[class^="chat-box-title"]`).attr("title").toLowerCase();
+  let title = chatbox.find(`[class*="chat-box-title"]`).attr("title").toLowerCase();
   if (!namesList[title]) {
     namesList[title] = [];
   }
 
-  chatbox.find(`div[class^="message"] > a`).each(function() {
+  chatbox.find(`div[class*="overview"] div[class*="message_"] > a`).each(function() {
     let name = $.trim($(this).text()).replace(":", "");
     if (!namesList[title].includes(name)) {
       namesList[title].push(name);
@@ -270,7 +270,7 @@ function setChatHide() {
 function addTabComplete(chatbox, title) {
     // tabComplete using plugin from: https://www.jqueryscript.net/form/Simple-jQuery-Tab-Completion-Plugin-Tab-Complete.html
 
-  let textarea = chatbox.find(`[class^="chat-box-input"] textarea`);
+  let textarea = chatbox.find(`[class*="chat-box-input"] textarea`);
   if (textarea.length != 0) {
 
     //remove previous event listeners and reset tabcomplete list (in case of new names added from chat)
