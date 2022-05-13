@@ -65,6 +65,7 @@ function urlHandler() {
   }
 }
 
+//Organized Crimes Tab
 function crimesTab() {
   if ($('#re_ready_ocs').length == 0) {
     $('#faction-crimes').prepend(`
@@ -162,6 +163,7 @@ function crimesTab() {
   });
 }
 
+//Roster Tab
 function rosterTab() {
     tornstatsSync("roster")
     .then((data) => {
@@ -224,6 +226,7 @@ function rosterTab() {
     });
 }
 
+//Function for clicking the Roster button on desktop
 function rosterClick() {
   $('div.control-tab-section').hide();
   $('#ts-roster').data('last-tab', $('ul.control-tabs li.ui-state-default[tabindex=0]').children('a').attr('href'));
@@ -237,23 +240,29 @@ function rosterClick() {
   }
 }
 
+//function for adding the Ranked War filter header
 function rankedWar(warID) {
-  //ignore territory wars
+  //stop and ignore if territory wars
   if ($('.faction-war-info').find('a[href*="#terrName"]').length > 0) {
     return;
   }
-  //ignore raids
+  //stop and ignore on raids
   if ($('.desc-wrap.raid-members-list').length > 0) {
     return;
   }
   
   //Insert Header
-  insertHeader($("ul.f-war-list"), 'before');
-  $('#re_title').text("Ranked War Filter");
-  $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
-  <label class="re_title noselect" >Disable filters</label>
-    <input type="checkbox">
-  </span>`);
+  if ($('.re_container').length <= 0) {
+    insertHeader($("ul.f-war-list"), 'before');
+    $('#re_title').text("Ranked War Filter");
+    $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
+    <label class="re_title noselect" >Disable filters</label>
+      <input type="checkbox">
+    </span>`);
+  }
+
+
+  //click events for disable filter label and checkbox
   $('#re_disable_filters').click(function(event) {
     event.stopPropagation();
     let checkbox = $(this).find('input[type="checkbox"]');
@@ -266,6 +275,7 @@ function rankedWar(warID) {
     checkbox.trigger("change");
   });
   
+  //Add loading dots
   $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
   <p id="re_message" style="display: none;"></p>`);
   getWarID()
