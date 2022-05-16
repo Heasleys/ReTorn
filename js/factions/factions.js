@@ -254,7 +254,7 @@ function rankedWar(warID) {
   //Insert Header
   if ($('.re_container').length <= 0) {
     insertHeader($("ul.f-war-list"), 'before');
-    $('#re_title').text("Ranked War Filter");
+    $('#re_title').text("War Filter");
     $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
     <label class="re_title noselect" >Disable filters</label>
       <input type="checkbox">

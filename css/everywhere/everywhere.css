@@ -101,6 +101,7 @@
     vertical-align: top;
     margin-top: 7px;
     margin-left: 3px;
+    font-size: 12px;
 }
 
 .re_checkbox > label, .re_checkbox > input[type="checkbox"], .re_content select {
