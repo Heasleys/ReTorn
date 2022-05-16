@@ -85,6 +85,16 @@ function insertHeader(element, where, classes) {
         }
     });
 
+
+    //button or link click event to open options page for ReTorn
+    $(document).on('click', '#re_options', function(event){
+      event.stopPropagation();
+      event.preventDefault();
+      
+      chrome.runtime.sendMessage({name: "open_options"});
+    });
+
+
     if ($('div.re_content').is(":visible")) {
       $('span.re_icon').addClass('arrow_down');
     } else {

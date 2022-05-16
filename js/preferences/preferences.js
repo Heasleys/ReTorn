@@ -73,10 +73,6 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_api_key"}, (response) 
   });
 });
 
-  $("button#re_options").click(() => {
-    chrome.runtime.sendMessage({name: "open_options"});
-  });
-
 
 function synced(response) {
   if (response.message != undefined) {
