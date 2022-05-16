@@ -287,11 +287,11 @@ margin-right: auto;
 }
 
 span.re_icon.arrow_right svg path {
-  d: path('M4 6l-4 4 6 6-6 6 4 4 10-10L4 6z');
+  d: path('M4 6l-4 4 6 6-6 6 4 4 10-10L4 6z') !important;
 }
 
 span.re_icon.arrow_down svg path {
-  d: path('M16 10l-6 6-6-6-4 4 10 10 10-10-4-4z');
+  d: path('M16 10l-6 6-6-6-4 4 10 10 10-10-4-4z') !important;
 }
 
 div.re_button_wrap {
