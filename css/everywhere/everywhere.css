@@ -60,6 +60,10 @@
   margin-right: 20px !important;
 }
 
+a {
+  cursor: pointer;
+}
+
 .re_logo {
   font-family: "impact", "Arial Black";
   font-weight: normal;

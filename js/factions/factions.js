@@ -31,6 +31,14 @@ var rankedWarObserver = new MutationObserver(function(mutations, observer) {
 });
 
 
+$(document).on('click', '#re_options', function(event){
+  event.stopPropagation();
+  event.preventDefault();
+  
+  chrome.runtime.sendMessage({name: "open_options"});
+});
+
+
 
 
 urlHandler();
@@ -547,7 +555,7 @@ function tornstatsSync(type, ID) {
             reject("Request type not specified.")
           }
         } else {
-          reject("Torn Stats integration disabled or invalid.");
+          reject("Torn Stats integration disabled or invalid. <a id='re_options'>Click here</a> to view the ReTorn options.");
         }
       } else {
         console.log("ReTorn Response:", res)
