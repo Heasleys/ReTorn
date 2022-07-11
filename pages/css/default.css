@@ -1,0 +1,98 @@
+:root {
+    color: var(--re-text);
+    background-color: var(--re-background);
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    cursor: default;
+}
+
+div {
+    display: block;
+}
+
+button {
+    min-width: 80px;
+    height: 25px;
+    line-height: 18px;
+
+    color: inherit;
+    background-color: var(--re-button-bg);
+
+    border-radius: 3px;
+    border-style: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    list-style: none;
+    margin: 0;
+    outline: none;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    transition: color 100ms;
+    vertical-align: baseline;
+    user-select: none;
+    -webkit-user-select: none;
+}
+button:hover {
+    background-color: var(--re-button-bg-hover);
+}
+button:active {
+    position:relative;
+    top:1px;
+    border: none;
+}
+button:active {
+    position:relative;
+    top:1px;
+}
+
+button:focus, input:focus {
+    outline: none;
+}
+
+
+input[type=text], input[type=password] {
+    height: 25px;
+    line-height: 18px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    border: 0;
+    border-radius: 3px;
+
+    color: var(--re-text);
+    background-color: var(--re-input-bg);
+}
+
+a {
+    color: var(--re-link);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a:hover {
+    color: var(--re-link-hover);
+}
+
+label {
+    cursor: inherit;
+}
+
+
+
+
+
+.bold {
+    font-weight: bold;
+}
+
+.error {
+    color: var(--re-error);
+}

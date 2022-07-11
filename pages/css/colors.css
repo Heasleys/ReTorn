@@ -1,0 +1,56 @@
+:root.light {
+    --re-text: #000;
+    --re-text2: #8A8A8E;
+    --re-text3: #CBCBCD;
+    --re-text4: #DCDCDD;
+    --re-gray: rgb(142,142,147);
+
+    --re-dp00: #FFFFFF;
+    --re-dp01: #F3F3F3;
+    --re-dp02: #E6E6E6;
+    --re-dp03: #DADADA;
+    --re-dp04: #CECECE;
+    --re-dp05: #C1C1C1;
+    --re-dp06: #B5B5B5;
+    --re-dp08: #A9A9A9;
+    --re-dp09: #9C9C9C;
+    --re-dp10: #909090;
+}
+
+:root.dark {
+    --re-text: #FFF;
+    --re-text2: #989899;
+    --re-text3: #5A5A5E;
+    --re-text4: #404044;
+    --re-gray: rgb(152,152,157);
+
+    --re-dp00: #121212;
+    --re-dp01: #1e1e1e;
+    --re-dp02: #232323;
+    --re-dp03: #252525;
+    --re-dp04: #272727;
+    --re-dp05: #2c2c2c;
+    --re-dp06: #2e2e2e;
+    --re-dp08: #333333;
+    --re-dp09: #363636;
+    --re-dp10: #383838;
+}
+
+:root {
+    --retorn-blue: #62B4FD;
+    --retorn-yellow: #e0ce00;
+    --tornstats-blue: #8ABEEF;
+    --doctorn-purple: #663399;
+    --torntools-green: #627E0D;
+    --torn-black: #242424;
+    --re-error: #d55640;
+
+
+
+    --re-background: var(--re-dp00);
+    --re-button-bg: var(--re-dp08);
+    --re-button-bg-hover: var(--re-dp10);
+    --re-input-bg: var(--re-dp04);
+    --re-link: var(--retorn-blue);
+    --re-link-hover: #aed8fe;
+}

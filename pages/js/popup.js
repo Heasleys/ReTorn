@@ -12,6 +12,21 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 );
 
 $( document ).ready(function() {
+  chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
+    if (response.status == true) {
+      const settings = response.value.re_settings;
+
+      if (settings.notifications.notifications.enabled) {
+        $('button#toggle_notifications i').addClass('fa-bell');
+        $('button#toggle_notifications').attr('tooltip','Notifications on');
+      } else {
+        $('button#toggle_notifications i').addClass('fa-bell-slash');
+        $('button#toggle_notifications').attr('tooltip','Notifications off');
+      }
+    }
+  });
+
+
     if ($('#re_user').length != 0) {
       chrome.runtime.sendMessage({name: "get_value", value: "re_user"}, (response) => {
         console.log(response);
@@ -46,6 +61,19 @@ $( document ).ready(function() {
           errorMessage({status: false, message: "Unknown error."});
         }
       });
+    });
+
+    $("button#toggle_notifications").click(function() {
+      let icon = $(this).find('i');
+      icon.toggleClass(['fa-bell', 'fa-bell-slash']);
+      let value = icon.hasClass('fa-bell');
+      if (value) {
+        $(this).attr('tooltip', "Notifications on");
+      } else {
+        $(this).attr('tooltip', "Notifications off");
+      }
+
+      chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {notifications: {enabled: value}}}});
     });
 });
 
