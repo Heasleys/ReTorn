@@ -38,9 +38,18 @@ const observer = new MutationObserver(function(mutations) {
 
 //Trade Chat Search insert Observer
 const tradeObserver = new MutationObserver(function(mutations) {
-    if ($('div[class*="chat-box"][class*="trade"]').length != 0 && $('input.re_chat_search').length == 0) {
+    let tradetitle = $('div[class*="chat-box-head"] > div[class*="chat-box-title"][title="Trade"] span[class*="name_"]');
+    let chatsearch = $('input.re_chat_search');
+    let tradebox = $('div[class*="chat-box"][class*="trade"]');
+
+    //if trade chat box exists and chat search box does not exists yet, make it exist
+    if (tradebox.length != 0 && chatsearch.length == 0) {
       insertChatSearch();
-      tradeObserver.disconnect();
+    }
+
+    //if trade chat search already exists, check if it's in the correct place, and if not in the correct place, put it in the right place
+    if (tradebox.length != 0 && chatsearch.length == 1 && tradetitle.length == 1) {
+      tradetitle.prev('input.re_chat_search').insertAfter(tradetitle);
     }
 });
 
@@ -134,7 +143,7 @@ observer.observe(document, {attributes: false, childList: true, characterData: f
 
 
 function insertChatSearch() {
-  $('div[class*="chat-box-head"] > div[class*="chat-box-title"][title="Trade"]').append(`
+  $('div[class*="chat-box-head"] > div[class*="chat-box-title"][title="Trade"] span[class*="name_"]').after(`
   <input type="text" class="re_chat_search" title="Filter Chat">
   `);
 
