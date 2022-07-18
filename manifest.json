@@ -40,21 +40,14 @@
         "resources": [
           "/js/everywhere/interceptFetch.js",
           "/js/everywhere/torn3d.js",
-          "/lib/fontawesome/webfonts/fa-solid-900.eot",
-          "/lib/fontawesome/webfonts/fa-solid-900.svg",
-          "/lib/fontawesome/webfonts/fa-solid-900.ttf",
-          "/lib/fontawesome/webfonts/fa-solid-900.woff",
-          "/lib/fontawesome/webfonts/fa-solid-900.woff2",
-          "/lib/fontawesome/webfonts/fa-brands-400.eot",
-          "/lib/fontawesome/webfonts/fa-brands-400.svg",
           "/lib/fontawesome/webfonts/fa-brands-400.ttf",
-          "/lib/fontawesome/webfonts/fa-brands-400.woff",
           "/lib/fontawesome/webfonts/fa-brands-400.woff2",
-          "/lib/fontawesome/webfonts/fa-regular-400.eot",
-          "/lib/fontawesome/webfonts/fa-regular-400.svg",
+          "/lib/fontawesome/webfonts/fa-solid-900.ttf",
+          "/lib/fontawesome/webfonts/fa-solid-900.woff2",
           "/lib/fontawesome/webfonts/fa-regular-400.ttf",
-          "/lib/fontawesome/webfonts/fa-regular-400.woff",
-          "/lib/fontawesome/webfonts/fa-regular-400.woff2"
+          "/lib/fontawesome/webfonts/fa-regular-400.woff2",
+          "/lib/fontawesome/webfonts/fa-v4compatibility.ttf",
+          "/lib/fontawesome/webfonts/fa-v4compatibility.woff2"
          ],
         "matches": [ "https://*.torn.com/*" ]
       }
@@ -68,7 +61,7 @@
                 "https://*.torn.com/api.html*",
                 "https://wiki.torn.com/*"
             ],
-        "css": ["/lib/fontawesome/css/modified-all.min.css","css/everywhere/everywhere.css"],
+        "css": ["/lib/fontawesome/css/all.min.css","css/everywhere/everywhere.css"],
         "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/tornstats.js"],
         "run_at": "document_start"
       },

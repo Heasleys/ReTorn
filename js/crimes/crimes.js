@@ -11,6 +11,7 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
   }
 
   $('#re_title').text("Quick Crimes");
+  $('.re_head .re_title').after(`<span class="re_settings_icon"><i class="fas fa-gear" id="re_settings" title="Toggle settings view"></i></span>`);
   $('.re_content').html(`
     <p>Click on a crime's image to add it to this quick crimes list. Click the image in this list to remove it.</p>
     <div class="re_row" id="re_quick_crimes"></div>
