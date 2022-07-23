@@ -470,35 +470,31 @@ function fetchTSAPI(version, apikey, selection) {
     }
     fetch('https://www.tornstats.com/api/' + version + '/' + apikey + '/' + selection)
 
-    .then((response) => {
+    .then(response => {
       if (response.status !== 200) {
-        console.log("There was a problem connecting to Torn Stats servers. Status Code: " + response.status);
-        return reject({status: false, message: "There was a problem connecting to Torn Stats servers. Status Code: " + response.status});
-      } else {
-        response.json().then((data) => {
-          if (data.status == undefined) {
-            console.log({status: false, message: "No status detected from Torn Stats. Rejecting.", TSData: data});
-            return reject({status: false, message: "No status detected from Torn Stats. Rejecting.", TSData: data});
-          }
-
-          if (data.status == false || data.status == "false") {
-            console.log("ReTorn: Torn Stats status is false. Rejecting.", data);
-            return reject(data);
-          } else {
-            console.log("ReTorn: Torn Stats status is true.", data);
-            return resolve(data);
-          }
-        })
-        .catch((error) => {
-          reject({status: false, message: "JSON Error: " + error});
-        });
+        return reject("There was a problem connecting to Torn Stats servers. Status Code: " + response.status);
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.status == undefined) {
+        console.error("No status detected from Torn Stats. Rejecting.", data);
+        return reject("No status detected from Torn Stats.");
       }
 
+      if (data.status == false || data.status == "false") {
+        console.log("ReTorn: Torn Stats status is false. Rejecting.", data);
+        return reject(data.message);
+      } else {
+        console.log("ReTorn: Torn Stats status is true. Resolving.", data);
+        return resolve(data);
+      }
     })
     .catch((error) => {
-      console.log('Fetch Error: ', error);
-      reject({status: false, message: "Fetch Error: " + error});
+      console.error('ReTorn: fetchTSAPI error', error);
+      return reject("ReTorn: Torn Stats fetch error.");
     });
+    return true;
   });
 }
 
@@ -983,6 +979,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       return true;
     break;
 
+
     case "pull_tornstats":
       if (msg.selection == undefined) {
         sendResponse({response: false, message: "No selection given."});
@@ -991,20 +988,24 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         sendResponse({response: false, message: "No version given."});
       }
 
-      getValue("re_settings").then((response) => {
+      getValue("re_settings")
+      .then((response) => {
         let settings = response.re_settings;
         if (settings && settings.tornstats && settings.tornstats == true && settings.tornstats_apikey != undefined && settings.tornstats_apikey != "") {
           let apikey = settings.tornstats_apikey;
-          fetchTSAPI(msg.version, apikey, msg.selection).then(async (res) => {
-            await logger("api", "tornstats", "Torn Stats API", {status: res.status, message: res.message, selection: msg.selection, timestamp: Date.now()});
-            sendResponse(res);
-          }).catch(async (error) => {
-            await logger("api", "tornstats", "Torn Stats API Error", {status: error.status, message: error.message, selection: msg.selection, timestamp: Date.now()});
-            sendResponse({response: false, message: "Torn Stats API ERROR"});
-          })
+          return fetchTSAPI(msg.version, apikey, msg.selection);
+        } else {
+          throw 'Torn Stats is not linked to ReTorn or your api key is missing. Try relinking to fix this.';
         }
-      }).catch((error) => {
-        sendResponse({response: false, message: "Error getting value for Torn Stats pull."});
+      })
+      .then(async (res) => {
+        await logger("api", "tornstats", "Torn Stats API", {status: res.status, message: res.message, selection: msg.selection, timestamp: Date.now()});
+        return res;
+      })
+      .then((res) => sendResponse(res))  
+      .catch(async (error) => {
+        console.log("ReTorn: pull_tornstats error: ", error);
+        sendResponse({status: false, message: error});
       })
 
       return true;
@@ -1028,8 +1029,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     break;
 
     default:
-    sendResponse({status: false, message: "Message received does not exist."});
-    return true;
+      sendResponse({status: false, message: "Message received does not exist."});
+      return true;
     break;
   }
 
