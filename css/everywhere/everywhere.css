@@ -187,7 +187,6 @@ border-top-right-radius: 0px;
 .re_content > p {
   text-align: center;
   margin: 10px;
-  margin-bottom: 5px;
 }
 
 .re_content input[type="text"], .re_content input[type="number"], .re_content select {
@@ -213,6 +212,10 @@ border-top-right-radius: 0px;
   margin: 0.75em;
   flex-wrap: wrap;
   justify-content: space-between;
+}
+
+.re_row:empty {
+  margin: 0;
 }
 
 .re_row.re_message {
