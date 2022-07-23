@@ -489,6 +489,7 @@ function rankedWar(warID) {
   })
   .catch((err) => {
     console.log(err);
+    $('#re_loader').remove();
     $('#re_message').html(`<span class="re_error">${err}</span>`);
     $('#re_message').show();
   });
@@ -545,7 +546,7 @@ function tornstatsSync(type, ID) {
                   return resolve(data);
                 } else {
                   console.log("Torn Stats data status returned false.", data);
-                  reject("Torn Stats data status returned false.")
+                  reject(data.message)
                 }
               } else {
                 reject("Torn Stats data not found.");
