@@ -20,12 +20,10 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.tr
               profileHeader();
               tornstatsSync()
               .then((data) => {
-                return data;
-              })
-              .then((data) => {
                 parseTornStatsData(data)
               })
               .catch((err) => {
+                $('#re_loader').remove();
                 $('#re_message').html(`<span class="re_error">Torn Stats Error: ${err}</span>`);
                 $('#re_message').show();
               });
@@ -59,7 +57,10 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.tr
     insertHeader($("div.profile-wrapper.medals-wrapper"), 'before');
     $('#re_title').text("Torn Stats");
     $('.re_content').html(`
-      <div class="re_row">
+      <div class="re_row" id="re_loader">
+        <img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" style="margin-left: 0; left: 0;">
+      </div>
+      <div class="re_row" style="display: none;" id="re_ts_content">
         <div id="re_compare" style="display: none;"></div>
         <div style="display: none;">
           <div id="re_spy" style="display: none;"></div>
@@ -203,10 +204,12 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.tr
           }
         }
 
+      $('#re_ts_content').show();
       } else {
         console.error(data);
         return reject(data.message);
       }
+      $('#re_loader').remove();
     });
   }
 
