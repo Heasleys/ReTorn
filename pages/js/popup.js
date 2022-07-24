@@ -6,14 +6,18 @@ var cooldowns = ["booster", "medical", "drug"];
 function popupDataMessenger() {
   chrome.alarms.get("required_api")
   .then((alarm) => {
-    let scheduledTime = alarm.scheduledTime;
-    let now = new Date();
-    let millisDif = scheduledTime - now + 1000; //add an extra second in case data hasn't been saved yet
-    setTimeout(function(){
-      chrome.runtime.sendMessage({name: "get_popup_data"})
-      .then((response) => updatePopup(response.value.re_user_data))
-      .then(() => popupDataMessenger())
-    }, millisDif);
+    if (alarm != undefined) { //alarm might not exist immedietely, especially if user has just entered an API key, so check if alarm exists, otherwise, wait 1 second and try again
+      let scheduledTime = alarm.scheduledTime;
+      let now = new Date();
+      let millisDif = scheduledTime - now + 1000; //add an extra second in case data hasn't been saved yet
+      setTimeout(function(){
+        chrome.runtime.sendMessage({name: "get_popup_data"})
+        .then((response) => updatePopup(response.value.re_user_data))
+        .then(() => popupDataMessenger())
+      }, millisDif);
+    } else {
+      setTimeout(function() {popupDataMessenger()}, 1000);
+    }
   })
 }
 

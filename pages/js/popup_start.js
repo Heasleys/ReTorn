@@ -14,7 +14,7 @@ $("button#re_sign_in").click(function() {
   let key = $("#apikey").val();
   if (key != undefined && key.length == 16) {
     chrome.runtime.sendMessage({name: "set_api", apikey: key}, (response) => {
-      console.log(response);
+      console.log("ReTorn: Set API:", response);
       if (response.status != undefined) {
         if (response.status == true) {
           chrome.action.setPopup({popup: "pages/popup.html"});
@@ -40,7 +40,7 @@ $("button#re_options").click(function() {
 });
 
 function errorMessage(error) {
-  console.log(error);
+  console.log("Error Message", error);
   $("#re_message").text(error.message);
   $("#re_message").attr('hidden', false);
 }
