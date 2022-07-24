@@ -519,7 +519,6 @@ function pullRequiredAPI(apikey) {
     fetchAPI(apikey, 'user', 'basic,bars,icons,money,notifications,cooldowns,travel,education,networth,refills,timestamp')
     .then(async (data) => {
       await logger("api", "torn", "Required API", {type: "user", id: "", selection: "basic,bars,icons,money,notifications,cooldowns,travel,education,networth,refills,timestamp&comment=ReTorn", timestamp: Date.now()});
-      chrome.runtime.sendMessage({name: "popup_data", data: data});
       await setValue({"re_user_data": data}, "local");
       await setValue({"re_user": {"name": data.name, "player_id": data.player_id}}, "sync");
       return resolve({status: true, message: "Required Torn API has been pulled."});
@@ -1025,6 +1024,15 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       } else {
         sendResponse({response: false, message: "Error with selection, id or type."});
       }
+      return true;
+    break;
+
+    case "get_popup_data":
+       getValue("re_user_data", "local")
+      .then((response) => {
+        sendResponse({status: true, value: response});
+      })
+
       return true;
     break;
 

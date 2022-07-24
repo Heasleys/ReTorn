@@ -2,16 +2,25 @@ var interval = [];
 var bars = ["energy", "nerve", "happy", "life"];
 var cooldowns = ["booster", "medical", "drug"];
 
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-        if (msg.name === "popup_data") {
-            console.log(msg.data);
-            updatePopup(msg.data);
-        }
-        return true
-    }
-);
+//recursive function for getting updated popup data
+function popupDataMessenger() {
+  chrome.alarms.get("required_api")
+  .then((alarm) => {
+    let scheduledTime = alarm.scheduledTime;
+    let now = new Date();
+    let millisDif = scheduledTime - now + 1000; //add an extra second in case data hasn't been saved yet
+    setTimeout(function(){
+      chrome.runtime.sendMessage({name: "get_popup_data"})
+      .then((response) => updatePopup(response.value.re_user_data))
+      .then(() => popupDataMessenger())
+    }, millisDif);
+  })
+}
+
 
 $( document ).ready(function() {
+  popupDataMessenger();
+
   chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
     if (response.status == true) {
       const settings = response.value.re_settings;
@@ -26,55 +35,55 @@ $( document ).ready(function() {
     }
   });
 
+  //get the user's name, and if it's not available, go back to popup_start
+  if ($('#re_user').length != 0) {
+    chrome.runtime.sendMessage({name: "get_value", value: "re_user"}, (response) => {
+      console.log(response);
+      if (response.status == true && response.value.re_user.name != undefined) {
+        $('#re_user').text(`${response.value.re_user.name}`);
+      } else {
+        chrome.action.setPopup({popup: "pages/popup_start.html"});
+        window.location.href="/pages/popup_start.html";
+      }
+    });
+  }
+  
+  //get initial user data to populate the popup
+  chrome.runtime.sendMessage({name: "get_value", value: "re_user_data", type: "local"}, (response) => {
+    console.log(response);
+    if (response.status == true && response.value.re_user_data != undefined) {
+      var data = response.value.re_user_data;
+      updatePopup(data);
+    }
+  });
 
-    if ($('#re_user').length != 0) {
-      chrome.runtime.sendMessage({name: "get_value", value: "re_user"}, (response) => {
-        console.log(response);
-        if (response.status == true && response.value.re_user.name != undefined) {
-          $('#re_user').text(`${response.value.re_user.name}`);
-        } else {
+  $("button#re_logout").click(function() {
+    chrome.runtime.sendMessage({name: "logout"}, (response) => {
+      if (response.status != undefined) {
+        if (response.status == true) {
           chrome.action.setPopup({popup: "pages/popup_start.html"});
           window.location.href="/pages/popup_start.html";
+        } else {
+          errorMessage(response);
         }
-      });
+      } else {
+        errorMessage({status: false, message: "Unknown error."});
+      }
+    });
+  });
+
+  $("button#toggle_notifications").click(function() {
+    let icon = $(this).find('i');
+    icon.toggleClass(['fa-bell', 'fa-bell-slash']);
+    let value = icon.hasClass('fa-bell');
+    if (value) {
+      $(this).attr('tooltip', "Notifications on");
+    } else {
+      $(this).attr('tooltip', "Notifications off");
     }
 
-    chrome.runtime.sendMessage({name: "get_value", value: "re_user_data", type: "local"}, (response) => {
-      console.log(response);
-      if (response.status == true && response.value.re_user_data != undefined) {
-        var data = response.value.re_user_data;
-        updatePopup(data);
-      }
-    });
-
-    $("button#re_logout").click(function() {
-      chrome.runtime.sendMessage({name: "logout"}, (response) => {
-        console.log(response);
-        if (response.status != undefined) {
-          if (response.status == true) {
-            chrome.action.setPopup({popup: "pages/popup_start.html"});
-            window.location.href="/pages/popup_start.html";
-          } else {
-            errorMessage(response);
-          }
-        } else {
-          errorMessage({status: false, message: "Unknown error."});
-        }
-      });
-    });
-
-    $("button#toggle_notifications").click(function() {
-      let icon = $(this).find('i');
-      icon.toggleClass(['fa-bell', 'fa-bell-slash']);
-      let value = icon.hasClass('fa-bell');
-      if (value) {
-        $(this).attr('tooltip', "Notifications on");
-      } else {
-        $(this).attr('tooltip', "Notifications off");
-      }
-
-      chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {notifications: {enabled: value}}}});
-    });
+    chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {notifications: {enabled: value}}}});
+  });
 });
 
 function updatePopup(data) {
