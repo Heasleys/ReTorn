@@ -198,3 +198,29 @@ function timeDifference(current, previous) {
       return '' + Math.round(elapsed/msPerYear ) + ' years ago';
   }
 }
+
+
+
+//function for inserting error message into error message area
+function displayError(message) {
+  $('#re_loader').remove();
+  $('#re_message').html(`<span class="re_error">${message}</span>`);
+  $('#re_message').show();
+}
+
+//function for pulling data from Torn Stats
+function getTornStats(selection, version) {
+  return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({"name": "pull_tornstats", "selection": selection, "version": version}, (data) => {
+        if (data) {
+          if (data.status) {
+            console.log("ReTorn requesting data from Torn Stats:", data);
+            return resolve(data);
+          } else {
+            console.error(data);
+            return reject(data.message);
+          }
+        }
+      });
+  });
+}
