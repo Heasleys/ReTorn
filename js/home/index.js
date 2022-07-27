@@ -1,15 +1,6 @@
 
 if ($('#body').attr('data-traveling') != "true" && $('#body').attr('data-abroad') != "true") {
 
-  //Personal Perk total
-  if ($('div#personal-perks').length != 0) {
-    let totPP = 0;
-    $('#personal-perks .perk-category-buttons > li').each(function() {
-      totPP += parseInt($(this).find('.perk-category-button').attr('title').replace(/\D/g, ''));
-    });
-    $('h5.box-title:contains("Personal Perks")').text( 'Personal Perks: ' + totPP).prop('title', 'Total Personal Perks: ' + totPP);
-  }
-
   //Live Networth
   if ($(".sortable-box .title h5.box-title:contains('General Information')").length != 0) {
     chrome.runtime.sendMessage({name: "get_value", value: "re_user_data", type: "local"}, (response) => {
