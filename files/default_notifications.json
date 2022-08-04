@@ -1,0 +1,84 @@
+{
+    "all_notifications": {
+        "enabled": true,
+        "tooltip": "Toggle all notifications.",
+        "order": 2
+    },
+    "text_to_speech": {
+        "enabled": false,
+        "tooltip": "Text-to-Speech for notifications.",
+        "order": 1
+    },
+    "energy": {
+        "enabled": true,
+        "value": "100%",
+        "tooltip": "Notify when energy reaches value.",
+        "order": 3
+    },
+    "nerve": {
+        "enabled": true,
+        "value": "100%",
+        "tooltip": "Notify when nerve reaches value.",
+        "order": 4
+    },
+    "happy": {
+        "enabled": false,
+        "value": "100%",
+        "tooltip": "Notify when happy reaches value.",
+        "order": 5
+    },
+    "life": {
+        "enabled": false,
+        "value": "<100%",
+        "tooltip": "Notify when life reaches value.",
+        "order": 6
+    },
+    "drug_cooldown": {
+        "enabled": true,
+        "tooltip": "Notify when drug cooldown reaches zero.",
+        "order": 7
+    },
+    "booster_cooldown": {
+        "enabled": true,
+        "tooltip": "Notify when booster cooldown reaches zero.",
+        "order": 8
+    },
+    "medical_cooldown": {
+        "enabled": true,
+        "tooltip": "Notify when medical cooldown reaches zero.",
+        "order": 9
+    },
+    "education": {
+        "enabled": false,
+        "tooltip": "Notify when education course is complete.",
+        "order": 13
+    },
+    "messages": {
+        "enabled": true,
+        "tooltip": "Notify on new messages.",
+        "order": 10
+    },
+    "events": {
+        "enabled": true,
+        "tooltip": "Notify on new events.",
+        "order": 11
+    },
+    "travel": {
+        "enabled": true,
+        "tooltip": "Notify when you reach your destination.",
+        "order": 12
+    },
+    "chain_time": {
+        "enabled": true,
+        "value": "30,60,90,120",
+        "tooltip": "Notify when chain time goes below time values.",
+        "order": 14
+    },
+    "chain_hit": {
+        "enabled": false,
+        "value": "4975,9975,24975",
+        "tooltip": "Notify when chain hit count reaches values.",
+        "order": 15
+    }
+    
+}
