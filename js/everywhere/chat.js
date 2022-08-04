@@ -300,5 +300,20 @@ function addTabComplete(chatbox, title) {
 
   }
 }
+                //check chat messages 
+                else {
+                    let text = value.value.toLowerCase();
+                    //value can be within a word (EX: 'heas' would trigger on 'heasley' or 'heasly')
+                    if (text && text.includes("*")) {
+                        text = text.replace('*', '');
+                        $(`#chatRoot div[class*="overview"] div[class*="message_"] > span:icontains(${text})`).parent(`div[class*="message_"]`).css("background-color", value.color + "4D").css("font-weight", "bold");
+                    } else {//must be exact match
+                        const match = text.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                        const rgex = new RegExp(`\\b${match}\\b`);
+                        $(`#chatRoot div[class*="overview"] div[class*="message_"] > span`).filter(function () {
+                            return rgex.test($(this).text()); 
+                        }).parent(`div[class*="message_"]`).css("background-color", value.color + "4D").css("font-weight", "bold");
+                    }
+                }
 
 })();
