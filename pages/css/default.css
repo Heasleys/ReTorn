@@ -7,6 +7,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
     cursor: default;
+    line-height: 1.4;
 }
 
 div {
@@ -57,7 +58,7 @@ button:focus, input:focus {
 }
 
 
-input[type=text], input[type=password] {
+input[type=text], input[type=password], select {
     height: 25px;
     line-height: 18px;
     box-sizing: border-box;
@@ -95,4 +96,18 @@ label {
 
 .error {
     color: var(--re-error);
+}
+
+.text2 {
+    color: var(--re-text2);
+}
+
+.yellow {
+    color: var(--retorn-yellow);
+}
+
+.logo {
+    font-family: "impact";
+    letter-spacing: 0.5px;
+    font-weight: normal;
 }

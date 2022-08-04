@@ -99,11 +99,11 @@ html.dark div.progressbar > span#life {
 }
 
 
-div.buttons {
+div.buttons, div.messages {
     margin-top: 10px;
 }
 
-.cooldowns, .wealth, .re_messages {
+.cooldowns, .wealth {
     display: flex;
     justify-content: space-around;
     line-height: 2em;

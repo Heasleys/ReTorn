@@ -1,97 +1,34 @@
 var interval = [];
-var bars = ["energy", "nerve", "happy", "life"];
-var cooldowns = ["booster", "medical", "drug"];
+const bars = ["energy", "nerve", "happy", "life"];
+const cooldowns = ["booster", "medical", "drug"];
 
 //recursive function for getting updated popup data
 function popupDataMessenger() {
-  chrome.alarms.get("required_api")
-  .then((alarm) => {
-    if (alarm != undefined) { //alarm might not exist immedietely, especially if user has just entered an API key, so check if alarm exists, otherwise, wait 1 second and try again
-      let scheduledTime = alarm.scheduledTime;
-      let now = new Date();
-      let millisDif = scheduledTime - now + 1000; //add an extra second in case data hasn't been saved yet
-      setTimeout(function(){
-        chrome.runtime.sendMessage({name: "get_popup_data"})
-        .then((response) => updatePopup(response.value.re_user_data))
-        .then(() => popupDataMessenger())
-      }, millisDif);
-    } else {
-      setTimeout(function() {popupDataMessenger()}, 1000);
-    }
-  })
+    chrome.alarms.get("required_api")
+    .then((alarm) => {
+      if (alarm != undefined) { //alarm might not exist immedietely, especially if user has just entered an API key, so check if alarm exists, otherwise, wait 1 second and try again
+        let scheduledTime = alarm.scheduledTime;
+        let now = new Date();
+        let millisDif = scheduledTime - now + 1000; //add an extra second in case data hasn't been saved yet
+        setTimeout(function(){
+          sendMessage({name: "get_local", value: "re_user_data"})
+          .then((r) => updatePopup(r.data))
+          .then(() => popupDataMessenger())
+          .catch((error) => errorMessage(error))
+        }, millisDif);
+      } else {
+        setTimeout(function() {popupDataMessenger()}, 1000);
+      }
+    })
+    .catch((error) => console.log("ReTorn: Error getting alarm in popup.", error))
 }
 
-
-$( document ).ready(function() {
-  popupDataMessenger();
-
-  chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
-    if (response.status == true) {
-      const settings = response.value.re_settings;
-
-      if (settings.notifications.notifications.enabled) {
-        $('button#toggle_notifications i').addClass('fa-bell');
-        $('button#toggle_notifications').attr('tooltip','Notifications on');
-      } else {
-        $('button#toggle_notifications i').addClass('fa-bell-slash');
-        $('button#toggle_notifications').attr('tooltip','Notifications off');
-      }
-    }
-  });
-
-  //get the user's name, and if it's not available, go back to popup_start
-  if ($('#re_user').length != 0) {
-    chrome.runtime.sendMessage({name: "get_value", value: "re_user"}, (response) => {
-      console.log(response);
-      if (response.status == true && response.value.re_user.name != undefined) {
-        $('#re_user').text(`${response.value.re_user.name}`);
-      } else {
-        chrome.action.setPopup({popup: "pages/popup_start.html"});
-        window.location.href="/pages/popup_start.html";
-      }
-    });
-  }
-  
-  //get initial user data to populate the popup
-  chrome.runtime.sendMessage({name: "get_value", value: "re_user_data", type: "local"}, (response) => {
-    console.log(response);
-    if (response.status == true && response.value.re_user_data != undefined) {
-      var data = response.value.re_user_data;
-      updatePopup(data);
-    }
-  });
-
-  $("button#re_logout").click(function() {
-    chrome.runtime.sendMessage({name: "logout"}, (response) => {
-      if (response.status != undefined) {
-        if (response.status == true) {
-          chrome.action.setPopup({popup: "pages/popup_start.html"});
-          window.location.href="/pages/popup_start.html";
-        } else {
-          errorMessage(response);
-        }
-      } else {
-        errorMessage({status: false, message: "Unknown error."});
-      }
-    });
-  });
-
-  $("button#toggle_notifications").click(function() {
-    let icon = $(this).find('i');
-    icon.toggleClass(['fa-bell', 'fa-bell-slash']);
-    let value = icon.hasClass('fa-bell');
-    if (value) {
-      $(this).attr('tooltip', "Notifications on");
-    } else {
-      $(this).attr('tooltip', "Notifications off");
-    }
-
-    chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {notifications: {enabled: value}}}});
-  });
-});
-
 function updatePopup(data) {
-  var timestamp = data.timestamp;
+  //if (!data) window.location.href="/pages/popup_start.html";
+  $("#re_message").html(`&nbsp;`); //clear error message
+  const timestamp = data.timestamp;
+  const lastupdate = (Date.now()/1000) - timestamp;
+
   bars.forEach((bar, i) => {
     let d = data[bar];
     let perc = Math.round((d.current / d.maximum)*100);
@@ -99,10 +36,7 @@ function updatePopup(data) {
     $("#"+bar).css('width', perc+'%');
     $("#"+bar+"_text").text(d.current + "/" + d.maximum);
 
-    var incr = d.increment;
     var fulltime = d.fulltime;
-    var ticktime = d.ticktime;
-    var lastupdate = (Date.now()/1000) - timestamp;
     var lastupdate2 = lastupdate;
     var lastupdateDisplay = secondsToDhms(lastupdate);
     var timeDisplay = secondsToDhms(fulltime - lastupdate);
@@ -113,41 +47,37 @@ function updatePopup(data) {
 
     clearInterval(interval[bar]);
     interval[bar] = setInterval(function() {
-      --fulltime;
-      ++lastupdate2;
-      lastupdateDisplay = secondsToDhms(lastupdate2);
-      lastupdateDisplay = lastupdateDisplay == "" ? "0s" : lastupdateDisplay;
-      timeDisplay = secondsToDhms(fulltime - lastupdate);
-      timeDisplay = timeDisplay == "" ? "Full" : timeDisplay;
-      $("#"+bar+"_countdown").html(timeDisplay);
-      $("#last_updated").html(lastupdateDisplay);
+    --fulltime;
+    ++lastupdate2;
+    lastupdateDisplay = secondsToDhms(lastupdate2);
+    lastupdateDisplay = lastupdateDisplay == "" ? "0s" : lastupdateDisplay;
+    timeDisplay = secondsToDhms(fulltime - lastupdate);
+    timeDisplay = timeDisplay == "" ? "Full" : timeDisplay;
+    $("#"+bar+"_countdown").html(timeDisplay);
+    $("#last_updated").html(lastupdateDisplay);
     }, 1000);
-
   });
 
   cooldowns.forEach((cooldown, i) => {
-    var timestamp = data.timestamp;
-    var lastupdate = (Date.now()/1000) - timestamp;
-
-    if (data.cooldowns[cooldown] != "undefined") {
+      if (data.cooldowns[cooldown] != "undefined") {
       let seconds = data.cooldowns[cooldown];
       if ((seconds - lastupdate) > 0) {
-        var timeDisplay = secondsToDhms(seconds - lastupdate);
+          var timeDisplay = secondsToDhms(seconds - lastupdate);
       }
       timeDisplay = timeDisplay == "" ? "0h 0m 0s" : timeDisplay;
       $("#"+cooldown).text(timeDisplay);
 
       clearInterval(interval[cooldown]);
       interval[cooldown] = setInterval(function() {
-        --seconds;
+          --seconds;
 
-        if ((seconds - lastupdate) > 0) {
+          if ((seconds - lastupdate) > 0) {
           var timeDisplay = secondsToDhms(seconds - lastupdate);
-        }
-        timeDisplay = timeDisplay == "" ? "0h 0m 0s" : timeDisplay;
-        $("#"+cooldown).text(timeDisplay);
+          }
+          timeDisplay = timeDisplay == "" ? "0h 0m 0s" : timeDisplay;
+          $("#"+cooldown).text(timeDisplay);
       }, 1000);
-    }
+      }
   });
 
   if ($('div.wealth').length != 0) {
@@ -155,21 +85,100 @@ function updatePopup(data) {
     $('#points').text(data.points.toLocaleString());
     $('#vault').text("$"+data.vault_amount.toLocaleString());
   }
+
+  if ($('#status').length && data.status?.description && data.status?.description != "Okay") {
+    $('#status').html(data.status?.description);
+  } else {
+    $("#status").html(`&nbsp;`);
+  }
+
+  if (lastupdate > 20) { //the number should eventually be changed to larger than the interval the user wants to pull the api for (currently interval set to 30 seconds)
+    sendMessage({name: "get_local", value: "re_last_error"})
+    .then((r) => errorMessage(r.data)).catch((e) => errorMessage(e))
+  }
 }
 
 function secondsToDhms(seconds) {
-  seconds = Number(seconds);
-  //var d = Math.floor(seconds / (3600*24));
-  var h = Math.floor(seconds / 3600);
-  var m = Math.floor(seconds % 3600 / 60);
-  var s = Math.floor(seconds % 60);
+seconds = Number(seconds);
+//var d = Math.floor(seconds / (3600*24));
+var h = Math.floor(seconds / 3600);
+var m = Math.floor(seconds % 3600 / 60);
+var s = Math.floor(seconds % 60);
 
-  //var dDisplay = d > 0 ? d + (d == 1 ? "d " : "d ") : "";
-  var hDisplay = h > 0 ? h + (h == 1 ? "h " : "h ") : "";
-  var mDisplay = m > 0 ? m + (m == 1 ? "m " : "m ") : "";
-  var sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
+//var dDisplay = d > 0 ? d + (d == 1 ? "d " : "d ") : "";
+var hDisplay = h > 0 ? h + (h == 1 ? "h " : "h ") : "";
+var mDisplay = m > 0 ? m + (m == 1 ? "m " : "m ") : "";
+var sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
 
-  //let display = dDisplay + hDisplay + mDisplay + sDisplay;
-  let display = hDisplay + mDisplay + sDisplay;
-  return display;
+//let display = dDisplay + hDisplay + mDisplay + sDisplay;
+let display = hDisplay + mDisplay + sDisplay;
+return display;
 }
+
+$( document ).ready(function() {
+    popupDataMessenger();
+
+    sendMessage({name: "get_sync", value: "settings"})
+    .then((r) => {
+      if (r.status) {
+        const s = r?.data;
+  
+        if (s?.notifications?.notifications?.enabled) {
+          $('#toggle_notifications i').addClass('fa-bell');
+          $('#toggle_notifications').attr('tooltip','Notifications on');
+        } else {
+          $('#toggle_notifications i').addClass('fa-bell-slash');
+          $('#toggle_notifications').attr('tooltip','Notifications off');
+        }
+      }
+    }).catch((error) => errorMessage(error));
+
+    
+    //get the user's name, and if it's not available, go back to popup_start
+    if ($('#re_user').length != 0) {
+        sendMessage({name: "get_local", value: "re_user"})
+        .then((r) => {
+            if (r.status) {
+                $('#re_user').text(`${r.data?.name}`);
+            } else {
+            chrome.action.setPopup({popup: "pages/popup_start.html"});
+            window.location.href="/pages/popup_start.html";
+            }
+        })
+        .catch((error) => errorMessage(error));
+    }
+    
+    //get initial user data to populate the popup
+    sendMessage({name: "get_local", value: "re_user_data"})
+    .then((r) => {
+        if (r.status && r.data) {
+            updatePopup(r.data);
+        }
+    }).catch((error) => errorMessage(error));
+
+  
+    $("button#re_logout").click(function() {
+        sendMessage({name: "logout"})
+        .then((r) => {
+            if (r.status) {
+                chrome.action.setPopup({popup: "pages/popup_start.html"});
+                window.location.href="/pages/popup_start.html";
+            } else {
+                errorMessage(response);
+            }
+        }).catch((error) => errorMessage(error));
+    });
+  
+    $("button#toggle_notifications").click(function() {
+      let i = $(this).find('i');
+      i.toggleClass(['fa-bell', 'fa-bell-slash']);
+      let v = i.hasClass('fa-bell');
+      if (v) {
+        $(this).attr('tooltip', "Notifications on");
+      } else {
+        $(this).attr('tooltip', "Notifications off");
+      }
+  
+      //chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {notifications: {enabled: value}}}});
+    });
+});

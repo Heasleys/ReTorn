@@ -3,10 +3,6 @@ html {
     background-color: var(--re-background);
 }
 
-#re_message {
-    color: var(--re-error);
-}
-
 body {
     text-align: center;
     margin: 10px;
@@ -15,16 +11,6 @@ body {
 .title {
     font-size: 1.5em;
     font-weight: bold;
-}
-
-.logo {
-    font-family: "impact";
-    letter-spacing: 0.5px;
-    font-weight: normal;
-}
-
-.yellow {
-    color: var(--retorn-yellow);
 }
 
 div.buttons {

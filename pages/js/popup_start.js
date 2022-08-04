@@ -1,46 +1,54 @@
-$( document ).ready(function() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
-      if (response.status == true && response.value.re_settings != undefined && response.value.re_settings.darkmode != undefined && response.value.re_settings.darkmode == true) {
-        $("html").removeClass('light');
-        $("html").addClass('dark');
-      } else {
-        $("html").removeClass('dark');
-        $("html").addClass('light');
-      }
-  });
-});
-
-$("button#re_sign_in").click(function() {
-  let key = $("#apikey").val();
-  if (key != undefined && key.length == 16) {
-    chrome.runtime.sendMessage({name: "set_api", apikey: key}, (response) => {
-      console.log("ReTorn: Set API:", response);
-      if (response.status != undefined) {
-        if (response.status == true) {
-          chrome.action.setPopup({popup: "pages/popup.html"});
-          window.location.href="/pages/popup.html";
-        } else {
-          errorMessage(response);
-        }
-      } else {
-        errorMessage({status: false, message: "Unknown error."});
-      }
+const sendMessage = (msg) => {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage(msg, (data) => {
+      resolve(data);
     });
+  });
+};
+
+function errorMessage(error) {
+  if (error) {
+    console.log("Error Message", error);
+    $("#re_message").text(error.message);
+  }
+}
+
+async function loginClickEvent() {
+  $("#re_message").html(`&nbsp;`); //clear error message
+  const key = $("#apikey").val();
+  if (key && key.length == 16) {
+    sendMessage({name: "set_api", apikey: key})
+    .then((r) => {
+      if (r.status) {
+        window.location.href="/pages/popup.html";
+      } else {
+        errorMessage({status: false, message: r.message});
+      }
+    })
+    .catch((error) => errorMessage(error));
   } else {
     errorMessage({status: false, message: "Please enter a valid apikey."});
   }
-});
-
-$("button#re_options").click(function() {
-  if (chrome.runtime.openOptionsPage) {
-    chrome.runtime.openOptionsPage();
-  } else {
-    window.open(chrome.runtime.getURL('/pages/options.html'));
-  }
-});
-
-function errorMessage(error) {
-  console.log("Error Message", error);
-  $("#re_message").text(error.message);
-  $("#re_message").attr('hidden', false);
 }
+
+$( document ).ready(function() {
+  $(`#re_sign_in`).click(loginClickEvent);
+  $("#re_options").click(function() {
+    sendMessage({name: "open_options"})
+  });
+
+  //set darkmode if setting exists for it, otherwise light mode
+  sendMessage({name: "get_sync", value: "settings"})
+  .then((r) => {
+    if (r.status && !r.data?.darkmode) {
+      $("html").removeClass('dark');
+      $("html").addClass('light');
+    }
+  })
+  .catch((error) => {
+    console.log("ReTorn: Error - ", error);
+  })
+
+  sendMessage({name: "get_local", value: "re_last_error"})
+  .then((r) => errorMessage(r.data)).catch((e) => errorMessage(e))
+});
