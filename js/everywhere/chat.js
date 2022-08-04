@@ -222,7 +222,7 @@ function filterTradeChatMessages() {
     });
 }
 function monitorChats(target) {
-    if (features?.chat_highlights) {
+    if (features?.chat?.highlights?.enabled) {
         // Check for highlights
         const highlights = settings?.chat_highlights;
         if (highlights && !jQuery.isEmptyObject(highlights)) {
@@ -252,7 +252,7 @@ function monitorChats(target) {
                         const match = text.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
                         const rgex = new RegExp(`\\b${match}\\b`);
                         $(`#chatRoot div[class*="overview"] div[class*="message_"] > span`).filter(function () {
-                            return rgex.test($(this).text()); 
+                            return rgex.test($(this).text().toLowerCase()); 
                         }).parent(`div[class*="message_"]`).css("background-color", value.color + "4D").css("font-weight", "bold");
                     }
                 }
