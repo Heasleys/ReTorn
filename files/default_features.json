@@ -59,7 +59,7 @@
             }
         },
         "city": {
-            "city_find": {
+            "city_finds": {
                 "enabled": true,
                 "description": "Adds a window that shows a list of items on the city map and highlights them for easier viewing."
             }
