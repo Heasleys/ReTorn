@@ -99,7 +99,7 @@
             "description": "Adds a list of NPCs and loot times to the sidebar."
         },
         "quick_links": {
-            "enabled": false,
+            "enabled": true,
             "description": "Adds custom links to the sidebar."
         }
     },
