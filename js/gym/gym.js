@@ -48,7 +48,10 @@ function insertGymGains() {
               $(this).find('[class*="propertyContent_"]').append(`<div class="re_gym_gains"><span>+${num}% faction gym gains</span></div>`)
             }
           }
-
+          //fill with empty space in case other stats have gym gains
+          if ($(this).find('.re_gym_gains').length == 0) {
+            $(this).find('[class*="propertyContent_"]').append(`<div class="re_gym_gains"><span>&nbsp;</span></div>`)
+          }
         })
       }
     })
