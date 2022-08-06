@@ -25,3 +25,13 @@ body.dark-mode g.highcharts-label.highcharts-tooltip text {
 body.dark-mode g.highcharts-label.highcharts-tooltip path.highcharts-label-box {
   fill: rgba(51, 51, 51, 0.85) !important;
 }
+
+.re_gym_gains {
+  margin-top: 6px;
+  margin-bottom: -6px;
+}
+.re_gym_gains > span {
+  line-height: 15px;
+  color: #678c00;
+  color: var(--gym-green-color);
+}

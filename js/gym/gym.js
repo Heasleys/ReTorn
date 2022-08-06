@@ -1,7 +1,12 @@
 (function() {
 if ($('div.captcha').length == 0) {
+  if (features?.pages?.gym?.faction_gym_gains?.enabled) {
+    const observer = new MutationObserver(function(mutations) {
+      if ($('ul[class*="properties_"]').length != 0 && $('.re_gym_gains').length == 0) {
+        insertGymGains();
       }
     });
+    observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
   }
 
   if (features?.pages?.gym?.torn_stats_graph?.enabled) {
@@ -29,6 +34,18 @@ if ($('div.captcha').length == 0) {
   }
 }
 
+
+//Faction Gym Gains on training area
+function insertGymGains() {
+  sendMessage({name: "get_local", value: "re_user_data"})
+    .then((r) => {
+      if (r?.data?.faction_perks.length) {
+        $('[class*="gymContentWrapper_"]').find('ul[class*="properties_"] > li').each(function() {
+          const stat = $(this).attr("class").split('_').shift().toLowerCase();
+          for (const [key, value] of Object.entries(r?.data?.faction_perks)) {
+            if (value.toLowerCase().includes(stat+ " gym gains")) {
+              const num = value.replace(/\D/g, "");
+              $(this).find('[class*="propertyContent_"]').append(`<div class="re_gym_gains"><span>+${num}% faction gym gains</span></div>`)
             }
           }
 

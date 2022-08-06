@@ -24,6 +24,10 @@
             "torn_stats_graph": {
                 "enabled": true,
                 "description": "Adds a graph of your battle stats information from Torn Stats. Requires Torn Stats."
+            },
+            "faction_gym_gains": {
+                "enabled": true,
+                "description": "Adds text to easily know what Steadfast gym gains your factions has set for each stat."
             }
         },
         "index": {
