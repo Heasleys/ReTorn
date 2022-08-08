@@ -1,4 +1,5 @@
 (function() {
+if (features?.pages?.forums?.discord_copy?.enabled) {
 insertDiscordButtons();
   var observer = new MutationObserver(function(mutations, observer) {
     mutations.forEach(function(mutation) {
@@ -28,6 +29,8 @@ function insertDiscordButtons() {
       `);
     }
   });
+  //used as an identifier for css
+  $('.content-wrapper').addClass('re_discord_copy');
 
   $(".re_discord").click(function(e) {
     e.preventDefault();
@@ -139,5 +142,5 @@ function insertDiscordButtons() {
     }
   }
 
-
+}
 })();
