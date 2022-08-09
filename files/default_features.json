@@ -18,13 +18,13 @@
             "discord_copy": {
                 "enabled": true,
                 "description": "Adds a button to every forum post that copies the post to a Discord format."
-            },
+            }
+        },
         "api": {
             "autofill_api": {
                 "enabled": true,
                 "description": "Switch api page to 'Try it' page and autofill your api key to the api key textbox."
             }
-        }
         },
         "gym": {
             "torn_stats_graph": {
