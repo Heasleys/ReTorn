@@ -2,47 +2,50 @@
 if ($('#body').attr('data-traveling') != "true" && $('#body').attr('data-abroad') != "true") {
 
   //Live Networth
-  if ($(".sortable-box .title h5.box-title:contains('General Information')").length != 0) {
-    chrome.runtime.sendMessage({name: "get_value", value: "re_user_data", type: "local"}, (response) => {
-      console.log(response);
+  if (features?.pages?.index?.live_networth?.enabled && $(".sortable-box .title h5.box-title:contains('General Information')").length != 0) {
+    sendMessage({name: "get_local", value: "re_user_data"})
+    .then((r) => {
+    console.log(r);
 
-      if (response && response.value && response.value.re_user_data) {
-        data = response.value.re_user_data;
-        if (data.networth && data.networth.total) {
-          let liveNetworth = data.networth.total;
-          let colorClass = "";
+    if (r.status) {
+      data = r.data;
+      if (data.networth && data.networth.total) {
+        const liveNetworth = data.networth.total;
+        let colorClass = "";
 
-          let genBox = $("h5.box-title:contains('General Information')").parent('div.title').parent('div.sortable-box');
-          let genUL = genBox.find("ul.info-cont-wrap");
-          let oldNetworth = parseInt(genUL.find("li.last").attr("aria-label").replace("Networth: ", "").replaceAll(",",""));
-          let diffNetworth = Math.round(liveNetworth - oldNetworth);
+        const genBox = $("h5.box-title:contains('General Information')").parent('div.title').parent('div.sortable-box');
+        const genUL = genBox.find("ul.info-cont-wrap");
+        const oldNetworth = parseInt(genUL.find("li.last").attr("aria-label").replace("Networth: ", "").replaceAll(",",""));
+        const diffNetworth = Math.round(liveNetworth - oldNetworth);
 
-          if (diffNetworth < 0) {
-            colorClass = " red";
-          } else {
-            colorClass = " green";
-          }
-          if (diffNetworth == 0) {
-            colorClass = "";
-          }
-
-          genUL.append(`
-            <li class="last" tabindex="0" role="row" aria-label="Networth: ${liveNetworth.toLocaleString("en-US")}">
-              <span class="divider">
-                <span>Live Networth</span>
-              </span>
-              <span class="desc${colorClass}">
-                $${liveNetworth.toLocaleString("en-US")} <i class="networth-info-icon" title="Networth difference: <b class='${colorClass}'>$${diffNetworth.toLocaleString("en-US")}</b>"></i>
-              </span>
-            </li>
-          `);
+        if (diffNetworth < 0) {
+          colorClass = " red";
+        } else {
+          colorClass = " green";
         }
+        if (diffNetworth == 0) {
+          colorClass = "";
+        }
+
+        genUL.append(`
+          <li class="last" tabindex="0" role="row" aria-label="Networth: ${liveNetworth.toLocaleString("en-US")}">
+            <span class="divider">
+              <span>Live Networth</span>
+            </span>
+            <span class="desc${colorClass}">
+              $${liveNetworth.toLocaleString("en-US")} <i class="networth-info-icon" title="Networth difference: <b class='${colorClass}'>$${diffNetworth.toLocaleString("en-US")}</b>"></i>
+            </span>
+          </li>
+        `);
       }
-    });
+    }
+
+    })
+    .catch((e) => console.error(e))
   }
 
   //Effective BattleStats
-  if ($('h5.box-title:contains("Battle Stats")').length != 0) {
+  if (features?.pages?.index?.effective_stats?.enabled && $('h5.box-title:contains("Battle Stats")').length != 0) {
     var bsBox = $('h5.box-title:contains("Battle Stats")').parent('div.title').parent('div.sortable-box');
     var statsContainer = bsBox.children('div.bottom-round');
 
@@ -131,7 +134,7 @@ if ($('#body').attr('data-traveling') != "true" && $('#body').attr('data-abroad'
 }
 
 //Max button abroad
-if ($('#body').attr('data-abroad') == "true" && $('#body').attr('data-traveling') != "true") {
+if (features?.pages?.index?.max_buy_abroad?.enabled && $('#body').attr('data-abroad') == "true" && $('#body').attr('data-traveling') != "true") {
   addMaxButton();
 
   var observer = new MutationObserver(function(mutations) {
