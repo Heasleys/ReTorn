@@ -1,16 +1,25 @@
 var data;
 (function() {
   if (features?.general?.refill_reminder?.enabled) {
-    sendMessage({name: "get_local", value: "re_user_data"})
-    .then((r) => {
-      data = r.data?.refills;
-      setRefills();
-    })
-    .catch((e) => console.error(e));
+    const observer = new MutationObserver(function(mutations) {
+      if ($('#barEnergy').length != 0 && $('#barNerve').length != 0 && $('.re_refill').length == 0) {
+          setRefills();
+          observer.disconnect();
+      }
+    });
     //click event for new refill links
     $(document).on('click', '.re_refill', function(event){
       window.location = $(this).prop('href');
     });
+
+    sendMessage({name: "get_local", value: "re_user_data"})
+    .then((r) => {
+      data = r.data?.refills;
+      const target = document;
+      const obsOptions = {attributes: false, childList: true, characterData: false, subtree:true};
+      observer.observe(target, obsOptions);
+    })
+    .catch((e) => console.error(e));
   }
 })();
 
