@@ -23,7 +23,7 @@
         "api": {
             "autofill_api": {
                 "enabled": true,
-                "description": "Switch api page to 'Try it' page and autofill your api key to the api key textbox."
+                "description": "Autofull api input with your apikey, clickable and control+clickable fields, and other QoL improvements."
             }
         },
         "gym": {
