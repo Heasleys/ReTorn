@@ -25,9 +25,11 @@
             "bail": false
         }
     },
+    "faction_ocs": {
+        "show_ready": true
+    },
     "quick_crimes": {},
-    "ranked_war": {
-        "filters": {}
+    "ranked_war_filters": {
     },
     "christmas_town": {
         "cheats": {
@@ -84,7 +86,6 @@
         }
     },
     "quick_items": {
-        "items": {}
     },
     "bounty": {
         "hide": {
