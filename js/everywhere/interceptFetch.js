@@ -30,6 +30,10 @@ interceptFetch("torn.com","torn.com", (response, url) => {
 document.addEventListener('re_fetchInject', function (e)
 {
     var url=e.detail;
+/* Faction War Filters */
+ if (url.includes('faction_wars.php?') && url.includes('wardescid=rank') && features?.pages?.factions?.ranked_war_filter?.enabled) {
+    faction_ranked_wars(response);
+ }
 });
 
 
