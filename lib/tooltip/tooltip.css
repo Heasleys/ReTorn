@@ -68,7 +68,8 @@
   [data-tooltip]:after {
     z-index: 1000;
     padding: 8px;
-    width: 160px;
+    width: max-content;
+    max-width: 200px;
     background-color: #000;
     background-color: hsla(0, 0%, 20%, 0.9);
     color: #fff;
@@ -217,6 +218,6 @@
 
   .tooltip:after,
   [data-tooltip]:after {
-    width: 200px;
+    /*width: 200px;*/
     border-radius: 5px;
   }
