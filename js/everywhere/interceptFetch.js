@@ -1,3 +1,11 @@
+//interceptFetch is isolated from the rest of the files, so we need to repeat some function here.
+var settings;
+var features;
+document.addEventListener('re_fetchInject', function (r) {
+    settings = r?.detail?.settings;
+    features = r?.detail?.features;
+});
+
 function interceptFetch(url,q, callback) {
     var originalFetch = window.fetch;
     window.fetch = function() {
@@ -17,7 +25,9 @@ interceptFetch("torn.com","torn.com", (response, url) => {
 
 /* Mini Profiles */
  if (url.includes('step=getUserNameContextMenu')) {
-   miniProfiles(response);
+  if (features?.general?.last_action_mini_profile?.enabled) {
+    miniProfiles(response);
+  }
  }
 
  /* Christmas Town */
@@ -25,11 +35,7 @@ interceptFetch("torn.com","torn.com", (response, url) => {
     christmas_town(response);
   }
 
-});
 
-document.addEventListener('re_fetchInject', function (e)
-{
-    var url=e.detail;
 /* Faction War Filters */
  if (url.includes('faction_wars.php?') && url.includes('wardescid=rank') && features?.pages?.factions?.ranked_war_filter?.enabled) {
     faction_ranked_wars(response);
@@ -40,21 +46,21 @@ document.addEventListener('re_fetchInject', function (e)
 
 /* Mini Profiles */
 function miniProfiles(response) {
-    if (response && response.user) {
+    if (response?.user) {
       let message = "";
 
-        if (response.user.role === "NPC") {
+        if (response?.user?.role === "NPC") {
           //Loot Time??
         }
 
-        if (response.user.lastAction && response.user.lastAction.seconds && !isNaN(response.user.lastAction.seconds)) {
+        if (response?.user?.lastAction?.seconds && !isNaN(response.user.lastAction.seconds)) {
           message = "Last Action: ";
-          let seconds = response.user.lastAction.seconds;
+          const seconds = response.user.lastAction.seconds;
 
-          let lastaction = secondsToHmsShort(seconds);
+          const lastaction = secondsToHmsShort(seconds);
           message += lastaction;
-          let desc = $('#profile-mini-root').find('.description');
-          let subdesc = desc.find('.sub-desc');
+          const desc = $('#profile-mini-root').find('.description');
+          const subdesc = desc.find('.sub-desc');
 
           let subdescText = subdesc.text();
           if (subdescText != "") {
@@ -65,11 +71,19 @@ function miniProfiles(response) {
             subdesc.text(message);
           }
 
-          if (response.user.userID === "1468764") {
+          if (response?.user?.userID === "1468764") {
             $('#profile-mini-root').find('.icons').prepend(`<span class="right" style="font-size: 17px;" title="King of ReTorn">👑</span>`);
           }
         }
     }
+}
+
+
+
+/* Faction War Filters */
+function faction_ranked_wars(response) {
+  const e = new CustomEvent("re_ranked_wars_fetch");
+  document.dispatchEvent(e);
 }
 
 
@@ -461,37 +475,7 @@ document.addEventListener("re_ct_itemlist", function(msg) {
 });
 
 
-function secondsToHms(d) {
-    d = Number(d);
-    var days = Math.floor(d / 86400);
-    var h = Math.floor(d % 86400 / 3600);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
 
-    var dayDisplay = days > 0 ? days + (days == 1 ? " day, " : " days, ") : "";
-    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
-    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
-    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-    return dayDisplay + hDisplay + mDisplay + sDisplay;
-}
-function secondsToHmsShort(d) {
-    d = Number(d);
-    var days = Math.floor(d / 86400);
-    var h = Math.floor(d % 86400 / 3600);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
-
-    var dayDisplay = days > 0 ? days + (days == 1 ? "d " : "d ") : "";
-    var hDisplay = h > 0 ? h + (h == 1 ? "h " : "h ") : "";
-    var mDisplay = m > 0 ? m + (m == 1 ? "m " : "m ") : "";
-    var sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
-
-    if (days > 1) {
-      return days + " days";
-    }
-
-    return dayDisplay + hDisplay + mDisplay + sDisplay;
-}
 
 
 function itemURLtoName(url) {
@@ -530,4 +514,36 @@ function itemURLtoName(url) {
   }
 
   return name;
+}
+
+function secondsToHms(d) {
+  d = Number(d);
+  var days = Math.floor(d / 86400);
+  var h = Math.floor(d % 86400 / 3600);
+  var m = Math.floor(d % 3600 / 60);
+  var s = Math.floor(d % 3600 % 60);
+
+  var dayDisplay = days > 0 ? days + (days == 1 ? " day, " : " days, ") : "";
+  var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+  var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+  var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+  return dayDisplay + hDisplay + mDisplay + sDisplay;
+}
+function secondsToHmsShort(d) {
+  d = Number(d);
+  var days = Math.floor(d / 86400);
+  var h = Math.floor(d % 86400 / 3600);
+  var m = Math.floor(d % 3600 / 60);
+  var s = Math.floor(d % 3600 % 60);
+
+  var dayDisplay = days > 0 ? days + (days == 1 ? "d " : "d ") : "";
+  var hDisplay = h > 0 ? h + (h == 1 ? "h " : "h ") : "";
+  var mDisplay = m > 0 ? m + (m == 1 ? "m " : "m ") : "";
+  var sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
+
+  if (days > 1) {
+    return days + " days";
+  }
+
+  return dayDisplay + hDisplay + mDisplay + sDisplay;
 }
