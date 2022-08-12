@@ -125,10 +125,10 @@ $( document ).ready(function() {
   
         if (s?.notifications?.notifications?.enabled) {
           $('#toggle_notifications i').addClass('fa-bell');
-          $('#toggle_notifications').attr('tooltip','Notifications on');
+          $('#toggle_notifications').attr('data-tooltip','Notifications on');
         } else {
           $('#toggle_notifications i').addClass('fa-bell-slash');
-          $('#toggle_notifications').attr('tooltip','Notifications off');
+          $('#toggle_notifications').attr('data-tooltip','Notifications off');
         }
       }
     }).catch((error) => errorMessage(error));
@@ -174,9 +174,9 @@ $( document ).ready(function() {
       i.toggleClass(['fa-bell', 'fa-bell-slash']);
       let v = i.hasClass('fa-bell');
       if (v) {
-        $(this).attr('tooltip', "Notifications on");
+        $(this).attr('data-tooltip', "Notifications on");
       } else {
-        $(this).attr('tooltip', "Notifications off");
+        $(this).attr('data-tooltip', "Notifications off");
       }
   
       //chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {notifications: {enabled: value}}}});

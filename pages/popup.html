@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/default.css">
     <link rel="stylesheet" href="css/popup_start.css">
     <link rel="stylesheet" href="css/popup.css">
-    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="/lib/tooltip/tooltip.css">
 
     <script src="/lib/jquery-3.6.0.min.js"></script>
     <link href="/lib/fontawesome/css/all.min.css" rel="stylesheet">
@@ -25,35 +25,35 @@
 
     <div class="progress_bars">
       <a href="https://www.torn.com/gym.php" target="_blank">
-        <label for="energy"><span>Energy: <span id="energy_text"></span></span><span class="countdown" tooltip="Time until full" flow="left" id="energy_countdown"></span></label>
+        <label for="energy"><span>Energy: <span id="energy_text"></span></span><span class="countdown tooltip-left" data-tooltip="Time until full" id="energy_countdown"></span></label>
         <div class="progressbar">
           <span id="energy" style="width: 0%"></span>
         </div>
       </a>
 
       <a href="https://www.torn.com/crimes.php" target="_blank">
-        <label for="nerve"><span>Nerve: <span id="nerve_text"></span></span><span class="countdown" tooltip="Time until full" flow="left" id="nerve_countdown"></span></label>
+        <label for="nerve"><span>Nerve: <span id="nerve_text"></span></span><span class="countdown tooltip-left" data-tooltip="Time until full" id="nerve_countdown"></span></label>
         <div class="progressbar">
           <span id="nerve" style="width: 20%"></span>
         </div>
       </a>
 
       <a href="https://www.torn.com/item.php#candy-items" target="_blank">
-        <label for="happy"><span>Happy: <span id="happy_text"></span></span><span class="countdown" tooltip="Time until full" flow="left" id="happy_countdown"></span></label>
+        <label for="happy"><span>Happy: <span id="happy_text"></span></span><span class="countdown tooltip-left"  data-tooltip="Time until full" id="happy_countdown"></span></label>
         <div class="progressbar">
           <span id="happy" style="width: 0%"></span>
         </div>
       </a>
 
       <a href="https://www.torn.com/item.php#medical-items" target="_blank">
-        <label for="life"><span>Life: <span id="life_text"></span></span><span class="countdown" tooltip="Time until full" flow="left" id="life_countdown"></span></label>
+        <label for="life"><span>Life: <span id="life_text"></span></span><span class="countdown tooltip-left" data-tooltip="Time until full" id="life_countdown"></span></label>
         <div class="progressbar">
           <span id="life" style="width: 0%"></span>
         </div>
       </a>
 
       <a href="https://www.torn.com/factions.php?step=your#/war/chain" target="_blank" hidden>
-        <label for="life"><span>Chain: <span id="chain_text"></span></span><span class="countdown" tooltip="Time until chain cooldown" flow="left" id="chain_countdown"></span></label>
+        <label for="life"><span>Chain: <span id="chain_text"></span></span><span class="countdown tooltip-left" data-tooltip="Time until chain cooldown" id="chain_countdown"></span></label>
         <div class="progressbar">
           <span id="chain" style="width: 0%"></span>
         </div>
@@ -83,7 +83,7 @@
 
     <div class="buttons">
       <button id="re_options">Options</button>
-      <button id="toggle_notifications" tooltip="" flow="up"><i class="fa-regular"></i></button>
+      <button id="toggle_notifications" class="tooltip-top" data-tooltip=""><i class="fa-regular"></i></button>
       <button id="re_logout">Logout</button>
     </div>
 
