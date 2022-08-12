@@ -281,9 +281,10 @@ justify-content: center;
 width: 16px;
 }
 
-.re_checkbox+div.re_icon_wrap {
+.re_checkbox+div.re_icon_wrap, .re_settings_icon+div.re_icon_wrap {
   margin-left: 15px;
 }
+ 
 
 span.re_icon svg {
 display: block;
@@ -875,4 +876,65 @@ input[type=number] {
     border-color: #ab181880;
     box-shadow: rgba(214, 28, 28, 0.65) 0px 0px 2px 0px
   }
+}
+
+
+
+
+
+
+/* Torn Styled Modal */
+.re-modal {
+  display: flex;
+  flex-direction: column;
+  width: 315px;
+  height: 165px;
+  overflow: hidden;
+  border-radius: 5px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 1000001;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #333333;
+  opacity: 0;
+}
+.re-modal-header {
+  text-shadow: 0 0 2px #000000;
+  padding: 10px;
+  background: transparent linear-gradient(180deg, #555555 0%, #333333 100%) 0% 0% no-repeat padding-box;
+}
+.re-modal-separator {
+  height: 1px;
+  background: #000000;
+  box-shadow: 0 1px 0 #FFFFFF1A;
+}
+
+.re-modal-body {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#re-modal-effects-selector {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 1000002;
+  padding: 5px;
+  border: 2px solid red;
+  border-radius: 5px;
+}
+
+.re-modal-body-text {
+  margin-bottom: 20px;
+}
+
+.re-modal-body-text .re-modal-body-link {
+  color: var(--default-blue-dark-color);
+  text-decoration: none;
 }
