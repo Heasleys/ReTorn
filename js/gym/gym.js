@@ -25,7 +25,7 @@ if ($('div.captcha').length == 0) {
         <p id="re_message" hidden></p>
       </div>
       `);
-  
+    if (settings?.headers.gym.expanded) loadTornStatsGraph();
     $(".re_head").click(function() {
       if ($('div#stats.loaded').length == 0) {
         loadTornStatsGraph();
@@ -60,9 +60,8 @@ function insertGymGains() {
 
 //Load Torn Stats Battlestats graphs after header is opened
 function loadTornStatsGraph() {
-  sendMessage({name: "get_torn_stats", selection: "battlestats/graph"})
+  getTornStats("battlestats/graph")
   .then((data) => {
-    console.log(data)
     if (data) {
       $('#re_loader').remove();
       if (data.status) {
@@ -104,7 +103,7 @@ function insertTornStatsButtons() {
   $('div#buttons').show();
 
   $("button#re_tornstats_stats").click(function() {
-    sendMessage({name: "get_torn_stats", selection: "battlestats/record"})
+    sendMessage({name: "get_torn_stats", selection: "battlestats/record"})// Dont use getTornStats for this because this records new info, not pulls info
     .then((data) => {
       if (data.status) {
         Message(data);
@@ -117,7 +116,7 @@ function insertTornStatsButtons() {
 
   $("button#re_tornstats_hof").click(function() {
     const num = $(this).val();
-    sendMessage({name: "get_torn_stats", selection: "hof/" + num})
+    sendMessage({name: "get_torn_stats", selection: "hof/" + num}) //dont use getTornStats because this toggles hof, not 
     .then((data) => {
       if (data.status == true) {
         Message(data);
@@ -128,6 +127,14 @@ function insertTornStatsButtons() {
           $('#re_tornstats_hof').val(1);
           $('#re_tornstats_hof').html("ENABLE TORNSTATS HOF");
         }
+
+        const obj = {
+          "battlestats_graph": {
+            "share_hof": num
+          }
+        }
+        sendMessage({"name": "merge_local", "key": "torn_stats", "object": obj})
+        .catch((e) => console.error(e))
       }
     })
     .catch((e) => {
