@@ -1,14 +1,5 @@
 (function() {
 
-//button or link click event to open options page for ReTorn
-$(document).on('click', '#re_options', function(event){
-    event.stopPropagation();
-    event.preventDefault();
-    
-    sendMessage({"name": "open_options"})
-    .catch((e) => console.error(e))
-});
-
 insertHeader($("div.content-wrapper"), 'append');
 $('#re_title').text("Sync");
 $('.re_content').html(`
