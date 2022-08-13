@@ -456,7 +456,7 @@ function rankedWar() {
       <p>Showing <span class="re_your">0</span> of <span class="re_your_max">0</span> ${friendlyFac} members</p>
       </div>`);
 
-      $('#re_ps_select').change(function() {
+      $('#re_ps_select').change(function() {        
         if ($(this).val()) {
           $('#re_ps_wrap').show();
         } else {
@@ -467,6 +467,11 @@ function rankedWar() {
           $('#re_ps_wrap select').prop("selectedIndex", 3);
           $('#re_ps_wrap select').prop('disabled', true).hide();
           $('#re_ps_wrap input').prop('disabled', true).hide().val(1);
+        } else {
+          $('#re_ps_wrap select').prop("selectedIndex", 0);
+          $('#re_ps_wrap select').prop('disabled', false).show();
+          $('#re_ps_wrap input').prop('disabled', false).show();
+          $('#re_ps_wrap input').val("");
         }
       });
 
@@ -486,6 +491,7 @@ function rankedWar() {
       /* event listener from interceptFetch for when user status changes */
       document.addEventListener("re_ranked_wars_fetch", function(msg) {
         const filters = settings?.ranked_war_filters;
+        console.log("EVENT LISTENER re_ranked_wars_fetch")
         filterUsers(filters);
       });
 
@@ -527,12 +533,8 @@ function rankedWar() {
 
 
         if (option && inequalities && num) {
-          $('#re_ps_select').prop("selectedIndex", 0);
-          $('#re_ps_wrap select').prop("selectedIndex", 0);
-          $('#re_ps_wrap select').prop('disabled', false).show();
-          $('#re_ps_wrap input').prop('disabled', false).show();
-          $('#re_ps_wrap input').val("");
-          $('#re_ps_wrap').hide();
+          resetFilterInputs();
+
 
           const index = Object.keys(settings?.ranked_war_filters).length;
 
@@ -671,6 +673,15 @@ function filterUsers(filters) {
   $('.re_enemy_count .re_enemy_max').text($('ul.members-list > li.enemy').length);
   $('.re_your_count .re_your').text(yourCount);
   $('.re_your_count .re_your_max').text($('ul.members-list > li.your').length);
+}
+
+function resetFilterInputs() {
+  $('#re_ps_select').prop("selectedIndex", 0);
+  $('#re_ps_wrap select').prop("selectedIndex", 0);
+  $('#re_ps_wrap select').prop('disabled', false).show();
+  $('#re_ps_wrap input').prop('disabled', false).show();
+  $('#re_ps_wrap input').val("");
+  $('#re_ps_wrap').hide();
 }
 
 
