@@ -64,6 +64,9 @@ function urlHandler() {
 function crimesTab() {
   getTornStats("faction/crimes")
   .then((data) => {
+    if (!data?.status) return;
+    if (!data.members) return;
+    
     if ($('.faction-crimes-wrap > .begin-wrap .crimes-list').length == 1 && $('.faction-crimes-wrap > .organize-wrap .crimes-list').length == 1 && Object.keys(data?.members).length > 0) {
       $('.faction-crimes-wrap > .begin-wrap .crimes-list, .faction-crimes-wrap > .organize-wrap .crimes-list').each(function() {
         var crimeList = $(this);
@@ -160,6 +163,9 @@ function crimesTab() {
 function rosterTab() {
     getTornStats("faction/roster")
     .then((data) => {
+      if (!data?.status) return;
+      if (!data?.members) return;
+
       Object.entries(data.members).forEach(([key, value]) => {
         data.members[key]['userid'] = key;
         if (value.total == "N/A") {
@@ -399,7 +405,11 @@ function rankedWar() {
         }
       });
     } else {
-      $('.re_content').prepend(`<div class="re_row"><p>You must link your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account to filter by battle stats and personal stats. <a id='re_options'>Click here</a> to view the ReTorn options.</p></div>`)
+      if (data.message == "re_torn_stats_apikey is empty.") {
+        $('.re_content').prepend(`<div class="re_row"><p>You must link your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account to filter by battle stats and personal stats. <a id='re_options'>Click here</a> to view the ReTorn options.</p></div>`)
+      } else {
+        $('.re_content').prepend(`<div class="re_row"><p>${data.message}</p></div>`)
+      }
     }
     
     return psList;
