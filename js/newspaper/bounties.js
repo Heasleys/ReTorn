@@ -4,7 +4,7 @@ var startupObserver = new MutationObserver(function(mutations) {
     //mutationObserver on bounty wrap
     var target = document.querySelector('div.content-wrapper');
     bountyPageObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
-    
+
     startupObserver.disconnect();
   }
 });
@@ -27,8 +27,6 @@ var bountyPageObserver = new MutationObserver(function(mutations) {
 
 function insertHead() {
   let hide_unavailable = settings?.bounty?.hide?.unavailable;
-  console.log(hide_unavailable)
-
   let checked = "";
   if (hide_unavailable) {
     checked = "checked";
