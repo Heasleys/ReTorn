@@ -3,9 +3,9 @@
 // @author       Heasleys4hemp [1468764]
 
 (function() {
-
   var observer = new MutationObserver(function(mutations, observer) {
     addAcros();
+
     mutations.forEach(function(mutation) {
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         for (var i = 0; i < mutation.addedNodes.length; i++) {
@@ -24,8 +24,6 @@
   });
 
   var target = document.getElementById('stockmarketroot');
-
-
   observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
 
 
