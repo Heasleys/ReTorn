@@ -25,7 +25,7 @@ if ($('div.captcha').length == 0) {
         <p id="re_message" hidden></p>
       </div>
       `);
-    if (settings?.headers.gym.expanded) loadTornStatsGraph();
+    if (settings?.headers?.gym?.expanded) loadTornStatsGraph();
     $(".re_head").click(function() {
       if ($('div#stats.loaded').length == 0) {
         loadTornStatsGraph();
@@ -45,7 +45,7 @@ function insertGymGains() {
           for (const [key, value] of Object.entries(r?.data?.faction_perks)) {
             if (value.toLowerCase().includes(stat+ " gym gains")) {
               const num = value.replace(/\D/g, "");
-              $(this).find('[class*="propertyContent_"]').append(`<div class="re_gym_gains"><span>+${num}% faction gym gains</span></div>`)
+              if ($(this).find('.re_gym_gains').length == 0) $(this).find('[class*="propertyContent_"]').append(`<div class="re_gym_gains"><span>+${num}% faction gym gains</span></div>`)
             }
           }
           //fill with empty space in case other stats have gym gains
