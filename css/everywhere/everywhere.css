@@ -787,23 +787,23 @@ body.dark-mode .re_container a:active {
   color: #a71d2a;
 }
 
-input[type="number"], input[type="text"], .re_content select {
+.re_content input[type="number"], .re_content input[type="text"], .re_content select {
   color: #000;
   border: 1px solid #ccc;
 }
 
-body.dark-mode input[type="number"], body.dark-mode input[type="text"], body.dark-mode .re_content select {
+body.dark-mode .re_content input[type="number"], body.dark-mode .re_content input[type="text"], body.dark-mode .re_content select {
   border: 1px solid #222;
   background-color: #333;
   color: #ccc;
 }
 
-input[type="number"]:focus, input[type="text"]:focus, .re_content select:focus {
+.re_content input[type="number"]:focus, .re_content input[type="text"]:focus, .re_content select:focus {
   border-color: #1864ab80;
   box-shadow: rgba(28, 126, 214, 0.65) 0px 0px 2px 0px
 }
 
-input[type="number"].error, input[type="text"].error, .re_content select.error {
+.re_content input[type="number"].error, .re_content input[type="text"].error, .re_content select.error {
   animation-duration: .5s;
   animation-iteration-count: infinite;
   animation-name: error;
@@ -849,14 +849,14 @@ body.dark-mode .re_button button .close:hover {
 
 
 /* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+.re_content input::-webkit-outer-spin-button,
+.re_content input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 /* Firefox */
-input[type=number] {
+.re_content input[type=number] {
   -moz-appearance: textfield;
 }
 
