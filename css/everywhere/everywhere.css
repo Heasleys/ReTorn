@@ -3,7 +3,8 @@
   --re-title-color: #FFF;
   --re-dm-title-color: #DDD;
   --re-leftalign: auto;
-  --re-header-background: repeating-linear-gradient(90deg,var(--re-header-color),var(--re-header-color) 2px,var(--re-header-color-two) 0,var(--re-header-color-two) 4px);
+  --re-header-background-old: repeating-linear-gradient(90deg,var(--re-header-color),var(--re-header-color) 2px,var(--re-header-color-two) 0,var(--re-header-color-two) 4px);
+  --re-header-background: linear-gradient(180deg, var(--re-header-color) 0%, var(--re-header-color-two) 100%);
   --re-chat-hide-all: block;
   --re-chat-hide-players: block;
 }
