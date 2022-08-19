@@ -66,7 +66,7 @@ function crimesTab() {
   .then((data) => {
     if (!data?.status) return;
     if (!data.members) return;
-    
+
     if ($('.faction-crimes-wrap > .begin-wrap .crimes-list').length == 1 && $('.faction-crimes-wrap > .organize-wrap .crimes-list').length == 1 && Object.keys(data?.members).length > 0) {
       $('.faction-crimes-wrap > .begin-wrap .crimes-list, .faction-crimes-wrap > .organize-wrap .crimes-list').each(function() {
         var crimeList = $(this);
@@ -308,6 +308,17 @@ function rankedWar() {
       }
   
       $('.re_spy_title').click(function() {
+        const className = 'faction-war membersWrap___Ibeoe re_rankedwar';
+        const newStateObj = {
+          "opponentActive": true,
+          "sorting": {
+            "field": "playername",
+            "direction": "desc"
+          }
+        }
+        const e = new CustomEvent("updateState", {detail: {className: className, newState: newStateObj}});
+        document.dispatchEvent(e);
+
         const p = $(this).closest('.members-cont').find('ul.members-list');
         const icon = $(this).find('.re_sort_icon');
         //always sort by largest > smallest first

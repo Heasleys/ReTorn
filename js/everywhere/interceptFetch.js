@@ -1,3 +1,32 @@
+//React injection to update State https://stackoverflow.com/questions/57618119/is-it-possible-to-write-a-script-to-inject-props-on-a-react-component
+function updateState(domElement, newState) {
+  var keys = Object.keys(domElement);
+  var instanceKey = keys.filter(prop =>
+    /__reactInternalInstance/.test(prop)
+  )[0];
+  var instance = domElement[instanceKey];
+    console.log(instance);
+
+  for (var state in newState) {
+    if (newState.hasOwnProperty(state)) {
+      instance.return.stateNode.state[state] = newState[state];
+    }
+  }
+  instance.return.stateNode.updater.enqueueForceUpdate(
+    instance.return.stateNode
+  );
+}
+document.addEventListener("updateState", function(msg) {
+  console.log(msg)
+  console.log(msg.detail)
+  if (msg?.detail?.newState != undefined && msg?.detail?.className != undefined) {
+    console.log(msg.detail.className, msg.detail.newState);
+    const el = document.getElementsByClassName(msg.detail.className)[0]
+    updateState(el, msg.detail.newState);
+  }
+});
+
+
 //interceptFetch is isolated from the rest of the files, so we need to repeat some function here.
 var settings;
 var features;
