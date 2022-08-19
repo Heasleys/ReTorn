@@ -131,13 +131,6 @@ function reloadCrimes() {
                 reloadCrimes();
               })
               .catch((e) => console.error(e))
-
-              // chrome.runtime.sendMessage({name: "del_value", value: "re_qcrimes", key: cval}, (response) => {
-              //   if (response && response.status && response.status == true) {
-              //     reloadCrimes();
-              //   }
-              // });
-
             });
 
           });
