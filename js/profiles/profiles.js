@@ -1,6 +1,6 @@
 // @description  Add stat spies and profile info from torn stats to profile
 // @author       Heasleys4hemp [1468764]
-
+(function() {
 var observer = new MutationObserver(function(mutations) {
   if ($("div.profile-wrapper.medals-wrapper").length == 1 && $('div.re_container').length == 0) {
     loadTS();
@@ -16,27 +16,19 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.tr
 
 
 function loadTS() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (res) => {
-    if (res.status != undefined) {
-      if (res.value.re_settings.tornstats != undefined && res.value.re_settings.tornstats == true) {
-        if (res.value.re_settings.tornstats_apikey != undefined && res.value.re_settings.tornstats_apikey != "") {
-            profileHeader();
-            var uid = parseInt($('a[href*="/playerreport.php?step=add&userID="]').attr("href").replace(/\D/g, ""));
-            if (uid) {
-              getTornStats("spy/user/"+uid, "v2")
-              .then((data) => {
-                parseTornStatsData(data)
-              })
-              .catch((err) => {
-                displayError(`Torn Stats Error: ${err}`)
-              });
-            } else {
-              displayError(`There was an issue finding the user id. Refresh your page.`)
-            }
-        }
-      }
+  if (features?.pages?.profiles?.profile_stats?.enabled) {
+    const uid = parseInt($('a[href*="/playerreport.php?step=add&userID="]').attr("href").replace(/\D/g, ""));
+    if (uid) {
+      getTornStats(`spy/user/${uid}`)
+      .then((data) => {
+        profileHeader();
+        parseTornStatsData(data)
+      })
+      .catch((err) => displayError(`Torn Stats Error: ${err}`))
+    } else {
+      displayError(`There was an issue finding the user id. Refresh your page.`)
     }
-  });
+  }
 }
 
 function profileHeader() {
@@ -201,3 +193,4 @@ function parseTornStatsData(data) {
 
 
 
+})();
