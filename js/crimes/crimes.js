@@ -65,9 +65,23 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
                 var action = $(this).data("action");
 
                 if ($('#re_quick_crimes').find('input[name="crime"][value="'+cval+'"]').length == 0) {
-                  chrome.runtime.sendMessage({name: "set_value", value_name: "re_qcrimes", value: {crimes: {[cval]: {order: n, nerve: nval, crime: cval, text: ctext, action: action, img: imgURL}}}}, (response) => {
+                  const obj = {
+                    quick_crimes: {
+                      [cval]: {
+                        order: n, 
+                        nerve: nval,
+                        crime: cval, 
+                        text: ctext, 
+                        action: action, 
+                        img: imgURL
+                      }
+                    }
+                  }
+                  sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+                  .then((r) => {
                     reloadCrimes();
-                  });
+                  })
+                  .catch((e) => console.error(e))
                 }
               });
             }
@@ -83,14 +97,14 @@ observer.observe(target, {attributes: false, childList: true, characterData: fal
 }//if captcha
 
 function reloadCrimes() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_qcrimes"}, (response) => {
-
-    if (response.status && response.status == true) {
-      if (response.value && response.value.re_qcrimes && response.value.re_qcrimes.crimes) {
+  sendMessage({name: "get_sync", value: "settings"})
+  .then((r) => {
+    if (r?.status) {
+      if (r?.data?.quick_crimes != undefined) {
           $('#re_quick_crimes').empty();
-          var crimes = response.value.re_qcrimes.crimes;
+          const crimes = r?.data?.quick_crimes;
           let x = 0;
-          $.each(crimes, (index, crime) => {
+          Object.entries(crimes).forEach(([index, crime]) => {
             x++;
             $('#re_quick_crimes').prepend(`
               <form action="`+crime.action+`" method="post" name="crimes" style="order: `+crime.order+`">
@@ -112,11 +126,17 @@ function reloadCrimes() {
               event.preventDefault();
               var cval = $(this).data('cval');
 
-              chrome.runtime.sendMessage({name: "del_value", value: "re_qcrimes", key: cval}, (response) => {
-                if (response && response.status && response.status == true) {
-                  reloadCrimes();
-                }
-              });
+              sendMessage({"name": "delete_settings_key", "item": "quick_crimes", "key": cval})
+              .then((r) => {
+                reloadCrimes();
+              })
+              .catch((e) => console.error(e))
+
+              // chrome.runtime.sendMessage({name: "del_value", value: "re_qcrimes", key: cval}, (response) => {
+              //   if (response && response.status && response.status == true) {
+              //     reloadCrimes();
+              //   }
+              // });
 
             });
 
@@ -126,10 +146,8 @@ function reloadCrimes() {
           n++;
       }
     }
-
-
-
-  });
+  })
+  .catch((e) => console.error(e))
 }
 
 function checkSafeCrime(item) {
