@@ -520,7 +520,7 @@ function rankedWar() {
         const parent = $(this).closest('li');
         const index = parent.attr('data-index');
         if (index != undefined && parent.length > 0) {
-          sendMessage({name: "del_index", key: index, setting: "ranked_war_filters"})
+          sendMessage({name: "del_settings_index", key: index, setting: "ranked_war_filters"})
           .then((r) => {
             parent.remove();
             delete settings.ranked_war_filters[index];
