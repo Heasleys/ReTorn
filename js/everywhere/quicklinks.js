@@ -19,7 +19,7 @@ const qlink_base = `
 </div>
 `;       
 const observer = new MutationObserver(function(mutations) {
-    if ($('#sidebar > div:first-child').length != 0 && $('#re_qlinks').length == 0) {
+    if ($('#sidebar > div').first().length != 0 && $('#re_qlinks').length == 0) {
         insertQuickLinksHead();
         observer.disconnect();
     }
@@ -33,7 +33,7 @@ if (features?.sidebar?.quick_links.enabled && settings?.quick_links.length != 0)
 
   
   function insertQuickLinksHead() {
-        $('#sidebar > div:first-child').after(qlink_base);
+        $('#sidebar > div').first().after(qlink_base);
   
         if (settings?.headers["quicklinks"]?.expanded) {
           $(".re_qlinks_head").addClass("expanded");

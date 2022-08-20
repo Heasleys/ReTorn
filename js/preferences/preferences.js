@@ -26,6 +26,8 @@ $('.re_content').html(`
         .then((r) => {
             console.log(r)
         if (r.status) {
+            $("#re_message").attr('hidden', true);
+            $("#re_message").parent().attr('hidden', true);
             isSynced(r);
         } else {
             errorMessage({status: false, message: r.message});
@@ -66,12 +68,6 @@ function isSynced(r) {
         $("#re_signin_message").text(`Welcome ${rr?.data?.name}! You are signed in.`);
     })
     .catch((e) => console.error(e))
-
-    if (r.message) {
-        $("#re_message").text(r.message);
-        $("#re_message").attr('hidden', false);
-        $("#re_message").parent().attr('hidden', false);
-    }
 
     $("#re_sync").text("Synced!");
     $("#re_sync").attr("disabled", true);

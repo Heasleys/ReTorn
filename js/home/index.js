@@ -1,4 +1,4 @@
-
+(function() {
 if ($('#body').attr('data-traveling') != "true" && $('#body').attr('data-abroad') != "true") {
 
   //Live Networth
@@ -166,3 +166,4 @@ if (features?.pages?.index?.max_buy_abroad?.enabled && $('#body').attr('data-abr
     });
   }
 }
+})();

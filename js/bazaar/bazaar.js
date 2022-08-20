@@ -18,7 +18,7 @@ var observer = new MutationObserver(function(mutations) {
           });
         }
 
-        //item node as target
+        //item node as target, after clicking the shopping cart button
         if (mutation.target.className.includes('item')) {
           mutation.addedNodes.forEach(function(node) {
             //when clicking the buy button (shopping cart) in desktop mode, add max button
@@ -47,13 +47,29 @@ var observer = new MutationObserver(function(mutations) {
         if (mutation.target.className.includes('itemDescription_')) {
           addBuyMaxButton(mutation.target);
         }
+
+        //searching on tablet/mobile
+        if (mutation.target.className.includes('rowItems_')) {
+          addBuyMaxButton(mutation.target);
+        }
+        //another search on tablet/mobile
+        if (mutation.target.className.includes('itemsContainner_')) {
+          addBuyMaxButton(mutation.target);
+        }
+
+        //cancelling a buy
+        if (mutation.target.className.includes('item_')) {
+          addBuyMaxButton(mutation.target);
+        }
       }
     }
   });
 });
 
-var target = document.querySelector('div.content-wrapper');
-observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+if (features?.general?.max_buy_torn?.enabled) {
+  var target = document.querySelector('div.content-wrapper');
+  observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+}
 
 
 function addBuyAllTitle(element) {

@@ -3,7 +3,8 @@
   --re-title-color: #FFF;
   --re-dm-title-color: #DDD;
   --re-leftalign: auto;
-  --re-header-background: repeating-linear-gradient(90deg,var(--re-header-color),var(--re-header-color) 2px,var(--re-header-color-two) 0,var(--re-header-color-two) 4px);
+  --re-header-background-old: repeating-linear-gradient(90deg,var(--re-header-color),var(--re-header-color) 2px,var(--re-header-color-two) 0,var(--re-header-color-two) 4px);
+  --re-header-background: linear-gradient(180deg, var(--re-header-color) 0%, var(--re-header-color-two) 100%);
   --re-chat-hide-all: block;
   --re-chat-hide-players: block;
 }
@@ -62,6 +63,12 @@
 
 a {
   cursor: pointer;
+  color: var(--default-blue-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--default-blue-hover-color);
 }
 
 .re_logo {
@@ -584,78 +591,6 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
 }
 
 
-/* Bootstrap styled popup for TornStats events */
-.alert_popup {
-  position: relative;
-  padding: .75rem 1.25rem;
-  margin-bottom: 1rem;
-  border: 1px solid transparent;
-  border-radius: .25rem;
-  z-index: 99999;
-  position: fixed;
-  right: 0;
-  left: 0;
-  margin-right: auto;
-  margin-left: auto;
-  width: 50%;
-}
-
-.alert_popup.green {
-  color: #155724;
-  background-color: #d4edda;
-  border-color: #c3e6cb;
-}
-
-.alert_popup.red {
-  color: #721c24;
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-}
-
-.alert_popup .datetime {
-  font-size: 10px;
-}
-
-.alert_popup a {
-  color: inherit;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.alert_popup a:hover {
-  color: #000;
-  opacity: .5;
-}
-
-.alert_popup button.close {
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: .75rem 1.25rem;
-    color: inherit;
-    background-color: transparent;
-    border: 0;
-    -webkit-appearance: none;
-    float: right;
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1;
-    text-shadow: 0 1px 0 #fff;
-    opacity: .5;
-    text-transform: none;
-    overflow: visible;
-    margin: 0;
-    border-radius: 0;
-    top: -10%;
-}
-
-.alert_popup button.close:hover {
-  color: #000;
-  text-decoration: none;
-  opacity: .75;
-}
-
 
 /* Torn Styled Button */
 .re_torn_button {
@@ -787,23 +722,23 @@ body.dark-mode .re_container a:active {
   color: #a71d2a;
 }
 
-input[type="number"], input[type="text"], .re_content select {
+.re_content input[type="number"], .re_content input[type="text"], .re_content select {
   color: #000;
   border: 1px solid #ccc;
 }
 
-body.dark-mode input[type="number"], body.dark-mode input[type="text"], body.dark-mode .re_content select {
+body.dark-mode .re_content input[type="number"], body.dark-mode .re_content input[type="text"], body.dark-mode .re_content select {
   border: 1px solid #222;
   background-color: #333;
   color: #ccc;
 }
 
-input[type="number"]:focus, input[type="text"]:focus, .re_content select:focus {
+.re_content input[type="number"]:focus, .re_content input[type="text"]:focus, .re_content select:focus {
   border-color: #1864ab80;
   box-shadow: rgba(28, 126, 214, 0.65) 0px 0px 2px 0px
 }
 
-input[type="number"].error, input[type="text"].error, .re_content select.error {
+.re_content input[type="number"].error, .re_content input[type="text"].error, .re_content select.error {
   animation-duration: .5s;
   animation-iteration-count: infinite;
   animation-name: error;
@@ -849,14 +784,14 @@ body.dark-mode .re_button button .close:hover {
 
 
 /* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+.re_content input::-webkit-outer-spin-button,
+.re_content input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 /* Firefox */
-input[type=number] {
+.re_content input[type=number] {
   -moz-appearance: textfield;
 }
 
@@ -897,8 +832,8 @@ input[type=number] {
   z-index: 1000001;
   transform: translate(-50%, -50%);
   font-size: 14px;
-  color: #ffffff;
-  background-color: #333333;
+  background-color: var(--default-bg-panel-active-color);
+  border: 1px solid var(--default-tabs-active-color);
   opacity: 0;
 }
 .re-modal-header {
@@ -935,6 +870,5 @@ input[type=number] {
 }
 
 .re-modal-body-text .re-modal-body-link {
-  color: var(--default-blue-dark-color);
   text-decoration: none;
 }

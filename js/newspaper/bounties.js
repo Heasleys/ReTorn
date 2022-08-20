@@ -1,19 +1,23 @@
-var hide_unavailable;
-
 var startupObserver = new MutationObserver(function(mutations) {
   if ($(".bounties-wrap").length > 0 && $('div.re_container').length == 0) {
     insertHead();
+    //mutationObserver on bounty wrap
+    var target = document.querySelector('div.content-wrapper');
+    bountyPageObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+
     startupObserver.disconnect();
   }
 });
 
+//pagination
 var bountyPageObserver = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
     if (mutation.addedNodes && mutation.addedNodes.length > 0) {
       mutation.addedNodes.forEach(function(node) {
         if (node && node.className && node.className.includes("newspaper-wrap")) {
-          bountyPageObserver.disconnect();
-          insertHead();
+          if ($('#re_bounty_hide_unavailable').length == 0) {
+            insertHead();
+          }
         }
       });
     }
@@ -22,8 +26,9 @@ var bountyPageObserver = new MutationObserver(function(mutations) {
 
 
 function insertHead() {
+  let hide_unavailable = settings?.bounty?.hide?.unavailable;
   let checked = "";
-  if (hide_unavailable != undefined && hide_unavailable == true) {
+  if (hide_unavailable) {
     checked = "checked";
   }
   $('.bounties-wrap').before(`
@@ -36,7 +41,6 @@ function insertHead() {
     </div>
   `);
 
-  hide_unavailable = settings?.bounty?.hide?.unavailable;
 
   filterBounties(hide_unavailable);
 
@@ -47,7 +51,7 @@ function insertHead() {
     const obj = {"bounty": {"hide": {"unavailable": checked}}}
     sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
     .then((r) => {
-      hide_unavailable = checked;
+      settings.bounty.hide.unavailable = checked;
       filterBounties(checked);
     })
     .catch((e) => console.error(e))
@@ -58,10 +62,6 @@ function insertHead() {
     checkbox.prop("checked", !checkbox.prop("checked"));
     checkbox.trigger("change");
   });
-
-  //mutationObserver on bounty wrap
-  var target = document.querySelector('div.content-wrapper');
-  bountyPageObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
 }
 
 
