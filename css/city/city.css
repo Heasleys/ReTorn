@@ -47,3 +47,11 @@ p#re_city_finds a:hover {
 body.dark-mode p#re_city_finds a, body.dark-mode p#re_city_finds a:visited {
   color: #4974a5;
 }
+
+
+/* fix a css bug with racket fonts. For some reason the secondary line has the class 'fa-sm' which clashes with font-awesome */
+.m-left10.fa-sm {
+  font-size: inherit;
+    line-height: inherit;
+    vertical-align: inherit;
+}
