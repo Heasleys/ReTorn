@@ -183,8 +183,11 @@ function parseTornStatsData(data) {
 
     $('#re_ts_content').show();
     } else {
-      console.error(data);
-      return reject(data.message);
+      if (data?.message.includes('re_torn_stats_apikey')) {
+        displayError(`You do not currently have your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account linked. <a id='re_options'>Click here</a> to view the ReTorn options.`)
+      } else {
+        displayError(`Torn Stats Error - ${data?.message}`)
+      }
     }
     $('#re_loader').remove();
   });
