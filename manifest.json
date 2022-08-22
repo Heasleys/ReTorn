@@ -16,11 +16,10 @@
       "default_popup": "pages/popup_start.html"
     },
     "permissions": [
-      "management",
-      "notifications",
       "storage",
       "background",
       "alarms",
+      "notifications",
       "tts"
     ],
     "host_permissions": [
@@ -39,6 +38,7 @@
       {
         "resources": [
           "/js/everywhere/interceptFetch.js",
+          "/js/api/apiAjaxComplete.js",
           "/js/everywhere/torn3d.js",
           "/lib/fontawesome/webfonts/fa-brands-400.ttf",
           "/lib/fontawesome/webfonts/fa-brands-400.woff2",
@@ -62,7 +62,7 @@
                 "https://wiki.torn.com/*"
             ],
         "css": ["/lib/fontawesome/css/all.min.css","css/everywhere/everywhere.css"],
-        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/everywhere/chat.js", "js/everywhere/tornstats.js"],
+        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js", "js/everywhere/chat.js", "js/everywhere/tornstats_events.js"],
         "run_at": "document_start"
       },
       {
@@ -81,6 +81,7 @@
       {
         "matches": ["https://*.torn.com/api.html*"],
         "js": ["/lib/jquery-3.6.0.min.js","js/api/api.js"],
+        "css": ["css/api/api.css"],
         "run_at": "document_end"
       },
       {
