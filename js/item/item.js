@@ -1,7 +1,68 @@
-// @version      1.0.0
-// @description  Add quick items
-// @author       Heasleys4hemp [1468764]
-if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true") { //Check for captcha and traveling
+const observer = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+
+    if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+      if (mutation.target && mutation.target.nodeName && mutation.target.nodeName === "UL") {
+        if (mutation.target.parentElement && mutation.target.parentElement.id && mutation.target.parentElement.id == "category-wrap") {
+          if (mutation.previousSibling == null) {
+
+            if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-placeholder") ) {
+              return;
+            }
+            //update item qtys
+            if (mutation.target.dataset && mutation.target.dataset.info) {
+              updateQtyCategory(mutation.target, mutation.target.dataset.info);
+            }
+
+            for (const element of mutation.addedNodes) {
+              let itemID = element.dataset.item;
+              let itemCategory = element.dataset.category;
+
+              if (itemCategory == 'Medical' || itemCategory == 'Drug' || itemCategory == 'Energy Drink' || itemCategory == 'Alcohol' || itemCategory == 'Candy' || itemCategory == 'Booster' || itemCategory == 'Supply Pack' || itemCategory == 'Special' || itemCategory == 'Other') { //Donator Packs = 283
+                if ($(element).find('.re_add_qitem').length > 0) {
+                  return;
+                }
+                let nameWrap = $(element).find('span.name-wrap');
+                let actionWrap = $(element).find('ul.actions-wrap');
+                actionWrap.parent('.actions').addClass("re_qitemWrap");
+                nameWrap.addClass("re_qitemWrap");
+
+
+                let itemName = nameWrap.find('.name').text();
+                let itemQty = nameWrap.find('.qty.t-hide').text().replace('x', '');
+                if (itemQty === "") {itemQty = 1;}
+
+                  let qitemButton = `
+                  <li class="re_add_qitem" data-itemname="${itemName}" data-itemqty="${itemQty}" data-itemid="${itemID}" data-itemcategory="${itemCategory}">
+                    <span class="icon-h" title="Add to Quick Items">
+                      <button aria-label="Add ${itemName} to Quick Items" class="option-equip wai-btn qitem-btn"></button>
+                      <span class="opt-name">
+                          Add
+                          <span class="t-hide">to Quick Items</span>
+                      </span>
+                    </span>
+                  </li>
+                  `
+                  const exceptionItemList = ["403", "283"]; //tissues, donator packs
+                  if ((itemCategory == "Special" || itemCategory == "Other") && !exceptionItemList.includes(itemID)) { // Keep buttons consistent so add-button for donator pack doesn't look odd
+                    actionWrap.find('li').first().after(`<li class="left re_add_qitem"></li>`);
+                  } else {
+                    actionWrap.find('li').first().after(qitemButton);
+                  }
+              }
+
+            }//for
+
+          }
+        }
+      }
+    }
+  })
+});
+
+(function() {
+
+if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true" && features?.pages?.item?.quick_items?.enabled) { //Check for captcha and traveling  
   var n = 1;
   insertHeader($("div.equipped-items-wrap"), 'before', 'quick_items', 'after');
 
@@ -10,6 +71,11 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
     <div class="re_row" id="re_quick_items"></div>
     <div class="re_row action-wrap use-act use-action" id="re_quick_items_response" style="display: none;"></div>
     `);
+
+    $('#re_quick_items_response').on('click', '.close-act', function() {
+      $('#re_quick_items_response').hide();
+    });
+
     loadItems();
 
     $(document).on('click', '.re_add_qitem', function(event){
@@ -24,84 +90,34 @@ if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true")
       var itemCategory = thisButton.data("itemcategory");
 
       if ($('#re_quick_items').find('div[data-itemID='+itemID+']').length == 0) {
-        chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemID: itemID, order: n, itemName: itemName, itemQty: itemQty, itemCategory: itemCategory}}}}, (response) => {
-          loadItems();
-        });
-      }
-    });
-
-    var observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-
-        if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-          if (mutation.target && mutation.target.nodeName && mutation.target.nodeName === "UL") {
-            if (mutation.target.parentElement && mutation.target.parentElement.id && mutation.target.parentElement.id == "category-wrap") {
-              if (mutation.previousSibling == null) {
-
-                if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-placeholder") ) {
-                  return;
-                }
-                //update item qtys
-                if (mutation.target.dataset && mutation.target.dataset.info) {
-                  updateQtyCategory(mutation.target, mutation.target.dataset.info);
-                }
-
-                for (const element of mutation.addedNodes) {
-                  let itemID = element.dataset.item;
-                  let itemCategory = element.dataset.category;
-
-                  if (itemCategory == 'Medical' || itemCategory == 'Drug' || itemCategory == 'Energy Drink' || itemCategory == 'Alcohol' || itemCategory == 'Candy' || itemCategory == 'Booster' || itemCategory == 'Supply Pack' || itemCategory == 'Special' || itemCategory == 'Other') { //Donator Packs = 283
-                    if ($(element).find('.re_add_qitem').length > 0) {
-                      return;
-                    }
-                    let nameWrap = $(element).find('span.name-wrap');
-                    let actionWrap = $(element).find('ul.actions-wrap');
-                    actionWrap.parent('.actions').addClass("re_qitemWrap");
-                    nameWrap.addClass("re_qitemWrap");
-
-
-                    let itemName = nameWrap.find('.name').text();
-                    let itemQty = nameWrap.find('.qty.t-hide').text().replace('x', '');
-                    if (itemQty === "") {itemQty = 1;}
-
-                      let qitemButton = `
-                      <li class="re_add_qitem" data-itemname="${itemName}" data-itemqty="${itemQty}" data-itemid="${itemID}" data-itemcategory="${itemCategory}">
-                        <span class="icon-h" title="Add to Quick Items">
-                          <button aria-label="Add ${itemName} to Quick Items" class="option-equip wai-btn qitem-btn"></button>
-                          <span class="opt-name">
-                              Add
-                              <span class="t-hide">to Quick Items</span>
-                          </span>
-                        </span>
-                      </li>
-                      `
-
-                      if (itemCategory == "Special" || itemCategory == "Other" && itemID != 403 && itemID != 283) { // Keep buttons consistent so add button for donator pack doesn't look odd
-                        actionWrap.find('li').first().after(`<li class="left"></li>`);
-                      } else {
-                        actionWrap.find('li').first().after(qitemButton);
-                      }
-                  }
-
-                }//for
-
-              }
+        const obj = {
+          quick_items: {
+            [itemID]: {
+              itemID: itemID, 
+              order: n, 
+              itemName: itemName, 
+              itemQty: itemQty, 
+              itemCategory: itemCategory
             }
           }
         }
-      })
+        sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+        .then((r) => {
+          loadItems();
+        })
+        .catch((e) => console.error(e))
+      }
     });
+
 
   var target = document.querySelector('div.items-wrap');
   if (target) {
     observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
   } else {
-    console.log("Could not find items wrap.");
+    console.log("[ReTorn][Quick Items] Could not find items wrap.");
   }
-
-
-
 } //if captcha
+})();
 
 function updateQtyCategory(target, category) {
   if ($('#re_quick_items').find('div[data-category="'+category+'"]').length > 0) {
@@ -117,67 +133,73 @@ function updateQtyCategory(target, category) {
       }
 
       if (lastQty != itemQty) {
-        chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemQty: itemQty}}}})
-        $(this).attr("data-qty", itemQty);
-        $(this).find('.re_qty').text(`x${itemQty}`);
+          const obj = {
+            quick_items: {
+              [itemID]: {
+                itemQty: itemQty,
+              }
+            }
+          }
+          sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+          .then((r) => {
+            $(this).attr("data-qty", itemQty);
+            $(this).find('.re_qty').text(`x${itemQty}`);
+          })
+          .catch((e) => console.error(e))
       }
     });
   }
 }
 
-
 function loadItems() {
+  sendMessage({name: "get_sync", value: "settings"})
+  .then((r) => {
+    if (r?.status && r?.data?.quick_items) {
+        let x = 0;
+        $('#re_quick_items').empty();
+        var items = r.data.quick_items;
+        $.each(items, (index, item) => {
+          x++;
+          $('#re_quick_items').prepend(`
+            <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/medium.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="close"></span></button></div>
+          `);
+        });
+        n = x;
+        n++;
+
+        $(".close").off('click').click(function (event) {
+          event.stopPropagation();
+          event.preventDefault();
+
+          let itemID = $(this).parent().parent().data('itemid');
+
+          sendMessage({"name": "delete_settings_key", "item": "quick_items", "key": itemID})
+          .then((r) => {
+            loadItems();
+          })
+          .catch((e) => console.error(e))
+
+        });
+
+        $(".re_quse").off('click').click(function (event) {
+          event.preventDefault();
+          let parent = $(this).parent();
+          let itemID = parent.data('itemid');
+
+          sendItemUseRequest(itemID);
+
+          $("#re_quick_items_response").show();
+
+        });    
+    }
+  })
   chrome.runtime.sendMessage({name: "get_value", value: "re_qitems"}, (response) => {
     if (response.status && response.status == true) {
-      if (response.value && response.value.re_qitems && response.value.re_qitems.items) {
-          let x = 0;
-          $('#re_quick_items').empty();
-          var items = response.value.re_qitems.items;
-          $.each(items, (index, item) => {
-            x++;
-            $('#re_quick_items').prepend(`
-              <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/medium.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="close"></span></button></div>
-            `);
-          });
-          n = x;
-          n++;
 
-          $(".close").off('click').click(function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-
-            let itemID = $(this).parent().parent().data('itemid');
-
-            chrome.runtime.sendMessage({name: "del_value", value: "re_qitems", key: itemID}, (response) => {
-              if (response && response.status && response.status == true) {
-                loadItems();
-              }
-            });
-
-          });
-
-          $(".re_quse").off('click').click(function (event) {
-            event.preventDefault();
-            let parent = $(this).parent();
-            let itemID = parent.data('itemid');
-
-            sendItemUseRequest(itemID);
-
-            $("#re_quick_items_response").show();
-
-
-
-          });
-      }
     }
   });
 
 }
-
-
-$('#re_quick_items_response').on('click', '.close-act', function() {
-  $('#re_quick_items_response').hide();
-});
 
 function sendItemUseRequest(itemID) {
   var options = {
@@ -437,4 +459,10 @@ function hex2rgb(hex, opacity) {
     rgb.css += rgb.r + ',' + rgb.g + ',' + rgb.b;
     rgb.css += (opacity ? ',' + opacity : '') + ')';
     return rgb;
+}
+
+function featureCleanup() {
+  $('.re_qitemWrap').removeClass('re_qitemWrap');
+  $('.re_add_qitem').remove();
+  observer.disconnect();
 }
