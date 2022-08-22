@@ -50,7 +50,7 @@
                 "description": "Adds a button to the shops while abroad to max all item quantity fields."
             }
         },
-        "items": {
+        "item": {
             "quick_items": {
                 "enabled": true,
                 "description": "Adds a window that allows you to quickly use items."
