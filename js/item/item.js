@@ -3,9 +3,8 @@
 // @author       Heasleys4hemp [1468764]
 if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true") { //Check for captcha and traveling
   var n = 1;
-  insertHeader($("div.equipped-items-wrap"), 'before', 'after');
+  insertHeader($("div.equipped-items-wrap"), 'before', 'quick_items', 'after');
 
-  $('#re_title').text("Quick Items");
   $('.re_content').html(`
     <p>Click the <span class="option-equip wai-btn qitem-btn"></span> button on an item to add it to this quick items list.</p>
     <div class="re_row" id="re_quick_items"></div>

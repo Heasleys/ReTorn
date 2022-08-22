@@ -11,8 +11,7 @@ if ($('div.captcha').length == 0) {
 
   if (features?.pages?.gym?.torn_stats_graph?.enabled) {
     //Torn Stats Graph
-    insertHeader($("div.content-wrapper"), 'append');
-    $('#re_title').text("Torn Stats");
+    insertHeader($("div.content-wrapper"), 'append', 'torn_stats_graph');
     $('.re_content').html(`
       <div class="re_row" id="re_loader">
         <img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" style="margin-left: 0; left: 0;">
@@ -267,3 +266,6 @@ function Message(data) {
 }
 })();
 
+function featureCleanup() {
+  $('.re_container').remove();
+}

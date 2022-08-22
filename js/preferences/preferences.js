@@ -1,15 +1,15 @@
 (function() {
 
-insertHeader($("div.content-wrapper"), 'append');
-$('#re_title').text("Sync");
+insertHeader($("div.content-wrapper"), 'append', 'connect');
+$('.re_settings_icon').remove();
 $('.re_content').html(`
   <div class="re_row">
-    <p id="re_signin_message">You are not signed into ReTorn. Please enter your api key then click sync.</p>
+    <p id="re_signin_message">You are not signed into ReTorn. Please enter your api key then click connect.</p>
   </div>
   <div class="re_row">
     <div class="re_button_wrap">
       <input id="re_apikey" type="text" maxlength="16" required autocomplete="off">
-      <button class="re_torn_button" id="re_sync">Sync</button>
+      <button class="re_torn_button" id="re_sync">Connect</button>
       <button class="re_torn_button" id="re_options">Options</button>
       <button class="re_torn_button" id="re_logout" hidden>Logout</button>
     </div>
@@ -69,7 +69,7 @@ function isSynced(r) {
     })
     .catch((e) => console.error(e))
 
-    $("#re_sync").text("Synced!");
+    $("#re_sync").text("Connected!");
     $("#re_sync").attr("disabled", true);
     $("#re_sync").attr("hidden", false);
     $("#re_logout").attr("hidden", false);
@@ -80,12 +80,12 @@ function isSynced(r) {
 }
 
 function signedOut() {
-    $("#re_sync").text("Sync");
+    $("#re_sync").text("Connect");
     $("#re_sync").attr("disabled", false);
     $("#re_logout").attr("hidden", true);
     $('#re_apikey').val('');
     $("#re_apikey").show();
-    $("#re_signin_message").text(`You are not signed into ReTorn. Please enter your api key then click sync.`);
+    $("#re_signin_message").text(`You are not signed into ReTorn. Please enter your api key then click connect.`);
 }
 
 function errorMessage(error) {

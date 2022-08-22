@@ -185,6 +185,7 @@ border-top-right-radius: 0px;
   font-weight: 700;
   line-height: 16px;
   flex-grow: 2;
+  text-transform: capitalize;
 }
 
 .re_content {
@@ -288,7 +289,7 @@ justify-content: center;
 width: 16px;
 }
 
-.re_checkbox+div.re_icon_wrap, .re_settings_icon+div.re_icon_wrap {
+.re_checkbox+div.re_icon_wrap, .re_checkbox+.re_settings_icon, .re_settings_icon+div.re_icon_wrap {
   margin-left: 15px;
 }
  
@@ -491,6 +492,11 @@ body.dark-mode .re_scrollbox {
   .re_list_item.item {
     width: 127px;
   }
+
+  /* hide disable filters title on small screen */
+  #re_disable_filters .re_title {
+    display: none;
+  }
 }
 
 
@@ -590,6 +596,67 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   background-color: var(--chat-dropdown-menu-bg-color);
 }
 
+
+/* ReTorn Header Feature Settings Menu */
+
+.re_menu_block {
+  position: relative; 
+  width: 0; 
+  height: 0
+}
+
+#re_feature_settings.re_active+.re_menu_block:before {
+  content: '';
+  z-index: 2;
+  width: 30px;
+  height: 34px;
+  top: -27px;
+  right: -24px;
+  display: block;
+  position: absolute;
+  /* background: url(/images/v2/svg_icons/top_header/dropdown_slices/regular/dropdown_centre.svg) 0 0 no-repeat; */
+  background: linear-gradient(to bottom, transparent 40%, var(--re-header-color-two) 90%, rgb(51, 51, 51) 98%);
+  background-size: 100% 100%;
+}
+
+#re_feature_settings.re_active+.re_menu_block > .re_menu {
+  display: block;
+}
+
+.re_menu {
+  display: none;
+  background: #333;
+  border-radius: 5px;
+  border: 1px solid #444;
+  position: absolute;
+  width: 150px;
+  right: -59px;
+  top: 6px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 45%);
+  z-index: 1;
+}
+
+.re_menu ul li {
+  line-height: 28px;
+  width: 100%;
+  color: #ccc;
+}
+.re_menu .re_menu_item {
+  display: inline-flex;
+  align-items: center;
+}
+.re_menu .re_menu_item:hover {
+  color: #fff;
+}
+.re_menu_item i {
+  padding: 8px;
+  font-size: 16px;
+}
+.re_menu_item .re_menu_item_text {
+  font-size: 12px;
+}
+
+/* ReTorn Header Feature Settings Menu */
 
 
 /* Torn Styled Button */

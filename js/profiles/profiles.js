@@ -32,8 +32,7 @@ function loadTS() {
 }
 
 function profileHeader() {
-  insertHeader($("div.profile-wrapper.medals-wrapper"), 'before');
-  $('#re_title').text("Torn Stats");
+  insertHeader($("div.profile-wrapper.medals-wrapper"), 'before', 'profile_stats');
   $('.re_content').html(`
     <div class="re_row" id="re_loader">
       <img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" style="margin-left: 0; left: 0;">

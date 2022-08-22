@@ -30,11 +30,11 @@ $(document).ready(function() {
 });
 
 function initJail() {
-  insertHeader($("div.content-title"), 'after');
+  insertHeader($("div.content-title"), 'after', 'quick_jail');
   $('#re_title').text("Jail");
   $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
   <label class="re_title noselect" >Disable filters</label>
-    <input type="checkbox">
+    <input type="checkbox" title="Disable filters">
   </span>`)
   $('.re_content').addClass('re_jail');
 

@@ -36,8 +36,7 @@ if (features?.pages?.city?.city_finds?.enabled) {
 
 
 function cityHeader() {
-    insertHeader($("div.content-title"), 'after');
-    $('#re_title').text("City Finds");
+    insertHeader($("div.content-title"), 'after', 'city_finds');
     $('.re_content').html(`
       <div class="re_row">
         <p id="re_city_finds"><img id="re_loader" src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" style="margin-left: -20px;"></p>
@@ -118,3 +117,9 @@ function randomIntFromInterval(min, max) { // min and max included
 return Math.floor(Math.random() * (max - min + 1) + min)
 }
 })();
+
+
+function featureCleanup() {
+  $('#map').removeClass('re_city_finds');
+  $('.re_container').remove();
+}
