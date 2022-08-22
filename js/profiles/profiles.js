@@ -196,7 +196,3 @@ function parseTornStatsData(data) {
 
 
 })();
-
-function featureCleanup() {
-  $('.re_container').remove();
-}

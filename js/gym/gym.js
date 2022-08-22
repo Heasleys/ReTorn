@@ -265,7 +265,3 @@ function Message(data) {
   $('#re_message').parent().attr('hidden', false);
 }
 })();
-
-function featureCleanup() {
-  $('.re_container').remove();
-}
