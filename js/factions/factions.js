@@ -265,11 +265,34 @@ function rankedWar() {
       <label class="re_title noselect">Disable filters</label>
       <input type="checkbox" title="Disable filters">
     </span>`);
+
+    //insert button into header menu to refresh Torn Stats War data manually
+    $('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh war data</span></span></li>')
+    //click event to refresh tornstats data
+    $('#re_war_refresh').click(function() {
+      //cleanup ranked war page first
+      $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
+      <p id="re_message" style="display: none;"></p>`);
+      featureCleanup('ranked_war_filter');
+
+      getWarID()
+      .then((warID) => getTornStats("wars/"+warID, 8, true))//8 hours cached, force update
+      .then(() => {
+        loadRankedWar();//reload ranked war
+      })
+      .catch((e) => console.error(e))
+    });
   }
   
   //Add loading dots
   $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
   <p id="re_message" style="display: none;"></p>`);
+
+
+  loadRankedWar();
+}
+
+function loadRankedWar() {
   getWarID()
   //pull ranked war data from Torn Stats
   .then((warID) => getTornStats("wars/"+warID))
@@ -278,7 +301,6 @@ function rankedWar() {
     let psList = [];
     let players = {};
 
-    console.log(data);
     if (data.status) {
       if (data.faction_a && data.faction_a.members) {
         for (const [index, value] of Object.entries(data.faction_a.members)) {
@@ -306,6 +328,7 @@ function rankedWar() {
         return (b_total) < (a_total) ? 1 : -1;    
       }
   
+      //Sorting for spy column
       $('.re_spy_title').click(function() {
         const className = 'faction-war membersWrap___Ibeoe re_rankedwar';
         const newStateObj = {
@@ -339,7 +362,7 @@ function rankedWar() {
           p.find('li').sort(sort_li_asc).appendTo(p);
         }
       });
-  
+      //if another column is clicked, then remove the classes from the spy column
       $('div.members-cont > div > div[class*="tab_"]').click(function() {
         $(this).closest('div.members-cont').find('.re_spy_title .re_sort_icon').removeClass('re_asc').removeClass('re_desc');
       })
@@ -354,7 +377,7 @@ function rankedWar() {
         let userid = url.replace("/profiles.php?XID=", "");
         let psTitle, spyTitle, fullTitle;
   
-        member.find('[class*="factionWrap"').hide();
+        member.find('[class*="factionWrap"]').hide();
   
         //add personal stats to title
         if (players[userid] && players[userid]["personalstats"]) {
@@ -509,11 +532,7 @@ function rankedWar() {
       });
 
       /* event listener from interceptFetch for when user status changes */
-      document.addEventListener("re_ranked_wars_fetch", function(msg) {
-        const filters = settings?.ranked_war_filters;
-        console.log("EVENT LISTENER re_ranked_wars_fetch")
-        filterUsers(filters);
-      });
+      document.addEventListener("re_ranked_wars_fetch", re_ranked_wars_fetch_eventListener);
 
       $(document).on('click', '#re_filter_rules .re_list_item.x .remove-link .delete-subscribed-icon', function() {
         const parent = $(this).closest('li');
@@ -603,13 +622,12 @@ function rankedWar() {
     rankedWarFilters();
   })
   .catch((err) => {
-    console.log(err);
+    console.log("[ReTorn][Ranked War Filter] Error: ", err);
     $('#re_loader').remove();
     $('#re_message').html(`<span class="re_error">${err}</span>`);
     $('#re_message').show();
   });
 }
-
 
 function getWarID() {
   return new Promise((resolve, reject) => {
@@ -720,4 +738,25 @@ function showReadyOCs(checked) {
     }
   });
 }
+
+function re_ranked_wars_fetch_eventListener() {
+  const filters = settings?.ranked_war_filters;
+  if (features?.pages?.factions?.ranked_war_filter?.enabled) {
+    filterUsers(filters);
+  }
+}
+
 })();
+
+
+
+
+
+function featureCleanup(feature) {
+  if (feature === `ranked_war_filter`) {
+    $('.re_spy_title,.re_spy_col,.re_mem_count').remove();
+    $('.re_rankedwar').removeClass('re_rankedwar');
+    $('[class*="factionWrap"]').show();
+    $('ul.members-list > li').show();//show all members in the list
+  }
+}

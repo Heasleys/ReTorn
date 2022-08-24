@@ -123,7 +123,7 @@ function insertHeader(element, where, feature, classes = "") {
       break;
     }
 
-    const remove_me_button = `<li id="re_remove_feature"><span class="re_menu_item"><i class="fa-solid fa-trash-can"></i><span class="re_menu_item_text">Remove Feature</span></span></li>`
+    const remove_me_button = `<li id="re_remove_feature"><span class="re_menu_item"><i class="fa-solid fa-trash-can"></i><span class="re_menu_item_text">Remove feature</span></span></li>`
     const settings_view = `<div class="re_menu_block noselect"><div class="re_menu"><ul id="re_features_settings_view">${remove_me_button}</ul></div></div>`
 
     $('.re_head .re_title').after(`<span class="re_settings_icon"><i class="fas fa-gear" id="re_feature_settings" title="Feature Settings"></i>${settings_view}</span>`);
@@ -135,9 +135,9 @@ function insertHeader(element, where, feature, classes = "") {
       e.stopPropagation();
       $('#re_feature_settings').toggleClass('re_active');
     });
-    $('.re_menu').click(function(e) { //don't hide menu or do any other click event when clicking on the menu
-      e.stopPropagation();
-    })
+    // $('.re_menu').click(function(e) { //don't hide menu or do any other click event when clicking on the menu
+    //   e.stopPropagation();
+    // })
     $('#re_remove_feature').click(function(e) {
       const feature = $(this).closest('.re_container').data('feature');
       
@@ -155,9 +155,10 @@ function insertHeader(element, where, feature, classes = "") {
         sendMessage({"name": "merge_sync", "key": "features", "object": obj})
         .then((r) => {
           if (r?.status) {
+            features["pages"][locationURL][feature]["enabled"] = false;
             $(`.re_container[data-feature="${feature}"`).remove();
             if (typeof featureCleanup === 'function') {
-              featureCleanup();
+              featureCleanup(feature);
             }
           }
         })
@@ -194,12 +195,14 @@ function insertHeader(element, where, feature, classes = "") {
 }
 
 
-async function getTornStats(selection, cacheHours = 8) { //default cached time to 8 hours
+async function getTornStats(selection, cacheHours = 8, forced = false) { //default cached time to 8 hours
   const storageSelection = selection.replaceAll('/', '_');
   
   const local = await sendMessage({name: "get_local", value: "torn_stats"})
   .then((r) => {
     console.log("get_local re", r);
+    if (forced) return; //Force update data, regardless of previous cache data
+
     if (r?.data[storageSelection]) console.log(r.data[storageSelection])
     const cache_until = r?.data[storageSelection]?.cache_until;
     const timestamp = r?.data[storageSelection]?.timestamp;
