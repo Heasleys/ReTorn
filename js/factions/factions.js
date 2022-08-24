@@ -330,9 +330,16 @@ function loadRankedWar() {
   
       //Sorting for spy column
       $('.re_spy_title').click(function() {
-        const className = 'faction-war membersWrap___Ibeoe re_rankedwar';
+        const spyCols = $('.re_spy_title');
+        const warDiv = $(this).closest('.faction-war.re_rankedwar')
+        
+        //send out a React State Change request to sort by player name first
+        const className = 'faction-war re_rankedwar';
+
+        const opponentActive = $('.faction-names .enemy').is('[class*=active_]');
+        //opponentActive is needed in case of small screen, we don't want to force switch the faction view
         const newStateObj = {
-          "opponentActive": true,
+          "opponentActive": opponentActive,
           "sorting": {
             "field": "playername",
             "direction": "desc"
@@ -340,31 +347,40 @@ function loadRankedWar() {
         }
         const e = new CustomEvent("updateState", {detail: {className: className, newState: newStateObj}});
         document.dispatchEvent(e);
+        //React State Change Request
 
-        const p = $(this).closest('.members-cont').find('ul.members-list');
-        const icon = $(this).find('.re_sort_icon');
-        //always sort by largest > smallest first
-        let dir = true;
-        if (icon.hasClass('re_desc')) dir = false;
-  
-        $(this).closest('.members-cont').find('div[class*="sortIcon_"]').removeClass(function (index, css) {
-          return (css.match (/(^|\s)desc_\S+/g) || []).join(' ');
-        }).removeClass(function (index, css) {
-          return (css.match (/(^|\s)asc_\S+/g) || []).join(' ');
-        });
         
-        
-        if (dir) {
-          icon.removeClass('re_asc').addClass('re_desc');
-          p.find('li').sort(sort_li_desc).appendTo(p);
-        } else {
-          icon.removeClass('re_desc').addClass('re_asc');
-          p.find('li').sort(sort_li_asc).appendTo(p);
-        }
+        const clickedSpyCol = $(this); //then spyCol that was clicked
+        const clickedIcon = clickedSpyCol.find('.re_sort_icon');
+        let dir = true;  //always sort by largest > smallest first
+        if (clickedIcon.hasClass('re_desc')) dir = false;
+
+        spyCols.each(function() {//now change icon for both spyCols to the correct direction
+          const spyCol = $(this); 
+          const icon = spyCol.find('.re_sort_icon');
+
+          const memberCont = spyCol.closest('.members-cont');
+          const memberList = memberCont.find('ul.members-list');
+          
+          memberCont.find('div[class*="sortIcon_"]').removeClass(function (index, css) {
+            return (css.match (/(^|\s)desc_\S+/g) || []).join(' ');
+          }).removeClass(function (index, css) {
+            return (css.match (/(^|\s)asc_\S+/g) || []).join(' ');
+          });
+
+          //actually sort the players based on direction
+          if (dir) {
+            icon.removeClass('re_asc').addClass('re_desc');
+            memberList.find('li').sort(sort_li_desc).appendTo(memberList);
+          } else {
+            icon.removeClass('re_desc').addClass('re_asc');
+            memberList.find('li').sort(sort_li_asc).appendTo(memberList);
+          }
+        })
       });
       //if another column is clicked, then remove the classes from the spy column
       $('div.members-cont > div > div[class*="tab_"]').click(function() {
-        $(this).closest('div.members-cont').find('.re_spy_title .re_sort_icon').removeClass('re_asc').removeClass('re_desc');
+        $(this).closest('.faction-war').find('.re_spy_title .re_sort_icon').removeClass('re_asc').removeClass('re_desc');
       })
   
   
