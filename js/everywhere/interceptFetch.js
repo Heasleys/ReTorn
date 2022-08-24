@@ -28,11 +28,10 @@ document.addEventListener("updateState", function(msg) {
 
 
 //interceptFetch is isolated from the rest of the files, so we need to repeat some function here.
-var settings;
-var features;
+var ReTorn = {}; //we set this to ReTorn[settings] & ReTorn[features] because these variables will be global to the browser and we dont want conflicts with Torn
 document.addEventListener('re_fetchInject', function (r) {
-    settings = r?.detail?.settings;
-    features = r?.detail?.features;
+    ReTorn["settings"] = r?.detail?.settings;
+    ReTorn["features"] = r?.detail?.features;
 });
 
 function interceptFetch(url,q, callback) {
@@ -54,7 +53,7 @@ interceptFetch("torn.com","torn.com", (response, url) => {
 
 /* Mini Profiles */
  if (url.includes('step=getUserNameContextMenu')) {
-  if (features?.general?.last_action_mini_profile?.enabled) {
+  if (ReTorn?.features?.general?.last_action_mini_profile?.enabled) {
     miniProfiles(response);
   }
  }
@@ -66,7 +65,7 @@ interceptFetch("torn.com","torn.com", (response, url) => {
 
 
 /* Faction War Filters */
- if (url.includes('faction_wars.php?') && url.includes('wardescid=rank') && features?.pages?.factions?.ranked_war_filter?.enabled) {
+ if (url.includes('faction_wars.php?') && url.includes('wardescid=rank') && ReTorn?.features?.pages?.factions?.ranked_war_filter?.enabled) {
     faction_ranked_wars(response);
  }
 });
