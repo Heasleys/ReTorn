@@ -1,12 +1,8 @@
-// @version      1.0.0
-// @description  Add quick busts, quick bail, jail filter, law firm speed busts
-// @author       Heasleys4hemp [1468764]
 
 //Changing jail pages
 var jailPageObserver = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
     if (mutation.addedNodes && mutation.addedNodes.length > 1) {
-      //console.log(mutation);
       if (mutation.target && mutation.target && mutation.target.className && mutation.target.className.includes('users-list')) {
         setQuickActions();
         filterJail();
@@ -16,6 +12,7 @@ var jailPageObserver = new MutationObserver(function(mutations) {
   })
 });
 
+//check for userlist wrapper and if jail header exists already
 var startupObserver = new MutationObserver(function(mutations) {
   if ($(".userlist-wrapper").length == 1 && $('div.re_container').length == 0) {
     initJail();
@@ -23,8 +20,9 @@ var startupObserver = new MutationObserver(function(mutations) {
   }
 });
 
+//actual startup
 $(document).ready(function() {
-  if ($('div.captcha').length == 0) {
+  if ($('div.captcha').length == 0 && features?.pages?.jailview?.quick_jail?.enabled) {
     startupObserver.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
   }
 });
@@ -91,63 +89,102 @@ function initJail() {
   });
 
   //start up - set filters and checkboxes
-  chrome.runtime.sendMessage({name: "get_value", value: "re_jail"}, (response) => {
-    if (response.status) {
-      if (response.value && response.value.re_jail) {
-        if (response.value.re_jail.filters) {
-          if (response.value.re_jail.filters.level) {
-            $('#re_jail_level').val(response.value.re_jail.filters.level);
-          }
-          if (response.value.re_jail.filters.score) {
-            $('#re_jail_score').val(response.value.re_jail.filters.score);
-          }
-        }
-        if (response.value.re_jail.quick) {
-          if (response.value.re_jail.quick.bust) {
-              $('#re_jail_qbust').prop( "checked", response.value.re_jail.quick.bust);
-          }
-          if (response.value.re_jail.quick.bail) {
-              $('#re_jail_qbail').prop( "checked", response.value.re_jail.quick.bail);
-          }
-        }
-        if (response.value.re_jail.speed) {
-          if (response.value.re_jail.speed.bust) {
-              $('#re_jail_sbust').prop( "checked", response.value.re_jail.speed.bust);
-          }
-          if (response.value.re_jail.speed.bail) {
-              $('#re_jail_sbail').prop( "checked", response.value.re_jail.speed.bail);
-          }
-        }
-      }
-      setQuickActions();
-      filterJail();
+  const jail_settings = settings?.jail;
+
+  if (jail_settings) {
+    //filters
+    if (jail_settings?.filters?.level) {
+      $('#re_jail_level').val(jail_settings?.filters?.level);
+    }
+    if (jail_settings?.filters?.score) {
+      $('#re_jail_score').val(jail_settings?.filters?.score);
     }
 
-  });
+    //quick checkboxes
+    if (jail_settings?.quick?.bust) {
+      $('#re_jail_qbust').prop( "checked", jail_settings?.quick?.bust);
+    }
+    if (jail_settings?.quick?.bail) {
+        $('#re_jail_qbail').prop( "checked", jail_settings?.quick?.bail);
+    }
+
+    //speed checkboxes
+    if (jail_settings?.speed?.bust) {
+      $('#re_jail_sbust').prop( "checked", jail_settings?.speed?.bust);
+    }
+    if (jail_settings?.speed?.bail) {
+        $('#re_jail_sbail').prop( "checked", jail_settings?.speed?.bail);
+    }
+
+    setQuickActions();
+    filterJail();
+  }
 
 
   $('#re_jail_level,#re_jail_score').on('input', function() {
-    let input = $(this).val();
-    let name = $(this).attr('name');
-    chrome.runtime.sendMessage({name: "set_value", value_name: "re_jail", value: {filters: {[name]: parseInt(input)}}}, (response) => {
-      filterJail();
-    });
+    const input = $(this).val();
+    const name = $(this).attr('name');
+    const obj = {
+      "jail": {
+        "filters": {
+          [name]: input
+        }
+      }
+    }
+    sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+    .then((r) => {
+      if (r?.status) {
+        jail_settings["filters"][name] = input;
+        console.log("new jail settings", settings.jail)
+        filterJail();
+      }
+    })
+    .catch((e) => console.error(e))
   });
 
   $('#re_jail_qbust, #re_jail_qbail').change(function() {
-    let checked = this.checked;
-    let name = $(this).attr('name');
-    chrome.runtime.sendMessage({name: "set_value", value_name: "re_jail", value: {quick: {[name]: checked}}}, (response) => {
-      setQuickActions();
-    });
+    const checked = this.checked;
+    const name = $(this).attr('name');
+
+    const obj = {
+      "jail": {
+        "quick": {
+          [name]: checked
+        }
+      }
+    }
+    sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+    .then((r) => {
+      if (r?.status) {
+        jail_settings["quick"][name] = checked;
+        console.log("new jail settings", settings.jail)
+        setQuickActions();
+      }
+    })
+    .catch((e) => console.error(e))
   });
 
   $('#re_jail_sbust, #re_jail_sbail').change(function() {
-    let checked = this.checked;
-    let name = $(this).attr('name');
-    chrome.runtime.sendMessage({name: "set_value", value_name: "re_jail", value: {speed: {[name]: checked}}});
+    const checked = this.checked;
+    const name = $(this).attr('name');
+    const obj = {
+      "jail": {
+        "speed": {
+          [name]: checked
+        }
+      }
+    }
+    sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+    .then((r) => {
+      if (r?.status) {
+        jail_settings["speed"][name] = checked;
+        console.log("new jail settings", settings.jail)
+      }
+    })
+    .catch((e) => console.error(e))
   });
 
+  //disable filters > label
   $('.re_checkbox > label').click(function() {
     let checkbox = $(this).parent('.re_checkbox').find('input[type="checkbox"]');
     checkbox.prop("checked", !checkbox.prop("checked"));
