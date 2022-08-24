@@ -228,7 +228,7 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
 
     console.log("TS", ts);
 
-    if (ts.status) {
+    if (ts?.status) {
       let obj = {
         [storageSelection]: ts
       }
