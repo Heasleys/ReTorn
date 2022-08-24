@@ -98,6 +98,16 @@ a:hover {
     margin-left: var(--re-leftalign) !important;
   }
 }
+
+
+@media screen and (max-width: 1000px) {
+  /* hide disable filters title on small screen */
+  #re_disable_filters .re_title {
+    display: none;
+  }
+}
+
+
 .re_checkbox {
   display: flex;
   align-items: center;
@@ -491,11 +501,6 @@ body.dark-mode .re_scrollbox {
   }
   .re_list_item.item {
     width: 127px;
-  }
-
-  /* hide disable filters title on small screen */
-  #re_disable_filters .re_title {
-    display: none;
   }
 }
 
