@@ -507,13 +507,24 @@ function loadRankedWar() {
       </div>
       `);
 
+      const onlineIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="default___qrLNi " filter="" fill="url(&quot;#svg_status_online&quot;)" stroke="#fff" stroke-width="0" width="13" height="13" viewBox="-1.5 -1.2 14 14"><path d="M0,6a6,6,0,1,1,6,6A6,6,0,0,1,0,6Z"></path></svg>`;
+      const idleIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="default___qrLNi " filter="" fill="url(&quot;#svg_status_idle&quot;)" stroke="#fff" stroke-width="0" width="13" height="13" viewBox="-1.5 -1.2 14 14"><g xmlns="http://www.w3.org/2000/svg"><path d="M0,6a6,6,0,1,1,6,6A6,6,0,0,1,0,6Z"></path><path d="M5,3V7H9V6H6V3Z" fill="#f2f2f2"></path></g></svg>`;
+      const offlineIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="default___qrLNi " filter="" fill="url(&quot;#svg_status_offline&quot;)" stroke="#fff" stroke-width="0" width="13" height="13" viewBox="-1.5 -1.2 14 14"><g xmlns="http://www.w3.org/2000/svg"><path d="M0,6a6,6,0,1,1,6,6A6,6,0,0,1,0,6Z"></path><path d="M3,5H9V7H3Z" fill="#f2f2f2"></path></g></svg>`;    
+
+
       $(`.faction-names .name.enemy`).append(`<div class="re_enemy_count re_mem_count">
       <p>Showing <span class="re_enemy">0</span> of <span class="re_enemy_max">0</span> ${enemyFac} members</p>
+      <p>${onlineIcon}<span class="onlineCount">0</span> ${idleIcon}<span class="idleCount">0</span> ${offlineIcon}<span class="offlineCount">0</span></p>
       </div>`);
 
       $(`.faction-names .name.your`).append(`<div class="re_your_count re_mem_count">
       <p>Showing <span class="re_your">0</span> of <span class="re_your_max">0</span> ${friendlyFac} members</p>
+      <p>${onlineIcon}<span class="onlineCount">0</span> ${idleIcon}<span class="idleCount">0</span> ${offlineIcon}<span class="offlineCount">0</span></p>
       </div>`);
+
+      countPlayerStatus();
+
+
 
       $('#re_ps_select').change(function() {        
         if ($(this).val()) {
@@ -679,6 +690,7 @@ function rankedWarFilters() {
 
 
 function filterUsers(filters) {
+  console.log("filter")
   //actually filter the players
   if (!$('#re_disable_filters input[type="checkbox"]').is(":checked")) { //if filter rules checkbox is not checked, proceed
     $('ul.members-list > li').each(function() { //for each member
@@ -755,9 +767,24 @@ function showReadyOCs(checked) {
   });
 }
 
+function countPlayerStatus() {
+  //count offline, online, idle
+  const statuses = ["offline", "idle", "online"]
+  statuses.forEach(function(e) {
+    let enemyCount = $('.enemy-faction ul.members-list .member.icons [id*="'+e+'"]').length;
+    $('.re_enemy_count .'+e+'Count').text(enemyCount);
+
+    let yourCount = $('.your-faction ul.members-list .member.icons [id*="'+e+'"]').length;
+    $('.re_your_count .'+e+'Count').text(yourCount);
+  });
+}
+
+
 function re_ranked_wars_fetch_eventListener() {
+  console.log("re_ranked_wars_fetch_eventListener")
   const filters = settings?.ranked_war_filters;
   if (features?.pages?.factions?.ranked_war_filter?.enabled) {
+    countPlayerStatus();
     filterUsers(filters);
   }
 }

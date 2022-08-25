@@ -176,7 +176,10 @@
   width: 0;
 }
 
-
+/* space between paragraphs for count */
+.re_mem_count p+p {
+  padding-top: 2px;
+}
 
 
 
