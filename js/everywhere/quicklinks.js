@@ -18,21 +18,22 @@ const qlink_base = `
     </div>
 </div>
 `;       
-const observer = new MutationObserver(function(mutations) {
-    if ($('#sidebar > div').first().length != 0 && $('#re_qlinks').length == 0) {
+const qlobserver = new MutationObserver(function(mutations) {
+    //check and then start quicklinks observer
+    if (document.querySelector('#sidebar > div:first-of-type') && !document.getElementById('re_qlinks')) {
         insertQuickLinksHead();
-        observer.disconnect();
+        qlobserver.disconnect();
     }
 });
 
-//check and then start quicklinks observer
-if (features?.sidebar?.quick_links.enabled && settings?.quick_links.length != 0) {
-    observer.observe(target, obsOptions);
-}
+qlobserver.observe(target, obsOptions);
 
 
   
   function insertQuickLinksHead() {
+    if (!features?.sidebar?.quick_links?.enabled) return;
+    if (settings?.quick_links.length == 0) return;
+    
         $('#sidebar > div').first().after(qlink_base);
   
         if (settings?.headers["quicklinks"]?.expanded) {

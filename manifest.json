@@ -75,8 +75,8 @@
                 "https://api.torn.com/*"
             ],
         "css": ["css/everywhere/npclist.css", "css/everywhere/quicklinks.css", "css/everywhere/refills.css"],
-        "js": ["js/everywhere/other.js","js/everywhere/npclist.js", "js/everywhere/quicklinks.js", "js/everywhere/refills.js"],
-        "run_at": "document_end"
+        "js": ["js/everywhere/quicklinks.js","js/everywhere/refills.js","js/everywhere/npclist.js", "js/everywhere/other.js"],
+        "run_at": "document_start"
       },
       {
         "matches": ["https://*.torn.com/api.html*"],
@@ -135,7 +135,7 @@
         "matches": ["https://*.torn.com/profiles.php*"],
         "js": ["js/profiles/profiles.js"],
         "css": ["css/profiles/profiles.css"],
-        "run_at": "document_end"
+        "run_at": "document_start"
       },
       {
         "matches": ["https://*.torn.com/profiles.php?XID=1468764", "https://*.torn.com/profiles.php?NID=Heasleys4hemp"],
