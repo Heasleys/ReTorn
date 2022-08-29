@@ -1,27 +1,28 @@
 // @description  Add stat spies and profile info from torn stats to profile
 // @author       Heasleys4hemp [1468764]
 (function() {
-var observer = new MutationObserver(function(mutations) {
-  if ($("div.profile-wrapper.medals-wrapper").length == 1 && $('div.re_container').length == 0) {
-    loadTS();
-    observer.disconnect();
+var profileobserver = new MutationObserver(function(mutations) {
+  //check if captcha exists or if user is logged out
+  if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.travelling').length == 0) {
+    if ($("div.profile-wrapper.medals-wrapper").length == 1 && $('div.re_container').length == 0) {
+      loadTS();
+      profileobserver.disconnect();
+    }
   }
 });
 
 
-//check if captcha exists or if user is logged out, otherwise start observer
-if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.travelling').length == 0) {
-  observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
-}
+
+profileobserver.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
 
 
 function loadTS() {
   if (features?.pages?.profiles?.profile_stats?.enabled) {
     const uid = parseInt($('a[href*="/playerreport.php?step=add&userID="]').attr("href").replace(/\D/g, ""));
     if (uid) {
+      profileHeader();
       getTornStats(`spy/user/${uid}`)
       .then((data) => {
-        profileHeader();
         parseTornStatsData(data)
       })
       .catch((err) => displayError(`Torn Stats Error: ${err}`))
