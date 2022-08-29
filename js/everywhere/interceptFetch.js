@@ -65,7 +65,7 @@ interceptFetch("torn.com","torn.com", (response, url) => {
 
 
 /* Faction War Filters */
- if (url.includes('faction_wars.php?') && url.includes('wardescid=rank') && ReTorn?.features?.pages?.factions?.ranked_war_filter?.enabled) {
+ if (url.includes('faction_wars.php?') && url.includes('wardescid=rank')) {
     faction_ranked_wars(response);
  }
 });
