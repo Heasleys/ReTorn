@@ -2,7 +2,7 @@ var data;
 (function() {
   if (features?.general?.refill_reminder?.enabled) {
     const observer = new MutationObserver(function(mutations) {
-      if ($('#barEnergy').length != 0 && $('#barNerve').length != 0 && $('.re_refill').length == 0) {
+      if (document.getElementById('barEnergy') && document.getElementById('barNerve') && !document.getElementsByClassName('re_refill').length) {
           setRefills();
           observer.disconnect();
       }
