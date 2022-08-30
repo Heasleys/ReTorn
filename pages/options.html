@@ -6,199 +6,48 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link rel="stylesheet" href="css/colors.css">
+    <link rel="stylesheet" href="css/default.css">
+
     <link rel="stylesheet" href="css/options.css">
-    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="/lib/tooltip/tooltip.css">
 
     <!--3rd party libraries -->
-    <script src="/lib/jquery-3.6.0.min.js"></script>
-    <script src="/lib/jscolor/jscolor.min.js"></script>
-    <link rel="stylesheet" href="/lib/fontawesome/css/all.min.css">
-    <script src="/lib/jqueryui/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="/lib/jqueryui/jquery-ui.min.css">
+      <!-- jquery -->
+      <script src="/lib/jquery-3.6.0.min.js"></script>
+      <script src="/lib/jqueryui/jquery-ui.min.js"></script>
+      <link rel="stylesheet" href="/lib/jqueryui/jquery-ui.min.css">
+      <!-- jscolor -->
+      <script src="/lib/jscolor/jscolor.min.js"></script>
+      <!-- fontawesome -->
+      <link rel="stylesheet" href="/lib/fontawesome/css/all.min.css">
 
+
+    <script src="js/options.js"></script>
   </head>
 
   <body>
-    <div class="container">
     <div class="sidenav">
-      <span class="title"><button class="mobile"><i class="fas fa-bars"></i></button><span class="re_logo"><span class="re_yellow">Re</span>Torn</span></span>
+      <span class="title"><button class="mobile"><i class="fas fa-bars"></i></button><span class="logo"><span class="yellow">Re</span>Torn</span></span>
       <ul class="tabs">
-        <li data-tab="notifications_tab"><i class="fas fa-bell"></i> Notifications</li>
+        <li data-tab="notifications"><i class="fas fa-bell"></i> Notifications</li>
         <li data-tab="features"><i class="fas fa-tasks"></i> Features</li>
-        <li data-tab="settings"><i class="fas fa-cog"></i> Extension Settings</li>
+        <li data-tab="settings"><i class="fas fa-cog"></i> Settings</li>
         <li data-tab="tornstats"><img src="../images/TornStats.png" width="16px" height="16px" style="vertical-align:middle;"> <span>Torn Stats</span></li>
         <li data-tab="discord"><i class="fa-brands fa-discord"></i> Discord</li>
         <li data-tab="attributions"><i class="fa-brands fa-creative-commons-by"></i> Attributions</li>
       </ul>
       <span class="version float-bottom"></span>
     </div>
-
     <div class="mainview">
       <div class="tab_groups">
 
-        <div class="tab_container" id="notifications_tab">
+        <div class="tab_container" id="notifications">
           <h3 class="menu_title">Notifications</h3>
 
           <section class="card-container">
-
             <article class="card">
-              <div class="card-content" id="general_notifications">
-                <h4 class="card_title">General Notifications:</h4>
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span for="all_notifications" tooltip="Toggle notifications" flow="right">All Notifications</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="notifications">
-                    <label for="notifications"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span for="energy_value" tooltip="Notify when energy reaches value" flow="right">Energy</span>
-
-                  </div>
-                  <input type="text" id="energy_value" value="">
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="energy">
-                    <label for="energy"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span for="nerve_value" tooltip="Notify when nerve reaches value" flow="right">Nerve</span>
-
-                  </div>
-                  <input type="text" id="nerve_value" value="">
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="nerve">
-                    <label for="nerve"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span for="happy_value" tooltip="Notify when happy reaches value" flow="right">Happy</span>
-                  </div>
-                  <input type="text" id="happy_value" value="">
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="happy">
-                    <label for="happy"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span for="life_value" tooltip="Notify when life reaches value" flow="right">Life</span>
-                  </div>
-                  <input type="text" id="life_value" value="">
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="life">
-                    <label for="life"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Notify on new events" flow="right">Events</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="events">
-                    <label for="events"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Notify on new messages" flow="right">Messages</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="messages">
-                    <label for="messages"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Notify when drug cooldown reaches zero" flow="up">Drug Cooldown</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="drugs">
-                    <label for="drugs"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Notify when booster cooldown reaches zero" flow="up">Booster Cooldown</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="boosters">
-                    <label for="boosters"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Notify when med cooldown reaches zero" flow="up">Medical Cooldown</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="medical">
-                    <label for="medical"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Notify when education course has finished" flow="up">Education Course</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="education">
-                    <label for="education"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Notify on landing" flow="right">Travel</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="travel">
-                    <label for="travel"></label>
-                  </div>
-                </div>
-
-              </div>
-            </article>
-
-            <article class="card">
-              <div class="card-content">
-                <h4 class="card_title">Chain Notifications:</h4>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Notify if chain timer is below value" flow="up">Chain Time</span>
-                  </div>
-                  <input type="text" id="chaintime_value" value="" style="width: 120px;">
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="chaintime">
-                    <label for="chaintime"></label>
-                  </div>
-                </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Notify when chain reaches value" flow="up">Chain Hits</span>
-                  </div>
-                  <input type="text" id="chainhit_value" value="" style="width: 120px;">
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="chainhit">
-                    <label for="chainhit"></label>
-                  </div>
-                </div>
-
+              <div class="card-content" id="notifications_card">
               </div>
             </article>
           </section>
@@ -207,115 +56,54 @@
 
         <div class="tab_container" id="features">
           <h3 class="menu_title">Features</h3>
-
             <section class="card-container">
-
-              <article class="card" style="display: none;">
-                <div class="card-content">
-                  <h4 class="card_title">Chat Features:</h4>
-                  <div class="switch_wrap">
-                    <label tooltip="Enter UserID to highlight name in chat"  flow="up">User Highlight:</label>
-                    <input type="checkbox" id="chatuserhighlight">
-                  </div>
-                  <div class="input_wrap" id="highlightUsers" style="display: none;">
-                  </div>
-                </div>
-              </article>
-
               <article class="card">
-                <div class="card-content">
-                  <h4 class="card_title">Chat Features:</h4>
-                  <label tooltip="highlights names or text in chats"  flow="right">Chat Highlights:</label>
-                  <div id="chat_highlights">
-
-                  </div>
+                <div class="card-content" id="features_card">
                 </div>
               </article>
-
-
-              <article class="card">
-                <div class="card-content">
-                  <h4 class="card_title">Quick Links:</h4>
-                  <ul class="fa-ul" id="quicklinks">
-
-                  </ul>
-                </div>
-              </article>
-
-
-              <article class="card">
-                <div class="card-content">
-                  <h4>Other Features:</h4>
-
-                  <div class="switch-holder">
-                    <div class="switch-label">
-                      <span tooltip="Align Torn to the left to fit more chats" flow="up">Torn Left Align</span>
-                    </div>
-                    <div class="switch-toggle">
-                      <input type="checkbox" id="leftalign">
-                      <label for="leftalign"></label>
-                    </div>
-                  </div>
-
-                </div>
-              </article>
-
-
-
             </section>
 
         </div><!-- end of tab container -->
 
         <div class="tab_container" id="settings">
-          <h3 class="menu_title">Extension Settings</h3>
+          <h3 class="menu_title">Settings</h3>
 
           <section class="card-container">
 
             <article class="card">
               <div class="card-content">
-                <h4 class="card_title">Settings:</h4>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Darkmode within ReTorn" flow="right">Darkmode</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="darkmode">
-                    <label for="darkmode"></label>
+                <div class="category"><h4 class="capitalize">ReTorn Settings:</h4>
+                  <div class="switch-holder">
+                    <input type="checkbox" id="darkmode"><label class="switch-label" for="darkmode">Toggle</label>
+                    <span for="darkmode" class="tooltip-right" data-tooltip="Darkmode within ReTorn (options/popup)">Darkmode</span>  
                   </div>
                 </div>
-
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Text to Speech on notifications" flow="right">TTS</span>
+                <div class="category"><h4 class="capitalize">ReTorn Header:</h4>
+                  <div class="re_head">
+                    <span class="re_title"><span class="re_logo"><span class="re_yellow">Re</span>Torn: </span><span id="re_title">Example Title</span></span>
                   </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="tts">
-                    <label for="tts"></label>
-                  </div>
-                </div>
-
-                <br>
-                <div class="switch_wrap">
-                  <div>
-                    <label tooltip="Change the default header color" flow="up"><b>ReTorn Header Color:</b></label>
+                  <div class="switch-holder">
                     <input type="text" data-jscolor="{}" id="header_color">
+                  </div>
+                  <h5><b>Color Suggestions:</b></h5>
+                  <div class="colorcodes">
+                    <button class="color_code" style="color: #E0CE00;" data-color="#E0CE00">ReTorn</button>
+                    <button class="color_code" style="color: #8ABEEF;" data-color="#8ABEEF">Torn Stats</button>
+                    <button class="color_code" style="color: #663399;" data-color="#663399">DocTorn</button>
+                    <button class="color_code" style="color: #627E0D;" data-color="#627E0D">TornTools</button>
+                    <button class="color_code" style="color: #555555;" data-color="#555555">Torn</button>
+                  </div>
+                </div>
 
-                    <div class="re_head">
-                      <span class="re_title"><span class="re_logo"><span class="re_yellow">Re</span>Torn: </span><span id="re_title">Example Title</span></span>
-                    </div>
+                <div class="category"><h4 class="capitalize">Quick Links:</h4>
+                  <ul class="fa-ul" id="quicklinks"></ul>
+                </div>
 
-                    <h5><b>Color Suggestions:</b></h5>
-                    <div class="colorcodes">
-                      <span>ReTorn: </span><span class="color_code" style="color: #E0CE00;">#E0CE00</span>
-                      <span>Torn Stats: </span><span class="color_code" style="color: #8ABEEF;">#8ABEEF</span>
-                      <span>DocTorn: </span><span class="color_code" style="color: #663399;">#663399</span>
-                      <span>TornTools: </span><span class="color_code" style="color: #627E0D;">#627E0D</span>
-                      <span>Torn: </span><span class="color_code" style="color: #242424;">#242424</span>
-                    </div>
+                <div class="category"><h4 class="capitalize">Chat Highlights:<i class="tooltip-top float-right text-normal" data-tooltip="Start text with @ to match users. Start text with * to match any. Otherwise, text matches exact."><i class="fas fa-info-circle"></i></i>
+                </h4>
+                  <div id="chat_highlights">
 
                   </div>
-
                 </div>
 
               </div>
@@ -358,33 +146,8 @@
                 </div>
               </div>
             </article>
-            <article class="card" id="tornstats_features" style="display: none;">
-              <div class="card-content">
-                <h4 class="card_title">Torn Stats Features:</h4>
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span class="tsblue" tooltip="NPC timers and sidebar list" flow="up">NPC Features</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="npclist">
-                    <label for="npclist"></label>
-                  </div>
-                </div>
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span class="tsblue" tooltip="Popup events - Ex: faction membership apps" flow="up">Torn Stats Events</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="tsevents">
-                    <label for="tsevents"></label>
-                  </div>
-                </div>
-              </div>
-            </article>
           </section>
         </div><!-- end of tab container -->
-
-
 
         <div class="tab_container" id="attributions">
           <h3 class="menu_title">Credits and Attributions</h3>
@@ -393,9 +156,10 @@
               <div class="card-content">
                 <ul class='credits'>
                   <li><span>ReTorn was made by me: <a href="https://www.torn.com/profiles.php?XID=1468764" target="_blank">Heasleys4hemp [1468764]</a>. I am epic.</span></li>
-                  <li><span>Thank you to <a href="https://www.torn.com/profiles.php?XID=776"  target="_blank">IceBlueFire [776]</a> for his wonderful integration with <a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>.</span></li>
+                  <li><span>Thank you to <a href="https://www.torn.com/profiles.php?XID=776"  target="_blank">IceBlueFire [776]</a> for your wonderful integration with <a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>.</span></li>
+                  <li><span>Thank you to all of my friends for always being supportive of my work.</span></li>
                   <li><span><a href="https://www.flaticon.com/free-icon/rifle_2062174"  target="_blank">Rifle Icon</a> provided by <a href="https://www.freepik.com" title="Freepik"  target="_blank">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"  target="_blank">www.flaticon.com</a></span></li>
-                  <li><span>Settings Icons provided for free by <a href="https://fontawesome.com/" target="_blank" title="FontAwesome">FontAwesome</a></span></li>
+                  <li><span>Icons provided for free by <a href="https://fontawesome.com/" target="_blank" title="FontAwesome">FontAwesome</a></span></li>
                 </ul>
                 <p><a href='https://www.retorn.rocks/privacy' target='_blank'>Privacy Policy</a></p>
                 <ul class="tabs"><li data-tab="advanced"><a>Advanced Settings</a></li></ul>
@@ -447,15 +211,14 @@
           <section class="card-container">
             <article class="card">
               <div class="card-content">
-                <div class="switch-holder">
-                  <div class="switch-label">
-                    <span tooltip="Turn Torn 3D" flow="up">Torn 3D</span>
-                  </div>
-                  <div class="switch-toggle">
-                    <input type="checkbox" id="torn3d">
-                    <label for="torn3d"></label>
+
+                <div class="category"><h4 class="capitalize">Secret Settings:</h4>
+                  <div class="switch-holder">
+                    <input type="checkbox" id="torn3d"><label class="switch-label" for="torn3d">Toggle</label>
+                    <span for="torn3d" class="tooltip-right" data-tooltip="Turn Torn 3D!!!!!">Torn 3D</span>  
                   </div>
                 </div>
+
               </div>
             </article>
           </section>
@@ -463,8 +226,7 @@
 
       </div>
     </div>
-  </div>
+
   </body>
 
-<script src="js/options.js"></script>
 </html>

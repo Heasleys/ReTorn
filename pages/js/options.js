@@ -1,299 +1,367 @@
-const quicklinks = {
+const manifestData = chrome.runtime.getManifest();
+const default_quick_links = {
   amarket: {
     name: "Auction House",
-    url: "amarket.php",
-    icon: '<i class="cql-auction-house"></i>'
+    url: "amarket.php"
+  },
+  bazaar: {
+    name: "Bazaar",
+    url: "bazaar.php"
   },
   imarket: {
     name: "Item Market",
-    url: "imarket.php",
-    icon: '<i class="cql-item-market"></i>'
+    url: "imarket.php"
   },
   museum: {
     name: "Museum",
-    url: "museum.php",
-    icon: '<i class="cql-museum"></i>'
+    url: "museum.php"
   },
   pmarket: {
     name: "Points Market",
-    url: "pmarket.php",
-    icon: '<i class="cql-points-market"></i>'
+    url: "pmarket.php"
   },
   racing: {
     name: "Race Track",
-    url: "loader.php?sid=racing",
-    icon: '<i class="cql-race-track"></i>'
+    url: "loader.php?sid=racing"
   },
   stockmarket: {
     name: "Stock Market",
-    url: "page.php?sid=stocks",
-    icon: '<i class="cql-stock-exchange"></i>'
+    url: "page.php?sid=stocks"
   },
   travelagency: {
     name: "Travel Agency",
-    url: "travelagency.php",
-    icon: '<i class="cql-travel-agency"></i>'
+    url: "travelagency.php"
   },
   vault: {
     name: "Property Vault",
-    url: "properties.php#/p=options&tab=vault",
-    icon: '<i class="property-option-vault"></i>'
+    url: "properties.php#/p=options&tab=vault"
+  },
+  remove: {
+    name: "Remove...",
+    url: ""
   }
 }
+function titleCase(str) {
+  var splitStr = str.toLowerCase().split(' ');
+  for (var i = 0; i < splitStr.length; i++) {
+      // Assign it back to the array
+      splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+  }
+  // Directly return the joined string
+  return splitStr.join(' '); 
+}
+function isEmpty(obj) { //function for easily checking if an object is empty
+  if (obj != undefined) {
+    return Object.keys(obj).length === 0;
+  }
+  return true;
+}
+const sendMessage = (msg) => {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage(msg, (data) => {
+      resolve(data);
+    });
+  });
+};
 
 $(document).ready(function() {
-  var manifestData = chrome.runtime.getManifest();
   $('.version').text('ReTorn v'+manifestData.version);
 
-
-chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
-  if (response.status == true) {
-    const settings = response.value.re_settings;
-    initNotificationTab(settings);
-    initTornStatsTab(settings);
-  }
+  Promise.all([initSidebar(), initTornStatsTab(), createNotificationsList(), createFeaturesList(), initSettings()]);
+  initInputs()
 });
 
 
-  initLogger();
-  initChatUserHighlights();
-  initQuickLinksList();
-  initChatHighlights();
+async function createNotificationsList() {
+  sendMessage({name: "get_sync", value: "notifications"})
+  .then((n) => {
+    const d = n.data;
+    $('#notifications_card').append(`<div class="category"><h4 class="capitalize">Notifications:</h4></div>`)
 
-  $(document).click(function(event) {
-      if (!$(event.target).closest(".dropdown-menu, .dropdown .nav-link").length) {
-          $(".dropdown-menu").hide();
+    for (const [key, val] of Object.entries(d)) {
+      if (key != 'tooltip' && key != 'enabled' && key != 'order' && key != 'value') {
+        if (val.value) {
+          $('#notifications_card .category').append(switchWrap(key, val.tooltip, val.enabled, val.order, val.value))
+        } else {
+          $('#notifications_card .category').append(switchWrap(key, val.tooltip, val.enabled, val.order))
+        }
       }
-      if ($(event.target).closest(".mainview, ul.tabs.show > li").length) {
-          $("ul.tabs.show").removeClass("show");
-      }
-  });
-
-  /* Initialize Sidebar List */
-  $('ul.tabs > li').first().addClass('active');
-  $('.tab_container').first().addClass('show');
-  $('ul.tabs li:not(.disabled,:disabled)').click(function(){
-      var t = $(this).data('tab');
-
-      if($(this).hasClass('active')){
-
+    }
+  })
+  .catch((e) => {
+    alert(e)
+    console.log(e)
+  })
+}
+async function createFeaturesList() {
+  const iterateFeatures = (obj) => {
+    for (const [key, val] of Object.entries(obj)) {
+    if (key != 'description' && key != 'enabled') {
+      if (val.description) {
+        if ($(`#features_card .category`).last().find('.block').last().length) {
+          $(`#features_card .category`).last().find('.block').last().append(switchWrap(key,val.description,val.enabled))
+        } else {
+          $(`#features_card .category`).last().append(switchWrap(key,val.description,val.enabled))
+        } 
       } else {
-        $('ul.tabs > li').removeClass('active');
-        $(this).addClass('active');
+        $('#features_card .category').last().append(`<div class="block" data-page="${key}"><h5>${key}:</h5></div>`);
+        if (typeof val === 'object' && val !== null) {
+          iterateFeatures(val);
+        }
       }
-      $('.tab_container').removeClass('show');
-      $('.tab_container#'+ t).addClass('show');
-   });
-
-   $('button.mobile').click(function() {
-     $('ul.tabs').toggleClass('show');
-   });
+    }
+    }
+  }
 
 
-   //Tab Menus functionality
-   $('ul.nav > li.nav-item > a.nav-link, ul.dropdown-menu > li > a.dropdown-item').click(function() {
-     let tab_target = $(this).closest(".nav").attr("tab-target");
-     let target = $(this).data("target");
-     $(tab_target+" > .tab-pane").removeClass("active");
-     $(tab_target+" "+target).addClass("active");
-     $('.nav-link').removeClass("active");
-     $(this).closest(".nav-item").find(".nav-link").addClass("active");
-     $(".dropdown-menu").hide();
-   });
+  sendMessage({name: "get_sync", value: "features"})
+  .then((f) => {
+    const d = f.data;
+    Object.keys(d).forEach(key => {
+      $('#features_card').append(`<div class="category" data-category="${key}"><h4 class="capitalize">${key}:</h4></div>`)
+      iterateFeatures(d[key]);
+    })
+  })
+  .catch((e) => {
+    alert(e)
+    console.log(e)
+  })
+}
 
-   $('ul.nav > li.nav-item.dropdown > a.nav-link').off("click").click(function() {
-     let menu = $(this).parent(".dropdown").find("ul.dropdown-menu");
-     if (menu.is(":visible")) {
-       menu.hide();
-     } else {
-       $('ul.dropdown-menu').hide();
-       menu.show();
-     }
-   });
 
-  chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
-      if (response.status == true && response.value.re_settings != undefined) {
-        settings = response.value.re_settings;
-        if (settings.darkmode != undefined && settings.darkmode == true) {
-          $("html").removeClass('light');
-          $("html").addClass('dark');
-          $('#darkmode').prop("checked", true);
-        } else {
-          $("html").removeClass('dark');
-          $("html").addClass('light');
-          $('#darkmode').prop("checked", false);
+function switchWrap(key,desc,toggle,order=0,value=0) {
+  let checked = "", inputElement = "", orderText = "";
+
+  if (toggle) checked = "checked";
+  if (value) inputElement = `<input type="text" id="${key}_value" value="${value}">`;
+  if (order) orderText = `style="order: ${order}"`
+
+  return `
+  <div class="switch-holder" ${orderText}>
+    <input type="checkbox" id="${key}" ${checked}/><label class="switch-label" for="${key}">Toggle</label>
+    <span for="${key}" class="tooltip-right" data-tooltip="${desc}">${titleCase(key.replaceAll('_'," "))}</span>
+    ${inputElement}
+  </div>
+  `;
+}
+async function initSidebar() {
+    /* Initialize Sidebar List */
+    $('ul.tabs > li').first().addClass('active');
+    $('.tab_container').first().addClass('show');
+    $('ul.tabs li:not(.disabled,:disabled)').click(function(){
+        const t = $(this).data('tab');
+        if(!$(this).hasClass('active')){
+          $('ul.tabs > li').removeClass('active');
+          $(this).addClass('active');
         }
-
-        if (settings.tts != undefined && settings.tts.enabled && settings.tts.enabled == true) {
-          $('#tts').prop("checked", true);
-        } else {
-          $('#tts').prop("checked", false);
-        }
-
-        if (settings.npclist != undefined && settings.npclist.enabled && settings.npclist.enabled == true) {
-          $('#npclist').prop("checked", true);
-        } else {
-          $('#npclist').prop("checked", false);
-        }
-
-        if (settings.tsevents != undefined && settings.tsevents == true) {
-          $('#tsevents').prop("checked", true);
-        } else {
-          $('#tsevents').prop("checked", false);
-        }
-
-        if (settings.leftalign != undefined && settings.leftalign == true) {
-          $('#leftalign').prop("checked", true);
-        } else {
-          $('#leftalign').prop("checked", false);
-        }
-
-        if (settings.torn3d != undefined && settings.torn3d == true) {
-          $('#torn3d').prop("checked", true);
-        } else {
-          $('#torn3d').prop("checked", false);
-        }
-
-        if (settings.chatuserhighlight != undefined && settings.chatuserhighlight == true) {
-          $('#chatuserhighlight').prop("checked", true);
-          $('#highlightUsers').show();
-        } else {
-          $('#chatuserhighlight').prop("checked", false);
-          $('#highlightUsers').hide();
-        }
-
-        if (settings.header_color != undefined) {
-          $('#header_color').val(settings.header_color);
-          document.querySelector('#header_color').jscolor.fromString(settings.header_color);
-
-          $('.re_head').css("background-color", settings.header_color);
-        }
-
-      }
-  });
-
-
-
-
-
-  $('#darkmode').change(function() {
-     let v = $(this).is(":checked");
-     chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"darkmode": v}}, (response) => {
-          if ($(this).is(':not(:checked)')) {
-            $("html").removeClass('dark');
-            $("html").addClass('light');
-
-          } else {
-            $("html").removeClass('light');
-            $("html").addClass('dark');
-          }
-      });
-  });
-
-  $('#tts').change(function() {
-     let v = $(this).is(":checked");
-     chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"tts": {enabled: v}}}, (response) => {
-      });
-  });
-
-  $('#leftalign').change(function() {
-     let v = $(this).is(":checked");
-       chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"leftalign": v}}, (response) => {
-       });
-  });
-
-  $('#npclist').change(function() {
-     let v = $(this).is(":checked");
-     chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
-        if (response.value.re_settings.tornstats) {
-         chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"npclist": {enabled: v}}}, (response) => {
-         });
-       } else {
-         $('#npclist').prop("checked", false);
-         if (v) {
-           alert("TornStats Integration must be set to use this feature.");
-         }
-       }
-      });
-  });
-  $('#tsevents').change(function() {
-     let v = $(this).is(":checked");
-     chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
-       if (response.value.re_settings.tornstats) {
-         chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"tsevents": v}}, (response) => {
-         });
-       } else {
-         $('#tsevents').prop("checked", false);
-         if (v) {
-           alert("TornStats Integration must be set to use this feature.");
-         }
-       }
+        $('.tab_container').removeClass('show');
+        $('.tab_container#'+ t).addClass('show');
      });
-   });
+}
+function initInputs() {
+  $('body').on('change', '#energy_value, #nerve_value, #happy_value, #life_value', function() {
+    let v = $(this).val();
+    let id = $(this).attr('id').replace('_value', '');
+    if (v == "" || /(?!^)[\<\>]|[\%](?!$)|[^0-9\>\<\%]/.test(v)) {
+      $(this).val($(this).data('prev'));
+    } else {
+      const obj = {[id]: {value: v}}
+      if (!isEmpty(obj)) {
+        sendMessage({"name": "merge_sync", "key": "notifications", "object": obj})
+        .then((r) => {
 
-
-  $('#header_color').change(function() {
-    let color = $(this).val();
-    $('.re_head').css("background-color", color);
-    chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"header_color": color}}, (response) => {
-    });
+        })
+        .catch((e) => console.error(e))
+      }
+    }
   });
 
+  $('body').on('change', '#chain_time_value, #chain_hit_value', function() {
+    var input = $(this);
+    let id = input.attr('id').replace("_value", "");
+    let v = input.val();
+    if (v == "" || /[^0-9\,\s].*/.test(v)) {
+      input.val(input.data('prev'));
+    } else {
+      input.data('prev', v);
+      const obj = {[id]: {value: v}}
+      if (!isEmpty(obj)) {
+        sendMessage({"name": "merge_sync", "key": "notifications", "object": obj})
+        .then((r) => {
+
+        })
+        .catch((e) => console.error(e))
+      }
+      //chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"notifications": {"chain": {"alerts": {[id]: v}}}}});
+    }
+  });
+  $('body').on('focus', '#energy_value, #nerve_value, #happy_value, #life_value, #chain_time_value, #chain_hit_value', function() {
+    $(this).data('prev', $(this).val());
+  });
+
+  $('body').on('change', '.switch-holder input[type=checkbox]', function() {
+    let obj = {}
+    let key = $(this).closest('.tab_container').attr('id');
+    const category = $(this).closest('[data-category]').data('category');
+    const type = $(this).attr('id');
+    const enabled = this.checked;
+    const value = $(this).siblings('input[type=text]').val();
+
+    if (key == 'notifications') {
+      obj[type] = {};
+      obj[type]["enabled"] = enabled;
+      if (value) obj[type]["value"] = value;
+    }
+
+    if (key == 'features') {
+      obj[category] = {};
+      if (category == 'pages') {
+        const page = $(this).closest('[data-page]').data('page');
+        obj[category][page] = {};
+        obj[category][page][type] = {};
+        obj[category][page][type]["enabled"] = enabled;
+      } else {
+        obj[category][type] = {};
+        obj[category][type]["enabled"] = enabled;
+      }
+    }
+
+    if (key == 'settings' || key == 'beyond') {
+      key = 'settings';
+      obj[type] = enabled;
+    }
+
+    if (!isEmpty(obj)) {
+      sendMessage({"name": "merge_sync", "key": key, "object": obj})
+      .then((r) => {
+
+      })
+      .catch((e) => console.error(e))
+    }
+  });
+  //click event for switch labels (clicking on label will click the switch)
+  $('body').on('click', '.switch-holder span', function() {
+    const checkbox = $(this).parent('.switch-holder').find('input[type="checkbox"]');
+    checkbox.prop("checked", !checkbox.prop("checked"));
+    checkbox.trigger("change");
+  });
+
+  $('body').on('click', 'button.color_code', function() {
+    const c = $(this).data('color');
+    $('#header_color').val(c);
+    $('#header_color')[0].jscolor.fromString(c);
+    $('#header_color').trigger("change");
+  })
+  $('body').on('change', '#header_color', function() {
+    let color = $(this).val();
+    setHeaderColor(color);
+    const obj = {header_color: color}
+    sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+    .then((r) => {
+      
+    })
+    .catch((e) => console.error(e))
+  })
+  //set change events to all inputs for quicklinks
+  $('body').on('change', '#quicklinks input[type=checkbox], #quicklinks .quicklinks, #quicklinks input[type=text]', function() {
+    sendQuickLinks($(this));
+  });
+  //set change events to all inputs for chat highlights
+  $('body').on('change', "#chat_highlights input[type='checkbox'], #chat_highlights input[type='text']", function() {
+    let wrap = $(this).parent('.switch_wrap');
+    let enabled = wrap.find("input[type=checkbox]").is(":checked");
+    let index = $("#chat_highlights .switch_wrap").index(wrap);
+    let value = wrap.find("input[name='text']").val();
+    let color = wrap.find("input[name='color']").val();
+
+    // if everything is in place and not undefined or blank, then send message to add to chat highlights
+    if (index != undefined && enabled != undefined && value != undefined && value != "" && color != "") {
+      const obj = {chat_highlights: {[index]: {enabled: enabled, value: value, color: color}}}
+
+      sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+      .then((r) => {
+        //Only reload list if it's not the color input
+        if (!$(this).is(wrap.find("input[name='color']"))) {
+          initChatHighlights();
+        }
+      })
+      .catch((e) => console.error(e))
+    }
+
+    // if checkbox changed and select box is set to custom and is not the last child and checkbox is set to false, then delete quicklinks entry
+    if (enabled == false && value == "" && !$(wrap).is(':last-child')) {
+      deleteIndexFromObject(index, "chat_highlights", initChatHighlights);
+    }
+  });
+  //retorn darkmode
+  $('#darkmode').click(() => {
+      $("html").toggleClass('dark light');
+  });
+  //recognize all new color inputs
+  jscolor.install();
+
+
+  //hide dropdowns if click anywhere else on screen
+  $(document).click(function(event) {
+    if (!$(event.target).closest(".dropdown-menu, .dropdown .nav-link").length) {
+        $(".dropdown-menu").hide();
+    }
+    if ($(event.target).closest(".mainview, ul.tabs.show > li").length) {
+        $("ul.tabs.show").removeClass("show");
+    }
+  });
+
+
+  //button to integrate tornstats
+  ///*
   $("button#tornstats").click(function() {
-      // Enable Tornstats
-      if ($(this).val() == 0) {
-        let key = $("#ts_apikey").val();
-        if (key != undefined && key.length == 16) {
-          if (confirm('By accepting, you are agreeing to allow your Torn API key to be transmitted to Torn Stats.')) {
-            chrome.runtime.sendMessage({name: "integrate_tornstats", apikey: key}, (response) => {
-              if (response.status != undefined) {
-                message(response, "ts_message", response.status);
-                if (response.status == true) {
-                  $('#ts_status').text("Enabled");
-                  $(this).html("Unlink account");
-                  $('button#tornstats').val(1);
-                  $('#tornstats_features').show();
-                  $('#ts_link_wrap').hide();
-                } else {
-                  $('#ts_status').text("Disabled");
-                  $(this).html("Link account");
-                  $('button#tornstats').val(0);
-                  $('#tornstats_features').hide();
-                  $('#ts_link_wrap').show();
-                }
-              } else {
-                message("Unknown error.", "ts_message", false);
-              }
-            });
+    // Enable Tornstats
+    if ($(this).val() == 0) {
+      const key = $("#ts_apikey").val();
+
+      if (key && key.length == 16) {
+        if (confirm('By accepting, you agree to allow the api key you entered to be transmitted to tornstats.com.')) {
+          sendMessage({name: "set_torn_stats_api", apikey: key})
+          .then((r) => {
+            console.log(r);
+            if (r.status) {
+              $('#ts_status').text("Enabled");
+              $(this).html("Unlink account");
+              $('button#tornstats').val(1);
+              $('#ts_link_wrap').hide();
+            } else {
+              $('#ts_status').text("Disabled");
+              $(this).html("Link account");
+              $('button#tornstats').val(0);
+              $('#ts_link_wrap').show();
+            }
+            TornStatsMessage(r); 
+          })
+          .catch((error) => TornStatsMessage(error));
         }
-        } else {
-          message({message: "API Key field is empty."}, "ts_message", false);
-        }
+      } else {
+        TornStatsMessage({status: false, message: "Torn Stats api key is invalid."});
       }
+    }
 
-      // Disabled TornStats
-      if ($(this).val() == 1) {
-        chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"tornstats": false, "tornstats_apikey": ""}}, (response) => {
-          message(response, "ts_message", response.status);
-          if (response.status == true) {
-            $('#ts_status').text("Disabled");
-            $(this).html("Link account");
-            $('button#tornstats').val(0);
-            $('#tornstats_features').hide();
-            $('#ts_link_wrap').show();
-          } else {
-            $('#ts_status').text("Enabled");
-            $(this).html("Unlink account");
-            $('button#tornstats').val(1);
-            $('#tornstats_features').show();
-            $('#ts_link_wrap').hide();
-          }
-        });
-      }
+    // Disabled TornStats
+    if ($(this).val() == 1) {
+      sendMessage({name: "remove_value", key: "re_torn_stats_apikey", location: "local"})
+      .catch((e) => {
+        console.error(e)
+      })
+      $('#ts_status').text("Disabled");
+      $(this).html("Link account");
+      $('button#tornstats').val(0);
+      $('#ts_link_wrap').show();
+    }
 
-    });
+  });
+  //*/
+  
 
 
+  //button to fully reset ReTorn
   $("button#reset").click(function() {
     // Full reset of ReTorn Settings
       if (confirm('This will completely reset your settings and ReTorn data, including sync settings and local ReTorn storage. There is no going back from this. Are you sure you would like to fully reset ReTorn?')) {
@@ -306,195 +374,129 @@ chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response)
 
   });
 
+
   $("button#test_notification").click(function() {
-    chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
-      if (response.status == true) {
-        const settings = response.value.re_settings;
-        if (settings.notifications && settings.notifications.notifications && settings.notifications.notifications.enabled) {
-          chrome.runtime.sendMessage({name: "test_notification"});
-        } else {
-          alert("You have notifications turned off.")
-        }
-      }
-    });
+    // chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
+    //   if (response.status == true) {
+    //     const settings = response.value.re_settings;
+    //     if (settings.notifications && settings.notifications.notifications && settings.notifications.notifications.enabled) {
+    //       chrome.runtime.sendMessage({name: "test_notification"});
+    //     } else {
+    //       alert("You have notifications turned off.")
+    //     }
+    //   }
+    // });
   });
-
+  
   $("button#force_torn_items").click(function() {
-    // force api or items list doc to refill local items storage
-    chrome.runtime.sendMessage({name: "force_torn_items"});
-    alert("Items Cache have been refreshed.")
+    // // force api or items list doc to refill local items storage
+    // chrome.runtime.sendMessage({name: "force_torn_items"});
+    // alert("Items Cache have been refreshed.")
   });
+}
 
-}); //Document.ready
+function initSettings() {
+  sendMessage({name: "get_sync", value: "settings"})
+  .then((r) => {
+    const d = r.data;
+    //populate elements with settings
 
-function chatUserHighlight(parent) {
-    let v = parent.find('input[type="checkbox"]').is(":checked");
-    var value = parent.find('input[type="text"]:disabled').val();
-    let c = parent.find('input[type="color"]').val();
-
-    if (value && c && v != undefined) {
-      chrome.runtime.sendMessage({name: "set_value", value_name: "re_chatuserhighlight", value: {[value]: {enabled: v, color: c}}}, (response) => {
-        initChatUserHighlights();
-      });
+    //darkmode
+    $('#darkmode').prop('checked', d.darkmode)
+    if (!d.darkmode) $("html").toggleClass('dark light');
+    //torn3d
+    $('#torn3d').prop('checked', d.torn3d)
+    //header color
+    if (d.header_color) {
+      setHeaderColor(d.header_color);
+      
+      $('#header_color').val(d.header_color);
+      document.querySelector('#header_color').jscolor.fromString(d.header_color);
     }
+    //quick links
+    initQuickLinksList();
+
+    //chat highlights
+    initChatHighlights();
+
+  })
+  .catch((e) => {
+    alert(e)
+    console.log(e)
+  })
+
+
+  
 }
 
-function initChatUserHighlights() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_chatuserhighlight"}, (response) => {
-    if (response.status && response.status == true && response.value) {
-      if (response.value.re_chatuserhighlight && !jQuery.isEmptyObject(response.value.re_chatuserhighlight)) {
-        var userHighlights = response.value.re_chatuserhighlight;
-        $('#highlightUsers').empty();
-        Object.keys(userHighlights).forEach(userid => {
-          $('#highlightUsers').append(`<div data-id="`+userid+`">
-            <input type="checkbox">
-            <input type="text" class="numOnly" value="`+userid+`" disabled>
-            <input type="color" value="`+userHighlights[userid].color+`">
-            <input type="button" class="delChatUserHighlight" value="-">
-            </div>`);
-            $('#highlightUsers > div[data-id='+userid+'] > input[type=checkbox]').prop("checked", userHighlights[userid].enabled);
-        });
-        $('#highlightUsers').append(`<div>
-          <input type="checkbox">
-          <input type="text" class="numOnly" value="">
-          <input type="color" value="#E0CE00">
-          <input type="button" class="addChatUserHighlight" value="+">
-          </div>`);
-      } else {
-        $('#highlightUsers').html(`<div>
-          <input type="checkbox">
-          <input type="text" class="numOnly" value="">
-          <input type="color" value="#E0CE00">
-          <input type="button" class="addChatUserHighlight" value="+">
-          </div>`);
-      }
-
-      $('input#chatuserhighlight[type=checkbox]').change(function() {
-         let v = $(this).is(":checked");
-         chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"chatuserhighlight": v}}, (response) => {
-
-         });
-
-         if (v == true) {
-           initChatUserHighlights();
-           $('#highlightUsers').show();
-         } else {
-           $('#highlightUsers').hide();
-         }
-      });
-
-
-      $('input.numOnly[type="text"]').change(function() {
-        var value = $(this).val();
-        let id = $(this).attr('id');
-        if (!/^[0-9]*$/.test(value)) {
-          $(this).val($(this).data('prev'));
-        }
-      });
-
-      $('input.numOnly[type="text"]').focus(function() {
-        $(this).select();
-        $(this).data('prev', $(this).val());
-      });
-
-      $('#highlightUsers input[type="checkbox"], #highlightUsers input[type="color"]').change(function() {
-          var parent = $(this).parent();
-          chatUserHighlight(parent);
-      });
-
-      $('#highlightUsers input.delChatUserHighlight[type="button"]').click(function() {
-          var parent = $(this).parent();
-          let uid = parent.data('id');
-          chrome.runtime.sendMessage({name: "del_value", value: "re_chatuserhighlight", key: [uid]}, (response) => {
-            initChatUserHighlights();
-          });
-      });
-
-      $('#highlightUsers input.addChatUserHighlight[type="button"]').click(function() {
-          var parent = $(this).parent();
-          if (!parent.find('input[type="text"]').val()) {
-            parent.find('input[type="text"]').addClass('alerts-border');
-            setTimeout(
-                function() { parent.find('input[type="text"]').removeClass('alerts-border'); },
-                3000
-            );
-          } else {
-            parent.find('input[type="text"]').prop('disabled', true);
-            chatUserHighlight(parent);
-          }
-      });
+//initialize torn stats tab
+async function initTornStatsTab() {
+  sendMessage({name: "get_local", value: "re_torn_stats_apikey"})
+  .then((r) => {
+    console.log("TS", r)
+    if (r?.status) {
+      $('#ts_status').text("Enabled");
+      $('button#tornstats').html("Unlink account");
+      $('button#tornstats').val(1);
+      $('#ts_link_wrap').hide();
+    } else {
+      $('#ts_status').text("Disabled");
+      $('button#tornstats').html("Link account");
+      $('button#tornstats').val(0);
+      $('#ts_link_wrap').show();
     }
-  });
-
+  })
+  .catch((e) => {
+    console.error(e)
+  })
 }
 
-
-function message(response, me, status) {
-  if (status == false) {
-    $(".re_message#"+me).removeClass('success');
-    $(".re_message#"+me).addClass('error');
-  } else {
-    $(".re_message#"+me).removeClass('error');
-    $(".re_message#"+me).addClass('success');
-  }
-  if (response.value != undefined) {
-    $(".re_message#"+me).text(response.message + " {" + response.value + "}");
-  } else {
-    $(".re_message#"+me).text(response.message);
-  }
-  $(".re_message#"+me).attr('hidden', false);
+function TornStatsMessage(m) {
+  const ts = $('#ts_message');
+  ts.text(m.message);
+  ts.show();
 }
 
-
+//initialize quick links (also recursive for repopulating list after changes)
 function initQuickLinksList() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_quicklinks", type: "sync"}, (response) => {
-
+  sendMessage({name: "get_sync", value: "settings"})
+  .then((r) => {
+    const ql = r.data?.quick_links;
     $("#quicklinks").empty(); //Empty list
 
     //Propogate quick links list with enough select boxes for each plus one
-    for (var i = 0; i <= Object.keys(response.value.re_quicklinks).length; i++) {
+    for (var i = 0; i <= Object.keys(ql).length; i++) {
       appendQuickLinks();
     }
+
     let optionStr = ``;
     //fill each select box with all of the options available from quicklinks const
-    for (const [key, value] of Object.entries(quicklinks)) {
+    for (const [key, value] of Object.entries(default_quick_links)) {
       optionStr += `<option value="${value.url}">${value.name}</option>`;
     }
     $('.quicklinks').append(optionStr);
+
+    //initialize sortable feature for quick links
     $( "#quicklinks" ).sortable({axis: "y", items: "> li:not(:last-child)", deactivate: function( event, ui ) {
-      var message = {};
+      let obj = {"quick_links": {}};
+
       $('#quicklinks > li:not(:last-child) .switch_wrap').each(function() {
-
-        let qlink_wrap = $(this);
-        let enabled = qlink_wrap.find("input[type=checkbox]").is(":checked");
-        let index = $("#quicklinks .switch_wrap").index(qlink_wrap);
-        let value = qlink_wrap.find('.quicklinks').val();
-        let name;
-        let url;
-        let type;
-
-        if (value == "custom") {
-          type = "custom";
-          qlink_wrap.find('input[type=text]').show();
-          name = qlink_wrap.find('input[type=text][name=name]').val();
-          url = encodeURI(qlink_wrap.find('input[type=text][name=url]').val());
-        } else {
-          type = "default";
-          name  = qlink_wrap.find(".quicklinks option:selected").text();
-          url = encodeURI(value);
-        }
-
-        message[index] = {"type": type, "enabled": enabled, "name": name, "url": url}
+        const li = createQuickLinksObj($(this));
+        if (!isEmpty(li)) Object.assign(obj.quick_links, li);
       });
-      chrome.runtime.sendMessage({name: "set_value", value_name: "re_quicklinks", value: message}, (response) => {
+
+      sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+      .then((r) => {
         initQuickLinksList();
-      });
+      })
+      .catch((e) => console.error(e))
+
     }});
 
     //set each select box to the correct option
-    if (response.value.re_quicklinks && Object.keys(response.value.re_quicklinks).length != 0) {
-      for (const [key, value] of Object.entries(response.value.re_quicklinks)) {
-        let qlink_wrap = $("#quicklinks .switch_wrap").eq(key);
+    if (Object.keys(ql).length) {
+      for (const [key, value] of Object.entries(ql)) {
+        const qlink_wrap = $("#quicklinks .switch_wrap").eq(key);
         qlink_wrap.find("input[type='checkbox']").prop("checked", value.enabled);
 
         if (value.type == "default") {
@@ -508,50 +510,12 @@ function initQuickLinksList() {
         }
       }
     }
-
-    //set change events to all inputs for quicklinks
-    $("#quicklinks input[type='checkbox'], #quicklinks .quicklinks, #quicklinks input[type='text']").off('change').change(function(e) {
-      sendQuickLinks($(this));
-    });
-  });
+  })
+  .catch((e) => {
+    alert(e)
+    console.log(e)
+  })
 }
-
-
-function sendQuickLinks(el) {
-  let qlink_wrap = el.parent('.switch_wrap');
-  let enabled = qlink_wrap.find("input[type=checkbox]").is(":checked");
-  let index = $("#quicklinks .switch_wrap").index(qlink_wrap);
-  let value = qlink_wrap.find('.quicklinks').val();
-  let name;
-  let url;
-  let type;
-
-  if (value == "custom") {
-    type = "custom";
-    qlink_wrap.find('input[type=text]').show();
-    name = qlink_wrap.find('input[type=text][name=name]').val();
-    url = encodeURI(qlink_wrap.find('input[type=text][name=url]').val());
-  } else {
-    type = "default";
-    name  = qlink_wrap.find(".quicklinks option:selected").text();
-    url = encodeURI(value);
-  }
-
-  // if everything is in place and not undefined or blank, then send message to add to quick links
-  if (index != undefined && type != undefined && enabled != undefined && name != undefined && url != undefined && name != "" && url != "") {
-    chrome.runtime.sendMessage({name: "set_value", value_name: "re_quicklinks", value: {[index]: {type: type, enabled: enabled, name: name, url: url}}}, (response) => {
-      initQuickLinksList();
-    });
-  }
-
-  // if checkbox changed and select box is set to custom and is not the last child and checkbox is set to false, then delete quicklinks entry
-  if (el.is(':checkbox') && enabled == false && value == 'custom' && !$(qlink_wrap).is(':last-child') == false && name == "" && url == "") {
-    chrome.runtime.sendMessage({name: "del_value", value: "re_quicklinks", key: [index]}, (response) => {
-      initQuickLinksList();
-    });
-  }
-}
-
 //function to insert base of quick links wrap
 function appendQuickLinks() {
   $("#quicklinks").append(`
@@ -560,28 +524,79 @@ function appendQuickLinks() {
       <select class="quicklinks">
         <option value="custom" selected>Custom...</option>
       </select>
-      <input type="text" name="name" placeholder="Name">
-      <input type="text" name="url" placeholder="URL">
+      <input type="text" name="name" placeholder="Name" autocomplete="off">
+      <input type="text" name="url" placeholder="URL" autocomplete="off">
     </div></li>
     `)
 }
+//function to send message to background to save quicklinks changes
+function sendQuickLinks(el) {
+  const obj = {quick_links: {}}
+  obj.quick_links = createQuickLinksObj(el);
+  // if everything is in place and not undefined or blank, then send message to add to quick links
+  if (!isEmpty(obj.quick_links)) {
+    sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+    .then((r) => {
+      initQuickLinksList();
+    })
+    .catch((e) => console.error(e))
+  }
 
+
+}
+//function for creating a single quicklinks object 
+function createQuickLinksObj(element) {
+  const qlink_wrap = element[0].className.includes('switch_wrap') ? element : element.parent('.switch_wrap');
+  const enabled = qlink_wrap.find("input[type=checkbox]").is(":checked");
+  const index = $("#quicklinks .switch_wrap").index(qlink_wrap);
+  const value = qlink_wrap.find('.quicklinks').val();
+  let type;
+  let name;
+  let url;
+
+  if (value == "custom") {
+    qlink_wrap.find('input[type=text]').show();
+
+    type = "custom";
+    name = qlink_wrap.find('input[type=text][name=name]').val();
+    url = encodeURI(qlink_wrap.find('input[type=text][name=url]').val());
+  } else {
+    type = "default";
+    name  = qlink_wrap.find(".quicklinks option:selected").text();
+    url = encodeURI(value);
+  }
+
+  if (name == "Remove...") {
+    deleteIndexFromObject(index, "quick_links", initQuickLinksList);
+  }
+
+  if (name != "" && url != "") {
+    return {[index]: {type: type, enabled: enabled, name: name, url: url}}
+  } else {
+    return {}
+  }
+}
+
+
+//initialize chat highlights
 function initChatHighlights() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_chathighlights", type: "sync"}, (response) => {
+  sendMessage({name: "get_sync", value: "settings"})
+  .then((r) => {
+    const s = r.data;
+    const h = s.chat_highlights;
     $("#chat_highlights").empty(); //Empty list
-    console.log(response.value.re_chathighlights)
+
     //Propogate quick links list with enough select boxes for each plus one
-    for (var i = 0; i <= Object.keys(response.value.re_chathighlights).length; i++) {
+    for (var i = 0; i <= Object.keys(h).length; i++) {
       appendChatHighlights();
     }
 
     //recognize all new color inputs
     jscolor.install();
 
-
     //propogate chat Highlights
-    if (response.value.re_chathighlights && Object.keys(response.value.re_chathighlights).length != 0) {
-      for (const [key, value] of Object.entries(response.value.re_chathighlights)) {
+    if (!isEmpty(h)) {
+      for (const [key, value] of Object.entries(h)) {
         let wrap = $("#chat_highlights > .switch_wrap").eq(key);
         wrap.find("input[type='checkbox']").prop("checked", value.enabled);
         wrap.find("input[name='text']").val(value.value);
@@ -589,37 +604,9 @@ function initChatHighlights() {
         wrap.find("input[name='color']")[0].jscolor.fromString(value.color);
       }
     }
-
-    //set change events to all inputs for quicklinks
-    $("#chat_highlights input[type='checkbox'], #chat_highlights input[type='text']").off('change').change(function(e) {
-      let wrap = $(this).parent('.switch_wrap');
-      let enabled = wrap.find("input[type=checkbox]").is(":checked");
-      let index = $("#chat_highlights .switch_wrap").index(wrap);
-      let value = wrap.find("input[name='text']").val();
-      let color = wrap.find("input[name='color']").val();
-
-      // if everything is in place and not undefined or blank, then send message to add to chat highlights
-      if (index != undefined && enabled != undefined && value != undefined && value != "" && color != "") {
-        chrome.runtime.sendMessage({name: "set_value", value_name: "re_chathighlights", value: {[index]: {enabled: enabled, value: value, color: color}}}, (response) => {
-          //Only reload list if it's not the color input
-          if (!$(this).is(wrap.find("input[name='color']"))) {
-            initChatHighlights();
-          }
-        });
-      }
-
-      // if checkbox changed and select box is set to custom and is not the last child and checkbox is set to false, then delete quicklinks entry
-      if (enabled == false && value == "" && !$(wrap).is(':last-child')) {
-        chrome.runtime.sendMessage({name: "del_value", value: "re_chathighlights", key: [index]}, (response) => {
-          initChatHighlights();
-        });
-      }
-    });
-
-
-  });
+  })
+.catch((e) => console.error(e));
 }
-
 //function to insert base of chat highlights wrap
 function appendChatHighlights() {
   $("#chat_highlights").append(`
@@ -631,293 +618,59 @@ function appendChatHighlights() {
     `)
 }
 
-
-function initNotificationTab(settings) {
-  const notifications = ["notifications", "energy", "nerve", "happy", "life", "events", "messages", "drugs", "boosters", "medical", "education", "travel"];
-  notifications.forEach((notif, i) => {
-    var checkbox = $('div#general_notifications input#' + notif);
-
-    checkbox.val(settings.notifications[notif].enabled);
-    if (settings.notifications[notif].enabled == true) {
-      checkbox.prop("checked", true);
-    } else {
-      checkbox.prop("checked", false);
-    }
-
-    if (!settings.notifications["notifications"].enabled) {
-      $('span[for="all_notifications"').attr('tooltip', "All notifications disabled");
-      $('div#general_notifications input:not(#notifications)').closest('.switch-holder').hide();
-    } else {
-      $('span[for="all_notifications').attr('tooltip', "All notifications enabled");
-      $('div#general_notifications input:not(#notifications)').closest('.switch-holder').show();
-    }
-
-    if (settings.notifications[notif].value != undefined) {
-      var textbox = $('div#general_notifications input#' + notif + '_value');
-      let val = settings.notifications[notif].value;
-      textbox.val(val);
-      if (val.includes("<")) {
-        $('span[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" drops below "+ val.replace('<',''));
-      }
-      if (val.includes(">")) {
-        $('span[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" increases above "+ val.replace('>',''));
-      }
-      if (!val.includes(">") && !val.includes("<")) {
-        if (val == "100%") {
-          $('span[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" is full");
-        } else {
-          $('span[for='+  notif + '_value]').attr("tooltip", "Notify when "+notif+" equals "+ val);
-        }
-      }
-
-      textbox.change(function() {
-        var value = $(this).val();
-        let id = $(this).attr('id');
-        if (value == "" || /(?!^)[\<\>]|[\%](?!$)|[^0-9\>\<\%]/.test(value)) {
-          $(this).val($(this).data('prev'));
-        } else {
-          chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {[notif]: {value: value}}}}, (response) => {
-            if (value.includes("<")) {
-              $('span[for='+  id  +']').attr("tooltip", "Notify when "+notif+" drops below "+ value.replace('<',''));
-            }
-            if (value.includes(">")) {
-              $('span[for='+  id  +']').attr("tooltip", "Notify when "+notif+" increases above "+ value.replace('>',''));
-            }
-            if (!value.includes(">") && !value.includes("<")) {
-              if (value == "100%") {
-                $('span[for='+  id  +']').attr("tooltip", "Notify when "+notif+" is full");
-              } else {
-                $('span[for='+  id  +']').attr("tooltip", "Notify when "+notif+" equals "+ value);
-              }
-            }
-          });
-        }
-      });
-
-      textbox.focus(function() {
-        $(this).data('prev', $(this).val());
-      });
-    }
-
-    checkbox.change(function() {
-      let value = $(this).val() == "false" ? true : false;
-      chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {[notif]: {enabled: value}}}}, (response) => {
-        $(this).val(value);
-      });
-      if (notif == "notifications") {
-        if (!value) {
-          $('span[for="all_notifications"').attr('tooltip', "All notifications disabled");
-          $('div#general_notifications input:not(#notifications)').closest('.switch-holder').hide();
-        } else {
-          $('span[for="all_notifications').attr('tooltip', "All notifications enabled");
-          $('div#general_notifications input:not(#notifications)').closest('.switch-holder').show();
-        }
-      }
-     });
-
-  });
-
-
-
-
-
-  if (settings.notifications.chain) {
-    $("#chaintime_value").val(settings.notifications.chain.alerts.time);
-    $("#chainhit_value").val(settings.notifications.chain.alerts.hit);
-
-    if (settings.notifications.chain.hit) {
-      $('#chainhit').prop("checked", true);
-    } else {
-      $('#chainhit').prop("checked", false);
-    }
-
-    if (settings.notifications.chain.time) {
-      $('#chaintime').prop("checked", true);
-    } else {
-      $('#chaintime').prop("checked", false);
-    }
-
-    $('#chainhit, #chaintime').change(function() {
-      let id = $(this).attr('id').replace("chain", "");
-      let v = $(this).is(":checked");
-      chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"notifications": {"chain": {[id]: v}}}});
-    });
-
-    $('input#chainhit_value, input#chaintime_value').change(function() {
-      var input = $(this);
-      let id = input.attr('id').replace("chain", "").replace("_value", "");
-      let v = input.val();
-      if (v == "" || /[^0-9\,\s].*/.test(v)) {
-        input.val(input.data('prev'));
-        input.addClass('alerts-border');
-        setTimeout(
-            function() {   input.removeClass('alerts-border'); },
-            1750
-        );
-      } else {
-        input.data('prev', v);
-        chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"notifications": {"chain": {"alerts": {[id]: v}}}}});
-      }
-    });
-
-    $('input#chainhit_value, input#chaintime_value').focus(function() {
-      $(this).data('prev', $(this).val());
-    });
-  }
+//function for deleting an index from settings location
+function deleteIndexFromObject(index, s, callback) {
+  sendMessage({name: "del_settings_index", key: index, setting: s})
+  .then((r) => {
+    callback();
+  })
+  .catch((e) => console.error(e))
 }
 
-function initTornStatsTab(settings) {
-  if (settings.tornstats != undefined && settings.tornstats == true) {
-    $('#ts_status').text("Enabled");
-    $('button#tornstats').html("Unlink account");
-    $('button#tornstats').val(1);
-    $('#tornstats_features').show();
-    $('#ts_link_wrap').hide();
+function setHeaderColor(color) {
+  const root = document.documentElement;
+  let color_two;
+  if (wc_hex_is_light(color)) {
+    color_two = pSBC(-0.15, color);
   } else {
-    $('#ts_status').text("Disabled");
-    $('button#tornstats').html("Link account");
-    $('button#tornstats').val(0);
-    $('#tornstats_features').hide();
-    $('#ts_link_wrap').show();
+    color_two = pSBC(0.013, color);
   }
+  root.style.setProperty('--re-header-color', color);
+  root.style.setProperty('--re-header-color-two', color_two);
 }
 
-function initLogger() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_logs", type: "local"}, (response) => {
-    if (response.status == true) {
-      let logs = response.value.re_logs;
-      for (const [type, subtype] of Object.entries(logs)) {
-        for (const key of Object.keys(subtype)) {
-          $('#logs-tabContent').append(`<div class="tab-pane" id="logs-`+type+`-`+key+`">
-                              <h3>`+type+` `+key+`</h3>
-                              <div class="log-wrap"></div>
-                            </div>`)
-        }
-      }
-      $('#logs-error-api').addClass('active');
-      updateLogger();
-    }
-  });
+//Function to return colors darker/lighter/blended - https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
+//Version 4.0
+//This is for the secondary color in headers
+const pSBC=(p,c0,c1,l)=>{
+	let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
+	if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
+	if(!this.pSBCr)this.pSBCr=(d)=>{
+		let n=d.length,x={};
+		if(n>9){
+			[r,g,b,a]=d=d.split(","),n=d.length;
+			if(n<3||n>4)return null;
+			x.r=i(r[3]=="a"?r.slice(5):r.slice(4)),x.g=i(g),x.b=i(b),x.a=a?parseFloat(a):-1
+		}else{
+			if(n==8||n==6||n<4)return null;
+			if(n<6)d="#"+d[1]+d[1]+d[2]+d[2]+d[3]+d[3]+(n>4?d[4]+d[4]:"");
+			d=i(d.slice(1),16);
+			if(n==9||n==5)x.r=d>>24&255,x.g=d>>16&255,x.b=d>>8&255,x.a=m((d&255)/0.255)/1000;
+			else x.r=d>>16,x.g=d>>8&255,x.b=d&255,x.a=-1
+		}return x};
+	h=c0.length>9,h=a?c1.length>9?true:c1=="c"?!h:false:h,f=pSBCr(c0),P=p<0,t=c1&&c1!="c"?pSBCr(c1):P?{r:0,g:0,b:0,a:-1}:{r:255,g:255,b:255,a:-1},p=P?p*-1:p,P=1-p;
+	if(!f||!t)return null;
+	if(l)r=m(P*f.r+p*t.r),g=m(P*f.g+p*t.g),b=m(P*f.b+p*t.b);
+	else r=m((P*f.r**2+p*t.r**2)**0.5),g=m((P*f.g**2+p*t.g**2)**0.5),b=m((P*f.b**2+p*t.b**2)**0.5);
+	a=f.a,t=t.a,f=a>=0||t>=0,a=f?a<0?t:t<0?a:a*P+t*p:0;
+	if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
+	else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
 }
-
-function updateLogger() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_logs", type: "local"}, (response) => {
-    if (response.status == true) {
-      let logs = response.value.re_logs;
-      if (logs.error) {
-        for (const subtype of Object.keys(logs.error)) {
-          if (logs.error[subtype]) {
-            let table = `<table class="log-list"><tr><th class="num">#</th><th>Message</th><th>Error</th><th>Timestamp</th></tr>`;
-            if (Object.keys(logs.error[subtype]).length) {
-              for (const [key, value] of Object.entries(logs.error[subtype]).reverse()) {
-                let log = value.log;
-                if (subtype == "api") {
-                  table += `<tr class="log-item"><td class="num">`+key+`</td><td>`+value.message+`</td><td>Error Code: `+log.code+` - `+log.error+`</td><td class="log-timestamp">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
-                } else {
-                  table += `<tr class="log-item"><td class="num">`+key+`</td><td colspan="2">`+value.message+`</td><td class="log-timestamp">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
-                }
-              }
-            } else {
-              table += `<tr><td colspan=4>No log data</td></tr>`;
-            }
-            table += `</table>`;
-            $('#logs-error-'+subtype+' > div').html(table);
-          }
-        }
-      }
-
-      if (logs.data) {
-        for (const subtype of Object.keys(logs.data)) {
-          if (logs.data[subtype]) {
-            let table = `<table class="log-list"><tr><th class="num">#</th><th>Message</th><th>Timestamp</th></tr>`;
-            if (Object.keys(logs.data[subtype]).length) {
-              for (const [key, value] of Object.entries(logs.data[subtype]).reverse()) {
-                let log = value.log;
-                let time_diff = new Date() - new Date(log.timestamp);
-                table += `<tr class="log-item"><td class="num">`+key+`</td><td>`+value.message+`</td><td class="log-timestamp" tooltip="`+time_diff+`" flow="up">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
-              }
-            } else {
-              table += `<tr><td colspan=4>No log data</td></tr>`;
-            }
-            table += `</table>`;
-            $('#logs-data-'+subtype+' > div').html(table);
-          }
-        }
-      }
-
-      if (logs.notifications) {
-        for (const subtype of Object.keys(logs.notifications)) {
-          if (logs.notifications[subtype]) {
-            let table = `<table class="log-list"><tr><th class="num">#</th><th>Title</th><th>Message</th><th>Timestamp</th></tr>`;
-            if (Object.keys(logs.notifications[subtype]).length) {
-              for (const [key, value] of Object.entries(logs.notifications[subtype]).reverse()) {
-                let log = value.log;
-                let time_diff = new Date() - new Date(log.timestamp);
-                table += `<tr class="log-item"><td class="num">`+key+`</td><td>`+value.message+`</td><td>`+log.message+`</td><td class="log-timestamp" tooltip="`+time_diff+`" flow="up">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
-              }
-            } else {
-              table += `<tr><td colspan=4>No log data</td></tr>`;
-            }
-            table += `</table>`;
-            $('#logs-notifications-'+subtype+' > div').html(table);
-          }
-        }
-      }
-
-      if (logs.api) {
-        for (const subtype of Object.keys(logs.api)) {
-          if (logs.api[subtype]) {
-            if (subtype == "torn") {
-              let table = `<table class="log-list"><tr><th class="num">#</th><th>Message</th><th class="ellipsis">API URL</th><th>Timestamp</th></tr>`;
-              if (Object.keys(logs.api[subtype]).length) {
-                for (const [key, value] of Object.entries(logs.api[subtype]).reverse()) {
-                  let log = value.log;
-                  table += `<tr class="log-item"><td class="num">`+key+`</td><td>`+value.message+`</td><td class="ellipsis" data-text="https://api.torn.com/`+log.type+`/`+log.id+`?selections=`+log.selection+`">https://api.torn.com/`+log.type+`/`+log.id+`?selections=`+log.selection+`</td><td class="log-timestamp">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
-                }
-              } else {
-                table += `<tr><td colspan=4>No log data</td></tr>`;
-              }
-              table += `</table>`;
-              $('#logs-api-'+subtype+' > div').html(table);
-            }
-            if (subtype == "tornstats") {
-              let table = `<table class="log-list"><tr><th class="num">#</th><th>Status</th><th>Message</th><th class="ellipsis">API URL</th><th>Timestamp</th></tr>`;
-              if (Object.keys(logs.api[subtype]).length) {
-                for (const [key, value] of Object.entries(logs.api[subtype]).reverse()) {
-                  let log = value.log;
-                  table += `<tr class="log-item"><td class="num">`+key+`</td><td>`+log.status+`</td><td>`+log.message+`</td><td class="ellipsis" data-text="https://www.tornstats.com/api/v1/KEY/`+log.selection+`">https://www.tornstats.com/api/v1/KEY/`+log.selection+`</td><td class="log-timestamp">`+new Date(log.timestamp).toLocaleString()+`</td></tr>`;
-                }
-              } else {
-                table += `<tr><td colspan=4>No log data</td></tr>`;
-              }
-              table += `</table>`;
-              $('#logs-api-'+subtype+' > div').html(table);
-            }
-          }
-        }
-      }
-    }
-  });
+function wc_hex_is_light(color) {
+    const hex = color.replace('#', '');
+    const c_r = parseInt(hex.substr(0, 2), 16);
+    const c_g = parseInt(hex.substr(2, 2), 16);
+    const c_b = parseInt(hex.substr(4, 2), 16);
+    const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
+    return brightness > 155; //originally 155
 }
-
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.name == "log") {
-    updateLogger();
-  }
-  return true
-});
-
-
-$('#torn3d').change(function() {
-   let v = $(this).is(":checked");
-     chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"torn3d": v}}, (response) => {
-     });
-});
-
-
-$('.color_code').click(function() {
-  let val = $(this).text();
-  $('#header_color').val(val);
-  $('#header_color')[0].jscolor.fromString(val);
-  $('#header_color').trigger("change");
-});
