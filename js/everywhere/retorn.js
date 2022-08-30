@@ -272,12 +272,13 @@ function getScreenType() {
   let screensize;
   const element = document.body;
   if (element) {
-    const styles = window.getComputedStyle(element,':before')
-    const content = styles['content'];
-    screensize = content.replaceAll(`"`,``);
-  }
-  if (document.documentElement.classList.contains('html-manual-desktop')) {
-    screensize = "desktop"; //report back as desktop if manual desktop mode is on
+    if (!element.classList.contains('r')) {
+      screensize = "desktop"; //report back as desktop if manual desktop mode is on
+    } else {
+      const styles = window.getComputedStyle(element,':before')
+      const content = styles['content'];
+      screensize = content.replaceAll(`"`,``);
+    }
   }
   return screensize;
 }
