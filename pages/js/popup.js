@@ -118,12 +118,12 @@ return display;
 $( document ).ready(function() {
     popupDataMessenger();
 
-    sendMessage({name: "get_sync", value: "settings"})
+    sendMessage({name: "get_sync", value: "notifications"})
     .then((r) => {
       if (r.status) {
         const s = r?.data;
   
-        if (s?.notifications?.notifications?.enabled) {
+        if (s?.all_notifications?.enabled) {
           $('#toggle_notifications i').addClass('fa-bell');
           $('#toggle_notifications').attr('data-tooltip','Notifications on');
         } else {
@@ -178,7 +178,10 @@ $( document ).ready(function() {
       } else {
         $(this).attr('data-tooltip', "Notifications off");
       }
-  
-      //chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {notifications: {notifications: {enabled: value}}}});
+      const obj = {["all_notifications"]: {"enabled": v}}
+
+
+      sendMessage({"name": "merge_sync", "key": "notifications", "object": obj})
+      .catch((e) => console.error(e))
     });
 });
