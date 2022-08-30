@@ -61,8 +61,8 @@
                 "https://*.torn.com/api.html*",
                 "https://wiki.torn.com/*"
             ],
-        "css": ["/lib/fontawesome/css/all.min.css","css/everywhere/everywhere.css", "css/everywhere/quicklinks.css"],
-        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/everywhere/quicklinks.js", "js/everywhere/chat.js", "js/everywhere/tornstats_events.js"],
+        "css": ["/lib/fontawesome/css/all.min.css","css/everywhere/everywhere.css", "css/everywhere/quicklinks.css", "css/everywhere/npclist.css"],
+        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/everywhere/quicklinks.js", "js/everywhere/npclist.js", "js/everywhere/chat.js", "js/everywhere/tornstats_events.js"],
         "run_at": "document_start"
       },
       {
@@ -74,8 +74,8 @@
                 "https://wiki.torn.com/*",
                 "https://api.torn.com/*"
             ],
-        "css": ["css/everywhere/npclist.css", "css/everywhere/refills.css"],
-        "js": ["js/everywhere/other.js","js/everywhere/npclist.js", "js/everywhere/refills.js"],
+        "css": ["css/everywhere/refills.css"],
+        "js": ["js/everywhere/other.js", "js/everywhere/refills.js"],
         "run_at": "document_end"
       },
       {
