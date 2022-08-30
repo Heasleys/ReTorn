@@ -62,7 +62,7 @@
                 "https://wiki.torn.com/*"
             ],
         "css": ["/lib/fontawesome/css/all.min.css","css/everywhere/everywhere.css", "css/everywhere/quicklinks.css", "css/everywhere/npclist.css"],
-        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/everywhere/quicklinks.js", "js/everywhere/npclist.js", "js/everywhere/chat.js", "js/everywhere/tornstats_events.js"],
+        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js", "js/everywhere/sidebar.js", "js/everywhere/chat.js", "js/everywhere/tornstats_events.js"],
         "run_at": "document_start"
       },
       {
