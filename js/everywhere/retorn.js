@@ -269,10 +269,17 @@ function fixIndexAfterDelete(index, object) {
 }
 
 function getScreenType() {
-  let element = document.querySelector('body');
-  let styles = window.getComputedStyle(element,':before')
-  let content = styles['content'];
-  return content.replaceAll(`"`,``);
+  let screensize;
+  const element = document.body;
+  if (element) {
+    const styles = window.getComputedStyle(element,':before')
+    const content = styles['content'];
+    screensize = content.replaceAll(`"`,``);
+  }
+  if (document.documentElement.classList.contains('html-manual-desktop')) {
+    screensize = "desktop"; //report back as desktop if manual desktop mode is on
+  }
+  return screensize;
 }
 function secondsToHms(d) {
     d = Number(d);
