@@ -257,8 +257,11 @@ const npc_list_mobile = `<li id="nav-npcs" class="">
         sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
         .then((r) => {
           if (r?.status) {
-            settings["npc_list"][npc_id]["loot_time"] = loot_time; //update global variable
-            let npc_li = addNPC(loot[npc_id]);
+            //update global variable
+            settings["npc_list"][npc_id] = {
+              "loot_time": loot_time
+            }
+            let npc_li = addNPC(LOOT[npc_id]);
             $('#npc_'+npc_id).replaceWith(npc_li);
             setAttackTimeClick();
           }
