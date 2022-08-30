@@ -1,5 +1,5 @@
 (function() {
-    var npclistComplete,qlinksComplete,refillsComplete = false;
+    var npclistComplete,qlinksComplete = false;
     var intervals = [];
     var LOOT;
     const LOOT_TIMES = ["hosp_out", "loot_2", "loot_3", "loot_4", "loot_5"]
