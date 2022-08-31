@@ -119,6 +119,8 @@ body.dark-mode .re_qlinks_head {
 .re_qlinks_link a .re_qlinks_name {
   line-height: 22px;
   padding-top: 1px;
+  overflow: hidden;
+  max-width: 134px;
 }
 
 /* SVG Colors */
