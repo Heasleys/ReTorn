@@ -3,6 +3,7 @@
     "version": "0.3.2",
     "description": "Its the return of a great Torn extension",
     "manifest_version": 3,
+    "minimum_chrome_version": "102",
     "icons": {
       "16": "images/ReTorn@16px.png",
       "32": "images/ReTorn@32px.png",
@@ -184,5 +185,4 @@
         "run_at": "document_end"
       }
     ]
-
   }
