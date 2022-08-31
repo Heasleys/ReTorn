@@ -49,8 +49,7 @@ function initCT() {
 
 
 function insertHead() {
-  insertHeader($("#ct-wrap"), 'after', 'mb2');
-  $('#re_title').text("Christmas Town");
+  insertHeader($("#ct-wrap"), 'after', 'christmas_town_helper', 'mb2');
   $('.re_content').html(`
     <div class="re_row" style="display: none;" id="re_ct_main">
       <div class="switch_wrap mb4" name="highlight">
@@ -169,12 +168,15 @@ function insertHead() {
     </div>
     `);
 
-  $('.re_head .re_title').after(`<i class="fas fa-cog" id="re_ct_gifts" title="Toggle settings view"></i>`);
+  const ct_helper_button = `<li id="re_ct_gifts"><span class="re_menu_item"><i class="fa-solid fa-gears"></i><span class="re_menu_item_text">Helper settings</span></span></li>`
+
+  $('#re_features_settings_view').prepend(ct_helper_button);
 
   $('#re_ct_gifts').click(function(e) {
     e.stopPropagation();
     $('#re_ct_main').toggle();
     $('#re_ct_giftview').toggle();
+    $('#re_feature_settings').removeClass('re_active');
   });
 
   $('.re_content input[type="checkbox"]').change(function() {
