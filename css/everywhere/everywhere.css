@@ -661,6 +661,10 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   font-size: 12px;
 }
 
+.re_menu ul li+li#re_remove_feature {
+  border-top: 1px solid #ccc;
+}
+
 /* ReTorn Header Feature Settings Menu */
 
 

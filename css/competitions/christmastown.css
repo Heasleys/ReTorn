@@ -347,15 +347,3 @@ input[type=number]::-webkit-outer-spin-button {
     max-width: 144px;
   }
 }
-
-
-
-
-#re_ct_gifts {
-  margin-right: 10px;
-}
-
-#re_ct_gifts:hover {
-  cursor: pointer;
-  color: #ccc;
-}
