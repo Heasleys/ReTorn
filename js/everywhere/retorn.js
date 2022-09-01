@@ -269,18 +269,25 @@ function fixIndexAfterDelete(index, object) {
 }
 
 function getScreenType() {
-  let screensize;
-  const element = document.body;
-  if (element) {
-    if (!element.classList.contains('r')) {
-      screensize = "desktop"; //report back as desktop if manual desktop mode is on
-    } else {
-      const styles = window.getComputedStyle(element,':before')
-      const content = styles['content'];
-      screensize = content.replaceAll(`"`,``);
+  const pixels = window.innerWidth;
+  const body = document.body;
+
+  if (body) {
+    if (!body.classList.contains('r')) {
+      return "desktop"; //report back as desktop if manual desktop mode is on
+    }
+
+    if (pixels > 1000) {
+      return "desktop";
+    }
+    if (pixels <= 1000 && pixels >= 387) {
+      return "tablet";
+    }
+    if (pixels <= 601) {
+      return "mobile";
     }
   }
-  return screensize;
+  return; //if body element doesn't exist yet, then return nothing
 }
 function secondsToHms(d) {
     d = Number(d);
