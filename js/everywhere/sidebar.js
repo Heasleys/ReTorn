@@ -65,7 +65,7 @@
     window.addEventListener('resize', event => {
         const screenType = getScreenType();
         //remove the top npc list if screen type is now desktop or tablet, then insert into sidebar
-        if ((screenType == "desktop" || screenType == "tablet")) {
+        if ((screenType == "desktop")) {
             if ($('li#nav-npcs').length) {
                 $('li#nav-npcs').remove();
                 npclistComplete = false;
@@ -79,15 +79,19 @@
             if (!document.getElementById('nav-npcs')) {
                 npclistComplete = false;
                 const target = document.getElementById('sidebarroot');
-                desktopSidebarObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+                if (target) {
+                  desktopSidebarObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+                }
             }
         }
-        if (screenType == "mobile") {
+        if ((screenType == "mobile") || (screenType == "tablet")) {
             if (!document.getElementById('nav-npcs')) {
                 npclistComplete = false;
                 insertNPCList();
                 const target = document.getElementById('header-root');
-                npcMobileObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+                if (target) {
+                  npcMobileObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+                }
             }
             if (document.getElementById('re_qlinks')) {
                 $('#re_qlinks').remove();
@@ -98,37 +102,37 @@
 
     //observer to observer document and start other observers based on when things appear in the DOM
     const observerObserver = new MutationObserver(function(mutations) {
-        if (getScreenType()) {
-          const screenType = getScreenType();
-          for (let i = 0; i < mutations.length; i++) {
-            //mobile check
-            if (mutations[i]?.target?.tagName == "BODY" && mutations[i]?.addedNodes?.length) {
-              for (let a = 0; a < mutations[i].addedNodes.length; a++) {
-                if (mutations[i].addedNodes[a].id == "header-root") {
-                  if (screenType == "mobile") {
-                    const target = document.getElementById('header-root');
-                    npcMobileObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
-                    observerObserver.disconnect();
-                  }
+      const screenType = getScreenType();  
+      if (screenType) {
+        for (let i = 0; i < mutations.length; i++) {
+          //mobile check
+          if (mutations[i]?.target?.tagName == "BODY" && mutations[i]?.addedNodes?.length) {
+            for (let a = 0; a < mutations[i].addedNodes.length; a++) {
+              if (mutations[i].addedNodes[a].id == "header-root") {
+                if (screenType == "mobile" || screenType == "tablet") {
+                  const target = document.getElementById('header-root');
+                  npcMobileObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+                  observerObserver.disconnect();
                 }
               }
             }
-    
-            //desktop/tablet check
-            if (mutations[i]?.target?.id == "mainContainer" && mutations[i]?.addedNodes?.length) {
-              for (let a = 0; a < mutations[i].addedNodes.length; a++) {
-                if (mutations[i].addedNodes[a].id == "sidebarroot") {
-                  if (screenType == "desktop" || screenType == "tablet") {
-                    const target = document.getElementById('sidebarroot');
-                    desktopSidebarObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
-                    observerObserver.disconnect();
-                  }
-                }
-              }
-            }
-    
           }
+  
+          //desktop/tablet check
+          if (mutations[i]?.target?.id == "mainContainer" && mutations[i]?.addedNodes?.length) {
+            for (let a = 0; a < mutations[i].addedNodes.length; a++) {
+              if (mutations[i].addedNodes[a].id == "sidebarroot") {
+                if (screenType == "desktop") {
+                  const target = document.getElementById('sidebarroot');
+                  desktopSidebarObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+                  observerObserver.disconnect();
+                }
+              }
+            }
+          }
+  
         }
+      }
       });
     
       const npcMobileObserver = new MutationObserver(function(mutations) {
@@ -166,16 +170,15 @@
             npclistComplete = true;
             return;
         }
-        
-        if (getScreenType() == "mobile") { //insert into small custom npc icon on topbar
-        $('div.header-navigation.right > div.header-buttons-wrapper > ul.toolbar').prepend(npc_list_mobile_base);
-
+        const screenType = getScreenType();
+        if (screenType == "mobile" || screenType == "tablet") { //insert into small custom npc icon on topbar
+            $('div.header-navigation.right > div.header-buttons-wrapper > ul.toolbar').prepend(npc_list_mobile_base);
             $('#nav-npcs > button.top_header_button').click(function() {
             $('#nav-npcs').toggleClass('active');
             })
         } 
 
-        if (getScreenType() == "desktop" || getScreenType() == "tablet") { //insert underneath enemy/friends list
+        if (screenType == "desktop") { //insert underneath enemy/friends list
         // find enemy/friend/staff lists and insert NPCs list at bottom of list of lists
         $('h2[class^="header"]:contains("Lists")').siblings('div[class^="toggle-content"]').append(npc_list_base);
 
