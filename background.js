@@ -1,399 +1,59 @@
+//event listener for message passing
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  handleMessage(msg).then((data) => {
+    sendResponse(data);
+  })
+  .catch((error) => {
+    sendResponse(error)
+  })
+  return true;
+});
+
 // Event Listener for Starting Up chrome/extension
 chrome.runtime.onStartup.addListener(() => {
-  checkLogin();
+  console.log("onStartup")
 });
+
 // Event Listener for Installing extension (update or new install)
-chrome.runtime.onInstalled.addListener(async (details) => {
+chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
-    await newInstall();
-    checkLogin();
+    console.log("onInstalled INSTALL");
+    newInstallation();
   }
   if (details.reason == "update") {
-    await checkUpdate();
-    checkLogin();
+    console.log("onInstalled update")
   }
 });
-// if extension was enabled, verify user is logged in
-chrome.management.onEnabled.addListener((extensionInfo) => {
-  checkLogin();
-});
-
-
-// Delete all settings and restore to default
-async function fullReset() {
-  chrome.storage.sync.clear();
-  chrome.storage.local.clear();
-
-  await newInstall();
-  checkLogin();
-}
-
-// Check if user has logged in with their API key
-async function checkLogin() {
-  //check for apikey
-  await getValue("re_api_key", "sync")
-  //then pull required api data
-  .then(async (api) => {
-    await pullRequiredAPI(api.re_api_key)
-    //then check for user data
-    .then(await getValue("re_user", "sync"))
-    //then set popup and alarms
-    .then(async (res) => {
-      chrome.action.setPopup({popup: "pages/popup.html"});
-      await createAPIAlarm();
-      return getValue("re_user_data", "local");
-    })
-    //then set Badge if messages/events
-    .then((response) => {
-      chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"});
-      const data = response.re_user_data;
-      if (data.notifications.events != undefined && data.notifications.messages != undefined) {
-        if ((data.notifications.events + data.notifications.messages) > 0) {
-          let badgeNum = parseInt(data.notifications.events + data.notifications.messages).toString();
-          chrome.action.setBadgeText({text: badgeNum});
-        } else {
-          chrome.action.setBadgeText({text: ""});
-        }
-      }
-    })
-
-    .catch((error) => {
-      console.log(error);
-    });
-  })
-
-  .catch((error) => {
-    console.log(error);
-  });
-
-  //then check Torn Item data
-  await getValue("re_item_data", "local")
-  .then((res) => {
-    if ((Math.floor(Date.now() / 1000) - parseInt(res.re_item_data.timestamp)) > 86400) { //has items been updated in 1 day?
-      getItemsAPI();
-    }
-  })
-  .catch((error) => {
-    console.log(error);
-    getItemsAPI();
-  });
-
-
-  cleanLogs();
-}
-
-function logout() {
-  removeValue("re_api_key", "sync")
-  .then(() => removeValue("re_user", "sync"))
-  .then(() => removeValue("re_user_data", "local"))
-  .then(() => setValue({re_settings: {tornstats: false, tornstats_apikey: ""}}, "sync"))
-  .catch((error) => {
-    console.log({status: false, message: "Failed to delete apikey.", error: error});
-    sendResponse({status: false, message: "Failed to delete apikey.", error: error});
-  });
-}
-
-function cleanLogs() {
-  getValue("re_logs", "local")
-    .then(async (response) => {
-      let re_logs = response.re_logs;
-      for (const [type, value] of Object.entries(re_logs)) {
-        //subtypes
-        for (const [subtype, subval] of Object.entries(value)) {
-          //check if logs need shifted (max of 25 per subtype);
-          await shiftObject(subval, type, subtype);
-        }
-      }
-
-
-    })
-    .catch((error) => {
-      console.log(error);
-    })
-}
-
-// New Installation function for setting default settings
-async function newInstall() {
-  console.log("NEW INSTALL")
-    const startup_settings = {
-      re_settings: {
-        chat: {
-          hide: "none"
-        },
-        tts: {
-          enabled: false
-        },
-        darkmode: false,
-        tornstats: false,
-        tornstats_apikey: "",
-        npclist: {
-          enabled: false
-        },
-        tsevents: false,
-        chatuserhighlight: false,
-        leftalign: false,
-        torn3d: false,
-        header_color: "#e0ce00",
-        notifications: {
-          notifications: {
-            enabled: true
-          },
-          energy: {
-            enabled: true,
-            value: "100%"
-          },
-          nerve: {
-            enabled: true,
-            value: "100%"
-          },
-          happy: {
-            enabled: false,
-            value: "100%"
-          },
-          life: {
-            enabled: false,
-            value: "<100%"
-          },
-          drugs: {
-            enabled: true
-          },
-          boosters: {
-            enabled: true
-          },
-          medical: {
-            enabled: true
-          },
-          education: {
-            enabled: false
-          },
-          messages: {
-            enabled: true
-          },
-          events: {
-            enabled: true
-          },
-          travel: {
-            enabled: true
-          },
-          chain: {
-            time: true,
-            hit: false,
-            alerts: {
-              time: "30,60,90,120",
-              hit: "4975,9975,24975"
-            }
-          }
-        }
-      },
-      re_quicklinks: {
-
-      },
-      re_chathighlights: {
-
-      },
-      re_ct: {
-        friends: {}
-      }
-    }
-
-    const re_logs = {
-      re_logs: {
-        error: {
-          api: {}
-        },
-        api: {
-          torn: {},
-          tornstats: {}
-        },
-        notifications: {
-          history: {}
-        }
-      }
-    }
-
-    await setValue(re_logs, "local")
-    .then(setValue(startup_settings, "sync"))
-    .catch((error) => {
-      console.log(error);
-    })
-}
-
-// Function for updating ReTorn settings in case user has older extension version
-function checkUpdate() {
-  getValue("re_settings", "sync")
-  .then(async (response) => {
-    console.log("ReTorn: Checking for updates in settings...", response);
-    const settings = response.re_settings;
-
-    //checking npclist
-    if (settings.npclist == undefined) {
-      console.log("ReTorn: Update found. Adding NPC List update.");
-      await setValue({re_settings: {npclist:{enabled: true}}}, "sync").then(res => console.log(res))
-    }
-
-    //if old npclist settings exist (v0.0.4), fix with new version (v0.0.5)
-    if (settings.npclist == false) {
-      console.log("ReTorn: Update found. Converting NPC list to v0.0.5");
-      delete settings.npclist;
-      await delValue("re_settings", "npclist", "sync").then(async () => await setValue({re_settings:{npclist:{enabled: false}}}, "sync")).then(res => console.log(res))
-    }
-    //if old npclist settings exist (v0.0.4), fix with new version (v0.0.5)
-    if (settings.npclist == true) {
-      console.log("ReTorn: Update found. Converting NPC list to v0.0.5");
-      delete settings.npclist;
-      await delValue("re_settings", "npclist", "sync").then(async () => await setValue({re_settings:{npclist:{enabled: true}}}, "sync")).then(res => console.log(res))
-    }
-
-    //checking tsevents
-    if (settings.tsevents == undefined) {
-      console.log("ReTorn: Update found. Adding tsevents update.");
-      await setValue({re_settings: {tsevents: false}}, "sync").then(res => console.log(res))
-    }
-
-    //checking chat user highlights
-    if (settings.chatuserhighlight == undefined) {
-      console.log("ReTorn: Update found. Adding Chat User Highlight update.");
-      await setValue({re_settings: {chatuserhighlight: false}}, "sync").then(res => console.log(res))
-    }
-
-    //checking left align
-    if (settings.leftalign == undefined) {
-      console.log("ReTorn: Update found. Adding Left Align update.");
-      await setValue({re_settings: {leftalign: false}}, "sync").then(res => console.log(res))
-    }
-
-    //checking torn3d
-    if (settings.torn3d == undefined) {
-      console.log("ReTorn: Update found. Torn 3D");
-      await setValue({re_settings: {torn3d: false}}, "sync").then(res => console.log(res))
-    }
-
-    //checking travel notifications
-    if (settings.notifications.travel == undefined) {
-      console.log("ReTorn: Update found. Adding Travel Notification update.");
-      await setValue({re_settings: {notifications: {travel: {enabled: true}}}}, "sync").then(res => console.log(res))
-    }
-
-    if (settings.tornstats_apikey == undefined) {
-      console.log("ReTorn: Update found. Adding Torn Stats API Key update.");
-      await setValue({re_settings: {"tornstats_apikey": ""}}, "sync").then(res => console.log(res))
-    }
-    if (settings.tornstats_apikey == "" && settings.tornstats.enabled == true) {
-      console.log("ReTorn: Update found. Torn Stats API Key update. Unlinking Torn Stats.");
-      await setValue({re_settings: {"tornstats": false}}, "sync").then(res => console.log(res))
-    }
-
-    //checking chain notifications
-    if (settings.notifications.chain == undefined) {
-      console.log("ReTorn: Update found. Adding Chain Notification update.");
-      await setValue({re_settings: {notifications: {chain: {time: true, hit: false,alerts: {time: "30,60,90,120",hit: "4975,9975,24975"}}}}}, "sync").then(res => console.log(res))
-    }
-
-    //checking tts
-    if (settings.tts == undefined) {
-      console.log("ReTorn: Update found. Adding TTS update.");
-      await setValue({re_settings: {tts:{enabled: false}}}, "sync").then(res => console.log(res))
-    }
-
-  })
-  .then(() => {
-    getValue("re_logs", "local")
-    .then((response) => {
-      console.log("ReTorn: Checking for updates - Log Data found. No update needed.", response);
-    })
-    .catch((error) => {
-      console.log("ReTorn: Update found for Logs. Adding Logs data.", error);
-      const re_logs = { re_logs: { error: { api: { }}, api: {torn:{}, tornstats:{} }, notifications: {history: {}} } }
-      setValue(re_logs, "local").catch((error) => {console.log(error);});
-    });
-  })
-
-  .then(() => {
-    getValue("re_quicklinks", "sync")
-    .then((response) => {
-      console.log("ReTorn: Checking for updates - Quick Links data found. No update needed.", response);
-    })
-    .catch((error) => {
-      console.log("ReTorn: Update found for Quick Links. Adding Quick Links data.", error);
-      setValue({"re_quicklinks": {}}, "sync").catch((error) => {console.log(error);});
-    });
-  })
-
-  .then(() => {
-    getValue("re_chathighlights", "sync")
-    .then((response) => {
-      console.log("ReTorn: Checking for updates - Chat Highlights data found. No update needed.", response);
-    })
-    .catch((error) => {
-      console.log("ReTorn: Update found for Chat Highlights. Adding Chat Highlights data.", error);
-      setValue({"re_chathighlights": {}}, "sync").catch((error) => {console.log(error);});
-    });
-  })
-
-  .then(() => {
-    getValue("re_ct", "sync")
-    .then((response) => {
-      console.log("ReTorn: Checking for updates - Christmas Town data found. No update needed.", response);
-    })
-    .catch((error) => {
-      console.log("ReTorn: Update found for Christmas Town. Adding Christmas Town data.", error);
-      setValue({"re_ct": {friends: {}}}, "sync").catch((error) => {console.log(error);});
-    });
-  })
-
-  .then(() => {
-    getValue("re_logs", "local")
-    .then(async (response) => {
-      if (response && response.re_logs) {
-        let re_logs = response.re_logs;
-        if (re_logs.data) {
-              //if data logs exist, delete them (no longer wanted v0.1.14)
-            console.log("ReTorn: Update found. Removing data logs.");
-            await delValue("re_logs", "del_type", "local", {type: "data"}).then((res) => console.log(res));
-        }
-
-        if (re_logs.error) {
-          if (re_logs.error.page) {
-              //if data logs exist, delete them (no longer wanted v0.1.14)
-              console.log("ReTorn: Update found. Removing page logs.");
-              await delValue("re_logs", "del_subtype", "local", {type: "error", subtype: "page"}).then((res) => console.log(res));
-          }
-          if (re_logs.error.background) {
-              //if data logs exist, delete them (no longer wanted v0.1.14)
-              console.log("ReTorn: Update found. Removing background logs.");
-              await delValue("re_logs", "del_subtype", "local", {type: "error", subtype: "background"}).then((res) => console.log(res));
-          }
-        }
-      }
-    })
-  })
-
-  .catch((error) => {
-    console.log("Error when updating settings: " + error);
-  });
-}
-
 
 // Chrome Alarm for pulling API data every 30 seconds
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name == "required_api") {
-    getValue("re_api_key")
-    .then((response) => {
-      pullRequiredAPI(response.re_api_key);
+    getValue("re_apikey", "local")
+    .then((key) => {
+      return pullRequiredAPI(key);
+    })
+    .then((r) => {
+      console.log("ASS", r)
+      if (r.code) {
+        if (r.code == 2 || r.code == 10 || r.code == 13) { //key invalid, key owner is in federal jail, or key owner is inactive, then remove apikey
+          logout();
+        }
+      }
     })
     .catch((error) => {
-      console.log(error);
-      chrome.alarms.clear("required_api", (wasCleared) => {
-        if (wasCleared == true) {
-            console.log("API alarm removed");
-        }
-      });
+      clearAlarm("required_api");
     });
   }
 });
-
+function clearAlarm(name) {
+  chrome.alarms.clear(name, (wasCleared) => {
+    if (wasCleared) {
+      console.log("ReTorn: Alarm for API has been removed.");
+    }
+  });
+}
 //function to create alarms
-function createAPIAlarm(minutes) {
+async function createAPIAlarm(minutes) {
   if (minutes == undefined) {
     minutes = 0.5;
   }
@@ -404,843 +64,243 @@ function createAPIAlarm(minutes) {
   });
 }
 
-// Function for Validating APIKEY before storing in settings
-function validateAPIKEY(apikey) {
-  return new Promise((resolve, reject) => {
-    fetchAPI(apikey, 'user', 'basic,timestamp')
-    .then(async (response) => {
-      await logger("api", "torn", "Validating User", {type: "user", id: "", selection: "basic,timestamp&comment=ReTorn", timestamp: Date.now()});
-      await setValue({"re_api_key": apikey});
-      await setValue({"re_user": {"name": response.name, "player_id": response.player_id}}, "sync");
-      await pullRequiredAPI(apikey);
-      await checkLogin();
-      return resolve();
-    })
-    .catch((error) => {
-      return reject(error);
-    });
-  });
-}
-
-// Function for fetching API from Torn
-function fetchAPI(apikey, type, selection, id) {
-  return new Promise((resolve, reject) => {
-    if (selection == undefined) {
-      selection = "";
-    }
-    if (id == undefined) {
-      id = "";
-    }
-    if (apikey == undefined || apikey.length != 16) {
-      reject({status: false, message: "Invalid apikey."})
-    }
-    fetch('https://api.torn.com/'+type+'/'+id+'?selections='+selection+'&key='+apikey+'&comment=ReTorn')
-    .then((response) => {
-      if (response.status !== 200) {
-        console.log("There was a problem connecting to Torn servers. Status Code: " + response.status);
-        reject({status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status});
-      } else {
-        return response;
-      }
-    })
-    .then(response => response.json())
-    .then(data => parseAPI(data))
-    .then((res) => {
-        return resolve(res);
-    })
-    .catch((error) => {
-      console.log('Fetch Error: ', error);
-      return reject({status: false, message: "Fetch Error: " + error});
-    });
-
-  });
-}
-
-// Function for fetching TornStats API data
-function fetchTSAPI(version, apikey, selection) {
-  return new Promise((resolve, reject) => {
-    if (apikey == undefined || apikey.length > 16) {
-      return reject({status: false, message: "Invalid apikey."})
-    }
-    if (selection == undefined) {
-      return reject({status: false, message: "No selection given."});
-    }
-    if (version == undefined) {
-      return reject({status: false, message: "No TS version given."});
-    }
-    fetch('https://www.tornstats.com/api/' + version + '/' + apikey + '/' + selection)
-
-    .then(response => {
-      if (response.status !== 200) {
-        return reject("There was a problem connecting to Torn Stats servers. Status Code: " + response.status);
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data.status == undefined) {
-        console.error("No status detected from Torn Stats. Rejecting.", data);
-        return reject("No status detected from Torn Stats.");
-      }
-
-      if (data.status == false || data.status == "false") {
-        console.log("ReTorn: Torn Stats status is false. Rejecting.", data);
-        return reject(data.message);
-      } else {
-        console.log("ReTorn: Torn Stats status is true. Resolving.", data);
-        return resolve(data);
-      }
-    })
-    .catch((error) => {
-      console.error('ReTorn: fetchTSAPI error', error);
-      return reject("ReTorn: Torn Stats fetch error.");
-    });
-    return true;
-  });
-}
-
-// Function for parsing the API data
-function parseAPI(data) {
-  return new Promise(async (resolve, reject) => {
-    if (data.error != undefined) {
-      await logger("error", "api", "Torn API Error code detected during parsing.", {code: data.error.code, error: data.error.error, timestamp: Date.now()});
-      if (data.error.code == 2 || data.error.code == 10 || data.error.code == 13) { //key invalid, key owner is in federal jail, or key owner is inactive, then remove apikey
-        logout();
-      }
-      reject({status: false, message: "API Error: Code: " + data.error.code + " | Message: " + data.error.error});
-    } else {
-      resolve(data);
-    }
-  });
-}
-
-// Function for pulling the required API data
-function pullRequiredAPI(apikey) {
-  return new Promise((resolve, reject) => {
-    fetchAPI(apikey, 'user', 'basic,bars,icons,money,notifications,cooldowns,travel,education,networth,refills,timestamp')
-    .then(async (data) => {
-      await logger("api", "torn", "Required API", {type: "user", id: "", selection: "basic,bars,icons,money,notifications,cooldowns,travel,education,networth,refills,timestamp&comment=ReTorn", timestamp: Date.now()});
-      await setValue({"re_user_data": data}, "local");
-      await setValue({"re_user": {"name": data.name, "player_id": data.player_id}}, "sync");
-      return resolve({status: true, message: "Required Torn API has been pulled."});
-    })
-    .catch((error) => {
-      console.log(error);
-      return reject({status: false, message: "There was an error pulling required Torn API."});
-    })
-    .catch(function (err) {
-    console.log(err)
-    });
-  });
-}
-
-// Function for integrating Torn Stats features into ReTorn
-function integrateTornStats(apikey) {
-  return new Promise((resolve, reject) => {
-    fetchAPI(apikey, 'torn', 'timestamp')
-    .then(response => fetchTSAPI("v1", apikey, ""))
-    .then(async (res) => {
-      await logger("api", "tornstats", "Integrate Torn Stats", {status: res.status, message: res.message, selection: "", timestamp: Date.now()});
-      setValue({"re_settings": {"tornstats": true, "tornstats_apikey": apikey}});
-      return resolve(res);
-    })
-    .catch((error) => {
-      console.log(error);
-      return reject({status: false, message: "There was an error integrating Torn Stats.", error: error});
-    })
-  });
-}
-
-// function for saving data to storage locations
-function setValue(value, type) {
-  return new Promise((resolve, reject) => {
-    var keys = Object.keys(value);
-    if (type == undefined) {
-      type = "sync";
-    }
-    if (type == "sync" || type == "local") {
-      chrome.storage[type].get([keys[0]], async (response) => {
-        let merged = {};
-        if (Object.keys(response).length != 0 && response.constructor === Object) {
-          merged = merge(response, value);
-        } else {
-          merged = value;
-        }
-        await chrome.storage[type].set(merged, (response) => {
-          if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError.message);
-            return reject({status: false, message: chrome.runtime.lastError.message});
-          } else {
-            return resolve({status: true, message: "Value: " + keys[0] + " has been set."});
-          }
-        });
-      })
-    } else {
-      return reject({status: false, message: "Type not sync or local when setting value.", value: value});
-    }
-  })
-}
-
-// function for overwriting data to storage locations
-function overwriteValue(value, type) {
-  return new Promise((resolve, reject) => {
-    var keys = Object.keys(value);
-    if (type == "sync" || type == "local") {
-      chrome.storage[type].set(value, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError.message);
-          return reject({status: false, message: chrome.runtime.lastError.message});
-        } else {
-          return resolve({status: true, message: "Value: " + keys[0] + " has been set."});
-        }
-      });
-    } else {
-      return reject({status: false, message: "Type not sync or local when setting value.", value: value});
-    }
-  })
-}
-
-// function for pulling data from storage locations
-function getValue(value, type) {
-  return new Promise((resolve, reject) => {
-    if (type == undefined) {
-      type = "sync";
-    }
-    if (type == "sync" || type == "local") {
-      chrome.storage[type].get([value], async (response) => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError.message);
-          return reject({status: false, message: chrome.runtime.lastError.message});
-        }
-        if (Object.keys(response).length === 0 && response.constructor === Object) {
-          if (value != "re_logs") {
-            // If re_logs doesn't exist yet, trying to log something means it will become a bad loop of death
-          }
-          return reject({status: false, message: "Could not find value in storage.", value: value});
-        } else {
-          return resolve(response);
-        }
-      });
-    } else {
-      return reject({status: false, message: "Type not sync or local when getting value.", value: value})
-    }
-  });
-}
-
-// function for deleting nested values from storage (NOT fulling deleting values)
-function delValue(value, key, storage, log) {
-  if (storage == undefined) {
-    storage = "sync";
-  }
-  return new Promise((resolve, reject) => {
-    if (storage == "sync" || storage == "local") {
-      chrome.storage[storage].get([value], async (response) => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError.message);
-          return reject({status: false, message: chrome.runtime.lastError.message});
-        } else {
-          if (Object.keys(response).length === 0 && response.constructor === Object) {
-            return reject({status: false, message: "Could not find value in storage.", value: value});
-          }
-
-          // Deleting Quick Crime Storage
-          if (value == "re_qcrimes") {
-            var order = response.re_qcrimes.crimes[key].order;
-            delete response.re_qcrimes.crimes[key];
-            Object.keys(response.re_qcrimes.crimes).forEach(function(k) {
-              if (response.re_qcrimes.crimes[k].order > order) {
-                response.re_qcrimes.crimes[k].order--;
-              }
-            });
-          }
-
-          // Deleting Chat Highlight Storage
-          if (value == "re_chatuserhighlight") {
-            delete response.re_chatuserhighlight[key];
-          }
-
-          // Deleting Quick Items Storage
-          if (value == "re_qitems") {
-            var order = response.re_qitems.items[key].order;
-            delete response.re_qitems.items[key];
-            Object.keys(response.re_qitems.items).forEach(function(k) {
-              if (response.re_qitems.items[k].order > order) {
-                response.re_qitems.items[k].order--;
-              }
-            });
-          }
-
-          if (key == "npclist") {
-            delete response.re_settings.npclist;
-          }
-
-          if (value == "re_quicklinks" || value == "re_chathighlights") {
-            delete response[value][key];
-            Object.keys(response[value]).forEach(function(k) {
-              if (parseInt(k) > parseInt(key)) {
-                let newkey = parseInt(k);
-                newkey--;
-                response[value][newkey] = response[value][k];
-                delete response[value][k];
-              }
-            });
-          }
-
-          if (value == "re_ct" && !isNaN(key)) {
-            delete response.re_ct.friends[key];
-          }
-
-          if (value == "re_rankedwar" && key != undefined) {
-            delete response.re_rankedwar.filters[key];
-          }
-
-          if (value == "re_logs") {
-            if (key == "del_type" || key == "del_subtype") {
-              if (key == "del_type") {
-                if (log != undefined && log.type != undefined) {
-                  delete response.re_logs[log.type];
-                }
-              }
-              if (key == "del_subtype") {
-                if (log != undefined && log.type != undefined && log.subtype != undefined) {
-                  delete response.re_logs[log.type][log.subtype];
-                }
-              }
-            } else {
-              if (key != undefined && log != undefined && log.type != undefined && log.subtype != undefined) {
-                delete response.re_logs[log.type][log.subtype][key];
-              }
-            }
-          }
-
-
-
-          chrome.storage[storage].set(response, async () => {
-            if (chrome.runtime.lastError) {
-              console.error(chrome.runtime.lastError.message);
-              return reject({status: false, message: chrome.runtime.lastError.message});
-            } else {
-              if (value != "re_logs") {
-                // If re_logs is asking to delete, it's because it's full, so trying to log something now means it will become a bad loop of death
-              }
-              return resolve({status: true, message: "Value: " + key + " has been deleted."});
-            }
-          });
-        }
-      });
-    } else {
-      return reject({status: false, message: "Incorrect storage type: ", storage})
-    }
-
-  });
-}
-
-// Function for removing values from storage (complete destruction of value)
-function removeValue(value, type) {
-  return new Promise((resolve, reject) => {
-    if (type == "sync" || type == "local") {
-      chrome.storage[type].remove(value, async () => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError.message);
-          return reject({status: false, message: chrome.runtime.lastError.message});
-        } else {
-          return resolve({status: true, message: type+" value: " + value + " has been removed."});
-        }
-      });
-    } else {
-      return reject({status: false, message: "Type not sync or local when removing value.", value: value})
-    }
-  });
-}
-
-
-// Function for merging two sets of nested objects
-function merge(a, b) {
-    return Object.entries(b).reduce((o, [k, v]) => {
-        o[k] = v && typeof v === 'object'
-            ? merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v)
-            : v;
-        return o;
-    }, a);
-}
-
-// Function for adding logs to log data
-async function logger(type, subtype, message, log) {
-    await getValue("re_logs", "local")
-    .then(async (response) => {
-      //check if re_logs has type and subtype, if not, add them
-      if (response.re_logs[type] == 'undefined') {
-        response.relogs[type] = {};
-        response.relogs[type][subtype] = {};
-      }
-      if (response.re_logs[type][subtype] == 'undefined') {
-        response.relogs[type][subtype] = {};
-      }
-
-      //check if logs need shifted (max of 100 per subtype);
-        let key = await shiftObject(response.re_logs[type][subtype], type, subtype);
-        //create new log base
-        let new_log = {re_logs: {}}
-        new_log.re_logs[type] = {};
-        new_log.re_logs[type][subtype] = {};
-
-        await getValue("re_logs", "local")
-        .then(async (res) => {
-          new_log.re_logs[type][subtype][key] = {log, message: message}
-          await setValue(new_log, "local")
-          .then(() => {
-            chrome.runtime.sendMessage({name: "log"});
-          })
-          .catch((error) => {
-            console.log("Logger Error:", error);
-          });
-        })
-
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
-
-// Assist function for logger to shift logger objects
-async function shiftObject(object, type, subtype) {
-  return new Promise(async (resolve, reject) => {
-    let response = {"re_logs": {[type]: {[subtype]: object}}};
-    const MAX = 25;
-    if (object == null) {
-      return resolve(0);
-    }
-    let keyCount = Object.keys(object).length; //Get length of object
-    //Only keep last 100 entries
-    if (keyCount >= MAX) {
-      for (const [key, value] of Object.entries(object)) {
-        let nextkey = parseInt(key)+1;
-        if (object[nextkey]) {
-          response.re_logs[type][subtype][key] = object[nextkey];
-          if (nextkey == MAX) {
-            delete response.re_logs[type][subtype][nextkey];
-            await delValue("re_logs", nextkey, "local", {type: type, subtype: subtype}).then((res) => console.log(res))
-          }
-        }
-        if (nextkey > MAX) {
-          delete response.re_logs[type][subtype][key];
-          await delValue("re_logs", key, "local", {type: type, subtype: subtype}).then((res) => console.log(res))
-        }
-      };
-      await setValue(response, "local").then((res) => console.log("RES", res));
-      return resolve(MAX-1);
-    } else {
-      return resolve(keyCount);
-    }
-  });
-}
-
-// Assist function for making logs more readable in settings menu
-function objectStringify(object) {
-  return JSON.stringify(object).replaceAll(`":{"`, ` -> `).replaceAll(`:`, ` = `).replaceAll(`{`, ``).replaceAll(`}`, ``).replaceAll(`"`, ``).replaceAll(`,`, `, `);
-}
-
-// Function for getting all Torn Item data and saving it to local storage
-function getItemsAPI() {
-  getValue("re_api_key")
-  //API key is available, so get a fresh new list of Torn items from the API
-  .then(response => fetchAPI(response.re_api_key, 'torn', 'items,timestamp'))
-  .then(async (data) => {
-    await logger("api", "torn", "Torn item data", {type: "torn", id: "", selection: "items,timestamp&comment=ReTorn", timestamp: Date.now()});
-    return data;
-  })
-  .then(data => setValue({"re_item_data": data}, "local"))
-  .catch((error) => {
-    console.log(error);
-    const url = chrome.runtime.getURL('/files/items.json');
-    //API key hasn't been set yet, so get old list of Torn items from file
-    fetch(url).then((response) => response.json()).then((json) => setValue({"re_item_data": json}, "local"));
-  });
-}
-
-// Listen for sent browser messages
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  switch (msg.name) {
-    case "open_options":
-      if (chrome.runtime.openOptionsPage) {
-        chrome.runtime.openOptionsPage();
-      } else {
-        window.open(chrome.runtime.getURL('/pages/options.html'));
-      }
-    break;
-
-    case "test_notification":
-      createNotification("test_not", "ReTorn: Test Notification", "This is a test of the notification system.", {action: 'Open', title: "Torn"}, "https://www.torn.com/", true);
-    break;
-
-    case "full_reset":
-      fullReset();
-    break;
-
-    case "force_torn_items":
-      getItemsAPI();
-    break;
-
-    case "set_api":
-      if (msg.apikey != undefined) {
-        validateAPIKEY(msg.apikey)
-        .then(async () => {
-          chrome.action.setPopup({popup: "pages/popup.html"});
-          sendResponse({status: true, message: "Your apikey has been saved."});
-        })
-        .catch((error) => {
-          sendResponse(error);
-        });
-      } else {
-        sendResponse({status: false, message: "The apikey entered was invalid."});
-      }
-      return true;
-    break;
-
-
-    case "get_value":
-      if (msg.value != undefined) {
-        getValue(msg.value, msg.type)
-        .then((response) => {
-          sendResponse({status: true, value: response});
-        })
-        .catch((error) => {
-          sendResponse(error);
-        })
-      }
-      return true;
-    break;
-
-    case "del_value":
-      if (msg.value != undefined && msg.key != undefined) {
-        delValue(msg.value, msg.key, msg.type)
-        .then((response) => {
-          sendResponse({status: true, value: response});
-        })
-        .catch((error) => {
-          sendResponse(error);
-        })
-      }
-      return true;
-    break;
-
-
-    case "set_value":
-      if (msg.value_name != undefined && msg.value != undefined) {
-        if (msg.type == undefined) {
-          msg.type = "sync";
-        }
-        setValue({[msg.value_name]: msg.value}, msg.type)
-        .then(async (response) => {
-          sendResponse(response);
-        })
-        .catch((error) => {
-          sendResponse(error);
-        });
-      }
-      return true;
-    break;
-
-    case "overwrite_value":
-      if (msg.value_name != undefined && msg.value != undefined && msg.type != undefined) {
-        overwriteValue({[msg.value_name]: msg.value}, msg.type)
-        .then(async (response) => {
-          sendResponse(response);
-        })
-        .catch((error) => {
-          sendResponse(error);
-        });
-      }
-      return true;
-    break;
-
-
-    case "logout":
-      logout();
-      sendResponse({status: true, value: "Logout successful."});
-      return true;
-    break;
-
-    case "integrate_tornstats":
-      integrateTornStats(msg.apikey).then((response) => {
-        sendResponse(response);
-      })
-      .catch((error) => {
-        sendResponse(error);
-      })
-      return true;
-    break;
-
-    case "set_logger":
-      if (msg.type != undefined && msg.subtype != undefined) {
-        logger(msg.type, msg.subtype, msg.message, msg.log);
-      }
-
-      return true;
-    break;
-
-
-    case "pull_tornstats":
-      if (msg.selection == undefined) {
-        sendResponse({response: false, message: "No selection given."});
-      }
-      if (msg.version == undefined) {
-        sendResponse({response: false, message: "No version given."});
-      }
-
-      getValue("re_settings")
-      .then((response) => {
-        let settings = response.re_settings;
-        if (settings && settings.tornstats && settings.tornstats == true && settings.tornstats_apikey != undefined && settings.tornstats_apikey != "") {
-          let apikey = settings.tornstats_apikey;
-          return fetchTSAPI(msg.version, apikey, msg.selection);
-        } else {
-          throw 'Torn Stats is not linked to ReTorn or your api key is missing. Try relinking to fix this.';
-        }
-      })
-      .then(async (res) => {
-        await logger("api", "tornstats", "Torn Stats API", {status: res.status, message: res.message, selection: msg.selection, timestamp: Date.now()});
-        return res;
-      })
-      .then((res) => sendResponse(res))  
-      .catch(async (error) => {
-        console.log("ReTorn: pull_tornstats error: ", error);
-        sendResponse({status: false, message: error});
-      })
-
-      return true;
-    break;
-
-    case "pull_api":
-      if (msg.selection != undefined && msg.type != undefined && msg.id != undefined) {
-        getValue("re_api_key")
-        .then(response => fetchAPI(response.re_api_key, msg.type , msg.selection, msg.id))
-        .then(async (data) => {
-          await logger("api", "torn", "Page Specific Pull", {type: msg.type, id: msg.id, selection: msg.selection+"&comment=ReTorn", timestamp: Date.now()});
-          sendResponse(data);
-        })
-        .catch((error) => {
-          sendResponse({response: false, message: error});
-        })
-      } else {
-        sendResponse({response: false, message: "Error with selection, id or type."});
-      }
-      return true;
-    break;
-
-    case "get_popup_data":
-       getValue("re_user_data", "local")
-      .then((response) => {
-        sendResponse({status: true, value: response});
-      })
-
-      return true;
-    break;
-
-    default:
-      sendResponse({status: false, message: "Message received does not exist."});
-      return true;
-    break;
-  }
-
-});
 
 // On changes to Storage, check for differences in data for notifications
 chrome.storage.onChanged.addListener(async (changes, areaName) => {
-  console.log({changes: changes, areaName: areaName});
-  if (changes.re_user_data != undefined) {
-    getValue("re_settings").then(async (response) => {
-      var tts = response.re_settings.tts.enabled;
-      var notifications = response.re_settings.notifications;
-      let newValue = changes.re_user_data.newValue;
-      let oldValue = changes.re_user_data.oldValue;
-      if (newValue != undefined && oldValue != undefined) {
-        if (newValue.notifications != undefined && newValue.notifications != undefined) {
-          if ((newValue.notifications.events + newValue.notifications.messages) > 0) {
-            let badgeNum = parseInt(newValue.notifications.events + newValue.notifications.messages).toString();
-            chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"});
-            chrome.action.setBadgeText({text: badgeNum});
-          } else {
-            chrome.action.setBadgeText({text: ""});
-          }
+  if (changes?.re_user_data == undefined) return;
+    console.log("[ReTorn][re_user_data] changes found: ",{changes: changes, areaName: areaName});
+
+    const n = await getValue("notifications", "sync");
+    console.log('[ReTorn][NOTIFICATIONS]',n)
+    const tts = n?.text_to_speech?.enabled;
+    const newValue = changes?.re_user_data?.newValue;
+    const oldValue = changes?.re_user_data?.oldValue;
+
+    console.log("NEW VALUES", newValue)
+
+    if (isEmpty(newValue) || isEmpty(oldValue)) return;
+
+    //check extension badge
+    const badgeCount = newValue?.notifications?.events + newValue?.notifications?.messages;
+    if ((badgeCount) > 0) {
+      const badgeText = badgeCount.toString();
+      chrome.action.setBadgeText({text: badgeText});
+    } else {
+      chrome.action.setBadgeText({text: ""});
+    }
+    
+    if (isEmpty(n)) return;
+    if (!n?.all_notifications?.enabled) return;
+
+    //MESSAGES
+    if (n?.messages?.enabled && (newValue?.notifications?.messages != oldValue?.notifications?.messages) && newValue?.notifications?.messages != 0) {
+      await createNotification("new_message", "ReTorn: New Message", "You have " + newValue?.notifications?.messages + " new messages.", {action: 'Open', title: "View Messages"}, "https://www.torn.com/messages.php", tts);
+    }
+
+    //EVENTS
+    if (n?.events?.enabled && (newValue?.notifications?.events != oldValue?.notifications?.events) && newValue?.notifications?.events != 0) {
+      await createNotification("new_event", "ReTorn: New Event", "You have " + newValue?.notifications?.events + " new events.", {action: 'Open', title: "View Events"}, "https://www.torn.com/events.php", tts);
+    }
+
+    // COOLDOWNS - DRUGS
+    if (n?.drug_cooldown?.enabled && oldValue?.cooldowns?.drug != 0 && newValue?.cooldowns?.drug == 0) {
+      await createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#drugs-items", tts);
+    }
+
+    //COOLDOWNS - BOOSTERS
+    if (n?.boosters?.enabled && oldValue?.cooldowns?.booster != 0 && newValue?.cooldowns?.booster == 0) {
+      await createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#boosters-items", tts);
+    }
+
+    // COOLDOWNS - MEDICAL
+    if (n?.medical?.enabled && oldValue?.cooldowns?.medical != 0 && newValue?.cooldowns?.medical == 0) {
+      await createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#medical-items", tts);
+    }
+
+    // ENERGY
+    if (n?.energy?.enabled && newValue?.energy?.current != oldValue?.energy?.current) {
+      let data = checkNotifyBars('energy', notifications, newValue, oldValue);
+      if (data.notify == true) {
+        await createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Visit Gym"}, "https://www.torn.com/gym.php", tts);
+      }
+    }
+
+    // NERVE 
+    if (n?.nerve?.enabled && newValue?.nerve?.current != oldValue?.nerve?.current) {
+      let data = checkNotifyBars('nerve', notifications, newValue, oldValue);
+      if (data.notify == true) {
+        await createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Commit Crimes"}, "https://www.torn.com/crimes.php", tts);
+      }
+    }
+
+    // HAPPY
+    if (n?.happy?.enabled && newValue?.happy?.current != oldValue?.happy?.current) {
+      let data = checkNotifyBars('happy', notifications, newValue, oldValue);
+      if (data.notify == true) {
+        await createNotification("happy", "ReTorn: Happy", data.message, {action: 'Open', title: "Get Happy"}, "https://www.torn.com/item.php#candy-items", tts);
+      }
+    }
+
+    // LIFE
+    if (n?.life?.enabled && newValue?.life?.current != oldValue?.life?.current) {
+      let data = checkNotifyBars('life', notifications, newValue, oldValue);
+      if (data.notify == true) {
+        await createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "Get a Life"}, "https://www.torn.com/item.php#medical-items", tts);
+      }
+    }
+
+    // EDUCATION
+    if (n?.education?.enabled && oldValue?.education_current != 0 && newValue?.education_current == 0) {
+        await createNotification("education", "ReTorn: Education", "Your education course has complete.", {action: 'Open', title: "Get Knowledge"}, "https://www.torn.com/education.php", tts);
+    }
+
+    // TRAVEL
+    if (n?.travel?.enabled && newValue?.travel?.time_left == 0 && newValue?.travel?.time_left != oldValue?.travel?.time_left) {
+      await createNotification("new_message", "ReTorn: Travel Notification", "You have landed in "+newValue.travel.destination+".", {action: 'Open', title: newValue.travel.destination}, "https://www.torn.com/index.php", tts);
+    }
+
+    // CHAINS
+    if (newValue?.chain?.cooldown == 0 && newValue?.chain?.current >= 10) {
+      const types = ["time", "hit"]
+      types.forEach((e) => {
+        if (n["chain_"+e].enabled && n["chain_"+e].value != "") {
+          let str = n["chain_"+e].value;
+          str = str.replace(/ /g, '');
+          let strArray = str.split(',');
+          strArray.forEach(async (v) => {
+            if (e == "time" && newValue?.chain?.timeout <= v && oldValue?.chain?.timeout >= v) {
+              await createNotification("chain_time_"+v, "ReTorn: Chain Alert", "The chain will drop in " + newValue?.chain?.timeout + " seconds!", {action: 'Open', title: "Enemy List"}, "https://www.torn.com/blacklist.php", tts);
+            }
+            if (e == "hit" && newValue?.chain?.current >= v && oldValue?.chain?.current < v) {
+              await createNotification("chain_hit_"+v, "ReTorn: Chain Alert", "The chain has reached " + newValue?.chain?.current + " hits.", {action: 'Open', title: "Chain"}, "https://www.torn.com/factions.php?step=your#/war/chain", tts);
+            }
+          });
         }
+      })
+    }
 
-        if (notifications != undefined && notifications.notifications != undefined && notifications.notifications.enabled == true) {
 
-            // MESSAGES
-            if (notifications.messages.enabled == true && newValue.notifications.messages != oldValue.notifications.messages && newValue.notifications.messages != 0) {
-              await createNotification("new_message", "ReTorn: New Message", "You have " + newValue.notifications.messages + " new messages.", {action: 'Open', title: "View Messages"}, "https://www.torn.com/messages.php", tts);
-            }
 
-            // EVENTS
-            if (notifications.events.enabled == true && newValue.notifications.events != oldValue.notifications.events && newValue.notifications.events != 0) {
-              await createNotification("new_event", "ReTorn: New Event", "You have " + newValue.notifications.events + " new events.", {action: 'Open', title: "View Events"}, "https://www.torn.com/events.php", tts);
-            }
+    //Check for changes in user data to create notifications
+    //const tts = s?.
 
-            // COOLDOWNS - DRUGS
-            if (notifications.drugs.enabled == true && oldValue.cooldowns.drug != 0 && newValue.cooldowns.drug == 0) {
-             await createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#drugs-items", tts);
-            }
 
-            // COOLDOWNS - BOOSTERS
-            if (notifications.boosters.enabled == true && oldValue.cooldowns.booster != 0 && newValue.cooldowns.booster == 0) {
-              await createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#boosters-items", tts);
-            }
 
-            // COOLDOWNS - MEDICAL
-            if (notifications.medical.enabled == true && oldValue.cooldowns.medical != 0 && newValue.cooldowns.medical == 0) {
-              await createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#medical-items", tts);
-            }
+    // getValue("re_settings").then(async (response) => {
+    //   var tts = response.re_settings.tts.enabled;
+    //   var notifications = response.re_settings.notifications;
+    //   let newValue = changes.re_user_data.newValue;
+    //   let oldValue = changes.re_user_data.oldValue;
+    //   if (newValue != undefined && oldValue != undefined) {
+    //     if (newValue.notifications != undefined && newValue.notifications != undefined) {
+    //       if ((newValue.notifications.events + newValue.notifications.messages) > 0) {
+    //         let badgeNum = parseInt(newValue.notifications.events + newValue.notifications.messages).toString();
+    //         chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"});
+    //         chrome.action.setBadgeText({text: badgeNum});
+    //       } else {
+    //         chrome.action.setBadgeText({text: ""});
+    //       }
+    //     }
 
-            // ENERGY
-            if (notifications.energy.enabled == true && newValue.energy.current != oldValue.energy.current) {
-              let data = checkNotifyBars('energy', notifications, newValue, oldValue);
-              if (data.notify == true) {
-                await createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Visit Gym"}, "https://www.torn.com/gym.php", tts);
-              }
-            }
+    //     // if (notifications != undefined && notifications.notifications != undefined && notifications.notifications.enabled == true) {
 
-            // NERVE
-            if (notifications.nerve.enabled == true && newValue.nerve.current != oldValue.nerve.current) {
-              let data = checkNotifyBars('nerve', notifications, newValue, oldValue);
-              if (data.notify == true) {
-                await createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Commit Crimes"}, "https://www.torn.com/crimes.php", tts);
-              }
-            }
 
-            // HAPPY
-            if (notifications.happy.enabled == true && newValue.happy.current != oldValue.happy.current) {
-              let data = checkNotifyBars('happy', notifications, newValue, oldValue);
-              if (data.notify == true) {
-                await createNotification("happy", "ReTorn: Happy", data.message, {action: 'Open', title: "Get Happy"}, "https://www.torn.com/item.php#candy-items", tts);
-              }
-            }
 
-            // LIFE
-            if (notifications.life.enabled == true && newValue.life.current != oldValue.life.current) {
-              let data = checkNotifyBars('life', notifications, newValue, oldValue);
-              if (data.notify == true) {
-                await createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "Get a Life"}, "https://www.torn.com/item.php#medical-items", tts);
-              }
-            }
+    //     //     // COOLDOWNS - DRUGS
+    //     //     if (notifications.drugs.enabled == true && oldValue.cooldowns.drug != 0 && newValue.cooldowns.drug == 0) {
+    //     //      await createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#drugs-items", tts);
+    //     //     }
 
-            // EDUCATION
-            if (notifications.education.enabled == true && oldValue.education_current != 0 && newValue.education_current == 0) {
-                await createNotification("education", "ReTorn: Education", "Your education course has complete.", {action: 'Open', title: "Get Knowledge"}, "https://www.torn.com/education.php", tts);
-            }
+    //     //     // COOLDOWNS - BOOSTERS
+    //     //     if (notifications.boosters.enabled == true && oldValue.cooldowns.booster != 0 && newValue.cooldowns.booster == 0) {
+    //     //       await createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#boosters-items", tts);
+    //     //     }
 
-            // TRAVEL
-            if (notifications.travel.enabled == true && newValue.travel.time_left == 0 && newValue.travel.time_left != oldValue.travel.time_left) {
-              await createNotification("new_message", "ReTorn: Travel Notification", "You have landed in "+newValue.travel.destination+".", {action: 'Open', title: newValue.travel.destination}, "https://www.torn.com/index.php", tts);
-            }
+    //     //     // COOLDOWNS - MEDICAL
+    //     //     if (notifications.medical.enabled == true && oldValue.cooldowns.medical != 0 && newValue.cooldowns.medical == 0) {
+    //     //       await createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#medical-items", tts);
+    //     //     }
 
-            // CHAINS
-            if (notifications.chain != undefined && newValue.chain.cooldown == 0 && newValue.chain.current >= 10) {
-              if (notifications.chain.alerts != undefined) {
-                // Notifications for chain time
-                if (notifications.chain.time != undefined && notifications.chain.time == true && notifications.chain.alerts.time != undefined && notifications.chain.alerts.time != "") {
-                  let timeStr = notifications.chain.alerts.time;
-                  timeStr = timeStr.replace(/ /g, '');
-                  let times = timeStr.split(',');
-                  times.forEach(async (seconds) => {
-                    if (newValue.chain.timeout <= seconds && oldValue.chain.timeout >= seconds) {
-                      await createNotification("chain_time_"+seconds, "ReTorn: Chain Alert", "The chain will drop in " + newValue.chain.timeout + " seconds!", {action: 'Open', title: "Enemy List"}, "https://www.torn.com/blacklist.php", tts);
-                    }
-                  });
-                }
+    //     //     // ENERGY
+    //     //     if (notifications.energy.enabled == true && newValue.energy.current != oldValue.energy.current) {
+    //     //       let data = checkNotifyBars('energy', notifications, newValue, oldValue);
+    //     //       if (data.notify == true) {
+    //     //         await createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Visit Gym"}, "https://www.torn.com/gym.php", tts);
+    //     //       }
+    //     //     }
 
-                // Notifications for chain total hits
-                if (notifications.chain.hit != undefined && notifications.chain.hit == true && notifications.chain.alerts.hit != undefined && notifications.chain.alerts.hit != "") {
-                  let hitStr = notifications.chain.alerts.hit;
-                  hitStr = hitStr.replace(/ /g, '');
-                  let hits = hitStr.split(',');
-                  hits.forEach(async (hit) => {
-                    if (newValue.chain.current >= hit && oldValue.chain.current < hit) {
-                      await createNotification("chain_hit_"+hit, "ReTorn: Chain Alert", "The chain has reached " + newValue.chain.current + " hits.", {action: 'Open', title: "Chain"}, "https://www.torn.com/factions.php?step=your#/war/chain", tts);
-                    }
-                  });
-                }
-              }
-            } // Chain
-          }
-        }
-    }).catch((error) => {console.log(error);});
-  }
+    //     //     // NERVE
+    //     //     if (notifications.nerve.enabled == true && newValue.nerve.current != oldValue.nerve.current) {
+    //     //       let data = checkNotifyBars('nerve', notifications, newValue, oldValue);
+    //     //       if (data.notify == true) {
+    //     //         await createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Commit Crimes"}, "https://www.torn.com/crimes.php", tts);
+    //     //       }
+    //     //     }
+
+    //     //     // HAPPY
+    //     //     if (notifications.happy.enabled == true && newValue.happy.current != oldValue.happy.current) {
+    //     //       let data = checkNotifyBars('happy', notifications, newValue, oldValue);
+    //     //       if (data.notify == true) {
+    //     //         await createNotification("happy", "ReTorn: Happy", data.message, {action: 'Open', title: "Get Happy"}, "https://www.torn.com/item.php#candy-items", tts);
+    //     //       }
+    //     //     }
+
+    //     //     // LIFE
+    //     //     if (notifications.life.enabled == true && newValue.life.current != oldValue.life.current) {
+    //     //       let data = checkNotifyBars('life', notifications, newValue, oldValue);
+    //     //       if (data.notify == true) {
+    //     //         await createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "Get a Life"}, "https://www.torn.com/item.php#medical-items", tts);
+    //     //       }
+    //     //     }
+
+    //     //     // EDUCATION
+    //     //     if (notifications.education.enabled == true && oldValue.education_current != 0 && newValue.education_current == 0) {
+    //     //         await createNotification("education", "ReTorn: Education", "Your education course has complete.", {action: 'Open', title: "Get Knowledge"}, "https://www.torn.com/education.php", tts);
+    //     //     }
+
+    //     //     // TRAVEL
+    //     //     if (notifications.travel.enabled == true && newValue.travel.time_left == 0 && newValue.travel.time_left != oldValue.travel.time_left) {
+    //     //       await createNotification("new_message", "ReTorn: Travel Notification", "You have landed in "+newValue.travel.destination+".", {action: 'Open', title: newValue.travel.destination}, "https://www.torn.com/index.php", tts);
+    //     //     }
+
+    //     //     // CHAINS
+    //     //     if (notifications.chain != undefined && newValue.chain.cooldown == 0 && newValue.chain.current >= 10) {
+    //     //       if (notifications.chain.alerts != undefined) {
+    //     //         // Notifications for chain time
+    //     //         if (notifications.chain.time != undefined && notifications.chain.time == true && notifications.chain.alerts.time != undefined && notifications.chain.alerts.time != "") {
+    //     //           let timeStr = notifications.chain.alerts.time;
+    //     //           timeStr = timeStr.replace(/ /g, '');
+    //     //           let times = timeStr.split(',');
+    //     //           times.forEach(async (seconds) => {
+    //     //             if (newValue.chain.timeout <= seconds && oldValue.chain.timeout >= seconds) {
+    //     //               await createNotification("chain_time_"+seconds, "ReTorn: Chain Alert", "The chain will drop in " + newValue.chain.timeout + " seconds!", {action: 'Open', title: "Enemy List"}, "https://www.torn.com/blacklist.php", tts);
+    //     //             }
+    //     //           });
+    //     //         }
+
+    //     //         // Notifications for chain total hits
+    //     //         if (notifications.chain.hit != undefined && notifications.chain.hit == true && notifications.chain.alerts.hit != undefined && notifications.chain.alerts.hit != "") {
+    //     //           let hitStr = notifications.chain.alerts.hit;
+    //     //           hitStr = hitStr.replace(/ /g, '');
+    //     //           let hits = hitStr.split(',');
+    //     //           hits.forEach(async (hit) => {
+    //     //             if (newValue.chain.current >= hit && oldValue.chain.current < hit) {
+    //     //               await createNotification("chain_hit_"+hit, "ReTorn: Chain Alert", "The chain has reached " + newValue.chain.current + " hits.", {action: 'Open', title: "Chain"}, "https://www.torn.com/factions.php?step=your#/war/chain", tts);
+    //     //             }
+    //     //           });
+    //     //         }
+    //     //       }
+    //     //     } // Chain
+    //     // }
+    //     }
+    // }).catch((error) => {console.log(error);});
 });
 
-// Assist Function for Notification Checking for Energy, Nerve, Life, and Happy
-function checkNotifyBars(type, notifications, newValue, oldValue) {
-  let notify = false;
-  let message = "Your "+type+" has reached it's value.";
-
-  var value = notifications[type].value;
-  var num = parseFloat(value.replace(/\D/g, ""));
-
-  let perc = Math.floor(parseFloat(num) * 100) / 100;
-  let eperc = Math.floor((newValue[type].current/newValue[type].maximum) * 100);
-  let epercOld = Math.floor((oldValue[type].current/oldValue[type].maximum) * 100);
-
-  // LESS THAN
-  if (value.includes("<")) {
-    if (value.includes("%")) {
-      if (eperc < perc && epercOld >= perc) {
-        notify = true;
-        message = "Your "+type+" has dropped below " + perc + "%.";
-      }
-    } else {
-      if (newValue[type].current < num && oldValue[type].current >= num) {
-        notify = true;
-        message = "Your "+type+" has dropped below " + num + ".";
-      }
-    }
-  }
-
-  // GREATER THAN
-  if (value.includes(">")) {
-    if (value.includes("%")) {
-      if (eperc > perc && epercOld <= perc) {
-        notify = true;
-        message = "Your "+type+" has increased above " + perc + "%.";
-      }
-    } else {
-      if (newValue[type].current > num && oldValue[type].current <= num) {
-        notify = true;
-        message = "Your "+type+" has increased above " + num + ".";
-      }
-    }
-  }
-
-  // BASE VALUE
-  if (!value.includes(">") && !value.includes("<")) {
-    if (value.includes("%")) {
-      if (num == 100) {
-        if (eperc >= perc && epercOld < perc) {
-          notify = true;
-          message = "Your "+type+" is full.";
-        }
-      } else {
-        if (eperc == perc) {
-          notify = true;
-          message = "Your "+type+" has reached " + perc + "%.";
-        }
-      }
-    } else {
-      if (newValue[type].current == num) {
-        notify = true;
-        message = "Your "+type+" has reached " + num + ".";
-      }
-    }
-  }
-
-
-
-  let data = {notify: notify, message: message}
-  return data;
-}
 
 
 // Function for creating Notifications (Chrome/Firefox?)
 async function createNotification(name, title, message, actions, openURL = "https://www.torn.com/", tts = false) {
-    await logger("notifications", "history", title, {title: title, message: message, timestamp: Date.now()});
+    //await logger("notifications", "history", title, {title: title, message: message, timestamp: Date.now()});
 
     //if actions parameter is passed, add close button to end of action buttons, else default to single close button
     if (actions) {
@@ -1265,19 +325,601 @@ async function createNotification(name, title, message, actions, openURL = "http
         {'rate': 0.8},
         function() {
           if (chrome.runtime.lastError) {
-            console.log('Error: ' + chrome.runtime.lastError.message);
+            console.log('[ReTorn][Text-to-Speech] Error: ' + chrome.runtime.lastError.message);
           }
         }
       );
     }
 }
 
-// Event Listener for Notification Button Clicks
-self.addEventListener('notificationclick', function (event) {
-  if (event.action === 'Open' && event.notification.data.url) {
-    chrome.tabs.create({'url': event.notification.data.url});
-  }
-  event.notification.close();
-  chrome.tts.stop();
-});
 
+//get value
+const getValue = async function(key, loc) {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage[loc].get(key, function(v) {
+        console.log("getValue", v, v[key])
+        if (isEmpty(v)) {
+          console.log({status: false, message: key + " is empty."})
+          reject({status: false, message: key + " is empty."});
+        } else {
+          console.log({status: true, message: key + " has been retrieved."})
+          resolve(v[key]);
+        }
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+//set value
+const setValue = async function(obj, loc) {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage[loc]?.set(obj, function() {
+        const keys = Object.keys(obj);
+        console.log({status: true, message: keys[0] + " has been set."})
+        resolve({status: true, message: keys[0] + " has been set."});
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+
+//empty a value
+const emptyValue = async function(key, loc) {
+  return new Promise((resolve, reject) => {
+    try {
+      const obj = {[key]:{}}
+      chrome.storage[loc]?.set(obj, function() {
+        console.log({status: true, message: key + " has been emptied."})
+        resolve({status: true, message: key + " has been emptied."});
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+//Complete destruction of value
+const removeValue = async function(key, loc) {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage[loc].remove(key, function() {
+        console.log({status: true, message: key + " has been removed."})
+        resolve({status: true, message: key + " has been removed."});
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+
+async function validateKey(key) {
+  try {
+    const r = await fetchAPI(key, 'user', 'basic,timestamp');
+    //logger("api", "torn", "Validating User", {type: "user", id: "", selection: "basic,timestamp&comment=ReTorn", timestamp: Date.now()});
+    const keyObj = {
+      're_apikey': key
+    };
+    await setValue(keyObj, "local");
+    return {status: true, message: "Your apikey is valid and has been saved."};
+  }
+  catch (error) {
+    console.log("ReTorn: Error validating apikey.", error)
+    throw error;
+  }
+}
+
+
+// Function for pulling the required API data
+async function pullRequiredAPI(apikey) {
+    try {
+      const data = await fetchAPI(apikey, 'user', 'basic,bars,icons,money,notifications,cooldowns,travel,education,networth,refills,perks,timestamp')
+      await Promise.all([
+        setValue({"re_user_data": data}, "local"),
+        setValue({"re_user": {"name": data.name, "player_id": data.player_id}}, "local")
+      ])
+      .catch((error) => {throw error})
+    }
+    catch (error) {
+      console.log("ERROR PULL", error)
+      return error;
+    }
+    return {status: true, message: "Required API has been pulled."}
+    //.finally(logger("api", "torn", "Required API", {type: "user", id: "", selection: "basic,bars,icons,money,notifications,cooldowns,travel,education,networth,refills,timestamp&comment=ReTorn", timestamp: Date.now()}))
+}
+
+// Function for fetching API from Torn
+function fetchAPI(apikey, type, selection, id) {
+  return new Promise((resolve, reject) => {
+    if (selection == undefined) {
+      selection = "";
+    }
+    if (id == undefined) {
+      id = "";
+    }
+    if (apikey == undefined || apikey.length != 16) {
+      reject({status: false, message: "Invalid apikey."})
+    }
+    fetch('https://api.torn.com/'+type+'/'+id+'?selections='+selection+'&key='+apikey+'&comment=ReTorn')
+    .catch((error) => {
+      console.log('Fetch Error: ', error);
+      return reject({status: false, message: "Fetch Error: " + error});
+    })
+    .then((response) => {
+      if (response.status !== 200) {
+        console.log("There was a problem connecting to Torn servers. Status Code: " + response.status);
+        return reject({status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status});
+      } else {
+        return response;
+      }
+    })
+    .then(response => response.json())
+    .then(data => parseAPI(data))
+    .catch((error) => {//should be Torn reported error code (2 = invalid key, 9 = api disabled, etc)
+      console.log("ERROR API", error)
+      return reject(error);
+    })
+    .then((res) => {
+        return resolve(res);
+    })
+    .catch((error) => {
+      console.log('Other Fetch Error: ', error);
+      return reject({status: false, message: "Fetch Error: " + error});
+    });
+
+  });
+}
+
+// Function for fetch API from Torn Stats
+async function fetchTornStats(apikey, selection) {
+  return new Promise((resolve, reject) => {
+    if (apikey == undefined) {
+      return reject({status: false, message: "Torn Stats apikey does not exist."})
+    }
+
+    if (apikey.length != 16) return reject({status: false, message: "Torn Stats apikey is invalid."})
+    if (selection == undefined) return reject({status: false, message: "Torn Stats selection is invalid."})
+
+    fetch('https://www.tornstats.com/api/v2/' + apikey + '/' + selection)
+    .then(response => {
+      if (response.status !== 200) {
+        return reject({status: false, message: "There was a problem connecting to Torn Stats servers. Status Code: " + response.status})
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data?.status == undefined) {
+        return reject({status: false, message:"No status detected from Torn Stats."})
+      }
+      if (data.status) {
+        console.log("ReTorn: Torn Stats status is true. Resolving.", data);
+        return resolve(data);
+      } else {
+        console.log("ReTorn: Torn Stats status is false. Rejecting.", data);
+        return reject({status: false, message: data.message})
+      }
+    })
+    .catch((error) => {
+      console.error('ReTorn: fetchTornStats error', error);
+      return reject("ReTorn: Torn Stats fetch error.");
+    });
+  });
+}
+
+// Function for parsing the API data
+function parseAPI(data) {
+  return new Promise((resolve, reject) => {
+    if (data.error != undefined) {
+      //logger("error", "api", "Torn API Error code detected during parsing.", {code: data.error.code, error: data.error.error, timestamp: Date.now()});
+      const e = {status: false, message: "API Error: Code: " + data.error.code + " | Message: " + data.error.error, code: data.error.code}
+      setValue({"re_last_error": e}, "local");
+      return reject(e);
+    } else {
+      removeValue("re_last_error", "local");
+      console.log("data has been parsed", data)
+      return resolve(data);
+    }
+  });
+}
+
+const deepExtend = function(out) {
+  out = out || {};
+
+  for (var i = 1, len = arguments.length; i < len; ++i) {
+    var obj = arguments[i];
+
+    if (!obj) {
+      continue;
+    }
+
+    for (var key in obj) {
+      if (!obj.hasOwnProperty(key)) {
+        continue;
+      }
+
+      // based on https://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
+      if (Object.prototype.toString.call(obj[key]) === '[object Object]') {
+        out[key] = deepExtend(out[key], obj[key]);
+        continue;
+      }
+
+      out[key] = obj[key];
+    }
+  }
+
+  return out;
+};
+
+function fixIndexAfterDelete(index, object) {
+  Object.keys(object).forEach(function(k) {
+    if (parseInt(k) > parseInt(index)) {
+      let newkey = parseInt(k);
+      newkey--;
+      object[newkey] = object[k];
+      delete object[k];
+    }
+  });
+  return object;
+}
+
+function deleteNestedKey(obj, match) {
+  console.log(JSON.stringify(obj), match)
+  delete obj[match];
+  for (let v of Object.values(obj)) {
+    if (v instanceof Object) {
+      deleteNestedKey(v, match);
+    }
+  }
+}
+
+async function handleMessage(msg) {
+  const m = msg;
+
+  switch (m.name) {
+    case "test_notification":
+      //createNotification("test_not", "ReTorn: Test Notification", "This is a test of the notification system.", {action: 'Open', title: "Torn"}, "https://www.torn.com/", true);
+    break;
+    
+    case "open_options":
+      if (chrome.runtime.openOptionsPage) {
+        chrome.runtime.openOptionsPage();
+      } else {
+        window.open(chrome.runtime.getURL('/pages/options.html'));
+      }
+    break;
+
+    case "set_api":
+      if (m.apikey) {
+        await validateKey(m.apikey); //validate if the apikey is real and working
+        await Promise.all([pullRequiredAPI(m.apikey), createAPIAlarm()]); //pull api data and create chrome.alarm to periodically pull api data
+        chrome.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
+        return {status: true, message: "Your apikey has been saved."}
+      } else {
+        throw {status: false, message: "The apikey was not passed correctly."}
+      }
+    break;
+
+    case "set_torn_stats_api":
+      if (m.apikey) {
+        const r = await fetchTornStats(m.apikey, "");
+        console.log("PEPE", r)
+        if (r.status) {
+          const keyObj = {
+            're_torn_stats_apikey': m.apikey
+          };
+          await setValue(keyObj, "local");
+        }
+        return r;
+      } else {
+        throw {status: false, message: "The apikey was not passed correctly."}
+      }
+    break;
+
+    case "get_torn_stats":
+      if (m.selection) {
+        const apikey = await getValue("re_torn_stats_apikey", "local");
+        console.log("GET TS", apikey);
+        const r = await fetchTornStats(apikey, m.selection);
+        return r;
+      } else {
+        throw {status: false, message: "Selection not sent with message."}
+      }
+    break;
+
+    case "get_session":
+      if (m.value) {
+        const r = await getValue(m.value, "session");
+        return {status: true, message: m.value+ " has been retrieved from storage.", data: r}
+      } else {
+        throw {status: false, message: "Value not sent with message."}
+      }
+    break;
+
+    case "merge_session":
+      if (m.key && !isEmpty(m.object)) {
+        const g = await getValue(m.key, "session");
+        const merg = deepExtend(g, m.object);
+        let obj = {};
+        obj[m.key] = merg;
+        console.log(obj)
+        await setValue(obj, "session");
+        return {status: true, message: `Object has been merged with ${m.key}`}
+      } else {
+        throw {status: false, message: "Key or object not properly sent with message."}
+      }
+    break;
+    
+    case "get_local":
+      if (m.value) {
+        const r = await getValue(m.value, "local");
+        return {status: true, message: m.value+ " has been retrieved from storage.", data: r}
+      } else {
+        throw {status: false, message: "Value not sent with message."}
+      }
+    break;
+
+    case "merge_local":
+      if (m.key && !isEmpty(m.object)) {
+        const g = await getValue(m.key, "local");
+        const merg = deepExtend(g, m.object);
+        let obj = {};
+        obj[m.key] = merg;
+        await setValue(obj, "local");
+        return {status: true, message: `Object has been merged with ${m.key}`}
+      } else {
+        throw {status: false, message: "Key or object not properly sent with message."}
+      }
+    break;
+
+    case "get_sync":
+      if (m.value) {
+        const r = await getValue(m.value, "sync");
+        return {status: true, message: m.value+ " has been retrieved from storage.", data: r}
+      } else {
+        throw {status: false, message: "Value not sent with message."}
+      }
+    break;
+
+    case "merge_sync":
+      if (m.key && !isEmpty(m.object)) {
+        const g = await getValue(m.key, "sync");
+        const merg = deepExtend(g, m.object);
+        let obj = {};
+        obj[m.key] = merg;
+        console.log(obj)
+        await setValue(obj, "sync");
+        return {status: true, message: `Object has been merged with ${m.key}`}
+      } else {
+        throw {status: false, message: "Key or object not properly sent with message."}
+      }
+    break;
+
+    case "del_settings_index":
+      if (m.key && m.setting) {
+        const s = await getValue("settings", "sync");
+        let newsettings = {[m.setting]: {}}
+        let obj = s[m.setting];
+
+        if (!isEmpty(obj)) {
+          delete obj[m.key];
+          const newobj = fixIndexAfterDelete(m.key, obj);
+          newsettings[m.setting] = newobj;
+          const merg = deepExtend(s, newsettings);
+          let finalobj = {};
+          finalobj["settings"] = JSON.parse(JSON.stringify(merg));
+
+          await setValue(finalobj, "sync");
+          return {status: true, message: `Key ${m.key} was deleted from ${m.setting}.`}
+        }
+        return {status: false, message: "Something went wrong deleting index. Object was empty."}
+      } else {
+        throw {status: false, message: "Key or object not sent with message."}
+      }
+    break;
+
+    case "remove_value":
+      if (m.key && m.location) {
+        removeValue(m.key, m.location);
+      } else {
+        throw {status: false, message: "Key not sent with message."}
+      }
+    break;
+
+    case "delete_settings_key":
+      if (m.key && m.item) {
+        const settings = await JSON.parse(JSON.stringify(await getValue('settings', 'sync')));
+        let finalobj = {};
+
+        if ((m.item).includes('.')) {//this is a dumb way to write this, but I am tired and could not figure out a better way lmao
+          //this is basically checked for a nested item, christmas_town.friends
+          //realistically this should be a loop incase of even deeper nested objects, but I don't have a use case for an even deeper nested object
+          const keys = m.item.split('.');
+          const obj = settings[keys[0]][keys[1]];
+          console.log(obj,keys)
+
+          deleteNestedKey(obj, m.key);
+
+          const newobj = {
+            [keys[0]]: {
+              [keys[1]]: JSON.parse(JSON.stringify(obj))
+            }
+          }
+          const merg = deepExtend(settings, newobj);
+          finalobj["settings"] = JSON.parse(JSON.stringify(merg));
+        } else {
+          const obj = settings[m.item];
+          deleteNestedKey(obj, m.key);
+          const newobj = {
+            [m.item]: JSON.parse(JSON.stringify(obj))
+          }
+          const merg = deepExtend(settings, newobj);
+          finalobj["settings"] = JSON.parse(JSON.stringify(merg));
+        }
+
+        console.log("BIG FINAL LOL", finalobj)
+
+        await setValue(finalobj, "sync");
+      } else {
+        throw {status: false, message: "Key or object not sent with message."}
+      }
+    break;
+
+    case "full_reset":
+      fullReset();
+      return;
+    break;
+
+    case "logout":
+      const lg = await logout();
+      return lg;
+    break;
+    
+    default:
+      throw {status: false, message: "[" + m.name + "] message name was not found."}
+    break;
+  }
+}
+
+function isEmpty(obj) { //function for easily checking if an object is empty
+  if (obj != undefined) {
+    return Object.keys(obj).length === 0;
+  }
+  return true;
+}
+
+
+// Delete all settings and restore to default
+function fullReset() {
+  chrome.storage.sync.clear();
+  chrome.storage.local.clear();
+  chrome.storage.session.clear();
+  clearAlarm("required_api");
+
+  newInstallation();
+}
+
+//remove user data and api keys
+async function logout() {
+  try {
+    const messages = await Promise.all([
+      removeValue("re_apikey", "local"),
+      removeValue("re_user", "local"),
+      removeValue("re_user_data", "local"),
+      removeValue("re_tornstats_apikey", "local"),
+      //setValue({re_settings: {tornstats: {enabled: false}}}, "local")
+      ]);
+      console.log("ReTorn: Removed user data from storage", messages);
+      chrome.action.setPopup({popup: "pages/popup_start.html"});
+      chrome.action.setBadgeText({text: ""});
+      clearAlarm("required_api");
+      return {status: true, message: "You have been logged out."};
+  }
+  catch (error) {
+    console.log({status: false, message: "Failed to log out properly.", error: error});
+    return {status: false, message: "Failed to log out properly.", error: error};
+  }
+}
+
+
+async function checkItemAPI() {
+  try {
+    const i = await getValue("re_items", "local");
+    if ((Math.floor(Date.now() / 1000) - parseInt(i.timestamp)) > 86400) { //has items been updated in 1 day?
+      try {
+        const key = await getValue("re_apikey", "local");
+        const r = await fetchAPI(key, 'torn', 'items,timestamp');
+        setValue({"re_items": r}, "local")
+      }
+      catch (error) { //API key hasn't been set yet or some issue with fetching, so get old list of Torn items from file
+        await setItemsFromFile();
+      }
+    }
+  }
+  catch (e) {
+    await setItemsFromFile();
+  }
+
+  //.finally(logger("api", "torn", "Torn item data", {type: "torn", id: "", selection: "items,timestamp&comment=ReTorn", timestamp: Date.now()}))
+}
+
+async function clearTornStats() {
+  try {
+    const ts = await getValue("torn_stats", "local");
+    for (const [key, value] of Object.entries(ts)) {
+      if (value?.cache_until) {
+        if ((Date.now()/1000) >= value.cache_until) {
+          delete ts[key];
+        }
+      } else {
+        delete ts[key];
+      }
+    }
+    setValue({torn_stats: ts}, "local");
+  }
+  catch (e) {
+    console.log("Clearing TornStats data error:", e)
+  }
+}
+
+async function setItemsFromFile() {
+  const url = chrome.runtime.getURL('/files/items.json');
+  const f = await fetch(url);
+  const json = await f.json();
+  await setValue({"re_items": json}, "local");
+}
+
+
+async function startup() {
+  chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"}); //set badge color
+  checkItemAPI();
+  //TODO: check if tornstats api key exists, if not, disable tornstats (and maybe notify user somehow)
+  await clearTornStats();
+  try {
+    const r = await getValue("re_user_data", "local");
+      chrome.action.setPopup({popup: "pages/popup.html"});
+      createAPIAlarm();
+  }
+  catch (e) {
+    //user data hasn't been generated so ignore
+  }
+}
+
+async function newInstallation() {
+  const sett = chrome.runtime.getURL('/files/default_settings.json');
+  const feat = chrome.runtime.getURL('/files/default_features.json');
+  const noti = chrome.runtime.getURL('/files/default_notifications.json');
+
+
+  const fetches = await Promise.all([fetch(sett),fetch(feat),fetch(noti)]);
+  const jsons = await Promise.all([fetches[0].json(), fetches[1].json(), fetches[2].json()])
+  await Promise.all([setValue({"settings": jsons[0]}, "sync"), setValue({"features": jsons[1]}, "sync"), setValue({"notifications": jsons[2]}, "sync"), setValue({"torn_stats": {}}, "local"), setValue({"re_ct_items": {}}, "local")])
+}
+
+/* 
+    This is a workaround for the onEnabled chrome api. 
+    onStartup/onUpdate does not trigger if extension is disabled and 
+    re-enabled unless we have the management permission (which is too powerful for ReTorn)
+    this function will run every time the Service Worker starts (every couple of minutes), but we only want the startup() function
+    to run the exact first time the service Worker starts, so we use session data to check if
+    it has already been ran during this session. Session data is removed when the extension is shut down in any way.
+*/
+async function serviceWorkerStart() {
+  try {
+    const z = await getValue("re_startup", "session");
+    createAPIAlarm();
+  }
+  catch (e) {
+    const obj = {
+      re_startup: true
+    }
+    await setValue(obj, "session");
+    startup();
+  }
+}
+serviceWorkerStart();
