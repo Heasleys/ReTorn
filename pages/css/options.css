@@ -24,6 +24,7 @@
     background-size: 4px;
     cursor: pointer;
     display: flex;
+    margin-bottom: 15px;
 }
 .re_title {
   text-shadow: rgba(0, 0, 0, 0.65) 1px 1px 2px;
@@ -82,9 +83,11 @@
 .capitalize * {
   text-transform: none;
 }
-.float-bottom {
+.float-topright {
   position: absolute;
-  bottom: 10px;
+  right: 5px;
+  top: 5px;
+  font-size: 10px;
 }
 .float-right {
   float: right;
@@ -92,8 +95,38 @@
 .text-normal {
   font-weight: 100;
 }
+.mb20 {
+  margin-bottom: 20px;
+}
+.mt20 {
+  margin-top: 20px;
+}
+.m10 {
+  margin: 10px;
+}
 /* optional classes */
 
+/* main container */
+.main_container {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+}
+
+button.mobile {
+  float: left;
+  width: 50px;
+  min-width: unset;
+  background-color: #00000000;
+  border: none;
+  color: white;
+  font-size: 32px;
+  padding-right: 20px;
+  cursor: pointer;
+}
+
+/* main container */
 
 /* Options Page = Menu Sidebar */
   .title {
@@ -197,6 +230,7 @@
     overflow-x: hidden;
     flex-grow: 1;
     margin-left: 1em;
+    margin-right: 1em;
   }
 /* Options Page = Main View */
 
@@ -205,7 +239,7 @@
 
 .tab_container {
   display: none;
-  padding: 2em;
+  padding-top: 1em;
   max-width: 800px;
 }
 .show {
@@ -217,7 +251,6 @@
 }
 
 .category {
-  margin-left: 1em;
   margin-bottom: 1.5em;
   padding: 5px;
   border-radius: 5px;
@@ -399,12 +432,231 @@ ul.credits {
   position: relative;
   left: 8px;
 }
+
+.beyond {
+  position: absolute;
+  bottom: 0;
+  right: 5px;
+}
+.beyond a {
+  color: #4974a50a !important;
+}
+.beyond a:hover {
+  color: #4974a51a !important;
+}
 /* credits */
 
+
+
+
+
+/* LOG TABLE https://codepen.io/AllThingsSmitty/pen/MyqmdM */
+table {
+  border: 1px solid;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  table-layout: fixed;
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.25;
+  font-size: 14px;
+}
+
+table caption {
+  font-size: 1.5em;
+  margin: .5em 0 .75em;
+}
+
+table tr {
+  border: 1px solid;
+  padding: .35em;
+}
+
+table th,
+table td {
+  padding: .625em;
+  text-align: center;
+  word-break: break-all;
+}
+
+table th {
+  font-size: .85em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 5px;
+  border-bottom: 1px solid;
+}
+
+@media screen and (max-width: 615px) {
+  table {
+    border: 0;
+  }
+
+  table caption {
+    font-size: 1.3em;
+  }
+  
+  table thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  
+  table tr {
+    border-bottom: 3px solid;
+    display: block;
+    margin-bottom: .625em;
+  }
+  
+  table td {
+    border-bottom: 1px solid;
+    display: block;
+    font-size: .8em;
+    text-align: right;
+  }
+  
+  table td::before {
+    /*
+    * aria-label has no advantage, it won't be read inside a table
+    content: attr(aria-label);
+    */
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-right: 10px;
+  }
+  
+  table td:last-child {
+    border-bottom: 0;
+  }
+}
+
+
+
+html.light table, html.light th, html.light th:not(:last-child), html.light td:not(:last-child) {
+  border-color: #111;
+}
+html.dark table, html.dark th, html.dark th:not(:last-child), html.dark td:not(:last-child) {
+  border-color: #fbfbfb;
+}
+table th {
+
+}
+table.log-list th:not(:last-child), table.log-list td:not(:last-child) {
+  border-right: 1px solid;
+}
+/* LOG TABLE */
+
+
+
+
+
+@media screen and (max-width: 360px) {
+  .tab_groups {
+    margin-left: 3px
+  }
+  .card {
+    margin-left: 0px;
+  }
+  .card-content {
+    padding-left: 2px;
+  }
+}
+
+
+@media screen and (max-width: 615px) {
+  .mainview {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .main_container {
+    flex-direction: column;
+  }
+  /*sidebar*/
+  .sidenav > ul.tabs {
+    display: none;
+  }
+
+  /* cards in mainview */
+  .card {
+    display: flex;
+    justify-content: center;
+  }
+  /* tab groups for main view */
+  .tab_groups {
+    margin-left: 0px;
+  }
+  /*tab container menu title*/
+  .menu_title {
+    margin-left: 1em;
+  }
+
+  .tab_container {
+    margin-bottom: 30em;
+  }
+
+  /*log stuff*/
+  .nav-link {
+    padding: .5rem 1rem;
+  }
+
+  .num {
+    display: none;
+  }
+
+
+
+}
+
+
+
+@media screen and (max-width: 750px) {
+  .navbar ul.nav li.nav-item {
+    width: auto;
+    min-width: 85px;
+  }
+
+  .dropdown-menu {
+    width: auto;
+    min-width: 85px;
+  }
+
+  .nav-link {
+    padding: .5rem 1rem;
+  }
+}
 
 /* large screen */
 @media screen and (min-width: 616px) {
   button.mobile {
     display: none;
   }
+  .category.category-fluid {
+    width: auto;
+  }
+
+
+  th[data-label="Time"], td[data-label="Time"] {
+    width:135px;
+  }
+  th[data-label="Code"], td[data-label="Code"] {
+    width:40px;
+  }
 }
+/* large screen */
+
+/* large screen */
+@media screen and (min-width: 1000px) {
+  .card:only-child {
+    max-width: 824px;
+  }
+}
+/* large screen */

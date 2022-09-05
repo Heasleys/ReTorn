@@ -76,7 +76,7 @@ async function createNotificationsList() {
   sendMessage({name: "get_sync", value: "notifications"})
   .then((n) => {
     const d = n.data;
-    $('#notifications_card').append(`<div class="category"><h4 class="capitalize">Notifications:</h4></div>`)
+    $('#notifications_card').append(`<div class="category"></div>`)
 
     for (const [key, val] of Object.entries(d)) {
       if (key != 'tooltip' && key != 'enabled' && key != 'order' && key != 'value') {
@@ -159,6 +159,10 @@ async function initSidebar() {
      });
 }
 function initInputs() {
+  $('button.mobile').click(function() {
+    $('ul.tabs').toggleClass('show');
+  });
+
   $('body').on('change', '#energy_value, #nerve_value, #happy_value, #life_value', function() {
     let v = $(this).val();
     let id = $(this).attr('id').replace('_value', '');
