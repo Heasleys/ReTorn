@@ -12,7 +12,7 @@
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 1000px) {
   html:not(.html-manual-desktop) #re_qlinks {
     display: none;
   }
@@ -65,10 +65,6 @@ body.dark-mode .re_qlinks_head {
 }
 .re_qlinks_head .re_logo {
   font-size: 12px;
-}
-
-.re_qlinks_content {
-
 }
 
 .re_qlinks_link {

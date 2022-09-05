@@ -184,18 +184,12 @@ ul.npc_list span.attack_time {
 }
 
 
-
-
-
-
-/* mobile list */
-@media screen and (min-width: 601px) {
- div.header-navigation.right > div.header-buttons-wrapper > ul.toolbar #nav-npcs {
-   visibility: hidden;
-   display: none;
- }
+@media screen and (max-width: 654px) and (min-width: 602px) {
+  li#nav-npcs+li.find-wrapper .input-wrapper.search, li#nav-npcs+li.find-wrapper #search-type-wrapper,li#nav-npcs+li.find-wrapper #search-type-wrapper div, li#nav-npcs+li.find-wrapper #search-type-wrapper button {
+    width: 26vw;
+    max-width: 170px;
+  }
 }
-
 
 #nav-npcs.active .re-npclist-tooltip {
   visibility: visible;
