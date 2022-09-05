@@ -85,7 +85,7 @@ if ($('#body').attr('data-traveling') != "true" && $('#body').attr('data-abroad'
     console.log(stats);
     statsContainer.append(`
       <div class="re_head expanded flat-top">
-        <span class="re_title"><span class="re_logo"><span class="re_yellow">Re</span>Torn: </span><span id="re_title">Effective Stats</span></span>
+        <span class="re_title"><span id="re_title">Effective Stats</span></span>
       </div>
       <div class="re_stats_list cont-gray bottom-round">
 
