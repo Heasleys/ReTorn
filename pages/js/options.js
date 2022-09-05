@@ -632,14 +632,19 @@ function deleteIndexFromObject(index, s, callback) {
 
 function setHeaderColor(color) {
   const root = document.documentElement;
-  let color_two;
-  if (wc_hex_is_light(color)) {
-    color_two = pSBC(-0.15, color);
-  } else {
-    color_two = pSBC(0.013, color);
+  if (color) {
+    let color_lighter;
+    let color_darker;
+    if (wc_hex_is_light(color)) {
+      color_lighter = color;
+      color_darker = pSBC(-0.64, color);
+    } else {
+      color_lighter = pSBC(0.13, color);
+      color_darker = color;
+    }
+    root.style.setProperty('--re-header-color', color_lighter);
+    root.style.setProperty('--re-header-color-two', color_darker);
   }
-  root.style.setProperty('--re-header-color', color);
-  root.style.setProperty('--re-header-color-two', color_two);
 }
 
 //Function to return colors darker/lighter/blended - https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
@@ -670,10 +675,10 @@ const pSBC=(p,c0,c1,l)=>{
 	else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
 }
 function wc_hex_is_light(color) {
-    const hex = color.replace('#', '');
-    const c_r = parseInt(hex.substr(0, 2), 16);
-    const c_g = parseInt(hex.substr(2, 2), 16);
-    const c_b = parseInt(hex.substr(4, 2), 16);
-    const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
-    return brightness > 155; //originally 155
+  const hex = color.replace('#', '');
+  const c_r = parseInt(hex.substr(0, 2), 16);
+  const c_g = parseInt(hex.substr(2, 2), 16);
+  const c_b = parseInt(hex.substr(4, 2), 16);
+  const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
+  return brightness > 82; //originally 155
 }

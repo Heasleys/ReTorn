@@ -1,6 +1,6 @@
 /* CSS for ReTorn Example Title Header */ 
 :root {
-  --re-header-background: repeating-linear-gradient(90deg,var(--re-header-color),var(--re-header-color) 2px,var(--re-header-color-two) 0,var(--re-header-color-two) 4px);
+  --re-header-background: linear-gradient(180deg, var(--re-header-color) 0%, var(--re-header-color-two) 100%);
 }
 .re_logo {
   font-family: "impact", "Arial Black";
@@ -15,7 +15,7 @@
   font-size: 15px;
 }
 .re_head {
-    background-image: var(--re-header-background);
+    background: var(--re-header-background);
     height: 25px;
     box-sizing: border-box;
     border-bottom: none;
