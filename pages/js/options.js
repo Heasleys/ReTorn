@@ -192,7 +192,6 @@ function initInputs() {
         })
         .catch((e) => console.error(e))
       }
-      //chrome.runtime.sendMessage({name: "set_value", value_name: "re_settings", value: {"notifications": {"chain": {"alerts": {[id]: v}}}}});
     }
   });
   $('body').on('focus', '#energy_value, #nerve_value, #happy_value, #life_value, #chain_time_value, #chain_hit_value', function() {
