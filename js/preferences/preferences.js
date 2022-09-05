@@ -2,6 +2,7 @@
     //make sure we are not logged out
     if ($('div.content-wrapper.logged-out').length == 0) {
         insertHeader($("div.content-wrapper"), 'append', 'connect');
+        $('.re_head .re_title').prepend(`<span class="re_logo"><span class="re_yellow">Re</span>Torn: </span>`)
         $('.re_settings_icon').remove();
         $('.re_content').html(`
         <div class="re_row">
