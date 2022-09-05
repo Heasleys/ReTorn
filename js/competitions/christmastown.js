@@ -18,30 +18,29 @@ function initCT() {
   updateFriendsList();
   insertWalls();
 
-  chrome.runtime.sendMessage({name: "get_value", value: "re_ct"}, (response) => {
-    if (response && response.value && response.value.re_ct) {
-      let re_ct = response.value.re_ct;
+  if (settings?.christmas_town) {
+    const ct_settings = settings.christmas_town;
 
-      for (const [category, cat_value] of Object.entries(re_ct)) {
-        for (const [index, value] of Object.entries(cat_value)) {
-          if (value.enabled) {
-            $(`.switch_wrap[name="${category}"] input[type="checkbox"][name="${index}"]`).prop( "checked", value.enabled).trigger("change");
-          }
+    for (const [category, cat_value] of Object.entries(ct_settings)) {
+      for (const [index, value] of Object.entries(cat_value)) {
+        if (value.enabled) {
+          $(`.switch_wrap[name="${category}"] input[type="checkbox"][name="${index}"]`).prop( "checked", value.enabled).trigger("change");
         }
       }
-
-      // Friends list Event
-      sendCTFriendEvent(re_ct);
-
     }
-  });
 
-  chrome.runtime.sendMessage({name: "get_value", value: "re_item_data", type: "local"}, (response) => {
-    if (response && response.status != undefined && response.status == true) {
-      items = response.value.re_item_data.items;
-      sendCTItemListEvent(items);
-    }
-  });
+    // Friends list Event
+    sendCTFriendEvent(ct_settings);
+  }
+
+  sendMessage({name: "get_local", value: "re_items"})
+  .then((r) => {
+      if (r.status) {
+          items = r?.data?.items;
+          sendCTItemListEvent(items);
+      }
+  })
+  .catch((e) => console.error(e))
 
   updateGiftsList();
 }
@@ -190,17 +189,44 @@ function insertHead() {
       $("#ct-wrap").removeClass(`re_ct_${name}`);
     }
 
-    chrome.runtime.sendMessage({name: "set_value", value_name: "re_ct", value: {[category]: {[name]: {"enabled": checked}}}});
-
+    const obj = {
+      "christmas_town": {
+        [category]: {
+          [name]: {
+            "enabled": checked
+          }
+        }
+      }
+    }
+    sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+    .then((r) => {
+      settings["christmas_town"][category][name]["enabled"] = checked;
+    })
+    .catch((e) => console.error(e))
   });
 
   $('.re_content #re_ct_friendsTextbox').change(function() {
     let userid = $(this).val();
     if (!isNaN(userid)) {
-      chrome.runtime.sendMessage({name: "set_value", value_name: "re_ct", value: {friends: {[userid]: {color: "#8ABEEF"}}}}, (response) => {
+      const obj = {
+        "christmas_town": {
+          "friends": {
+            [userid]: {
+              "color": "#8ABEEF"
+            }
+          }
+        }
+      }
+      sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+      .then((r) => {
+        settings["christmas_town"]["friends"][userid] = {
+            "color": "#8ABEEF"
+        }
+
         updateFriendsList();
         $('#re_ct_friendsTextbox').val('');
-      });
+      })
+      .catch((e) => console.error(e))
     }
   });
 
@@ -235,69 +261,94 @@ function insertWalls() {
 }
 
 function updateFriendsList() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_ct"}, (response) => {
-    if (response && response.value && response.value.re_ct) {
-      let re_ct = response.value.re_ct;
-      sendCTFriendEvent(re_ct);
+    let re_ct = settings?.christmas_town;
+    sendCTFriendEvent(re_ct);
 
-      if (re_ct.friends) {
-        $('#friends_list').empty();
-        for (const [userid, value] of Object.entries(re_ct.friends)) {
-          if (userid && value && value.color) {
-            $('#friends_list').append(`<li data-userid="${userid}"><div class="re_list_item x"><a class="remove-link"> <i class="delete-subscribed-icon"></i> </a></div><div class="re_list_item name"><a href="/profiles.php?XID=${userid}" target="_blank">${userid}</a></div><div class="re_list_item color" title="Change friend's character color"><input data-userid="${userid}" type="color" value="${value.color}"></div></li>`);
-          }
+    if (re_ct?.friends) {
+      $('#friends_list').empty();
+      console.log("CGROS<ASS", re_ct);
+      for (const [userid, value] of Object.entries(re_ct.friends)) {
+        console.log(userid, value)
+        if (userid && value && value.color) {
+          $('#friends_list').append(`<li data-userid="${userid}"><div class="re_list_item x"><a class="remove-link"> <i class="delete-subscribed-icon"></i> </a></div><div class="re_list_item name"><a href="/profiles.php?XID=${userid}" target="_blank">${userid}</a></div><div class="re_list_item color" title="Change friend's character color"><input data-userid="${userid}" type="color" value="${value.color}"></div></li>`);
         }
-
-        $('#friends_list input[type="color"]').change(function() {
-          let color = $(this).val();
-          let userid = $(this).attr("data-userid");
-          if (userid && !isNaN(userid) && color) {
-            chrome.runtime.sendMessage({name: "set_value", value_name: "re_ct", value: {friends: {[userid]: {color: color}}}}, (response) => {
-              updateFriendsList();
-            });
-          }
-        });
-
-        $('#friends_list .re_list_item.x .remove-link .delete-subscribed-icon').click(function() {
-          let parent = $(this).closest('li');
-          let userid = parent.attr('data-userid');
-
-          if (userid && parent.length > 0) {
-            chrome.runtime.sendMessage({name: "del_value", value: "re_ct", key: userid}, (response) => {
-              if (response.status) {
-                parent.remove();
-                $(`.users-layer #ctUser${userid}`).find('svg').css('fill', '');
-                updateFriendsList();
-              }
-            })
-          }
-        });
-
       }
+
+      $('#friends_list input[type="color"]').change(function() {
+        let color = $(this).val();
+        let userid = $(this).attr("data-userid");
+        if (userid && !isNaN(userid) && color) {
+          const obj = {
+            "christmas_town": {
+              "friends": {
+                [userid]: {
+                  "color": color
+                }
+              }
+            }
+          }
+
+          sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+          .then((r) => {
+            settings["christmas_town"]["friends"][userid]["color"] = color;
+            updateFriendsList();
+          })
+          .catch((e) => console.error(e))
+        }
+      });
+
+      $('#friends_list .re_list_item.x .remove-link .delete-subscribed-icon').click(function() {
+        let parent = $(this).closest('li');
+        let userid = parent.attr('data-userid');
+
+        if (userid && parent.length > 0) {
+          sendMessage({"name": "delete_settings_key", "item": "christmas_town.friends", "key": userid})
+          .then((r) => {
+            console.log("my big BIG response",r)
+            if (r?.status) {
+              parent.remove();
+              $(`.users-layer #ctUser${userid}`).find('svg').css('fill', '');
+              updateFriendsList();
+            }
+          })
+          .catch((e) => console.error(e))
+          // chrome.runtime.sendMessage({name: "del_value", value: "re_ct", key: userid}, (response) => {
+          //   if (response.status) {
+          //     parent.remove();
+          //     $(`.users-layer #ctUser${userid}`).find('svg').css('fill', '');
+          //     updateFriendsList();
+          //   }
+          // })
+        }
+      });
+
     }
-  });
+  
 }
 
 function updateGiftsList() {
-  chrome.runtime.sendMessage({name: "get_value", value: "re_ct_items", type: "local"}, (response) => {
-    if (response && response.status) {
-      $('#gifts_list').empty();
-      let items = response.value.re_ct_items.items;
-      itemCount = Object.keys(items).length;
-      let itemHTML = ``;
-      let totalValue = 0;
-      for (const [index, item] of Object.entries(items).reverse()) {
-        if (item.market_value) {
-          totalValue += item.market_value;
+  sendMessage({name: "get_local", value: "re_ct_items"})
+  .then((r) => {
+    console.log(r);
+    if (r?.status) {
+      const items = r?.data;
+      if (items) {
+        $('#gifts_list').empty();
+        itemCount = Object.keys(items).length;
+        let itemHTML = ``;
+        let totalValue = 0;
+        for (const [index, item] of Object.entries(items).reverse()) {
+          if (item.market_value) {
+            totalValue += item.market_value;
+          }
+          itemHTML += `<li><div class="re_list_item item">${item.name}</div></li>`;
         }
-        itemHTML += `<li><div class="re_list_item item">${item.name}</div></li>`;
+        $('#gifts_list').html(itemHTML);
+        $('#re_items_value').text(`$${totalValue.toLocaleString('en-US')}`)
       }
-      $('#gifts_list').html(itemHTML);
-      $('#re_items_value').text(`$${totalValue.toLocaleString('en-US')}`)
-    } else {
-      chrome.runtime.sendMessage({name: "set_value", value_name: "re_ct_items", value: {items: {}}, type: "local"});
     }
-  });
+  })
+  .catch((e) => console.error(e))
 }
 
 
@@ -325,9 +376,13 @@ document.addEventListener("re_ct_additems", function(msg) {
         }
       }
     }
-    chrome.runtime.sendMessage({name: "set_value", value_name: "re_ct_items", value: {items}, type: "local"}, (response) => {
+
+    console.log(items);
+    sendMessage({"name": "merge_local", "key": "re_ct_items", "object": items})
+    .then((r) => {
       updateGiftsList();
-    });
+    })
+    .catch((e) => console.error(e))
   }
 });
 
