@@ -95,7 +95,7 @@ label {
 }
 
 .error {
-    color: var(--re-error);
+    color: var(--torn-red);
 }
 
 .text2 {
