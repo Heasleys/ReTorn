@@ -226,8 +226,8 @@ function initJail() {
       time = info_wrap.find('span.time')[0].textContent.replace(/\s+/g, '').replace('TIME:', '');
       level = parseInt(info_wrap.find('span.level')[0].textContent.replace(/\s+/g, '').replace('LEVEL:', ''));
 
-      let hours = parseInt(time.split('h').shift());
-      let mins = parseInt(time.split('h').pop().replace('m', ''));
+      let hours = time.includes('h') ? parseInt(time.split('h').shift()) : 0;
+      let mins = time.includes('m') ? parseInt(time.split('h').pop().replace('m', '')) : 0;
 
       time = ((hours * 60) + mins);
       score = time * level;
