@@ -10,7 +10,7 @@
   padding-right: 5px;
 }
 
-.re_spy_col > i:hover {
+.re_spy_col > i:hover, .re_spy_col .re_spy_spy {
   cursor: pointer;
 }
 
