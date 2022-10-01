@@ -485,16 +485,18 @@ function loadRankedWar() {
         }
         
         if (psTitle) {
+          member.find(".member [class*='userInfoBox_']").append(`<i class="fas fa-info-circle re_spy_ps" style="margin-left: auto; padding-right: 3px;"></i>`);
+
           if (spyTitle) {
-            if (statTot) {
+            if (statTot) {//total stats available for abbreviated number
               member.find(".member").after(`<div class="re_spy_col left"><span class="re_spy_spy">${abbreviateNumber(statTot)}</span></div>`);
-            } else {
-              member.find(".member").after(`<div class="re_spy_col left"><i class="fas fa-info-circle re_spy_ps" style="margin-right: 3px;"></i><i class="fas fa-eye re_spy_spy"></i></div>`);
+            } else { //no total stats, so place eye icon instead
+              member.find(".member").after(`<div class="re_spy_col left"><i class="fas fa-eye re_spy_spy"></i></div>`);
             }
-          } else {
-            member.find(".member").after(`<div class="re_spy_col left"><i class="fas fa-info-circle re_spy_ps"></i></div>`)
+          } else {//no spies
+            member.find(".member").after(`<div class="re_spy_col left" title="Spy data not available.">N/A</div>`)
           }
-        } else {
+        } else {//no spies or playerstats
           member.find(".member").after(`<div class="re_spy_col left" title="No data available.">N/A</div>`)
         }
   

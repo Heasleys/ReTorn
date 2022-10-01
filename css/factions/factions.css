@@ -1,6 +1,6 @@
 /* ranked war spy column */
 .re_spy_title, .re_spy_col {
-  width: 40px;
+  width: 35px;
   border-right: 1px solid var(--default-panel-divider-outer-side-color);
   text-align: center;
   height: 33px;
@@ -23,9 +23,13 @@
   margin-left: 0px;
 }
 
+.faction-war.re_rankedwar .members-list .member [class*="userInfoBox_"] {
+  width: auto;
+}
+
 /* ranked war member name column */
 .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
-  width: 135px;
+  width: 140px;
 }
 
 /* ranked war member level column */
@@ -183,7 +187,7 @@
 
 
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 784px) {
   html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual-desktop) #tornstats-roster td.rank, html:not(.html-manual-desktop) #tornstats-roster td a span.userid {
     display: none;
   }
@@ -268,7 +272,7 @@
 
   /* ranked war member name column */
   .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
-    width: 135px;
+    width: 140px;
   }
 
   /* ranked war spy column */
@@ -276,6 +280,37 @@
     padding-left: 1px !important;
     padding-right: 0px !important;
   }
+
+  /* ranked war spy column title */
+  .re_spy_title {
+    border: 0;
+    position: relative;
+    width: 37px;
+  }
+  .re_spy_title:before {
+    background: var(--default-divider-left-linear-gradient);
+    bottom: 0;
+    content: "";
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 1px;
+  }
+  .re_spy_title:after {
+    background: var(--default-divider-right-linear-gradient);
+    bottom: 0;
+    content: "";
+    left: -1px;
+    position: absolute;
+    top: 0;
+    width: 1px;
+  }
+
+/* ranked war member level column title small screen */
+.d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .white-grad .level {
+  width: 32px !important;
+}
+  
 
   html:not(.html-manual-desktop) .re_mem_count {
     display: none;
