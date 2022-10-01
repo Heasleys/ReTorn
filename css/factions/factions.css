@@ -1,6 +1,6 @@
 /* ranked war spy column */
 .re_spy_title, .re_spy_col {
-  width: 30px;
+  width: 40px;
   border-right: 1px solid var(--default-panel-divider-outer-side-color);
   text-align: center;
   height: 33px;
@@ -25,7 +25,7 @@
 
 /* ranked war member name column */
 .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
-  width: 145px;
+  width: 135px;
 }
 
 /* ranked war member level column */
@@ -226,13 +226,11 @@
   html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .title>li.level, html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .item>li.level {
     width: 42px;
   }
-  html:not(.html-manual-desktop) .r .faction-crimes-wrap .re_nnb .details-list .title>li.member, html:not(.html-manual-desktop) .r .faction-crimes-wrap .re_nnb .details-list .item>li.member {
-    width: 167px;
-  }
+
 
   /* ranked war member name column */
   .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
-    width: 124px;
+    width: 135px;
   }
 
   html:not(.html-manual-desktop) .re_mem_count {
@@ -240,7 +238,7 @@
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 784px) {
   /* Planning OCs columns */
   html:not(.html-manual-desktop) .re_nnb .plans-list .item>li.nnb, html:not(.html-manual-desktop) .re_nnb .plan-list-scrollbar .title>li.nnb {
     width: 40px !important;
@@ -254,6 +252,9 @@
   html:not(.html-manual-desktop) .re_nnb .plans-list .item>li.offences, html:not(.html-manual-desktop) .re_nnb .plan-list-scrollbar .title>li.offences {
     width: 60px !important;
   }
+  html:not(.html-manual-desktop) .r .faction-crimes-wrap .begin-wrap .re_nnb .plans-list .item>li.member, html:not(.html-manual-desktop) .r .faction-crimes-wrap .begin-wrap .re_nnb .plan-list-scrollbar .title>li.member {
+    width: 186px;
+  }
 
   /* Already Planned Teams */
   html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .title>li.nnb, html:not(.html-manual-desktop) .d .faction-crimes-wrap .re_nnb .details-list .item>li.nnb {
@@ -263,13 +264,11 @@
     width: 42px;
     display: none;
   }
-  html:not(.html-manual-desktop) .r .faction-crimes-wrap .re_nnb .details-list .title>li.member, html:not(.html-manual-desktop) .r .faction-crimes-wrap .re_nnb .details-list .item>li.member {
-    width: 164px;
-  }
+
 
   /* ranked war member name column */
   .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
-    width: 120px;
+    width: 135px;
   }
 
   /* ranked war spy column */

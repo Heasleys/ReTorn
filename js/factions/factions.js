@@ -416,6 +416,53 @@ function loadRankedWar() {
   
           }
         }
+
+        function shortnameStats(stat) {
+          switch (stat) {
+            case "defense":
+              return "DEF";  
+            break;
+            case "strength":
+              return "STR";  
+            break;
+            case "dexterity":
+              return "DEX";  
+            break;
+            case "speed":
+              return "SPD";  
+            break;
+            case "total":
+              return "TOTAL"
+            break;
+            default:
+              return stat;
+            break;
+          }
+        }
+
+        const SI_PREFIXES = [
+          { value: 1, symbol: '' },
+          { value: 1e3, symbol: 'K' },
+          { value: 1e6, symbol: 'M' },
+          { value: 1e9, symbol: 'B' },
+          { value: 1e12, symbol: 't' },
+          { value: 1e15, symbol: 'q' },
+          { value: 1e18, symbol: 'Q' },
+          { value: 1e21, symbol: 's' },
+          { value: 1e24, symbol: 'S' }
+        ]
+        
+        const abbreviateNumber = (number) => { //https://stackoverflow.com/questions/10599933/convert-long-number-into-abbreviated-string-in-javascript-with-a-special-shortn
+          if (number === 0) return number
+        
+          const tier = SI_PREFIXES.filter((n) => number >= n.value).pop()
+          const numberFixed = (number / tier.value).toFixed(1)
+        
+          return `${numberFixed}${tier.symbol}`
+        }
+
+        let statTot;
+
         //if spy exists, add to title
         if (players[userid] && players[userid]["spy"]) {
           let timestampStr = "";
@@ -426,19 +473,24 @@ function loadRankedWar() {
             } else {
               member.data(index, value);
               if (isNaN(value)) {
-                spyTitle += `<br><b>${index[0].toUpperCase()}${index.slice(1)}: </b>${value}`;
+                spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value}</span>`;
               } else {
-                spyTitle += `<br><b>${index[0].toUpperCase()}${index.slice(1)}: </b>${value.toLocaleString()}`;
+                statTot = value;
+                spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value.toLocaleString()}</span>`;
               }
             }
   
           }
           spyTitle += timestampStr;
         }
-  
+        
         if (psTitle) {
           if (spyTitle) {
-            member.find(".member").after(`<div class="re_spy_col left"><i class="fas fa-info-circle re_spy_ps" style="margin-right: 3px;"></i><i class="fas fa-eye re_spy_spy"></i></div>`);
+            if (statTot) {
+              member.find(".member").after(`<div class="re_spy_col left"><span class="re_spy_spy">${abbreviateNumber(statTot)}</span></div>`);
+            } else {
+              member.find(".member").after(`<div class="re_spy_col left"><i class="fas fa-info-circle re_spy_ps" style="margin-right: 3px;"></i><i class="fas fa-eye re_spy_spy"></i></div>`);
+            }
           } else {
             member.find(".member").after(`<div class="re_spy_col left"><i class="fas fa-info-circle re_spy_ps"></i></div>`)
           }
