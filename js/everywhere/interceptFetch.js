@@ -101,6 +101,7 @@ function miniProfiles(response) {
 
           if (response?.user?.userID === "1468764") {
             $('#profile-mini-root').find('.icons').prepend(`<span class="right" style="font-size: 17px;" title="King of ReTorn">👑</span>`);
+            $('#profile-mini-root .box-info .box-value .digit .two-row>span:first-child').text('Epic');
           }
         }
     }
