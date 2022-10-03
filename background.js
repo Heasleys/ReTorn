@@ -285,7 +285,14 @@ async function createNotification(name, title, message, actions, openURL = "http
       );
     }
 }
-
+// Event Listener for Notification Button Clicks
+self.addEventListener('notificationclick', function (event) {
+  if (event.action === 'Open' && event.notification.data.url) {
+    chrome.tabs.create({'url': event.notification.data.url});
+  }
+  event.notification.close();
+  chrome.tts.stop();
+});
 
 //get value
 const getValue = async function(key, loc) {
