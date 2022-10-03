@@ -535,11 +535,7 @@ function deleteNestedKey(obj, match) {
 async function handleMessage(msg) {
   const m = msg;
 
-  switch (m.name) {
-    case "test_notification":
-      //createNotification("test_not", "ReTorn: Test Notification", "This is a test of the notification system.", {action: 'Open', title: "Torn"}, "https://www.torn.com/", true);
-    break;
-    
+  switch (m.name) {    
     case "open_options":
       if (chrome.runtime.openOptionsPage) {
         chrome.runtime.openOptionsPage();
@@ -729,6 +725,16 @@ async function handleMessage(msg) {
       return;
     break;
 
+    case "force_torn_items":
+      checkItemAPI(true);
+      return;
+    break;
+
+    case "test_notification":
+      let tts = m.tts ? m.tts : false;
+      createNotification("test_not", "ReTorn: Test Notification", "This is a test of the notification system.", {action: 'Open', title: "Torn"}, "https://www.torn.com/", tts);
+    break;
+
     case "logout":
       const lg = await logout();
       return lg;
@@ -781,10 +787,10 @@ async function logout() {
 }
 
 
-async function checkItemAPI() {
+async function checkItemAPI(force = false) {
   try {
     const i = await getValue("re_items", "local");
-    if ((Math.floor(Date.now() / 1000) - parseInt(i.timestamp)) > 86400) { //has items been updated in 1 day?
+    if ((Math.floor(Date.now() / 1000) - parseInt(i?.timestamp)) > 86400 || force) { //has items been updated in 1 day?
       try {
         const key = await getValue("re_apikey", "local");
         const r = await fetchAPI(key, 'torn', 'items,timestamp');

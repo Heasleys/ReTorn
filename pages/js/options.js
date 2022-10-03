@@ -67,8 +67,8 @@ const sendMessage = (msg) => {
 $(document).ready(function() {
   $('.version').text('ReTorn v'+manifestData.version);
 
-  Promise.all([initSidebar(), initTornStatsTab(), createNotificationsList(), createFeaturesList(), initSettings()]);
-  initInputs()
+  Promise.all([initSidebar(), initTornStatsTab(), createNotificationsList(), createFeaturesList(), initSettings()])
+  initInputs();
 });
 
 
@@ -369,7 +369,7 @@ function initInputs() {
     // Full reset of ReTorn Settings
       if (confirm('This will completely reset your settings and ReTorn data, including sync settings and local ReTorn storage. There is no going back from this. Are you sure you would like to fully reset ReTorn?')) {
 
-        chrome.runtime.sendMessage({name: "full_reset"});
+        sendMessage({"name": "full_reset"})
         setTimeout(function(){
            window.location.reload();
         }, 250);
@@ -379,22 +379,30 @@ function initInputs() {
 
 
   $("button#test_notification").click(function() {
-    // chrome.runtime.sendMessage({name: "get_value", value: "re_settings"}, (response) => {
-    //   if (response.status == true) {
-    //     const settings = response.value.re_settings;
-    //     if (settings.notifications && settings.notifications.notifications && settings.notifications.notifications.enabled) {
-    //       chrome.runtime.sendMessage({name: "test_notification"});
-    //     } else {
-    //       alert("You have notifications turned off.")
-    //     }
-    //   }
-    // });
+    sendMessage({name: "get_sync", value: "notifications"})
+    .then((r) => {
+      if (r?.status) {
+        if (r?.data?.all_notifications?.enabled) {
+          let tts = r?.data?.text_to_speech?.enabled;
+          sendMessage({name: "test_notification", tts: tts});
+        } else {
+          alert("You have notifications turned off.")
+        }
+      } else {
+        alert("Something went wrong retrieving notification data!");
+      }
+    })
+    .catch((e) => {
+      console.error(e)
+    })
   });
   
   $("button#force_torn_items").click(function() {
     // // force api or items list doc to refill local items storage
-    // chrome.runtime.sendMessage({name: "force_torn_items"});
-    // alert("Items Cache have been refreshed.")
+    sendMessage({"name": "force_torn_items"})
+    .then(() => {
+      alert("Items Cache have been refreshed.")
+    })
   });
 }
 
