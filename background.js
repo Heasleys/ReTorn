@@ -119,7 +119,7 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
 
     // ENERGY
     if (n?.energy?.enabled && newValue?.energy?.current != oldValue?.energy?.current) {
-      let data = checkNotifyBars('energy', notifications, newValue, oldValue);
+      let data = checkNotifyBars('energy', n, newValue, oldValue);
       if (data.notify == true) {
         await createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Visit Gym"}, "https://www.torn.com/gym.php", tts);
       }
@@ -127,7 +127,7 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
 
     // NERVE 
     if (n?.nerve?.enabled && newValue?.nerve?.current != oldValue?.nerve?.current) {
-      let data = checkNotifyBars('nerve', notifications, newValue, oldValue);
+      let data = checkNotifyBars('nerve', n, newValue, oldValue);
       if (data.notify == true) {
         await createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Commit Crimes"}, "https://www.torn.com/crimes.php", tts);
       }
@@ -135,7 +135,7 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
 
     // HAPPY
     if (n?.happy?.enabled && newValue?.happy?.current != oldValue?.happy?.current) {
-      let data = checkNotifyBars('happy', notifications, newValue, oldValue);
+      let data = checkNotifyBars('happy', n, newValue, oldValue);
       if (data.notify == true) {
         await createNotification("happy", "ReTorn: Happy", data.message, {action: 'Open', title: "Get Happy"}, "https://www.torn.com/item.php#candy-items", tts);
       }
@@ -143,7 +143,7 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
 
     // LIFE
     if (n?.life?.enabled && newValue?.life?.current != oldValue?.life?.current) {
-      let data = checkNotifyBars('life', notifications, newValue, oldValue);
+      let data = checkNotifyBars('life', n, newValue, oldValue);
       if (data.notify == true) {
         await createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "Get a Life"}, "https://www.torn.com/item.php#medical-items", tts);
       }
@@ -178,124 +178,78 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
         }
       })
     }
-
-
-
-    //Check for changes in user data to create notifications
-    //const tts = s?.
-
-
-
-    // getValue("re_settings").then(async (response) => {
-    //   var tts = response.re_settings.tts.enabled;
-    //   var notifications = response.re_settings.notifications;
-    //   let newValue = changes.re_user_data.newValue;
-    //   let oldValue = changes.re_user_data.oldValue;
-    //   if (newValue != undefined && oldValue != undefined) {
-    //     if (newValue.notifications != undefined && newValue.notifications != undefined) {
-    //       if ((newValue.notifications.events + newValue.notifications.messages) > 0) {
-    //         let badgeNum = parseInt(newValue.notifications.events + newValue.notifications.messages).toString();
-    //         chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"});
-    //         chrome.action.setBadgeText({text: badgeNum});
-    //       } else {
-    //         chrome.action.setBadgeText({text: ""});
-    //       }
-    //     }
-
-    //     // if (notifications != undefined && notifications.notifications != undefined && notifications.notifications.enabled == true) {
-
-
-
-    //     //     // COOLDOWNS - DRUGS
-    //     //     if (notifications.drugs.enabled == true && oldValue.cooldowns.drug != 0 && newValue.cooldowns.drug == 0) {
-    //     //      await createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#drugs-items", tts);
-    //     //     }
-
-    //     //     // COOLDOWNS - BOOSTERS
-    //     //     if (notifications.boosters.enabled == true && oldValue.cooldowns.booster != 0 && newValue.cooldowns.booster == 0) {
-    //     //       await createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#boosters-items", tts);
-    //     //     }
-
-    //     //     // COOLDOWNS - MEDICAL
-    //     //     if (notifications.medical.enabled == true && oldValue.cooldowns.medical != 0 && newValue.cooldowns.medical == 0) {
-    //     //       await createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#medical-items", tts);
-    //     //     }
-
-    //     //     // ENERGY
-    //     //     if (notifications.energy.enabled == true && newValue.energy.current != oldValue.energy.current) {
-    //     //       let data = checkNotifyBars('energy', notifications, newValue, oldValue);
-    //     //       if (data.notify == true) {
-    //     //         await createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Visit Gym"}, "https://www.torn.com/gym.php", tts);
-    //     //       }
-    //     //     }
-
-    //     //     // NERVE
-    //     //     if (notifications.nerve.enabled == true && newValue.nerve.current != oldValue.nerve.current) {
-    //     //       let data = checkNotifyBars('nerve', notifications, newValue, oldValue);
-    //     //       if (data.notify == true) {
-    //     //         await createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Commit Crimes"}, "https://www.torn.com/crimes.php", tts);
-    //     //       }
-    //     //     }
-
-    //     //     // HAPPY
-    //     //     if (notifications.happy.enabled == true && newValue.happy.current != oldValue.happy.current) {
-    //     //       let data = checkNotifyBars('happy', notifications, newValue, oldValue);
-    //     //       if (data.notify == true) {
-    //     //         await createNotification("happy", "ReTorn: Happy", data.message, {action: 'Open', title: "Get Happy"}, "https://www.torn.com/item.php#candy-items", tts);
-    //     //       }
-    //     //     }
-
-    //     //     // LIFE
-    //     //     if (notifications.life.enabled == true && newValue.life.current != oldValue.life.current) {
-    //     //       let data = checkNotifyBars('life', notifications, newValue, oldValue);
-    //     //       if (data.notify == true) {
-    //     //         await createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "Get a Life"}, "https://www.torn.com/item.php#medical-items", tts);
-    //     //       }
-    //     //     }
-
-    //     //     // EDUCATION
-    //     //     if (notifications.education.enabled == true && oldValue.education_current != 0 && newValue.education_current == 0) {
-    //     //         await createNotification("education", "ReTorn: Education", "Your education course has complete.", {action: 'Open', title: "Get Knowledge"}, "https://www.torn.com/education.php", tts);
-    //     //     }
-
-    //     //     // TRAVEL
-    //     //     if (notifications.travel.enabled == true && newValue.travel.time_left == 0 && newValue.travel.time_left != oldValue.travel.time_left) {
-    //     //       await createNotification("new_message", "ReTorn: Travel Notification", "You have landed in "+newValue.travel.destination+".", {action: 'Open', title: newValue.travel.destination}, "https://www.torn.com/index.php", tts);
-    //     //     }
-
-    //     //     // CHAINS
-    //     //     if (notifications.chain != undefined && newValue.chain.cooldown == 0 && newValue.chain.current >= 10) {
-    //     //       if (notifications.chain.alerts != undefined) {
-    //     //         // Notifications for chain time
-    //     //         if (notifications.chain.time != undefined && notifications.chain.time == true && notifications.chain.alerts.time != undefined && notifications.chain.alerts.time != "") {
-    //     //           let timeStr = notifications.chain.alerts.time;
-    //     //           timeStr = timeStr.replace(/ /g, '');
-    //     //           let times = timeStr.split(',');
-    //     //           times.forEach(async (seconds) => {
-    //     //             if (newValue.chain.timeout <= seconds && oldValue.chain.timeout >= seconds) {
-    //     //               await createNotification("chain_time_"+seconds, "ReTorn: Chain Alert", "The chain will drop in " + newValue.chain.timeout + " seconds!", {action: 'Open', title: "Enemy List"}, "https://www.torn.com/blacklist.php", tts);
-    //     //             }
-    //     //           });
-    //     //         }
-
-    //     //         // Notifications for chain total hits
-    //     //         if (notifications.chain.hit != undefined && notifications.chain.hit == true && notifications.chain.alerts.hit != undefined && notifications.chain.alerts.hit != "") {
-    //     //           let hitStr = notifications.chain.alerts.hit;
-    //     //           hitStr = hitStr.replace(/ /g, '');
-    //     //           let hits = hitStr.split(',');
-    //     //           hits.forEach(async (hit) => {
-    //     //             if (newValue.chain.current >= hit && oldValue.chain.current < hit) {
-    //     //               await createNotification("chain_hit_"+hit, "ReTorn: Chain Alert", "The chain has reached " + newValue.chain.current + " hits.", {action: 'Open', title: "Chain"}, "https://www.torn.com/factions.php?step=your#/war/chain", tts);
-    //     //             }
-    //     //           });
-    //     //         }
-    //     //       }
-    //     //     } // Chain
-    //     // }
-    //     }
-    // }).catch((error) => {console.log(error);});
 });
 
+
+// Assist Function for Notification Checking for Energy, Nerve, Life, and Happy
+function checkNotifyBars(type, notifications, newValue, oldValue) {
+  let notify = false;
+  let message = "Your "+type+" has reached it's value.";
+
+  var value = notifications[type].value;
+  var num = parseFloat(value.replace(/\D/g, ""));
+
+  let perc = Math.floor(parseFloat(num) * 100) / 100;
+  let eperc = Math.floor((newValue[type].current/newValue[type].maximum) * 100);
+  let epercOld = Math.floor((oldValue[type].current/oldValue[type].maximum) * 100);
+
+  // LESS THAN
+  if (value.includes("<")) {
+    if (value.includes("%")) {
+      if (eperc < perc && epercOld >= perc) {
+        notify = true;
+        message = "Your "+type+" has dropped below " + perc + "%.";
+      }
+    } else {
+      if (newValue[type].current < num && oldValue[type].current >= num) {
+        notify = true;
+        message = "Your "+type+" has dropped below " + num + ".";
+      }
+    }
+  }
+
+  // GREATER THAN
+  if (value.includes(">")) {
+    if (value.includes("%")) {
+      if (eperc > perc && epercOld <= perc) {
+        notify = true;
+        message = "Your "+type+" has increased above " + perc + "%.";
+      }
+    } else {
+      if (newValue[type].current > num && oldValue[type].current <= num) {
+        notify = true;
+        message = "Your "+type+" has increased above " + num + ".";
+      }
+    }
+  }
+
+  // BASE VALUE
+  if (!value.includes(">") && !value.includes("<")) {
+    if (value.includes("%")) {
+      if (num == 100) {
+        if (eperc >= perc && epercOld < perc) {
+          notify = true;
+          message = "Your "+type+" is full.";
+        }
+      } else {
+        if (eperc == perc) {
+          notify = true;
+          message = "Your "+type+" has reached " + perc + "%.";
+        }
+      }
+    } else {
+      if (newValue[type].current == num) {
+        notify = true;
+        message = "Your "+type+" has reached " + num + ".";
+      }
+    }
+  }
+
+
+
+  let data = {notify: notify, message: message}
+  return data;
+}
 
 
 // Function for creating Notifications (Chrome/Firefox?)
