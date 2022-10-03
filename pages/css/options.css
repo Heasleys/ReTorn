@@ -232,7 +232,7 @@ button.mobile {
     overflow-x: hidden;
     flex-grow: 1;
     margin-left: 1em;
-    margin-right: 1em;
+    padding-right: 1em;
   }
 /* Options Page = Main View */
 
@@ -257,7 +257,7 @@ button.mobile {
   padding: 5px;
   border-radius: 5px;
   border: 1px solid white;
-  width: 350px;
+  width: 440px;
   display: flex;
   flex-direction: column;
 }
@@ -368,11 +368,11 @@ html.dark .color_code {
 
 /* Quick Links */
 #quicklinks .switch_wrap input[type=text][name=name] {
-  width: 20%;
-  max-width: 100px;
+  width: 30%;
+  max-width: 120px;
 }
 #quicklinks .switch_wrap input[type=text][name=url] {
-  width: 30%;
+  width: 35%;
   max-width: 150px;
 }
 ul#quicklinks {
@@ -574,10 +574,10 @@ table.log-list th:not(:last-child), table.log-list td:not(:last-child) {
 }
 
 
-@media screen and (max-width: 615px) {
+@media screen and (max-width: 659px) {
   .mainview {
     margin-left: 0;
-    margin-right: 0;
+    padding-right: 0;
   }
   .main_container {
     flex-direction: column;
@@ -637,7 +637,7 @@ table.log-list th:not(:last-child), table.log-list td:not(:last-child) {
 }
 
 /* large screen */
-@media screen and (min-width: 616px) {
+@media screen and (min-width: 660px) {
   button.mobile {
     display: none;
   }
