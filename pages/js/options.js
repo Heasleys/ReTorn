@@ -173,7 +173,7 @@ function initInputs() {
       if (!isEmpty(obj)) {
         sendMessage({"name": "merge_sync", "key": "notifications", "object": obj})
         .then((r) => {
-
+          notificationTooltips(v,id);
         })
         .catch((e) => console.error(e))
       }
@@ -431,6 +431,13 @@ function initSettings() {
     initChatHighlights();
 
   })
+  .then(() => {
+    const notifs = ['energy', 'nerve', 'happy', 'life'];
+    notifs.forEach(function(nE) {
+      let nV = $('#'+nE+'_value').val();
+      notificationTooltips(nV, nE);
+    });
+  })
   .catch((e) => {
     alert(e)
     console.log(e)
@@ -627,6 +634,24 @@ function appendChatHighlights() {
       <input type="text" name="color" data-jscolor="{}" value="#E0CE00">
     </div>
     `)
+}
+
+
+//function for updating the notification tooltips
+function notificationTooltips(v, id) {
+  if (v.includes("<")) {
+    $('span[for='+  id + ']').attr("data-tooltip", "Notify when "+id+" drops below "+ v.replace('<',''));
+  }
+  if (v.includes(">")) {
+    $('span[for='+  id + ']').attr("data-tooltip", "Notify when "+id+" increases above "+ v.replace('>',''));
+  }
+  if (!v.includes(">") && !v.includes("<")) {
+    if (v == "100%") {
+      $('span[for='+  id + ']').attr("data-tooltip", "Notify when "+id+" is full");
+    } else {
+      $('span[for='+  id + ']').attr("data-tooltip", "Notify when "+id+" equals "+ v);
+    }
+  }
 }
 
 //function for deleting an index from settings location
