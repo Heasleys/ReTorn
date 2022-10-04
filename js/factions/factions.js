@@ -851,7 +851,7 @@ function re_ranked_wars_fetch_eventListener() {
 
 function featureCleanup(feature) {
   if (feature === `ranked_war_filter`) {
-    $('.re_spy_title,.re_spy_col,.re_mem_count').remove();
+    $('.re_spy_title,.re_spy_col,.re_mem_count,.re_spy_ps,.re_spy_spy').remove();
     $('.re_rankedwar').removeClass('re_rankedwar');
     $('[class*="factionWrap"]').show();
     $('ul.members-list > li').show();//show all members in the list
