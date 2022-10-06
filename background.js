@@ -722,6 +722,7 @@ async function handleMessage(msg) {
         console.log("BIG FINAL LOL", finalobj)
 
         await setValue(finalobj, "sync");
+        return {status: true, message: `Key ${m.key} was deleted.`}
       } else {
         throw {status: false, message: "Key or object not sent with message."}
       }
