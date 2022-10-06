@@ -61,10 +61,10 @@ function startCityItems() {
       i++;
       let src = $(this).attr("src");
       let itemID = src.replace(/\D/g, "");
-  
+      $(this).attr("src", "https://www.torn.com/images/items/"+itemID+"/large.png");
+      $(this).attr("data-cfid", i);
+
       if (typeof items[itemID] != "undefined") { //check if item is in the Torn item list
-        $(this).attr("src", "https://www.torn.com/images/items/"+itemID+"/large.png");
-        $(this).attr("data-cfid", i);
         $(this).attr("title", items[itemID].name);
         value += items[itemID].market_value;
         if (items[itemID].market_value >= 10000000) {
@@ -73,7 +73,7 @@ function startCityItems() {
           itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: $"+items[itemID].market_value.toLocaleString('en-US')+"'>" + items[itemID].name + "</a>, ";
         }
       } else {
-        itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: N/A'>UNKNOWN_ITEM</a>, ";
+        itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: N/A'>UNKNOWN_ITEM_"+itemID+"</a>, ";
       }
     });
   
