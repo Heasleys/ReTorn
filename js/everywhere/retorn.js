@@ -42,14 +42,14 @@ $(document).on('click', '#re_options', function(event){
 
   Promise.all([sendMessage({name: "get_sync", value: "settings"}),sendMessage({name: "get_sync", value: "features"})])
   .then((r) => {
-    console.log(r);
     settings = r[0].data;
     features = r[1].data;
+    return r;
   })
-  .then(() =>  {
+  .then((r) =>  {
     /* Create customEvent to communicate with interceptFetch.js/extension */
     ss.onload = function(){
-      const interceptFetchEvent = new CustomEvent('re_fetchInject', { detail: {settings: settings, features: features }}); //send settings and features with event details
+      const interceptFetchEvent = new CustomEvent('re_fetchInject', { detail: {settings: r[0].data, features: r[1].data }}); //send settings and features with event details
       document.dispatchEvent(interceptFetchEvent);
     };
 
