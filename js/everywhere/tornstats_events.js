@@ -6,6 +6,7 @@ const tsobserver = new MutationObserver(function(mutations) {
         if (features?.general?.torn_stats_events?.enabled) {
             getTornStats("events", 0.25)//get torn stats event data, cache for 15 minutes
             .then((r) => {
+                if (r?.status && r?.events != undefined) {
                 // Loop through events for unseen events and format them into a more readable message
                 Object.entries(r?.events).forEach(([key, value]) => {
                     if (value.seen == 0) {
@@ -26,6 +27,7 @@ const tsobserver = new MutationObserver(function(mutations) {
                         ReTornModalWindow(message);
                     }
                 });
+                }
             })
             .catch((e) => {
                 console.error(e);

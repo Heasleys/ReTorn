@@ -511,7 +511,7 @@ function loadRankedWar() {
       if (data.message == "re_torn_stats_apikey is empty.") {
         $('.re_content').prepend(`<div class="re_row"><p>You must link your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account to filter by battle stats and personal stats. <a id='re_options'>Click here</a> to view the ReTorn options.</p></div>`)
       } else {
-        $('.re_content').prepend(`<div class="re_row"><p>${data.message}</p></div>`)
+        $('.re_content').prepend(`<div class="re_row"><p class="re_error">${data.message}</p></div>`)
       }
     }
     

@@ -771,6 +771,9 @@ async function fetchTornStats(apikey, selection) {
         return resolve(data);
       } else {
         console.log("[ReTorn][fetchTornStats] Torn Stats status is false. Rejecting.", data);
+        if (data?.message == "ERROR: User not found.") {
+          return reject({status: false, message: data.message + " Check if your <a href='https://www.tornstats.com/settings/general' target='_blank'>Torn Stats API key</a> matches the one set in the <a id='re_options'>ReTorn Options.</a>"})
+        }
         return reject({status: false, message: data.message})
       }
     })
