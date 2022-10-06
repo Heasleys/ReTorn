@@ -744,7 +744,6 @@ function rankedWarFilters() {
 
 
 function filterUsers(filters) {
-  console.log("filter")
   //actually filter the players
   if (!$('#re_disable_filters input[type="checkbox"]').is(":checked")) { //if filter rules checkbox is not checked, proceed
     $('ul.members-list > li').each(function() { //for each member
@@ -835,7 +834,6 @@ function countPlayerStatus() {
 
 
 function re_ranked_wars_fetch_eventListener() {
-  console.log("re_ranked_wars_fetch_eventListener")
   const filters = settings?.ranked_war_filters;
   if (features?.pages?.factions?.ranked_war_filter?.enabled) {
     countPlayerStatus();

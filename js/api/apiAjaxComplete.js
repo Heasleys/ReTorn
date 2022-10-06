@@ -1,7 +1,6 @@
 var ajaxI;
 
 $( document ).ajaxComplete(function( event, request, settings ) {
-    console.log(request);
     //make api response body collapsable
     $('div > span > h4').each(function() {
         const pre = $(this).next();

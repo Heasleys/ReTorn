@@ -151,7 +151,6 @@ function insertHeader(element, where, feature, classes = "") {
             }
           }
         }
-        console.log(feature, locationURL, obj)
         sendMessage({"name": "merge_sync", "key": "features", "object": obj})
         .then((r) => {
           if (r?.status) {
@@ -180,9 +179,6 @@ function insertHeader(element, where, feature, classes = "") {
         let expanded = $(this).hasClass("expanded");
         const obj = {"headers": {[locationURL]: {"expanded": expanded}}}
         sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
-        .then((r) => {
-          //console.log(r);
-        })
         .catch((e) => console.error(e))      
     });
 
@@ -200,14 +196,10 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
   
   const local = await sendMessage({name: "get_local", value: "torn_stats"})
   .then((r) => {
-    console.log("get_local re", r);
     if (forced) return; //Force update data, regardless of previous cache data
-
-    if (r?.data[storageSelection]) console.log(r.data[storageSelection])
     const cache_until = r?.data[storageSelection]?.cache_until;
     const timestamp = r?.data[storageSelection]?.timestamp;
     if (r?.status && timestamp && cache_until) {
-      console.log(Date.now()/1000, cache_until)
       if ((Date.now()/1000) >= cache_until) return;
       return r?.data[storageSelection];
     }
@@ -215,18 +207,12 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
   })
   .catch((e) => console.error(e))
 
-  console.log("local", local);
-
   if (local == undefined) {
     const ts = await sendMessage({"name": "get_torn_stats", "selection": selection})
     .then((r) => {
-      console.log("I just pulled Torn Stats", r);
       return r;
     })
-    .catch((e) => console.log(e))
-
-
-    console.log("TS", ts);
+    .catch((e) => console.error(e))
 
     if (ts?.status) {
       let obj = {
@@ -235,8 +221,6 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
       obj[storageSelection].timestamp = Math.round(Date.now()/1000);
       obj[storageSelection].cache_until = Math.round((Date.now()/1000)+(cacheHours*3600));
 
-
-      console.log("NEW OBJ", obj)
       await sendMessage({"name": "merge_local", "key": "torn_stats", "object": obj})
       .catch((e) => console.error(e))
     }

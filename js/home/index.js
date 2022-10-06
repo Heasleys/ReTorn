@@ -5,7 +5,6 @@ if ($('#body').attr('data-traveling') != "true" && $('#body').attr('data-abroad'
   if (features?.pages?.index?.live_networth?.enabled && $(".sortable-box .title h5.box-title:contains('General Information')").length != 0) {
     sendMessage({name: "get_local", value: "re_user_data"})
     .then((r) => {
-    console.log(r);
 
     if (r.status) {
       data = r.data;
@@ -82,7 +81,6 @@ if ($('#body').attr('data-traveling') != "true" && $('#body').attr('data-abroad'
     if (bonuses[4] == 0) {
       titles[4] = "<div>"+bonuses[4].toLocaleString()+"</div>";
     }
-    console.log(stats);
     statsContainer.append(`
       <div class="re_head expanded flat-top">
         <span class="re_title"><span id="re_title">Effective Stats</span></span>

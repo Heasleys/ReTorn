@@ -17,7 +17,6 @@ const observer = new MutationObserver(function(mutations) {
 if (features?.pages?.city?.city_finds?.enabled) {
     sendMessage({name: "get_local", value: "re_items"})
     .then((r) => {
-        console.log(r);
         if (r.status) {
             items = r?.data?.items;
             const target = document.getElementById('map');

@@ -10,7 +10,6 @@ const sendMessage = (msg) => {
 
 Promise.all([sendMessage({name: "get_sync", value: "features"}), sendMessage({name: "get_local", value: "re_apikey"})])
 .then((r) => {
-  console.log(r);
   const features = r[0].data;
 
   if (features?.pages?.api?.autofill_api?.enabled) {

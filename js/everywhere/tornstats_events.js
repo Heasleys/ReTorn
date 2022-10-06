@@ -6,7 +6,6 @@ const tsobserver = new MutationObserver(function(mutations) {
         if (features?.general?.torn_stats_events?.enabled) {
             getTornStats("events", 0.25)//get torn stats event data, cache for 15 minutes
             .then((r) => {
-                console.log('events', r)
                 // Loop through events for unseen events and format them into a more readable message
                 Object.entries(r?.events).forEach(([key, value]) => {
                     if (value.seen == 0) {

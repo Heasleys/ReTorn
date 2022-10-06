@@ -135,7 +135,6 @@ function initJail() {
     .then((r) => {
       if (r?.status) {
         jail_settings["filters"][name] = input;
-        console.log("new jail settings", settings.jail)
         filterJail();
       }
     })
@@ -157,7 +156,6 @@ function initJail() {
     .then((r) => {
       if (r?.status) {
         jail_settings["quick"][name] = checked;
-        console.log("new jail settings", settings.jail)
         setQuickActions();
       }
     })
@@ -178,7 +176,6 @@ function initJail() {
     .then((r) => {
       if (r?.status) {
         jail_settings["speed"][name] = checked;
-        console.log("new jail settings", settings.jail)
       }
     })
     .catch((e) => console.error(e))

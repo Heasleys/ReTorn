@@ -10,18 +10,16 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 // Event Listener for Starting Up chrome/extension
-chrome.runtime.onStartup.addListener(() => {
-  console.log("onStartup")
-});
+//chrome.runtime.onStartup.addListener(() => {
+  //console.log("onStartup")
+//});
 
 // Event Listener for Installing extension (update or new install)
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
-    console.log("onInstalled INSTALL");
     newInstallation();
   }
   if (details.reason == "update") {
-    console.log("onInstalled update")
   }
 });
 
@@ -33,7 +31,6 @@ chrome.alarms.onAlarm.addListener((alarm) => {
       return pullRequiredAPI(key);
     })
     .then((r) => {
-      console.log("ASS", r)
       if (r.code) {
         if (r.code == 2 || r.code == 10 || r.code == 13) { //key invalid, key owner is in federal jail, or key owner is inactive, then remove apikey
           logout();
@@ -48,7 +45,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 function clearAlarm(name) {
   chrome.alarms.clear(name, (wasCleared) => {
     if (wasCleared) {
-      console.log("ReTorn: Alarm for API has been removed.");
+      console.log("[ReTorn] Alarm for API has been removed.");
     }
   });
 }
@@ -71,12 +68,10 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
     console.log("[ReTorn][re_user_data] changes found: ",{changes: changes, areaName: areaName});
 
     const n = await getValue("notifications", "sync");
-    console.log('[ReTorn][NOTIFICATIONS]',n)
     const tts = n?.text_to_speech?.enabled;
     const newValue = changes?.re_user_data?.newValue;
     const oldValue = changes?.re_user_data?.oldValue;
 
-    console.log("NEW VALUES", newValue)
 
     if (isEmpty(newValue) || isEmpty(oldValue)) return;
 
@@ -279,7 +274,7 @@ async function createNotification(name, title, message, actions, openURL = "http
         {'rate': 0.8},
         function() {
           if (chrome.runtime.lastError) {
-            console.log('[ReTorn][Text-to-Speech] Error: ' + chrome.runtime.lastError.message);
+            console.error('[ReTorn][Text-to-Speech] Error: ' + chrome.runtime.lastError.message);
           }
         }
       );
@@ -299,7 +294,6 @@ const getValue = async function(key, loc) {
   return new Promise((resolve, reject) => {
     try {
       chrome.storage[loc].get(key, function(v) {
-        console.log("getValue", v, v[key])
         if (isEmpty(v)) {
           console.log({status: false, message: key + " is empty."})
           reject({status: false, message: key + " is empty."});
@@ -371,7 +365,7 @@ async function validateKey(key) {
     return {status: true, message: "Your apikey is valid and has been saved."};
   }
   catch (error) {
-    console.log("ReTorn: Error validating apikey.", error)
+    console.log("[ReTorn][validateKey] Error validating apikey.", error)
     throw error;
   }
 }
@@ -388,7 +382,6 @@ async function pullRequiredAPI(apikey) {
       .catch((error) => {throw error})
     }
     catch (error) {
-      console.log("ERROR PULL", error)
       return error;
     }
     return {status: true, message: "Required API has been pulled."}
@@ -409,12 +402,12 @@ function fetchAPI(apikey, type, selection, id) {
     }
     fetch('https://api.torn.com/'+type+'/'+id+'?selections='+selection+'&key='+apikey+'&comment=ReTorn')
     .catch((error) => {
-      console.log('Fetch Error: ', error);
+      console.log('[ReTorn][fetchAPI] Fetch Error: ', error);
       return reject({status: false, message: "Fetch Error: " + error});
     })
     .then((response) => {
       if (response.status !== 200) {
-        console.log("There was a problem connecting to Torn servers. Status Code: " + response.status);
+        console.log("[ReTorn][fetchAPI] There was a problem connecting to Torn servers. Status Code: " + response.status);
         return reject({status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status});
       } else {
         return response;
@@ -423,15 +416,15 @@ function fetchAPI(apikey, type, selection, id) {
     .then(response => response.json())
     .then(data => parseAPI(data))
     .catch((error) => {//should be Torn reported error code (2 = invalid key, 9 = api disabled, etc)
-      console.log("ERROR API", error)
+      console.log("[ReTorn][fetchAPI] Error with API", error)
       return reject(error);
     })
     .then((res) => {
         return resolve(res);
     })
     .catch((error) => {
-      console.log('Other Fetch Error: ', error);
-      return reject({status: false, message: "Fetch Error: " + error});
+      console.error('[ReTorn][fetchAPI] Error with fetch call: ', error);
+      return reject({status: false, message: "Error with fetch call: " + error});
     });
 
   });
@@ -459,16 +452,16 @@ async function fetchTornStats(apikey, selection) {
         return reject({status: false, message:"No status detected from Torn Stats."})
       }
       if (data.status) {
-        console.log("ReTorn: Torn Stats status is true. Resolving.", data);
+        console.log("[ReTorn][fetchTornStats] Torn Stats status is true. Resolving.", data);
         return resolve(data);
       } else {
-        console.log("ReTorn: Torn Stats status is false. Rejecting.", data);
+        console.log("[ReTorn][fetchTornStats] Torn Stats status is false. Rejecting.", data);
         return reject({status: false, message: data.message})
       }
     })
     .catch((error) => {
-      console.error('ReTorn: fetchTornStats error', error);
-      return reject("ReTorn: Torn Stats fetch error.");
+      console.error('[ReTorn][fetchTornStats] fetchTornStats error', error);
+      return reject("Torn Stats fetch error.");
     });
   });
 }
@@ -483,7 +476,6 @@ function parseAPI(data) {
       return reject(e);
     } else {
       removeValue("re_last_error", "local");
-      console.log("data has been parsed", data)
       return resolve(data);
     }
   });
@@ -530,7 +522,6 @@ function fixIndexAfterDelete(index, object) {
 }
 
 function deleteNestedKey(obj, match) {
-  console.log(JSON.stringify(obj), match)
   delete obj[match];
   for (let v of Object.values(obj)) {
     if (v instanceof Object) {
@@ -565,7 +556,6 @@ async function handleMessage(msg) {
     case "set_torn_stats_api":
       if (m.apikey) {
         const r = await fetchTornStats(m.apikey, "");
-        console.log("PEPE", r)
         if (r.status) {
           const keyObj = {
             're_torn_stats_apikey': m.apikey
@@ -581,7 +571,6 @@ async function handleMessage(msg) {
     case "get_torn_stats":
       if (m.selection) {
         const apikey = await getValue("re_torn_stats_apikey", "local");
-        console.log("GET TS", apikey);
         const r = await fetchTornStats(apikey, m.selection);
         return r;
       } else {
@@ -604,7 +593,6 @@ async function handleMessage(msg) {
         const merg = deepExtend(g, m.object);
         let obj = {};
         obj[m.key] = merg;
-        console.log(obj)
         await setValue(obj, "session");
         return {status: true, message: `Object has been merged with ${m.key}`}
       } else {
@@ -649,7 +637,6 @@ async function handleMessage(msg) {
         const merg = deepExtend(g, m.object);
         let obj = {};
         obj[m.key] = merg;
-        console.log(obj)
         await setValue(obj, "sync");
         return {status: true, message: `Object has been merged with ${m.key}`}
       } else {
@@ -698,7 +685,6 @@ async function handleMessage(msg) {
           //realistically this should be a loop incase of even deeper nested objects, but I don't have a use case for an even deeper nested object
           const keys = m.item.split('.');
           const obj = settings[keys[0]][keys[1]];
-          console.log(obj,keys)
 
           deleteNestedKey(obj, m.key);
 
@@ -719,7 +705,6 @@ async function handleMessage(msg) {
           finalobj["settings"] = JSON.parse(JSON.stringify(merg));
         }
 
-        console.log("BIG FINAL LOL", finalobj)
 
         await setValue(finalobj, "sync");
         return {status: true, message: `Key ${m.key} was deleted.`}
@@ -782,7 +767,7 @@ async function logout() {
       removeValue("re_tornstats_apikey", "local"),
       //setValue({re_settings: {tornstats: {enabled: false}}}, "local")
       ]);
-      console.log("ReTorn: Removed user data from storage", messages);
+      console.log("[ReTorn][logout] Removed user data from storage", messages);
       chrome.action.setPopup({popup: "pages/popup_start.html"});
       chrome.action.setBadgeText({text: ""});
       clearAlarm("required_api");
@@ -831,7 +816,11 @@ async function clearTornStats() {
     setValue({torn_stats: ts}, "local");
   }
   catch (e) {
-    console.log("Clearing TornStats data error:", e)
+    if (e?.message == "torn_stats is empty.") {
+      console.log("[ReTorn][clearTornStats] torn_stats data doesn't exist yet", e)
+    } else {
+      console.error("[ReTorn][clearTornStats] Clearing TornStats data error:", e)
+    } 
   }
 }
 

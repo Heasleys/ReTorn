@@ -8,7 +8,7 @@ const sendMessage = (msg) => {
 
 function errorMessage(error) {
   if (error) {
-    console.log("Error Message", error);
+    console.log("[ReTorn] Error Message", error);
     $("#re_message").text(error.message);
   }
 }
@@ -46,7 +46,7 @@ $( document ).ready(function() {
     }
   })
   .catch((error) => {
-    console.log("ReTorn: Error - ", error);
+    console.log("[ReTorn][sendMessage] Error - ", error);
   })
 
   sendMessage({name: "get_local", value: "re_last_error"})

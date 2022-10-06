@@ -20,7 +20,7 @@ function popupDataMessenger() {
         setTimeout(function() {popupDataMessenger()}, 1000);
       }
     })
-    .catch((error) => console.log("ReTorn: Error getting alarm in popup.", error))
+    .catch((error) => console.log("[ReTorn][popupDataMessenger] Error getting alarm in popup.", error))
 }
 
 function updatePopup(data) {

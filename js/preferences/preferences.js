@@ -26,7 +26,6 @@
             if (key && key.length == 16) {
                 sendMessage({name: "set_api", apikey: key})
                 .then((r) => {
-                    console.log(r)
                 if (r.status) {
                     $("#re_message").attr('hidden', true);
                     $("#re_message").parent().attr('hidden', true);
@@ -57,7 +56,6 @@
 
         sendMessage({name: "get_local", value: "re_apikey"})
         .then((r) => {
-            console.log(r);
             isSynced(r);
         })
         .catch((e) => console.error(e))
@@ -91,7 +89,7 @@
         }
 
         function errorMessage(error) {
-            console.log(error);
+            console.log("[ReTorn]",error);
             $("#re_message").text(error.message);
             $("#re_message").attr('hidden', false);
             $("#re_message").parent().attr('hidden', false);

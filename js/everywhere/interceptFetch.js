@@ -5,7 +5,6 @@ function updateState(domElement, newState) {
     /__reactInternalInstance/.test(prop)
   )[0];
   var instance = domElement[instanceKey];
-    console.log(instance);
 
   for (var state in newState) {
     if (newState.hasOwnProperty(state)) {
@@ -17,10 +16,7 @@ function updateState(domElement, newState) {
   );
 }
 document.addEventListener("updateState", function(msg) {
-  console.log(msg)
-  console.log(msg.detail)
   if (msg?.detail?.newState != undefined && msg?.detail?.className != undefined) {
-    console.log(msg.detail.className, msg.detail.newState);
     const el = document.getElementsByClassName(msg.detail.className)[0]
     updateState(el, msg.detail.newState);
   }
@@ -32,6 +28,7 @@ var ReTorn = {}; //we set this to ReTorn[settings] & ReTorn[features] because th
 document.addEventListener('re_fetchInject', function (r) {
     ReTorn["settings"] = r?.detail?.settings;
     ReTorn["features"] = r?.detail?.features;
+    console.log("[ReTorn][InterceptFetch] InterceptFetch injected.", ReTorn);
 });
 
 function interceptFetch(url,q, callback) {
@@ -49,8 +46,7 @@ function interceptFetch(url,q, callback) {
 }
 
 interceptFetch("torn.com","torn.com", (response, url) => {
- console.log("Found a fetch from: " + url, response);
-
+ console.log("[ReTorn][InterceptFetch] Found a fetch from: " + url, response);
 /* Mini Profiles */
  if (url.includes('step=getUserNameContextMenu')) {
   if (ReTorn?.features?.general?.last_action_mini_profile?.enabled) {

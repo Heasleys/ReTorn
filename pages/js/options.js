@@ -89,8 +89,7 @@ async function createNotificationsList() {
     }
   })
   .catch((e) => {
-    alert(e)
-    console.log(e)
+    console.error(e)
   })
 }
 async function createFeaturesList() {
@@ -123,8 +122,7 @@ async function createFeaturesList() {
     })
   })
   .catch((e) => {
-    alert(e)
-    console.log(e)
+    console.error(e)
   })
 }
 
@@ -326,7 +324,6 @@ function initInputs() {
         if (confirm('By accepting, you agree to allow the api key you entered to be transmitted to tornstats.com.')) {
           sendMessage({name: "set_torn_stats_api", apikey: key})
           .then((r) => {
-            console.log(r);
             if (r.status) {
               $('#ts_status').text("Enabled");
               $(this).html("Unlink account");
@@ -439,8 +436,7 @@ function initSettings() {
     });
   })
   .catch((e) => {
-    alert(e)
-    console.log(e)
+    console.error(e)
   })
 
 
@@ -451,7 +447,6 @@ function initSettings() {
 async function initTornStatsTab() {
   sendMessage({name: "get_local", value: "re_torn_stats_apikey"})
   .then((r) => {
-    console.log("TS", r)
     if (r?.status) {
       $('#ts_status').text("Enabled");
       $('button#tornstats').html("Unlink account");
@@ -530,8 +525,7 @@ function initQuickLinksList() {
     }
   })
   .catch((e) => {
-    alert(e)
-    console.log(e)
+    console.error(e)
   })
 }
 //function to insert base of quick links wrap

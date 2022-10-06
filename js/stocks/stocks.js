@@ -10,7 +10,6 @@
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         for (var i = 0; i < mutation.addedNodes.length; i++) {
           if (mutation.addedNodes[i].id && mutation.addedNodes[i].id == "panel-ManagerTab") {
-            console.log(mutation);
             if (document.contains(document.getElementById('stockmarketroot'))) {
                 addAcros();
             }

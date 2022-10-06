@@ -266,9 +266,7 @@ function updateFriendsList() {
 
     if (re_ct?.friends) {
       $('#friends_list').empty();
-      console.log("CGROS<ASS", re_ct);
       for (const [userid, value] of Object.entries(re_ct.friends)) {
-        console.log(userid, value)
         if (userid && value && value.color) {
           $('#friends_list').append(`<li data-userid="${userid}"><div class="re_list_item x"><a class="remove-link"> <i class="delete-subscribed-icon"></i> </a></div><div class="re_list_item name"><a href="/profiles.php?XID=${userid}" target="_blank">${userid}</a></div><div class="re_list_item color" title="Change friend's character color"><input data-userid="${userid}" type="color" value="${value.color}"></div></li>`);
         }
@@ -304,7 +302,6 @@ function updateFriendsList() {
         if (userid && parent.length > 0) {
           sendMessage({"name": "delete_settings_key", "item": "christmas_town.friends", "key": userid})
           .then((r) => {
-            console.log("my big BIG response",r)
             if (r?.status) {
               parent.remove();
               $(`.users-layer #ctUser${userid}`).find('svg').css('fill', '');
@@ -323,7 +320,6 @@ function updateFriendsList() {
 function updateGiftsList() {
   sendMessage({name: "get_local", value: "re_ct_items"})
   .then((r) => {
-    console.log(r);
     if (r?.status) {
       const items = r?.data;
       if (items) {
@@ -371,7 +367,6 @@ document.addEventListener("re_ct_additems", function(msg) {
       }
     }
 
-    console.log(items);
     sendMessage({"name": "merge_local", "key": "re_ct_items", "object": items})
     .then((r) => {
       updateGiftsList();
