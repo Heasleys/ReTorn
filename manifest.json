@@ -1,6 +1,6 @@
 {
     "name": "ReTorn",
-    "version": "0.3.2",
+    "version": "1.0.0",
     "description": "Its the return of a great Torn extension",
     "manifest_version": 3,
     "minimum_chrome_version": "102",
