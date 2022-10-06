@@ -298,8 +298,8 @@ function updateFriendsList() {
       });
 
       $('#friends_list .re_list_item.x .remove-link .delete-subscribed-icon').click(function() {
-        let parent = $(this).closest('li');
-        let userid = parent.attr('data-userid');
+        const parent = $(this).closest('li');
+        const userid = parent.attr('data-userid');
 
         if (userid && parent.length > 0) {
           sendMessage({"name": "delete_settings_key", "item": "christmas_town.friends", "key": userid})
@@ -308,17 +308,11 @@ function updateFriendsList() {
             if (r?.status) {
               parent.remove();
               $(`.users-layer #ctUser${userid}`).find('svg').css('fill', '');
+              delete settings["christmas_town"]["friends"][userid];
               updateFriendsList();
             }
           })
           .catch((e) => console.error(e))
-          // chrome.runtime.sendMessage({name: "del_value", value: "re_ct", key: userid}, (response) => {
-          //   if (response.status) {
-          //     parent.remove();
-          //     $(`.users-layer #ctUser${userid}`).find('svg').css('fill', '');
-          //     updateFriendsList();
-          //   }
-          // })
         }
       });
 
