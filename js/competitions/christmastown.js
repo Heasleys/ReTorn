@@ -321,8 +321,8 @@ function updateGiftsList() {
   sendMessage({name: "get_local", value: "re_ct_items"})
   .then((r) => {
     if (r?.status) {
-      const items = r?.data;
-      if (items) {
+      const items = r?.data?.items;
+      if (items != undefined) {
         $('#gifts_list').empty();
         itemCount = Object.keys(items).length;
         let itemHTML = ``;
@@ -354,14 +354,14 @@ function sendCTItemListEvent(items) {
 
 document.addEventListener("re_ct_additems", function(msg) {
   if (msg.detail && msg.detail.items) {
-    let items = {};
+    let items = {"items":{}};
 
     let newitems = msg.detail.items;
     for (const [i, item] of Object.entries(newitems)) {
       if (item) {
         let index = itemCount;
         if (index != undefined) {
-          items[index] = item;
+          items["items"][index] = item;
           itemCount++;
         }
       }
