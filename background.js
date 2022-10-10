@@ -1015,7 +1015,21 @@ async function handleMessage(msg) {
           finalobj["settings"] = JSON.parse(JSON.stringify(merg));
         } else {
           const obj = settings[m.item];
+          const order = (obj[m.key].order != undefined) ? obj[m.key].order : null;
           deleteNestedKey(obj, m.key);
+
+          if (order != null) {
+            //fix order if it exists
+            Object.keys(obj).forEach(function(k) {
+              if (obj[k].order != undefined) {
+                if (obj[k].order > order) {
+                  obj[k].order--;
+                }
+              }
+            });
+          }
+
+
           const newobj = {
             [m.item]: JSON.parse(JSON.stringify(obj))
           }
