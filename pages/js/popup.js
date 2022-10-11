@@ -81,9 +81,12 @@ function updatePopup(data) {
   });
 
   if ($('div.wealth').length != 0) {
-    $('#cash').text("$"+data.money_onhand.toLocaleString());
-    $('#points').text(data.points.toLocaleString());
-    $('#vault').text("$"+data.vault_amount.toLocaleString());
+    let cash = (data?.money_onhand) ? data.money_onhand.toLocaleString() : 0;
+    let points = (data?.points) ? data.points.toLocaleString() : "0";
+    let vault = (data?.vault_amount) ? data.vault_amount.toLocaleString() : 0;
+    $('#cash').text(`$${cash}`);
+    $('#points').text(`${points}`);
+    $('#vault').text(`$${vault}`);
   }
 
   if ($('#status').length && data.status?.description && data.status?.description != "Okay") {
