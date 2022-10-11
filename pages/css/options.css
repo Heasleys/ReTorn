@@ -36,6 +36,13 @@
 }
 
 
+/* modification to Tooltip CSS */
+html.dark .tooltip:after,
+html.dark [data-tooltip]:after {
+  background-color: #000;
+  background-color: hsla(0, 0%, 11%, 0.95);
+}
+
 /* CSS for ReTorn Example Title Header */ 
 
 
@@ -266,6 +273,9 @@ button.mobile {
   width: 450px;
   max-width: 90vw;
 }
+html.light .category {
+  border-color: #666;
+}
 
 .block {
   margin-left: 1em;
@@ -278,6 +288,9 @@ button.mobile {
   border-radius: 5px 5px 0px 0px;
   background: rgba(205,205,205,0.2);
   padding: 5px 5px 5px 5px;
+}
+html.light .category h4 {
+  background: rgba(205,205,205,0.5);
 }
 
 /* Tab Groups */
