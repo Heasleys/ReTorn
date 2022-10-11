@@ -94,7 +94,7 @@ a:hover {
 
 /* Torn Left Align only on large screen (not mobile view)*/
 @media screen and (min-width: 601px) {
-  .d .container {
+  .d .container#mainContainer {
     margin-left: var(--re-leftalign) !important;
   }
 }
