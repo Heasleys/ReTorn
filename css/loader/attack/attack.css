@@ -8,6 +8,7 @@
   width: 100%;
 }
 
+
 @media screen and (max-width: 600px) {
   #re_loot_time {
     margin-top: 2px;
@@ -32,4 +33,12 @@ div[class^="playersModelWrap"] div[class^="boxTitle"] {
   #defender [class^="topWrap_"] [class^="textEntries_"] [class^="entry_"] {
       margin-left: 10px;
   }
+
+  /*fix tooltip on left align only on desktop */
+.re_leftalign #\#react-tooltip-attacker_strength {
+  left: 101px !important;
+}
+.re_leftalign #\#react-tooltip-attacker_strength [class*="tooltipArrowWrap_"] {
+  left: -45px;
+}
 }

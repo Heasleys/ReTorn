@@ -77,6 +77,7 @@ $(document).on('click', '#re_options', function(event){
 
     if (features?.general?.left_align?.enabled) {
       root.style.setProperty('--re-leftalign', "20px");
+      document.documentElement.classList.add("re_leftalign");
     }
 
     if (settings.torn3d) {

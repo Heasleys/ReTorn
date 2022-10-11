@@ -149,8 +149,8 @@
       },
       {
         "matches": ["https://*.torn.com/loader.php?sid=attack*"],
-        "js": ["js/loader/attack/npc.js"],
-        "css": ["css/loader/attack/npc.css"],
+        "js": ["js/loader/attack/attack.js"],
+        "css": ["css/loader/attack/attack.css"],
         "run_at": "document_end"
       },
       {
