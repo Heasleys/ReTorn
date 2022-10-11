@@ -118,7 +118,7 @@
   } //if captcha
 
   function updateQtyCategory(target, category) {
-    if ($('#re_quick_items').find('div[data-category="'+category+'"]').length > 0) {
+    if ($('#re_quick_items').find('div[data-category="'+category+'"]').length > 0 && $(target).children(`li[data-item]`).length != 0) {
       $('#re_quick_items').find('div[data-category="'+category+'"]').each(function() {
         let itemQty;
         let itemID = $(this).attr('data-itemid');
