@@ -90,7 +90,25 @@ function updatePopup(data) {
   }
 
   if ($('#status').length && data.status?.description && data.status?.description != "Okay") {
-    $('#status').html(data.status?.description);
+
+    if (data?.status?.state == "Traveling" && data?.travel?.time_left) {
+      clearInterval(interval["traveling"]);
+      let timeLeft = data?.travel?.time_left;
+      $('#status').html(`<i class="fa-solid fa-plane"></i> Arriving at ${data?.travel?.destination} in ${secondsToDhms(timeLeft-lastupdate)}`);
+      interval["traveling"] = setInterval(function() {
+          --timeLeft;
+
+          if ((timeLeft) > 0) {
+            var timeDisplay = secondsToDhms(timeLeft-lastupdate);
+          }
+          timeDisplay = timeDisplay == "" ? "0h 0m 0s" : timeDisplay;
+          $('#status').html(`<i class="fa-solid fa-plane"></i> Arriving at ${data?.travel?.destination} in ${timeDisplay}`);
+      }, 1000);
+      
+    }
+    else {
+      $('#status').html(data.status?.description);
+    }
   } else {
     $("#status").html(`&nbsp;`);
   }

@@ -1167,7 +1167,6 @@ async function setItemsFromFile() {
 async function startup() {
   chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"}); //set badge color
   checkItemAPI();
-  //TODO: check if tornstats api key exists, if not, disable tornstats (and maybe notify user somehow)
   await clearTornStats();
   try {
     const r = await getValue("re_user_data", "local");
