@@ -3,6 +3,7 @@
   --re-title-color: #FFF;
   --re-dm-title-color: #DDD;
   --re-leftalign: auto;
+  --re-leftalign-flex: center;
   --re-header-background-old: repeating-linear-gradient(90deg,var(--re-header-color),var(--re-header-color) 2px,var(--re-header-color-two) 0,var(--re-header-color-two) 4px);
   --re-header-background: linear-gradient(180deg, var(--re-header-color) 0%, var(--re-header-color-two) 100%);
   --re-chat-hide-all: block;
@@ -93,9 +94,10 @@ a:hover {
 }
 
 /* Torn Left Align only on large screen (not mobile view)*/
-@media screen and (min-width: 601px) {
-  .d .container#mainContainer {
+@media screen and (min-width: 1001px) {
+  .d .container {
     margin-left: var(--re-leftalign) !important;
+    justify-content: var(--re-leftalign-flex) !important;
   }
 }
 

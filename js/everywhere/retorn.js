@@ -74,6 +74,7 @@ $(document).on('click', '#re_options', function(event){
 
     if (features?.general?.left_align?.enabled) {
       root.style.setProperty('--re-leftalign', "20px");
+      root.style.setProperty('--re-leftalign-flex', "flex-start");
       document.documentElement.classList.add("re_leftalign");
     }
 
