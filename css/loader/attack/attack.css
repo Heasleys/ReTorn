@@ -41,4 +41,8 @@ div[class^="playersModelWrap"] div[class^="boxTitle"] {
 .re_leftalign #\#react-tooltip-attacker_strength [class*="tooltipArrowWrap_"] {
   left: -45px;
 }
+
+.re_leftalign .d.without-sidebar .container, .re_leftalign .d.without-sidebar .content-wrapper, .re_leftalign .d .anonymous .content-wrapper {
+  margin-left:20px;
+}
 }
