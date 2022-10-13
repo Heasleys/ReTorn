@@ -83,284 +83,298 @@ async function updateOldSettings() {
     console.log("[ReTorn] Error with cleanup of old data", e)
   }
 
-
-
   try {
     const oldSettings = await getValue("re_settings", "sync");
-    if (!isEmpty(oldSettings)) {
-      //duplicate of new installation, except without re_ct_items
-      const sett = chrome.runtime.getURL('/files/default_settings.json');
-      const feat = chrome.runtime.getURL('/files/default_features.json');
-      const noti = chrome.runtime.getURL('/files/default_notifications.json');
-
-
-      const fetches = await Promise.all([fetch(sett),fetch(feat),fetch(noti)]);
-      const jsons = await Promise.all([fetches[0].json(), fetches[1].json(), fetches[2].json()])
-      await Promise.all([setValue({"settings": jsons[0]}, "sync"), setValue({"features": jsons[1]}, "sync"), setValue({"notifications": jsons[2]}, "sync"), setValue({"torn_stats": {}}, "local")])
+    if (isEmpty(oldSettings)) {
+      console.log("[ReTorn] Old Settings not found. No need to convert.")
+      return;
     }
+
     let newSettings = {"settings":{}};
     let newFeatures = {"features":{}};
     let newNotifications = {"notifications": {}};
 
-    const oldAPI = await getValue("re_api_key", "sync");
-    if (oldAPI != undefined) {
-      //THIS SHOULD JUST SET IT IMMEDIATELY
-      const re_apikey = {
-        're_apikey': oldAPI
-      };
-      await setValue(re_apikey, "local");
-      pullRequiredAPI(oldAPI);
-      createAPIAlarm();
-      chrome.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
-      removeValue("re_api_key", "sync");
+    try {
+      newSettings["settings"] = await getValue("Fsettings", "sync");
+    } catch{
+      const sett = chrome.runtime.getURL('/files/default_settings.json');
+      const settFetch = await fetch(sett);
+      newSettings["settings"] = await settFetch.json();
+    }
+
+    try {
+      newFeatures["features"] = await getValue("features", "sync");
+    } catch{
+      const feat = chrome.runtime.getURL('/files/default_features.json');
+      const featFetch = await fetch(feat);
+      newFeatures["features"] = await featFetch.json();
+    }
+
+    try {
+      newNotifications["notifications"] = await getValue("notifications", "sync");
+    } catch{
+      const noti = chrome.runtime.getURL('/files/default_notifications.json');
+      const notiFetch = await fetch(noti);
+      newNotifications["notifications"] = await notiFetch.json();
     }
 
 
-    const oldQL = await getValue("re_quicklinks", "sync");
-    //quick links convert
-    if (oldQL != undefined) {
-      newSettings["settings"]["quick_links"] = {};
 
-      for (const [key, value] of Object.entries(oldQL)) {
-        if (!isEmpty(value)) {
-          newSettings["settings"]["quick_links"][key] = value;
+    //convert re_settings
+    try {
+      const oldSettings = await getValue("re_settings", "sync");
+
+      //re_settings to settings
+      if (oldSettings?.chat?.hide != undefined) {
+        newSettings["settings"]["chat_hide"] = {};
+        newSettings["settings"]["chat_hide"] = oldSettings?.chat?.hide;
+      }
+      if (oldSettings?.darkmode != undefined) {
+        newSettings["settings"]["darkmode"] = {};
+        newSettings["settings"]["darkmode"] = oldSettings?.darkmode;
+      }
+      if (oldSettings?.header_color != undefined) {
+        newSettings["settings"]["header_color"] = {};
+        newSettings["settings"]["header_color"] = oldSettings?.header_color;
+      }
+      //re_settings to features
+      newFeatures["features"]["general"] = {};
+      if (oldSettings?.leftalign != undefined) {
+        newFeatures["features"]["general"]["left_align"] = {};
+        newFeatures["features"]["general"]["left_align"]["enabled"] = oldSettings?.leftalign;
+      }
+      if (oldSettings?.tsevents != undefined) {
+        newFeatures["features"]["general"]["torn_stats_events"] = {};
+        newFeatures["features"]["general"]["torn_stats_events"]["enabled"] = oldSettings?.tsevents;
+      }
+      //re_settings to notifications
+      if (oldSettings?.tts?.enabled != undefined) {
+        newNotifications["notifications"]["text_to_speech"] = {};
+        newNotifications["notifications"]["text_to_speech"]["enabled"] = oldSettings?.tts?.enabled;
+      }
+      if (oldSettings?.notifications != undefined) {
+        if (oldSettings?.notifications?.notifications?.enabled != undefined) {
+          newNotifications["notifications"]["all_notifications"] = {};
+          newNotifications["notifications"]["all_notifications"]["enabled"] = oldSettings?.notifications?.notifications?.enabled;
         }
-      }
-
-      removeValue("re_quicklinks", "sync");
-    }
-
-    const oldQI = await getValue("re_qitems", "sync");
-    //quick items convert
-    if (oldQI != undefined) {
-      newSettings["settings"]["quick_items"] = {};
-
-
-      for (const [key, value] of Object.entries(oldQI["items"])) {
-        if (!isEmpty(value)) {
-          newSettings["settings"]["quick_items"][key] = value;
+        if (oldSettings?.notifications?.boosters?.enabled != undefined) {
+          newNotifications["notifications"]["booster_cooldown"] = {};
+          newNotifications["notifications"]["booster_cooldown"]["enabled"] = oldSettings?.notifications?.boosters?.enabled;
         }
-      }
-
-      removeValue("re_qitems", "sync");
-    }
-
-    const oldQC = await getValue("re_qcrimes", "sync");
-    //quick links convert
-    if (oldQC != undefined) {
-      newSettings["settings"]["quick_crimes"] = {};
-
-
-      for (const [key, value] of Object.entries(oldQC["crimes"])) {
-        if (!isEmpty(value)) {
-          newSettings["settings"]["quick_crimes"][key] = value;
-        }
-      }
-
-      removeValue("re_qcrimes", "sync");
-    }
-
-    const oldJail = await getValue("re_jail", "sync");
-    //re_jail to newSettings
-    if (oldJail != undefined) {
-      newSettings["settings"]["jail"] = {};
-      newSettings["settings"]["jail"] = oldJail;
-
-      removeValue("re_jail", "sync");
-    }
-
-    const oldChats = await getValue("re_chathighlights", "sync");
-    //re_chathighlights to newSettings
-    if (oldChats != undefined) {
-      newSettings["settings"]["chat_highlights"] = {};
-      newSettings["settings"]["chat_highlights"] = oldChats;
-      
-      removeValue("re_chathighlights", "sync");
-    }
-
-    const oldBounty = await getValue("re_bounty", "sync");
-    //re_bounty to newSettings
-    if (oldBounty != undefined) {
-      newSettings["settings"]["bounty"] = {};
-      newSettings["settings"]["bounty"] = oldBounty;
-
-      removeValue("re_bounty", "sync");
-    }
-
-    const oldCT = await getValue("re_ct", "sync");
-    //re_ct to newSettings
-    if (oldCT != undefined) {
-      newSettings["settings"]["christmas_town"] = {};
-      newSettings["settings"]["christmas_town"] = oldCT;
-
-      removeValue("re_ct", "sync");
-    }
-
-
-
-    //re_settings to settings
-    if (oldSettings?.chat?.hide != undefined) {
-      newSettings["settings"]["chat_hide"] = {};
-      newSettings["settings"]["chat_hide"] = oldSettings?.chat?.hide;
-    }
-    if (oldSettings?.darkmode != undefined) {
-      newSettings["settings"]["darkmode"] = {};
-      newSettings["settings"]["darkmode"] = oldSettings?.darkmode;
-    }
-    if (oldSettings?.header_color != undefined) {
-      newSettings["settings"]["header_color"] = {};
-      newSettings["settings"]["header_color"] = oldSettings?.header_color;
-    }
-
-
-    //re_settings to features
-    newFeatures["features"]["general"] = {};
-    if (oldSettings?.leftalign != undefined) {
-      newFeatures["features"]["general"]["left_align"] = {};
-      newFeatures["features"]["general"]["left_align"]["enabled"] = oldSettings?.leftalign;
-    }
-    if (oldSettings?.tsevents != undefined) {
-      newFeatures["features"]["general"]["torn_stats_events"] = {};
-      newFeatures["features"]["general"]["torn_stats_events"]["enabled"] = oldSettings?.tsevents;
-    }
-
-
-    //re_settings to notifications
-    if (oldSettings?.tts?.enabled != undefined) {
-      newNotifications["notifications"]["text_to_speech"] = {};
-      newNotifications["notifications"]["text_to_speech"]["enabled"] = oldSettings?.tts?.enabled;
-    }
-    if (oldSettings?.notifications != undefined) {
-      if (oldSettings?.notifications?.notifications?.enabled != undefined) {
-        newNotifications["notifications"]["all_notifications"] = {};
-        newNotifications["notifications"]["all_notifications"]["enabled"] = oldSettings?.notifications?.notifications?.enabled;
-      }
-      if (oldSettings?.notifications?.boosters?.enabled != undefined) {
-        newNotifications["notifications"]["booster_cooldown"] = {};
-        newNotifications["notifications"]["booster_cooldown"]["enabled"] = oldSettings?.notifications?.boosters?.enabled;
-      }
-      if (oldSettings?.notifications?.chain != undefined) {
-        if (oldSettings?.notifications?.chain?.alerts != undefined) {
-          if (oldSettings?.notifications?.chain?.alerts?.hit != undefined) {
+        if (oldSettings?.notifications?.chain != undefined) {
+          if (oldSettings?.notifications?.chain?.alerts != undefined) {
+            if (oldSettings?.notifications?.chain?.alerts?.hit != undefined) {
+              if (newNotifications["notifications"]["chain_hit"] == undefined) {
+                newNotifications["notifications"]["chain_hit"] = {};
+              }
+              newNotifications["notifications"]["chain_hit"]["value"] = oldSettings?.notifications?.chain?.alerts?.hit;
+            }
+            if (oldSettings?.notifications?.chain?.alerts?.time != undefined) {
+              if (newNotifications["notifications"]["chain_time"] == undefined) {
+                newNotifications["notifications"]["chain_time"] = {};
+              }
+              newNotifications["notifications"]["chain_time"]["value"] = oldSettings?.notifications?.chain?.alerts?.time;
+            }
+          }
+          if (oldSettings?.notifications?.chain?.hit != undefined) {
             if (newNotifications["notifications"]["chain_hit"] == undefined) {
               newNotifications["notifications"]["chain_hit"] = {};
             }
-            newNotifications["notifications"]["chain_hit"]["value"] = oldSettings?.notifications?.chain?.alerts?.hit;
+            newNotifications["notifications"]["chain_hit"]["enabled"] = oldSettings?.notifications?.chain?.hit;
           }
-          if (oldSettings?.notifications?.chain?.alerts?.time != undefined) {
+          if (oldSettings?.notifications?.chain?.time != undefined) {
             if (newNotifications["notifications"]["chain_time"] == undefined) {
               newNotifications["notifications"]["chain_time"] = {};
             }
-            newNotifications["notifications"]["chain_time"]["value"] = oldSettings?.notifications?.chain?.alerts?.time;
+            newNotifications["notifications"]["chain_time"]["enabled"] = oldSettings?.notifications?.chain?.time;
           }
         }
-        if (oldSettings?.notifications?.chain?.hit != undefined) {
-          if (newNotifications["notifications"]["chain_hit"] == undefined) {
-            newNotifications["notifications"]["chain_hit"] = {};
+        if (oldSettings?.notifications?.drugs?.enabled != undefined) {
+          newNotifications["notifications"]["drug_cooldown"] = {};
+          newNotifications["notifications"]["drug_cooldown"]["enabled"] = oldSettings?.notifications?.drugs?.enabled;
+        }
+        if (oldSettings?.notifications?.education?.enabled != undefined) {
+          newNotifications["notifications"]["education"] = {};
+          newNotifications["notifications"]["education"]["enabled"] = oldSettings?.notifications?.education?.enabled;
+        }
+        if (oldSettings?.notifications?.events?.enabled != undefined) {
+          newNotifications["notifications"]["events"] = {};
+          newNotifications["notifications"]["events"]["enabled"] = oldSettings?.notifications?.events?.enabled;
+        }
+        if (oldSettings?.notifications?.medical?.enabled != undefined) {
+          newNotifications["notifications"]["medical_cooldown"] = {};
+          newNotifications["notifications"]["medical_cooldown"]["enabled"] = oldSettings?.notifications?.medical?.enabled;
+        }
+        if (oldSettings?.notifications?.messages?.enabled != undefined) {
+          newNotifications["notifications"]["messages"] = {};
+          newNotifications["notifications"]["messages"]["enabled"] = oldSettings?.notifications?.messages?.enabled;
+        }
+        if (oldSettings?.notifications?.travel?.enabled != undefined) {
+          newNotifications["notifications"]["travel"] = {};
+          newNotifications["notifications"]["travel"]["enabled"] = oldSettings?.notifications?.travel?.enabled;
+        }
+
+        //notifications with values energy/nerve/happy/life
+        if (oldSettings?.notifications?.energy != undefined) {
+          newNotifications["notifications"]["energy"] = {};
+          if (oldSettings?.notifications?.energy?.enabled != undefined) {
+            newNotifications["notifications"]["energy"]["enabled"] = oldSettings?.notifications?.energy?.enabled;
           }
-          newNotifications["notifications"]["chain_hit"]["enabled"] = oldSettings?.notifications?.chain?.hit;
-        }
-        if (oldSettings?.notifications?.chain?.time != undefined) {
-          if (newNotifications["notifications"]["chain_time"] == undefined) {
-            newNotifications["notifications"]["chain_time"] = {};
+          if (oldSettings?.notifications?.energy?.value != undefined) {
+            newNotifications["notifications"]["energy"]["value"] = oldSettings?.notifications?.energy?.value;
           }
-          newNotifications["notifications"]["chain_time"]["enabled"] = oldSettings?.notifications?.chain?.time;
+        }
+        if (oldSettings?.notifications?.nerve != undefined) {
+          newNotifications["notifications"]["nerve"] = {};
+          if (oldSettings?.notifications?.nerve?.enabled != undefined) {
+            newNotifications["notifications"]["nerve"]["enabled"] = oldSettings?.notifications?.nerve?.enabled;
+          }
+          if (oldSettings?.notifications?.nerve?.value != undefined) {
+            newNotifications["notifications"]["nerve"]["value"] = oldSettings?.notifications?.nerve?.value;
+          }
+        }
+        if (oldSettings?.notifications?.happy != undefined) {
+          newNotifications["notifications"]["happy"] = {};
+          if (oldSettings?.notifications?.happy?.enabled != undefined) {
+            newNotifications["notifications"]["happy"]["enabled"] = oldSettings?.notifications?.happy?.enabled;
+          }
+          if (oldSettings?.notifications?.happy?.value != undefined) {
+            newNotifications["notifications"]["happy"]["value"] = oldSettings?.notifications?.happy?.value;
+          }
+        }
+        if (oldSettings?.notifications?.life != undefined) {
+          newNotifications["notifications"]["life"] = {};
+          if (oldSettings?.notifications?.life?.enabled != undefined) {
+            newNotifications["notifications"]["life"]["enabled"] = oldSettings?.notifications?.life?.enabled;
+          }
+          if (oldSettings?.notifications?.life?.value != undefined) {
+            newNotifications["notifications"]["life"]["value"] = oldSettings?.notifications?.life?.value;
+          }
         }
       }
-      if (oldSettings?.notifications?.drugs?.enabled != undefined) {
-        newNotifications["notifications"]["drug_cooldown"] = {};
-        newNotifications["notifications"]["drug_cooldown"]["enabled"] = oldSettings?.notifications?.drugs?.enabled;
+      //re_settings to newLocal
+      if (oldSettings?.tornstats_apikey != undefined) {
+        //THIS SHOULD JUST SET IT IMMEDIATELY
+        const re_torn_stats_apikey = {
+          're_torn_stats_apikey': oldSettings?.tornstats_apikey
+        };
+        await setValue(re_torn_stats_apikey, "local");
       }
-      if (oldSettings?.notifications?.education?.enabled != undefined) {
-        newNotifications["notifications"]["education"] = {};
-        newNotifications["notifications"]["education"]["enabled"] = oldSettings?.notifications?.education?.enabled;
-      }
-      if (oldSettings?.notifications?.events?.enabled != undefined) {
-        newNotifications["notifications"]["events"] = {};
-        newNotifications["notifications"]["events"]["enabled"] = oldSettings?.notifications?.events?.enabled;
-      }
-      if (oldSettings?.notifications?.medical?.enabled != undefined) {
-        newNotifications["notifications"]["medical_cooldown"] = {};
-        newNotifications["notifications"]["medical_cooldown"]["enabled"] = oldSettings?.notifications?.medical?.enabled;
-      }
-      if (oldSettings?.notifications?.messages?.enabled != undefined) {
-        newNotifications["notifications"]["messages"] = {};
-        newNotifications["notifications"]["messages"]["enabled"] = oldSettings?.notifications?.messages?.enabled;
-      }
-      if (oldSettings?.notifications?.travel?.enabled != undefined) {
-        newNotifications["notifications"]["travel"] = {};
-        newNotifications["notifications"]["travel"]["enabled"] = oldSettings?.notifications?.travel?.enabled;
-      }
+    } catch {}
 
-      //notifications with values energy/nerve/happy/life
-      if (oldSettings?.notifications?.energy != undefined) {
-        newNotifications["notifications"]["energy"] = {};
-        if (oldSettings?.notifications?.energy?.enabled != undefined) {
-          newNotifications["notifications"]["energy"]["enabled"] = oldSettings?.notifications?.energy?.enabled;
+    //re_api_key
+    try {
+      const oldAPI = await getValue("re_api_key", "sync");
+      if (oldAPI != undefined) {
+        //THIS SHOULD JUST SET IT IMMEDIATELY
+        const re_apikey = {
+          're_apikey': oldAPI
+        };
+        await setValue(re_apikey, "local");
+        pullRequiredAPI(oldAPI);
+        createAPIAlarm();
+        chrome.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
+        removeValue("re_api_key", "sync");
+      }
+    } catch {}
+
+    //convert re_quicklinks
+    try {
+      const oldQL = await getValue("re_quicklinks", "sync");
+      //quick links convert
+      if (oldQL != undefined) {
+        newSettings["settings"]["quick_links"] = {};
+
+        for (const [key, value] of Object.entries(oldQL)) {
+          if (!isEmpty(value)) {
+            newSettings["settings"]["quick_links"][key] = value;
+          }
         }
-        if (oldSettings?.notifications?.energy?.value != undefined) {
-          newNotifications["notifications"]["energy"]["value"] = oldSettings?.notifications?.energy?.value;
-        }
+
+        removeValue("re_quicklinks", "sync");
       }
-      if (oldSettings?.notifications?.nerve != undefined) {
-        newNotifications["notifications"]["nerve"] = {};
-        if (oldSettings?.notifications?.nerve?.enabled != undefined) {
-          newNotifications["notifications"]["nerve"]["enabled"] = oldSettings?.notifications?.nerve?.enabled;
+    } catch {}
+
+    //convert re_quickitems
+    try {
+      const oldQI = await getValue("re_qitems", "sync");
+      //quick items convert
+      if (oldQI != undefined) {
+        newSettings["settings"]["quick_items"] = {};
+        for (const [key, value] of Object.entries(oldQI["items"])) {
+          if (!isEmpty(value)) {
+            newSettings["settings"]["quick_items"][key] = value;
+          }
         }
-        if (oldSettings?.notifications?.nerve?.value != undefined) {
-          newNotifications["notifications"]["nerve"]["value"] = oldSettings?.notifications?.nerve?.value;
-        }
+        removeValue("re_qitems", "sync");
       }
-      if (oldSettings?.notifications?.happy != undefined) {
-        newNotifications["notifications"]["happy"] = {};
-        if (oldSettings?.notifications?.happy?.enabled != undefined) {
-          newNotifications["notifications"]["happy"]["enabled"] = oldSettings?.notifications?.happy?.enabled;
+    } catch {}
+
+    //convert re_qcrimes
+    try {
+      const oldQC = await getValue("re_qcrimes", "sync");
+      //quick links convert
+      if (oldQC != undefined) {
+        newSettings["settings"]["quick_crimes"] = {};
+        for (const [key, value] of Object.entries(oldQC["crimes"])) {
+          if (!isEmpty(value)) {
+            newSettings["settings"]["quick_crimes"][key] = value;
+          }
         }
-        if (oldSettings?.notifications?.happy?.value != undefined) {
-          newNotifications["notifications"]["happy"]["value"] = oldSettings?.notifications?.happy?.value;
-        }
+        removeValue("re_qcrimes", "sync");
       }
-      if (oldSettings?.notifications?.life != undefined) {
-        newNotifications["notifications"]["life"] = {};
-        if (oldSettings?.notifications?.life?.enabled != undefined) {
-          newNotifications["notifications"]["life"]["enabled"] = oldSettings?.notifications?.life?.enabled;
-        }
-        if (oldSettings?.notifications?.life?.value != undefined) {
-          newNotifications["notifications"]["life"]["value"] = oldSettings?.notifications?.life?.value;
-        }
+    } catch {}
+
+    //convert re_jail
+    try {
+      const oldJail = await getValue("re_jail", "sync");
+      //re_jail to newSettings
+      if (oldJail != undefined) {
+        newSettings["settings"]["jail"] = {};
+        newSettings["settings"]["jail"] = oldJail;
+
+        removeValue("re_jail", "sync");
       }
-    }
+    } catch {}
 
+    //convert re_chathighlights
+    try {
+      const oldChats = await getValue("re_chathighlights", "sync");
+      //re_chathighlights to newSettings
+      if (oldChats != undefined) {
+        newSettings["settings"]["chat_highlights"] = {};
+        newSettings["settings"]["chat_highlights"] = oldChats;
+        
+        removeValue("re_chathighlights", "sync");
+      }
+    } catch {}
 
-    //re_settings to newLocal
-    if (oldSettings?.tornstats_apikey != undefined) {
-      //THIS SHOULD JUST SET IT IMMEDIATELY
-      const re_torn_stats_apikey = {
-        're_torn_stats_apikey': oldSettings?.tornstats_apikey
-      };
-      await setValue(re_torn_stats_apikey, "local");
-    }
+    //convert re_bounty
+    try {
+      const oldBounty = await getValue("re_bounty", "sync");
+      //re_bounty to newSettings
+      if (oldBounty != undefined) {
+        newSettings["settings"]["bounty"] = {};
+        newSettings["settings"]["bounty"] = oldBounty;
 
+        removeValue("re_bounty", "sync");
+      }
+    } catch {}
 
-    const s = await getValue("settings", "sync");
-    const Smerg = deepExtend(s, newSettings["settings"]);
-    let Sobj = {};
-    Sobj["settings"] = JSON.parse(JSON.stringify(Smerg));
-    await setValue(Sobj, "sync");
+    //convert re_ct
+    try {
+      const oldCT = await getValue("re_ct", "sync");
+      //re_ct to newSettings
+      if (oldCT != undefined) {
+        newSettings["settings"]["christmas_town"] = {};
+        newSettings["settings"]["christmas_town"] = oldCT;
 
-    const f = await getValue("features", "sync");
-    const Fmerg = deepExtend(f, newFeatures["features"]);
-    let Fobj = {};
-    Fobj["features"] = JSON.parse(JSON.stringify(Fmerg));
-    await setValue(Fobj, "sync");
+        removeValue("re_ct", "sync");
+      }
+    } catch {}
 
-    const n = await getValue("notifications", "sync");
-    const Nmerg = deepExtend(n, newNotifications["notifications"]);
-    let Nobj = {};
-    Nobj["notifications"] = JSON.parse(JSON.stringify(Nmerg));
-    await setValue(Nobj, "sync");
-
-
+    await Promise.all([setValue(newSettings, "sync"),setValue(newFeatures, "sync"),setValue(newNotifications, "sync")])
+    console.log(newSettings,newFeatures,newNotifications);
     removeValue("re_settings", "sync");
   } catch (e) {
     if (e?.message == "re_settings is empty.") {
