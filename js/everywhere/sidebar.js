@@ -105,7 +105,7 @@
       const screenType = getScreenType();  
       if (screenType) {
         for (let i = 0; i < mutations.length; i++) {
-          //mobile check
+          //mobile/tablet check
           if (mutations[i]?.target?.tagName == "BODY" && mutations[i]?.addedNodes?.length) {
             for (let a = 0; a < mutations[i].addedNodes.length; a++) {
               if (mutations[i].addedNodes[a].id == "header-root") {
@@ -118,7 +118,7 @@
             }
           }
   
-          //desktop/tablet check
+          //desktop check
           if (mutations[i]?.target?.id == "mainContainer" && mutations[i]?.addedNodes?.length) {
             for (let a = 0; a < mutations[i].addedNodes.length; a++) {
               if (mutations[i].addedNodes[a].id == "sidebarroot") {
@@ -149,11 +149,15 @@
     
       const desktopSidebarObserver = new MutationObserver(function(mutations) {
         if (document.querySelector('#sidebar div:last-child div[class^="toggle-content"]')) {
-            insertNPCList();
+          insertNPCList();
         }
         if (document.querySelector('#sidebar:not([class*="mobile_"]) > div:first-of-type')) {
-            insertQuickLinksHead();
+          insertQuickLinksHead();
         }
+        if (document.querySelector('#sidebar:not([class*="mobile_"]) > div:first-of-type ul[class*="status-icons_"]')) {
+          hideThoseIcons();
+        }
+        
 
         if (qlinksComplete && npclistComplete) desktopSidebarObserver.disconnect();
       });
@@ -448,4 +452,15 @@
       
         return icon;
     }
+
+    //function for hiding side bar icons
+    function hideThoseIcons() {
+      const iconString = settings?.hide_sidebar_icons;
+      if (iconString) {
+          const icons = iconString.split(',');
+          icons.forEach(i => {
+              $(`#${i}-sidebar`).parent('li').remove();
+          });
+      }
+  }
 })();

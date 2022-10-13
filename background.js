@@ -95,7 +95,7 @@ async function updateOldSettings() {
     let newNotifications = {"notifications": {}};
 
     try {
-      newSettings["settings"] = await getValue("Fsettings", "sync");
+      newSettings["settings"] = await getValue("settings", "sync");
     } catch{
       const sett = chrome.runtime.getURL('/files/default_settings.json');
       const settFetch = await fetch(sett);
