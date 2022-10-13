@@ -122,6 +122,7 @@
       {
         "matches": ["https://*.torn.com/preferences.php*"],
         "js": ["js/preferences/preferences.js"],
+        "css": ["css/preferences/preferences.css"],
         "run_at": "document_end"
       },
       {

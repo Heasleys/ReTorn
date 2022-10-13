@@ -101,5 +101,6 @@
         "city": {
             "expanded": false
         }
-    }
+    },
+    "hide_sidebar_icons": ""
 }

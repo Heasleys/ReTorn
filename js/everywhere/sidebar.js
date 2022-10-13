@@ -105,7 +105,7 @@
       const screenType = getScreenType();  
       if (screenType) {
         for (let i = 0; i < mutations.length; i++) {
-          //mobile check
+          //mobile/tablet check
           if (mutations[i]?.target?.tagName == "BODY" && mutations[i]?.addedNodes?.length) {
             for (let a = 0; a < mutations[i].addedNodes.length; a++) {
               if (mutations[i].addedNodes[a].id == "header-root") {
@@ -118,7 +118,7 @@
             }
           }
   
-          //desktop/tablet check
+          //desktop check
           if (mutations[i]?.target?.id == "mainContainer" && mutations[i]?.addedNodes?.length) {
             for (let a = 0; a < mutations[i].addedNodes.length; a++) {
               if (mutations[i].addedNodes[a].id == "sidebarroot") {
@@ -141,6 +141,7 @@
               insertNPCList();
             }
           }
+          hideThoseIcons();
 
           if (npclistComplete) {
             npcMobileObserver.disconnect();
@@ -154,6 +155,7 @@
         if (document.querySelector('#sidebar:not([class*="mobile_"]) > div:first-of-type')) {
             insertQuickLinksHead();
         }
+        hideThoseIcons();    
 
         if (qlinksComplete && npclistComplete) desktopSidebarObserver.disconnect();
       });
@@ -252,7 +254,7 @@
         npc_list = `
         <li id="npc_`+npc.torn_id+`" data-tornid="`+npc.torn_id+`">
             <a href="/loader.php?sid=attack&user2ID=`+npc.torn_id+`">`+npc.name+`</a>
-            <span class="attack_time" title="Time until `+loot_time.replace("_", " ")+`" data-loot_time="`+loot_time+`">`+loot_time.replace("_", " ").replace("hosp out", "loot 1") + ": " +attack_time+`</span>
+            <span class="attack_time" data-loot_time="`+loot_time+`">`+loot_time.replace("_", " ").replace("hosp out", "loot 1") + ": " +attack_time+`</span>
         </li>
         `;
 
@@ -448,4 +450,16 @@
       
         return icon;
     }
+
+    //function for hiding side bar icons
+    function hideThoseIcons() {
+      const iconString = settings?.hide_sidebar_icons;
+      console.log(iconString)
+      if (iconString) {
+          const icons = iconString.split(',');
+          icons.forEach(i => {
+              $(`#${i}-sidebar`).parent('li').remove();
+          });
+      }
+  }
 })();

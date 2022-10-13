@@ -1182,6 +1182,35 @@ async function startup() {
   chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"}); //set badge color
   checkItemAPI();
   await clearTornStats();
+  
+  //check version, update version if needed  
+  const currentVersion = chrome.runtime.getManifest().version;
+  try {
+    const version = await getValue("version", "local");
+    console.log(version, currentVersion);
+
+    if (version == currentVersion) {// !=
+      console.log("[ReTorn] New extension version detected. Updating...");
+      checkUpdate(version);
+      const obj = {
+        version: currentVersion
+      }
+      console.log("version after", obj);
+      await setValue(obj, "local");
+    }
+  }
+  catch (e) {
+    //no version, before 1.0.1
+    const obj = {
+      version: currentVersion
+    }
+    console.log("version", obj);
+    await setValue(obj, "local");
+    checkUpdate(currentVersion);
+  }
+
+
+
   try {
     const r = await getValue("re_user_data", "local");
       chrome.action.setPopup({popup: "pages/popup.html"});
@@ -1190,6 +1219,41 @@ async function startup() {
   catch (e) {
     //user data hasn't been generated so ignore
   }
+}
+
+async function checkUpdate(version) {
+  console.log("CHECK UPDATE", version);
+  if (version === "1.0.0") {
+    console.log("FUCK YOU")
+    try {
+      const settings = await getValue("settings", "sync");
+
+      if (settings?.hide_sidebar_icons == undefined) {
+        settings["hide_sidebar_icons"] = "";
+      }
+
+      await setValue({"settings": settings}, "sync");
+    } catch(e) {
+      console.error(e)
+    }
+  }
+
+  if (version == "1.0.1") {
+    console.log("1.0.1");
+    try {
+      const settings = await getValue("settings", "sync");
+
+      if (settings?.hide_sidebar_icons == undefined) {
+        settings["hide_sidebar_icons"] = "";
+      }
+
+      await setValue(settings, "local");
+    } catch(e) {
+      console.error(e)
+    }
+  }
+
+  
 }
 
 async function newInstallation() {
