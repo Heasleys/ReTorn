@@ -23,7 +23,7 @@ if (features?.pages?.city?.city_finds?.enabled) {
             observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
         } else {
             cityHeader();
-            $('#re_city_finds').text("There was an error loading item data. Please restart ReTorn.");
+            $('#re_city_finds').text("There was an error loading item data. Please refresh item data in the ReTorn Advanced Settings.");
         }
     })
     .catch((e) => console.error(e))
