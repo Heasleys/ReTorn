@@ -458,7 +458,7 @@
       if (iconString) {
           const icons = iconString.split(',');
           icons.forEach(i => {
-              $(`#${i}-sidebar`).parent('li').remove();
+              $(`#${i}-sidebar`).parent('li').addClass("re_hide");
           });
       }
   }

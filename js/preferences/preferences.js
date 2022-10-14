@@ -123,7 +123,7 @@
                         $(this).css('opacity', "");
                         $(this).children('i').remove();
 
-                        $(`#${id}-sidebar`).parent('li').show();
+                        $(`#${id}-sidebar`).parent('li').removeClass("re_hide");
                     } else {
                         $(this).addClass('re_disabled');
                         $(this).css('opacity', "0.6");
@@ -163,7 +163,7 @@
             if (iconString) {
                 const icons = iconString.split(',');
                 icons.forEach(i => {
-                    $(`#${i}-sidebar`).parent('li').remove();
+                    $(`#${i}-sidebar`).parent('li').addClass("re_hide");
                 });
             }
         }

@@ -950,3 +950,18 @@ body.dark-mode .re_button button .close:hover {
 .re-modal-body-text .re-modal-body-link {
   text-decoration: none;
 }
+
+
+
+#sidebar ul[class*="status-icons_"] li.re_hide {
+  display: none;
+  margin: 0;
+}
+
+ul[class*="status-icons_"] li:nth-of-type(6n) {
+  margin-right: 0 !important;
+}
+
+ul[class*="status-icons_"] li {
+  margin-right: 10px !important;
+}
