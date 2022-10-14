@@ -1189,7 +1189,7 @@ async function startup() {
     const version = await getValue("version", "local");
     console.log(version, currentVersion);
 
-    if (version == currentVersion) {// !=
+    if (version != currentVersion) {// !=
       console.log("[ReTorn] New extension version detected. Updating...");
       checkUpdate(version);
       const obj = {
@@ -1223,35 +1223,18 @@ async function startup() {
 
 async function checkUpdate(version) {
   console.log("CHECK UPDATE", version);
-  if (version === "1.0.0") {
-    console.log("FUCK YOU")
-    try {
-      const settings = await getValue("settings", "sync");
+  try {
+    const settings = await getValue("settings", "sync");
 
-      if (settings?.hide_sidebar_icons == undefined) {
-        settings["hide_sidebar_icons"] = "";
-      }
-
-      await setValue({"settings": settings}, "sync");
-    } catch(e) {
-      console.error(e)
+    if (settings?.hide_sidebar_icons == undefined) {
+      settings["hide_sidebar_icons"] = "";
     }
+
+    await setValue(settings, "local");
+  } catch(e) {
+    console.error(e)
   }
 
-  if (version == "1.0.1") {
-    console.log("1.0.1");
-    try {
-      const settings = await getValue("settings", "sync");
-
-      if (settings?.hide_sidebar_icons == undefined) {
-        settings["hide_sidebar_icons"] = "";
-      }
-
-      await setValue(settings, "local");
-    } catch(e) {
-      console.error(e)
-    }
-  }
 
   
 }
