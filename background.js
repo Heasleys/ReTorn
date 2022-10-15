@@ -1226,7 +1226,7 @@ async function checkUpdate(version) {
       settings["hide_sidebar_icons"] = "";
     }
 
-    await setValue(settings, "local");
+    await setValue({"settings": settings}, "sync");
   } catch(e) {
     console.error(e)
   }
