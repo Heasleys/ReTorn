@@ -161,22 +161,19 @@
       });
 
       const iconWrapObserver = new MutationObserver(function(mutations) {
-        for (let i = 0; i < mutations.length; i++) {
-          console.log(mutations[i])
-        }
+        iconWrapObserver.disconnect();
         let sidebarIconsWrap = $("#sidebarroot ul[class*='status-icons_']");
         if (sidebarIconsWrap.length) {
           hideThoseIcons();
+          const target = document.querySelector('#sidebar ul[class*="status-icons_"]');
+          iconWrapObserver.observe(target, { subtree: true, attributes: true });
         }
       });
-
       const sidebarrootObserver = new MutationObserver(function(mutations) {
         if (document.getElementById('sidebarroot')) {
-          console.log(document.getElementById('sidebarroot'))
           const target = document.querySelector('#sidebar ul[class*="status-icons_"]');
-          console.log(target)
           if (target) {
-            iconWrapObserver.observe(document.getElementById('mainContainer'), { childList: true, attributes: true });
+            iconWrapObserver.observe(target, { subtree: true, attributes: true });
             hideThoseIcons();
             sidebarrootObserver.disconnect();
           }
@@ -482,10 +479,10 @@
           icons.forEach(i => {
               $(`#${i}-sidebar`).parent('li').addClass("re_hide");
           });
-          $('#sidebar ul[class*="status-icons_"] li').removeClass('re_six_icon');
-          $('#sidebar ul[class*="status-icons_"] li:not(.re_hide)').filter(function(i) {
-            return (i + 1) % 6 == 0 //select every 6th element, that does not have re_hide class
-          }).addClass('re_six_icon');
       }
+      $('#sidebar ul[class*="status-icons_"] li').removeClass('re_six_icon');
+      $('#sidebar ul[class*="status-icons_"] li:not(.re_hide)').filter(function(i) {
+        return (i + 1) % 6 == 0 //select every 6th element, that does not have re_hide class
+      }).addClass('re_six_icon');
     }
 })();

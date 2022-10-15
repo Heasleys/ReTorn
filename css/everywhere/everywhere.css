@@ -958,12 +958,16 @@ body.dark-mode .re_button button .close:hover {
   margin: 0;
 }
 
+#sidebar ul[class*="status-icons_"] li:not(.re_six_icon) {
+  margin-right: 10px !important;
+}
+
+html.html-manual-desktop #sidebar ul[class*="status-icons_"] li.re_six_icon {
+  margin-right: 0;
+}
 
 
 @media screen and (min-width: 1001px) {
-  html:not(.html-manual-desktop) #sidebar ul[class*="status-icons_"] li:not(.re_six_icon) {
-    margin-right: 10px !important;
-  }
   #sidebar ul[class*="status-icons_"] li.re_six_icon {
     margin-right: 0;
   }

@@ -155,24 +155,25 @@
                     sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
                     .then((r) => {
                     settings["hide_sidebar_icons"] = iconString;
-                    hideThoseIcons(iconString);
+                    hideThoseIcons();
                     })
                     .catch((e) => console.error(e))       
                 });
             }
         }
 
-        function hideThoseIcons(iconString) {
+        function hideThoseIcons() {
+            const iconString = settings?.hide_sidebar_icons;
+            $('#sidebar ul[class*="status-icons_"] li').removeClass('re_six_icon re_hide');
             if (iconString) {
                 const icons = iconString.split(',');
                 icons.forEach(i => {
                     $(`#${i}-sidebar`).parent('li').addClass("re_hide");
                 });
-                $('#sidebar ul[class*="status-icons_"] li').removeClass('re_six_icon');
-                $('#sidebar ul[class*="status-icons_"] li:not(.re_hide)').filter(function(i) {
-                  return (i + 1) % 6 == 0 //select every 6th element, that does not have re_hide class
-                }).addClass('re_six_icon');
             }
-        }
+            $('#sidebar ul[class*="status-icons_"] li:not(.re_hide)').filter(function(i) {
+              return (i + 1) % 6 == 0 //select every 6th element, that does not have re_hide class
+            }).addClass('re_six_icon');
+          }
     }
 })();
