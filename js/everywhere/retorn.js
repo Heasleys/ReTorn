@@ -24,10 +24,6 @@
   const href = window.location.href;   //locationURL is the page name of url (ex: jailview, factions, newspaper, stocks, missions)
   const locationURL = (href.includes('page.php') || href.includes('loader.php')) ? href.split('.com/').pop().split('sid=').pop().split(/[&#]+/).shift().trim().toLowerCase() : window.location.href.split('.com/').pop().split('.php').shift().trim().toLowerCase();
 
-  /* Inject FetchIntercept via js/everywhere/interceptFetch.js into Torn page */
-  var ss = document.createElement("script");
-  ss.src = chrome.runtime.getURL("/js/everywhere/interceptFetch.js");
-  (document.head || document.documentElement).appendChild(ss);
 
 //button or link click event to open options page for ReTorn
 $(document).on('click', '#re_options', function(event){
@@ -45,6 +41,10 @@ $(document).on('click', '#re_options', function(event){
     settings = r[0].data;
     features = r[1].data;
     /* Create customEvent to communicate with interceptFetch.js/extension */
+    /* Inject FetchIntercept via js/everywhere/interceptFetch.js into Torn page */
+    var ss = document.createElement("script");
+    ss.src = chrome.runtime.getURL("/js/everywhere/interceptFetch.js");
+    (document.head || document.documentElement).appendChild(ss);
     ss.onload = function(){
       const interceptFetchEvent = new CustomEvent('re_fetchInject', { detail: {settings: r[0].data, features: r[1].data }}); //send settings and features with event details
       document.dispatchEvent(interceptFetchEvent);

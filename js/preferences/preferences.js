@@ -60,6 +60,11 @@
         })
         .catch((e) => console.error(e))
 
+        //initialize hide icons selection
+        hideIcons();
+
+
+
 
         function isSynced(r) {
         if (r.status) {
@@ -94,5 +99,81 @@
             $("#re_message").attr('hidden', false);
             $("#re_message").parent().attr('hidden', false);
         }
+
+        function hideIcons() {
+            if ($('#iconTray').length) {
+                //initialize slashed icons
+                if (settings?.hide_sidebar_icons) {
+                    const icons = settings?.hide_sidebar_icons.split(',');
+                    icons.forEach(i => {
+                        $(`#your-icons #iconTray > #${i}`).addClass('re_disabled').css('opacity', "0.6").append(`
+                        <i class="fa-solid fa-slash" style="
+                        padding-left: 0px;
+                        padding-top: 2px;
+                        color: red;
+                        font-size: 14px;
+                        "></i>
+                        `);
+                    });
+                }
+
+                
+
+                $('#iconTray > li[id*="icon"]').click(function() {
+                    const id = $(this).attr('id');
+                    if ($(this).hasClass('re_disabled')) {
+                        $(this).removeClass('re_disabled');
+                        $(this).css('opacity', "");
+                        $(this).children('i').remove();
+
+                        $(`#${id}-sidebar`).parent('li').removeClass("re_hide");
+                    } else {
+                        $(this).addClass('re_disabled');
+                        $(this).css('opacity', "0.6");
+                        $(this).append(`<i class="fa-solid fa-slash" style="
+                        padding-left: 0px;
+                        padding-top: 2px;
+                        color: red;
+                        font-size: 14px;
+                        "></i>`);
+                    }
+                        
+                    var iconString = "";
+                    $('#your-icons #iconTray .re_disabled').each(function() {
+                        let iconID = $(this).attr('id');
+                        if (iconString != "") {
+                            iconString += `,${iconID}`;
+                        } else {
+                            iconString = `${iconID}`;
+                        }
+                    });
+                    
+                    const obj = {
+                        "hide_sidebar_icons": iconString
+                    }
+
+                    sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+                    .then((r) => {
+                    settings["hide_sidebar_icons"] = iconString;
+                    hideThoseIcons();
+                    })
+                    .catch((e) => console.error(e))       
+                });
+            }
+        }
+
+        function hideThoseIcons() {
+            const iconString = settings?.hide_sidebar_icons;
+            $('#sidebar ul[class*="status-icons_"] li').removeClass('re_six_icon re_hide');
+            if (iconString) {
+                const icons = iconString.split(',');
+                icons.forEach(i => {
+                    $(`#${i}-sidebar`).parent('li').addClass("re_hide");
+                });
+            }
+            $('#sidebar ul[class*="status-icons_"] li:not(.re_hide)').filter(function(i) {
+              return (i + 1) % 6 == 0 //select every 6th element, that does not have re_hide class
+            }).addClass('re_six_icon');
+          }
     }
 })();

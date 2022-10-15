@@ -1182,6 +1182,32 @@ async function startup() {
   chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"}); //set badge color
   checkItemAPI();
   await clearTornStats();
+  
+  //check version, update version if needed  
+  const currentVersion = chrome.runtime.getManifest().version;
+  try {
+    const version = await getValue("version", "local");
+
+    if (version != currentVersion) {// !=
+      console.log("[ReTorn][startup] New extension version detected. Checking for updates...");
+      checkUpdate(version);
+      const obj = {
+        version: currentVersion
+      }
+      await setValue(obj, "local");
+    }
+  }
+  catch (e) {
+    //no version, install is from before 1.1.0
+    const obj = {
+      version: currentVersion
+    }
+    await setValue(obj, "local");
+    checkUpdate(currentVersion);
+  }
+
+
+
   try {
     const r = await getValue("re_user_data", "local");
       chrome.action.setPopup({popup: "pages/popup.html"});
@@ -1190,6 +1216,23 @@ async function startup() {
   catch (e) {
     //user data hasn't been generated so ignore
   }
+}
+
+async function checkUpdate(version) {
+  try {
+    const settings = await getValue("settings", "sync");
+
+    if (settings?.hide_sidebar_icons == undefined) {
+      settings["hide_sidebar_icons"] = "";
+    }
+
+    await setValue(settings, "local");
+  } catch(e) {
+    console.error(e)
+  }
+
+
+  
 }
 
 async function newInstallation() {
