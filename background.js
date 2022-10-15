@@ -1187,24 +1187,21 @@ async function startup() {
   const currentVersion = chrome.runtime.getManifest().version;
   try {
     const version = await getValue("version", "local");
-    console.log(version, currentVersion);
 
     if (version != currentVersion) {// !=
-      console.log("[ReTorn] New extension version detected. Updating...");
+      console.log("[ReTorn][startup] New extension version detected. Checking for updates...");
       checkUpdate(version);
       const obj = {
         version: currentVersion
       }
-      console.log("version after", obj);
       await setValue(obj, "local");
     }
   }
   catch (e) {
-    //no version, before 1.0.1
+    //no version, install is from before 1.1.0
     const obj = {
       version: currentVersion
     }
-    console.log("version", obj);
     await setValue(obj, "local");
     checkUpdate(currentVersion);
   }
@@ -1222,7 +1219,6 @@ async function startup() {
 }
 
 async function checkUpdate(version) {
-  console.log("CHECK UPDATE", version);
   try {
     const settings = await getValue("settings", "sync");
 
