@@ -1,4 +1,5 @@
 (function() {
+    const observerParams = {attributes: false, childList: true, characterData: false, subtree:true};
     var npclistComplete,qlinksComplete = false;
     var intervals = [];
     var LOOT;
@@ -80,7 +81,7 @@
                 npclistComplete = false;
                 const target = document.getElementById('sidebarroot');
                 if (target) {
-                  desktopSidebarObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+                  desktopSidebarObserver.observe(target, observerParams);
                 }
             }
         }
@@ -90,14 +91,15 @@
                 insertNPCList();
                 const target = document.getElementById('header-root');
                 if (target) {
-                  npcMobileObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+                  npcMobileObserver.observe(target, observerParams);
                 }
             }
             if (document.getElementById('re_qlinks')) {
                 $('#re_qlinks').remove();
                 qlinksComplete = false;
-            }
+            } 
         }
+        hideThoseIcons();
     });
 
     //observer to observer document and start other observers based on when things appear in the DOM
@@ -111,7 +113,7 @@
               if (mutations[i].addedNodes[a].id == "header-root") {
                 if (screenType == "mobile" || screenType == "tablet") {
                   const target = document.getElementById('header-root');
-                  npcMobileObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+                  npcMobileObserver.observe(target, observerParams);
                   observerObserver.disconnect();
                 }
               }
@@ -122,9 +124,9 @@
           if (mutations[i]?.target?.id == "mainContainer" && mutations[i]?.addedNodes?.length) {
             for (let a = 0; a < mutations[i].addedNodes.length; a++) {
               if (mutations[i].addedNodes[a].id == "sidebarroot") {
+                const target = document.getElementById('sidebarroot');
                 if (screenType == "desktop") {
-                  const target = document.getElementById('sidebarroot');
-                  desktopSidebarObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+                  desktopSidebarObserver.observe(target, observerParams);
                   observerObserver.disconnect();
                 }
               }
@@ -141,7 +143,6 @@
               insertNPCList();
             }
           }
-          hideThoseIcons();
 
           if (npclistComplete) {
             npcMobileObserver.disconnect();
@@ -155,14 +156,36 @@
         if (document.querySelector('#sidebar:not([class*="mobile_"]) > div:first-of-type')) {
             insertQuickLinksHead();
         }
-        hideThoseIcons();    
 
         if (qlinksComplete && npclistComplete) desktopSidebarObserver.disconnect();
       });
+
+      const iconWrapObserver = new MutationObserver(function(mutations) {
+        for (let i = 0; i < mutations.length; i++) {
+          console.log(mutations[i])
+        }
+        let sidebarIconsWrap = $("#sidebarroot ul[class*='status-icons_']");
+        if (sidebarIconsWrap.length) {
+          hideThoseIcons();
+        }
+      });
+
+      const sidebarrootObserver = new MutationObserver(function(mutations) {
+        if (document.getElementById('sidebarroot')) {
+          console.log(document.getElementById('sidebarroot'))
+          const target = document.querySelector('#sidebar ul[class*="status-icons_"]');
+          console.log(target)
+          if (target) {
+            iconWrapObserver.observe(document.getElementById('mainContainer'), { childList: true, attributes: true });
+            hideThoseIcons();
+            sidebarrootObserver.disconnect();
+          }
+        }
+      });
     
       //observer document to start other observers
-      observerObserver.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
-
+      observerObserver.observe(document, observerParams);
+      sidebarrootObserver.observe(document, observerParams);
 
 
 
@@ -454,12 +477,15 @@
     //function for hiding side bar icons
     function hideThoseIcons() {
       const iconString = settings?.hide_sidebar_icons;
-      console.log(iconString)
       if (iconString) {
           const icons = iconString.split(',');
           icons.forEach(i => {
               $(`#${i}-sidebar`).parent('li').addClass("re_hide");
           });
+          $('#sidebar ul[class*="status-icons_"] li').removeClass('re_six_icon');
+          $('#sidebar ul[class*="status-icons_"] li:not(.re_hide)').filter(function(i) {
+            return (i + 1) % 6 == 0 //select every 6th element, that does not have re_hide class
+          }).addClass('re_six_icon');
       }
-  }
+    }
 })();

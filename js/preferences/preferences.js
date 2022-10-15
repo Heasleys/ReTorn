@@ -116,6 +116,9 @@
                         `);
                     });
                 }
+
+                
+
                 $('#iconTray > li[id*="icon"]').click(function() {
                     const id = $(this).attr('id');
                     if ($(this).hasClass('re_disabled')) {
@@ -165,6 +168,10 @@
                 icons.forEach(i => {
                     $(`#${i}-sidebar`).parent('li').addClass("re_hide");
                 });
+                $('#sidebar ul[class*="status-icons_"] li').removeClass('re_six_icon');
+                $('#sidebar ul[class*="status-icons_"] li:not(.re_hide)').filter(function(i) {
+                  return (i + 1) % 6 == 0 //select every 6th element, that does not have re_hide class
+                }).addClass('re_six_icon');
             }
         }
     }
