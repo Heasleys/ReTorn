@@ -188,6 +188,10 @@ body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .t
   position: relative;
 }
 
+.content-wrapper.re_block_users ul.thread-list > li > div.column-wrap .poster-wrap .info-wrap {
+  margin-bottom: 33px;
+}
+
 
 .re_block_user_wrap {
   height: 22px;
