@@ -22,10 +22,6 @@
       "notifications",
       "tts"
     ],
-    "host_permissions": [
-      "https://*.torn.com/*",
-      "https://www.tornstats.com/*"
-    ],
     "options_ui": {
   		"page": "/pages/options.html",
   		"open_in_tab": true
