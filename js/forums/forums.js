@@ -1,18 +1,25 @@
 (function() {
-if (features?.pages?.forums?.discord_copy?.enabled) {
-insertDiscordButtons();
   var observer = new MutationObserver(function(mutations, observer) {
     mutations.forEach(function(mutation) {
       if (mutation.target && mutation.target && mutation.target.id && mutation.target.id == "forums-page-wrap") {
         if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-
-          insertDiscordButtons();
-
+          if (features?.pages?.forums?.discord_copy?.enabled) {
+            insertDiscordButtons();
+          }
+          if (true) {
+            insertBlockButtons();
+          }
         }
       }
     });
   });
 
+  if (features?.pages?.forums?.discord_copy?.enabled) {
+    insertDiscordButtons();
+  }
+  if (true) {
+    insertBlockButtons();
+  }
   const target = document.querySelector('div.content-wrapper');
   observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
 
@@ -111,36 +118,51 @@ function insertDiscordButtons() {
   });
 
 }
-
-  //copy to clipboard function taken from internet -> https://pastebin.com/ikVzSiq9
-  async function copy_internal(text) {
-    if (!navigator.clipboard) {
-      try {
-        await navigator.clipboard.writeText(text);
-        return true;
-      } catch {
-        return false;
-      }
-    }
-
-    // fall back if clipboard api does not exist
-    let textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
+//copy to clipboard function taken from internet -> https://pastebin.com/ikVzSiq9
+async function copy_internal(text) {
+  if (!navigator.clipboard) {
     try {
-      return document.execCommand("copy");
+      await navigator.clipboard.writeText(text);
+      return true;
     } catch {
       return false;
-    } finally {
-      document.body.removeChild(textArea);
     }
   }
 
+  // fall back if clipboard api does not exist
+  let textArea = document.createElement("textarea");
+  textArea.value = text;
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    return document.execCommand("copy");
+  } catch {
+    return false;
+  } finally {
+    document.body.removeChild(textArea);
+  }
 }
+
+function insertBlockButtons() {
+  $('ul.thread-list > li div.poster-wrap').each(function() {
+    if ($(this).find('.re_block_user_wrap').length == 0) {
+      $(this).append(`
+        <div class="re_block_user_wrap">
+          Block Me
+        </div>
+      `);
+    }
+  });
+  //used as an identifier for css
+  $('.content-wrapper').addClass('re_block_users');
+}
+
+
+
+
 })();
