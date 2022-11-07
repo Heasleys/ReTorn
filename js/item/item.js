@@ -134,7 +134,7 @@
             const obj = {
               quick_items: {
                 [itemID]: {
-                  itemQty: itemQty,
+                  itemQty: itemQty
                 }
               }
             }
@@ -191,12 +191,6 @@
           });    
       }
     })
-    chrome.runtime.sendMessage({name: "get_value", value: "re_qitems"}, (response) => {
-      if (response.status && response.status == true) {
-
-      }
-    });
-
   }
 
   function sendItemUseRequest(itemID) {
@@ -220,10 +214,16 @@
                     itemQty = 0;
                   }
 
-                  item.data("qty", itemQty);
-                  item.find('.re_qty').text(`x${itemQty}`);
+                  const obj = {
+                    quick_items: {
+                      [itemID]: {
+                        itemID: itemID,  
+                        itemQty: itemQty
+                      }
+                    }
+                  }
 
-                  chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemQty: itemQty}}}})
+                  sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
                   item.attr("data-qty", itemQty);
                   item.find('.re_qty').text(`x${itemQty}`);
 
