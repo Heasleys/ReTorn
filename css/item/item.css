@@ -165,18 +165,13 @@ width: 172px !important;
   html:not(.html-manual-desktop) .re_qitemWrap.actions .actions-wrap li {
     width: 77px !important;
   }
-}
-@media (max-width: 600px) {
-  html:not(.html-manual-desktop) .r .items-cont .re_qitemWrap.actions {
-    width: 320px !important;
-  }
-  html:not(.html-manual-desktop) .re_qitemWrap.actions .actions-wrap li {
-    width: 64px !important;
-  }
-  html:not(.html-manual-desktop) .re_qitemWrap.actions .opt-name {
-    display: none;
+
+  html:not(.html-manual-desktop) .d .re_qitemWrap.actions .actions-wrap>li:first-child {
+    border-left: 1px solid;
+    border-left-color: var(--default-panel-divider-outer-side-color);
   }
 }
+
 /* Color CSS */
 #re_quick_items button {
   color: #000;
