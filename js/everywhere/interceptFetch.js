@@ -390,7 +390,7 @@ function typocalypse() {
 }
 
 function sortWord(word) {
-    var chars = word.toUpperCase().trim().split("");
+    var chars = word.toUpperCase().split("");
     chars.sort();
     return chars.join("");
 }
