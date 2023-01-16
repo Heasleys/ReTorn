@@ -99,7 +99,7 @@
       },
       {
         "matches": ["https://*.torn.com/crimes.php*"],
-        "js": ["js/crimes/crimes.js"],
+        "js": ["/lib/jquery.countdown.min.js","js/crimes/crimes.js"],
         "css": ["css/crimes/crimes.css"],
         "run_at": "document_end"
       },

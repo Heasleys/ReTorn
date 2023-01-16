@@ -29,7 +29,7 @@ button.re_del_qcrime img:hover {
   flex-wrap: wrap;
 }
 
-#re_quick_crimes form {
+#re_quick_crimes > div {
   flex-grow: 1;
 }
 
