@@ -209,6 +209,7 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
   if (local == undefined) {
     const ts = await sendMessage({"name": "get_torn_stats", "selection": selection})
     .then((r) => {
+      console.log("TS", r);
       return r;
     })
     .catch((e) => console.error(e))
@@ -220,10 +221,26 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
       obj[storageSelection].timestamp = Math.round(Date.now()/1000);
       obj[storageSelection].cache_until = Math.round((Date.now()/1000)+(cacheHours*3600));
 
+      console.log(obj)
+
+      console.log(selection);
+      if (selection.includes("spy/user/") && ts?.compare?.status && ts?.compare?.data) {
+        console.log('TTTTT')
+        var i = 1;
+        Object.entries(ts?.compare?.data).forEach(([key, value]) => {
+          console.log("TS to save", key, value);
+          console.log(obj)
+          obj[storageSelection].compare.data[key].order = i;
+          i++;
+        });
+      }
+
       await sendMessage({"name": "merge_local", "key": "torn_stats", "object": obj})
       .catch((e) => console.error(e))
-    }
 
+
+    }
+    console.log("TS changed", ts)
     return ts;
   } else {
     return local;

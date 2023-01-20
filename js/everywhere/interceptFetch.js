@@ -23,6 +23,11 @@ document.addEventListener("updateState", function(msg) {
 });
 
 
+document.addEventListener("initializeTooltip", function(msg) {
+    initializeTooltip('.content-wrapper', 'white-tooltip');
+});
+
+
 //interceptFetch is isolated from the rest of the files, so we need to repeat some function here.
 var ReTorn = {}; //we set this to ReTorn[settings] & ReTorn[features] because these variables will be global to the browser and we dont want conflicts with Torn
 document.addEventListener('re_fetchInject', function (r) {

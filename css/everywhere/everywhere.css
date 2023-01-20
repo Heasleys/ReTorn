@@ -62,6 +62,10 @@
   margin-right: 20px !important;
 }
 
+.center {
+  text-align: center;
+}
+
 a {
   cursor: pointer;
   color: var(--default-blue-color);
@@ -614,7 +618,7 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
 
 #re_feature_settings.re_active+.re_menu_block:before {
   content: '';
-  z-index: 2;
+  z-index: 10000;
   width: 30px;
   height: 34px;
   top: -27px;
@@ -640,7 +644,7 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   right: -59px;
   top: 6px;
   box-shadow: 0 1px 2px rgb(0 0 0 / 45%);
-  z-index: 1;
+  z-index: 9999;
 }
 
 .re_menu ul li {
