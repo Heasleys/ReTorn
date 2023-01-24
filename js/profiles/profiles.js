@@ -53,6 +53,23 @@
         loadTS(true);
       });
     }
+    if ($('#re_difference').length == 0) {
+      //insert button into header menu
+      $('#re_features_settings_view').prepend('<li id="re_difference"><span class="re_menu_item"><input type="checkbox" id="re_diff_toggle"><span class="re_menu_item_text">Show relative values</span></span></li>')
+      //click event for checkbox
+      $('#re_diff_toggle').on("click change", function(e) {
+        e.stopPropagation();
+        toggleDiff($('#re_diff_toggle').prop("checked"));
+      });
+
+      //click event for checkbox text to toggle checkbox
+      $('#re_difference .re_menu_item_text').click(function(e) {
+        e.stopPropagation();
+        let checkbox = $('#re_diff_toggle');
+        checkbox.prop("checked", !checkbox.prop("checked"));
+        checkbox.trigger("change");
+      })
+    }
   }
   
   function parseTornStatsData(data) {
@@ -60,6 +77,7 @@
       console.log("data", data)
       if (data.status) {
         if (data.spy.status) {
+          //colors and signs
           let strCol = "";
           let strSign = "";
           let defCol = "";
@@ -71,65 +89,92 @@
           let totCol = "";
           let totSign = "";
           if (data.spy.deltaStrength < 0) {
-            strCol = " class='red'";
+            strCol = "red";
           }
           if (data.spy.deltaStrength > 0) {
-            strCol = " class='green'";
+            strCol = "green";
             strSign = "+";
           }
   
           if (data.spy.deltaDefense < 0) {
-            defCol = " class='red'";
+            defCol = "red";
           }
           if (data.spy.deltaDefense > 0) {
-            defCol = " class='green'";
+            defCol = "green";
             defSign = "+";
           }
   
           if (data.spy.deltaSpeed < 0) {
-            speCol = " class='red'";
+            speCol = "red";
           }
           if (data.spy.deltaSpeed > 0) {
-            speCol = " class='green'";
+            speCol = "green";
             speSign = "+";
           }
   
           if (data.spy.deltaDexterity < 0) {
-            dexCol = " class='red'";
+            dexCol = "red";
           }
           if (data.spy.deltaDexterity > 0) {
-            dexCol = " class='green'";
+            dexCol = "green";
             dexSign = "+";
           }
   
           if (data.spy.deltaTotal < 0) {
-            totCol = " class='red'";
+            totCol = "red";
           }
           if (data.spy.deltaTotal > 0) {
-            totCol = " class='green'";
+            totCol = "green";
             totSign = "+";
           }
   
+          //Actual battle stats
           let deltaStrength = isNaN(data.spy.strength) ? data.spy.deltaStrength.toLocaleString() : Math.trunc((data.spy.strength + data.spy.deltaStrength)).toLocaleString();
           let deltaDefense = isNaN(data.spy.defense) ? data.spy.deltaDefense.toLocaleString() : Math.trunc((data.spy.defense + data.spy.deltaDefense)).toLocaleString();
           let deltaSpeed = isNaN(data.spy.speed) ? data.spy.deltaSpeed.toLocaleString() : Math.trunc((data.spy.speed + data.spy.deltaSpeed)).toLocaleString();
           let deltaDexterity = isNaN(data.spy.dexterity) ? data.spy.deltaDexterity.toLocaleString() : Math.trunc((data.spy.dexterity + data.spy.deltaDexterity)).toLocaleString();
           let deltaTotal = isNaN(data.spy.total) ? data.spy.deltaTotal.toLocaleString() : Math.trunc((data.spy.total + data.spy.deltaTotal)).toLocaleString();
+
+          //Difference between spy and user battle stats
+          let strDiff = `${strSign}${Math.trunc(strSign+data.spy.deltaStrength).toLocaleString()}`;
+          let defDiff = `${defSign}${Math.trunc(defSign+data.spy.deltaDefense).toLocaleString()}`;
+          let speDiff = `${speSign}${Math.trunc(speSign+data.spy.deltaSpeed).toLocaleString()}`;
+          let dexDiff = `${dexSign}${Math.trunc(dexSign+data.spy.deltaDexterity).toLocaleString()}`;
+          let totDiff = `${totSign}${Math.trunc(totSign+data.spy.deltaTotal).toLocaleString()}`;
   
   
           let spyUL = `<ul class="re_infotable">`;
           spyUL += `<li style="order: -1;"><div class="re_table-label"><span class="bold">Battle Stats</span></div><div class="re_table-value them"><span class="bold">Them</span></div><div class="re_table-value you"><span class="bold">You</span></div></li>`;
   
-          spyUL += ``;
-          spyUL += `<li><div class="re_table-label"><span class="bold">Strength:</span></div><div class="re_table-value them"><span>${data.spy.strength.toLocaleString()}</span></div><div class="re_table-value you"><span${strCol} title="<div${strCol} style='text-align: center;'>${strSign}${Math.trunc(strSign+data.spy.deltaStrength).toLocaleString()}</div>">${deltaStrength}</span></div></li>`;
-  
-          spyUL += `<li><div class="re_table-label"><span class="bold">Defense:</span></div><div class="re_table-value them"><span>${data.spy.defense.toLocaleString()}</span></div><div class="re_table-value you"><span${defCol} title="<div${defCol} style='text-align: center;'>${defSign}${Math.trunc(defSign+data.spy.deltaDefense).toLocaleString()}</div>">${deltaDefense}</span></div></li>`
-  
-          spyUL += `<li><div class="re_table-label"><span class="bold">Speed:</span></div><div class="re_table-value them"><span>${data.spy.speed.toLocaleString()}</span></div><div class="re_table-value you"><span${speCol} title="<div${speCol} style='text-align: center;'>${speSign}${Math.trunc(speSign+data.spy.deltaSpeed).toLocaleString()}</div>">${deltaSpeed}</span></div></li>`
+          //Strength Spy + User
+          spyUL += `<li class="re_stat"><div class="re_table-label"><span class="bold">Strength:</span></div>`;
+          spyUL += `<div class="re_table-value them"><span>${data.spy.strength.toLocaleString()}</span></div>`;
+          spyUL += `<div class="re_table-value you"><span class="${strCol}" data-color="${strCol}" data-diff="${strDiff}" data-stat="${deltaStrength}"></span></div>`;
+          spyUL += `</li>`;
 
-          spyUL += `<li><div class="re_table-label"><span class="bold">Dexterity:</span></div><div class="re_table-value them"><span>${data.spy.dexterity.toLocaleString()}</span></div><div class="re_table-value you"><span${dexCol} title="<div${dexCol} style='text-align: center;'>${dexSign}${Math.trunc(dexSign+data.spy.deltaDexterity).toLocaleString()}</div>">${deltaDexterity}</span></div></li>`
+          //Defense Spy + User
+          spyUL += `<li class="re_stat"><div class="re_table-label"><span class="bold">Defense:</span></div>`;
+          spyUL += `<div class="re_table-value them"><span>${data.spy.defense.toLocaleString()}</span></div>`;
+          spyUL += `<div class="re_table-value you"><span class="${defCol}"  data-color="${defCol}" data-diff="${defDiff}" data-stat="${deltaDefense}"></span></div>`;
+          spyUL += `</li>`;
+  
+          //Speed Spy + User
+          spyUL += `<li class="re_stat"><div class="re_table-label"><span class="bold">Speed:</span></div>`;
+          spyUL += `<div class="re_table-value them"><span>${data.spy.speed.toLocaleString()}</span></div>`;
+          spyUL += `<div class="re_table-value you"><span class="${speCol}"  data-color="${speCol}" data-diff="${speDiff}" data-stat="${deltaSpeed}"></span></div>`;
+          spyUL += `</li>`;
 
-          spyUL += `<li><div class="re_table-label"><span class="bold">Total:</span></div><div class="re_table-value them"><span>${data.spy.total.toLocaleString()}</span></div><div class="re_table-value you"><span${totCol} title="<div${totCol} style='text-align: center;'>${totSign}${Math.trunc(totSign+data.spy.deltaTotal).toLocaleString()}</div>">${deltaTotal}</span></div></li>`
+          //Dexterity Spy + User
+          spyUL += `<li class="re_stat"><div class="re_table-label"><span class="bold">Dexterity:</span></div>`;
+          spyUL += `<div class="re_table-value them"><span>${data.spy.dexterity.toLocaleString()}</span></div>`;
+          spyUL += `<div class="re_table-value you"><span class="${dexCol}" data-color="${dexCol}" data-diff="${dexDiff}" data-stat="${deltaDexterity}"></span></div>`;
+          spyUL += `</li>`;
+
+          //Total Spy + User
+          spyUL += `<li class="re_stat"><div class="re_table-label"><span class="bold">Total:</span></div>`;
+          spyUL += `<div class="re_table-value them"><span>${data.spy.total.toLocaleString()}</span></div>`;
+          spyUL += `<div class="re_table-value you"><span class="${totCol}" data-color="${totCol}" data-diff="${totDiff}" data-stat="${deltaTotal}"></span></div>`;
+          spyUL += `</li>`;
 
   
           spyUL += `<li style="order: 999;"><div class="re_table-label"><span class="bold">Last Spy:</span></div><div class="re_table-value them"><span>${data.spy.difference}</span></div><div class="re_table-value them"><span>Fair Fight Bonus: </span><span class="bold">x${data.spy.fair_fight_bonus.toFixed(2)}</span></div></div></li>`;
@@ -186,17 +231,24 @@
   
   
           Object.entries(data.compare.data).forEach(([key, value]) => {
-            console.log("KEY", key, "Value", value)
             let color = "";
             let sign = "";
             if (value.difference < 0) {
-              color = " class='red'";
+              color = "red";
             }
             if (value.difference > 0) {
-              color = " class='green'";
+              color = "green";
               sign = "+";
             }
-            compareUL += `<li style="order: ${value.order};"><div class="re_table-label"><span class="bold">${key}</span></div><div class="re_table-value them"><span>${value.amount.toLocaleString()}</span></div><div class="re_table-value you"><span${color}>${sign}${value.difference.toLocaleString()}</span></div></li>`
+
+            let difference = `${sign}${value.difference.toLocaleString()}`;
+            let absolute = Math.trunc((value.amount + value.difference)).toLocaleString();
+
+            compareUL += `<li class="re_stat" style="order: ${value.order};">
+            <div class="re_table-label"><span class="bold">${key}</span></div>
+            <div class="re_table-value them"><span>${value.amount.toLocaleString()}</span></div>
+            <div class="re_table-value you"><span class="${color}" data-color="${color}" data-diff="${difference}" data-stat="${absolute}"></span></div>
+            </li>`;
           });
           compareUL += `<li style="order: 999;"><div style="width: 100%; text-align: center;"><span><a href='https://www.tornstats.com/settings/script' target='_blank'>Change your script settings here</a></span></div></li>`;
           compareUL += "</ul>";
@@ -214,6 +266,7 @@
           }
         }
   
+        toggleDiff();
       $('#re_ts_content').show();
       } else {
         if (data?.message.includes('re_torn_stats_apikey')) {
@@ -228,6 +281,29 @@
     });
   }
   
-  
+  function beginRearrange() {
+
+  }
+
+  function toggleDiff(diff = false) {
+    //default to difference being the hover title and the actual stat being the text
+    if (diff) {
+      var strTitle = 'data-stat';
+      var strText = 'data-diff';
+    } else {
+      var strTitle = 'data-diff';
+      var strText = 'data-stat';
+    }
+
+    $('.re_stat .you > span').each(function() {
+      console.log($(this))
+      let title = $(this).attr(strTitle);
+      let text = $(this).attr(strText);
+
+      $(this).text(text);
+      $(this).attr('title', `<div class="${$(this).attr('data-color')}" style="text-align: center;">${title}</div>`);
+    })
+
+  }
   
   })();

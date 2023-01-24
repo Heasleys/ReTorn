@@ -131,7 +131,7 @@ a:hover {
     font-size: 12px;
 }
 
-.re_checkbox > label, .re_checkbox > input[type="checkbox"], .re_content select {
+.re_checkbox > label, .re_checkbox > input[type="checkbox"], .re_content select, input[type="checkbox"] {
   cursor: pointer;
 }
 
@@ -662,6 +662,11 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
 .re_menu_item i {
   padding: 8px;
   font-size: 16px;
+}
+.re_menu_item input[type="checkbox"] { /*same size as menu item icon*/
+  margin: 8px;
+  width: 16px;
+  height: 16px;
 }
 .re_menu_item .re_menu_item_text {
   font-size: 12px;
