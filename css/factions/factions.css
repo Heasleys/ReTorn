@@ -185,6 +185,14 @@
   padding-top: 2px;
 }
 
+p.re_playercounts > svg {
+  vertical-align: middle;
+  margin-right: 2px;
+}
+p.re_playercounts > span {
+  vertical-align: bottom;
+}
+
 
 
 @media screen and (max-width: 784px) {
