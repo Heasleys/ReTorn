@@ -79,8 +79,6 @@
   width: 65px;
 }
 
-
-
 .re_infotable li .re_table-value {
   margin: 0;
   padding: 0 10px;
@@ -94,39 +92,71 @@
   border-color: var(--panel-divider-outer-side-color);
 }
 
-.re_row > div:only-child .re_infotable li div:first-child {
-  border-left: 1px solid;
-  border-color: var(--panel-divider-outer-side-color);
-}
-
-.re_row > div:only-child .re_infotable li div:last-child {
-  border-right: 1px solid;
-  border-color: var(--panel-divider-outer-side-color);
-}
-
-.re_row > div:nth-child(2) .re_infotable li div:first-child {
-  border-left: 1px solid;
-  border-color: var(--panel-divider-outer-side-color);
-}
-.re_row > div:nth-child(2) .re_infotable li div:last-child {
-  border-right: 0;
-}
-
-.re_row > div:only-child {
-  border-radius: 0;
-}
-
-.re_row > div .re_infotable li:last-child {
-  border-radius: 0px 0px 0px 5px;
-}
-.re_row > div:nth-child(2) .re_infotable li:last-child {
-  border-radius: 0;
-}
-.re_row > div:only-child .re_infotable li:last-child {
-  border-radius: 0;
-}
 
 
+@media screen and (min-width: 785px) {  
+  .re_row > div:only-child .re_infotable li div:first-child {
+    border-left: 1px solid;
+    border-color: var(--panel-divider-outer-side-color);
+  }
+  
+  .re_row > div:only-child .re_infotable li div:last-child {
+    border-right: 1px solid;
+    border-color: var(--panel-divider-outer-side-color);
+  }
+  
+  .re_row > div:nth-child(2) .re_infotable li div:first-child {
+    border-left: 1px solid;
+    border-color: var(--panel-divider-outer-side-color);
+  }
+  .re_row > div:nth-child(2) .re_infotable li div:last-child {
+    border-right: 0;
+  }
+  
+  .re_row > div:only-child {
+    border-radius: 0;
+  }
+  
+  .re_row > div .re_infotable li:last-child {
+    border-radius: 0px 0px 0px 5px;
+  }
+  .re_row > div:nth-child(2) .re_infotable li:last-child {
+    border-radius: 0;
+  }
+  .re_row > div:only-child .re_infotable li:last-child {
+    border-radius: 0;
+  }
+}
+
+/* small screen */
+@media screen and (max-width: 784px) {
+  .re_row > div {
+    width: 100%;
+  }
+
+  .re_row > div:first-child {
+    margin-right: 0;
+    margin-bottom: 24px;
+  }
+  .re_row > div:only-child {
+    margin-bottom: 0;
+  }
+
+  .re_row > div .re_infotable li > div:first-child {
+    border-left: 0;
+  }
+  .re_row > div .re_infotable li > div:last-child {
+    border-right: 0;
+  }
+
+  .re_row > div .re_infotable li:last-child {
+    border-radius: 0;
+  }
+  .re_row > div:last-child .re_infotable li:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+}
 
 
 
