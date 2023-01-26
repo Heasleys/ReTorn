@@ -1222,8 +1222,18 @@ async function checkUpdate(version) {
   try {
     const settings = await getValue("settings", "sync");
 
+    //version 1.1.0
     if (settings?.hide_sidebar_icons == undefined) {
       settings["hide_sidebar_icons"] = "";
+    }
+    
+    //version 1.1.1
+    if (settings?.profile == undefined) {
+      settings["profile"] = {};
+      if (settings?.profile?.relative_values == undefined) {
+        settings["profile"]["relative_values"] = {};
+        settings["profile"]["relative_values"]["enabled"] = false;
+      }
     }
 
     await setValue({"settings": settings}, "sync");

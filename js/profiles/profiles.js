@@ -57,9 +57,18 @@
       //insert button into header menu
       $('#re_features_settings_view').prepend('<li id="re_difference"><span class="re_menu_item"><input type="checkbox" id="re_diff_toggle"><span class="re_menu_item_text">Show relative values</span></span></li>')
       //click event for checkbox
-      $('#re_diff_toggle').on("click change", function(e) {
+      $('#re_diff_toggle').on("change", function(e) {
         e.stopPropagation();
-        toggleDiff($('#re_diff_toggle').prop("checked"));
+        let enabled = $('#re_diff_toggle').prop("checked");
+
+        //set toggle settings
+        const obj = {"profile": {"relative_values": {"enabled": enabled}}}
+            sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+            .then((r) => {
+              console.log(r);
+                settings.profile.relative_values.enabled = enabled;
+                toggleDiff(enabled);
+            })
       });
 
       //click event for checkbox text to toggle checkbox
@@ -266,7 +275,14 @@
           }
         }
   
-        toggleDiff();
+        //initial toggleDiff
+        if (settings?.profile?.relative_values?.enabled) {
+          $('#re_diff_toggle').prop("checked", true);
+          toggleDiff(true);
+        } else {
+          toggleDiff();
+        }
+        
       $('#re_ts_content').show();
       } else {
         if (data?.message.includes('re_torn_stats_apikey')) {
@@ -296,7 +312,6 @@
     }
 
     $('.re_stat .you > span').each(function() {
-      console.log($(this))
       let title = $(this).attr(strTitle);
       let text = $(this).attr(strText);
 

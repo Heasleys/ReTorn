@@ -102,5 +102,10 @@
             "expanded": false
         }
     },
-    "hide_sidebar_icons": ""
+    "hide_sidebar_icons": "",
+    "profile": {
+        "relative_values": {
+            "enabled": false
+        }
+    }
 }
