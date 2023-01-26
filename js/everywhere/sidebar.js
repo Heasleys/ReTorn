@@ -345,7 +345,7 @@
 
     //function to insert the quick links header and base
     function insertQuickLinksHead() {
-        if ((features?.sidebar?.quick_links?.enabled == false) || (Object.keys(settings?.quick_links).length === 0) || (document.getElementById('re_qlinks'))) {
+        if ((features?.sidebar?.quick_links?.enabled == false) ||  typeof settings?.quick_links == "undefined" || (Object.keys(settings?.quick_links).length === 0) || (document.getElementById('re_qlinks'))) {
             qlinksComplete = true;
             return;
         }
