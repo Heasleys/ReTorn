@@ -1,3 +1,16 @@
 .re_color_hide, .re_bonus_hide, .re_name_hide, .re_damage_hide, .re_accuracy_hide, .re_defence_hide {
     display: none;
 }
+
+.auction-market-main-cont.re_torn_ah .pagination-right {
+    float: right;
+    margin: 0;
+    top: 8px;
+    padding-right: 10px;
+}
+.auction-market-main-cont.re_torn_ah .pagination-left {
+    float: left;
+    margin: 0;
+    top: 8px;
+    margin-left: 10px;
+}

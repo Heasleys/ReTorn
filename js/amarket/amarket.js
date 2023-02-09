@@ -62,6 +62,7 @@ auctionTabObserver.observe(target, {attributes: false, childList: true, characte
 const pageTarget = document.querySelector('div.pagination-wrap');
 paginationObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
 
+$('.auction-market-main-cont').addClass('re_torn_ah');//used for changing class for pagination arrows
 
 //insert auction head
 insertHeader($("div#auction-house-tabs"), 'before', 'auction_filter');
