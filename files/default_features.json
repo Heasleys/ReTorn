@@ -97,6 +97,12 @@
                 "enabled": true,
                 "description": "Adds a window with a large assortment of features for Christmas Town including: showing invisible walls, game cheats, items/chest locations, etc."
             }
+        },
+        "amarket": {
+            "auction_filter": {
+                "enabled": true,
+                "description": "Adds a window that allows you to filter weapons, armor, and items on the auction house market."
+            }
         }
     },
     "sidebar": {

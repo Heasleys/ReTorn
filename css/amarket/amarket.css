@@ -1,0 +1,3 @@
+.re_color_hide, .re_bonus_hide, .re_name_hide, .re_damage_hide, .re_accuracy_hide, .re_defence_hide {
+    display: none;
+}

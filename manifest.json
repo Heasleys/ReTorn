@@ -179,6 +179,12 @@
         "js": ["js/bazaar/bazaar.js"],
         "css": ["css/bazaar/bazaar.css"],
         "run_at": "document_end"
+      },
+      {
+        "matches": ["https://*.torn.com/amarket.php*"],
+        "js": ["js/amarket/amarket.js"],
+        "css": ["css/amarket/amarket.css"],
+        "run_at": "document_end"
       }
     ]
   }
