@@ -223,12 +223,14 @@ border-top-right-radius: 0px;
   line-height: 14px;
   height: 26px;
   text-align: left;
-  padding: 5px;
   display: inline-block;
   vertical-align: top;
   width: 178px;
   border-color: var(--input-border-color);
   background: var(--input-background-color);
+}
+.re_content input[type="text"], .re_content input[type="number"] {
+  padding: 5px;
 }
 
 .re_row {

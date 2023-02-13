@@ -72,21 +72,19 @@ $('.re_container').after(`<hr class="delimiter-999 m-top10">`);
 $('.re_content').html(`
 <!-- Weapons -->
 <div id="re_ah_weapons" class="re_filter" style="display: none;">
-<p>Weapons Filter</p>
-<select id="re_ah_weapons_color"><option></option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option></select>
-<input type="text" list="re_ah_weapons_list" id="re_ah_weapons_list_textbox">
+<input type="text" class="re_name" placeholder="Weapon name" list="re_ah_weapons_list" id="re_ah_weapons_list_textbox">
 <datalist id="re_ah_weapons_list"></datalist>
-<select id="re_ah_weapons_bonuses_1"></select>
-<select id="re_ah_weapons_bonuses_2"></select>
-<input type="number" id="re_ah_weapons_damage" min="0">
-<input type="number" id="re_ah_weapons_accuracy" min="0">
+<input class="re_stats" type="number" placeholder="Dmg" id="re_ah_weapons_damage" min="0">
+<input class="re_stats" type="number" placeholder="Acc" id="re_ah_weapons_accuracy" min="0">
+
+<select class="re_color" id="re_ah_weapons_color" required><option value="" selected>Weapon color</option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option><option value="orangered">Orange & Red</option></select>
+<select id="re_ah_weapons_bonuses_1" class="re_bonus" required></select>
+<select id="re_ah_weapons_bonuses_2" class="re_bonus" required></select>
 </div>
 
 <!-- Armor -->
 <div id="re_ah_armor" class="re_filter" style="display: none;">
-<p>Armor Filter</p>
-<select id="re_ah_armor_color"><option></option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option></select>
-<input type="text" list="re_ah_armor_types" id="re_ah_armor_types_textbox">
+<input type="text" class="re_name" list="re_ah_armor_types" id="re_ah_armor_types_textbox" placeholder="Armor name">
 <datalist id="re_ah_armor_types">
 <option data-name="Riot" value="Riot">Impregnable</option>
 <option data-name="Assault" value="Assault">Impenetrable</option>
@@ -97,13 +95,14 @@ $('.re_content').html(`
 <option data-name="Welding Helmet" value="Welding Helmet"></option>
 <option data-name="Hazmat Suit" value="Hazmat Suit">Radiation</option>
 </datalist>
-<input type="number" id="re_ah_armor_defense" min="0">
+<input class="re_stats" type="number" id="re_ah_armor_defense" min="0" placeholder="Def" title="Armor defense">
+<select class="re_color" id="re_ah_armor_color" required><option value="" selected>Armor color</option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option><option value="orangered">Orange & Red</option></select>
+<input class="re_stats" type="number" id="re_ah_armor_bonus_perc" min="0" placeholder="Perc" title="Bonus percent">
 </div>
 
 <!-- Items -->
 <div id="re_ah_items" class="re_filter" style="display: none;">
-<p>Item Filter</p>
-<input type="text" id="re_ah_items_textbox">
+<input type="text" id="re_ah_items_textbox" class="re_name" placeholder="Item name">
 </div>
 <div class="re_row re_message">
 <p>Showing <b><span id="shown">10</span></b> out of <b><span id="total">10</span></b> people.
@@ -111,7 +110,7 @@ $('.re_content').html(`
 `);
 
 //fill datalist for Weapons
-var weaponlist ="<option></option>";
+var weaponlist =`<option value="" selected>Weapon bonus</option>`;
 $.each(weaponbonuses, function(n,e) {
     weaponlist += '<option data-name="'+e+'">'+e+'</option>';
 });
@@ -184,7 +183,12 @@ function initSearchElements() {
     //Item Filters
     $('#re_ah_items_textbox').on('input', function() {
         filter('#types-tab-3');
-    })
+    });
+
+    //select on focus
+    $('.re_filter input[type="text"]').on('focus', function() {
+        $(this).select();
+    });
 }
 
 function nameFilter(element, searchTerm) {
