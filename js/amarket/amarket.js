@@ -282,10 +282,17 @@ function bonusFilter(element, b1, b2) {
 
 function colorFilter(element, color) {
     if (color) {
-        if (color != "none") {
-            if ($(element).attr('class') == "item torn-item large ") {
+        if (color == "none") {
+            if ($(element).attr('class') != "item torn-item large ") {
                 $(element).closest("li").addClass("re_color_hide");
             }
+            return;
+        }
+        if (color == "orangered") {
+            if (($(element).attr('class') == "item torn-item large ") || ($(element).hasClass("yellow"))) {
+                $(element).closest("li").addClass("re_color_hide");
+            }
+            return;
         }
         const colorsList = ["yellow", "orange", "red"];
         colorsList.forEach(function(c) {
