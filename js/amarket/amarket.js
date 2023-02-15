@@ -79,7 +79,9 @@ $('.re_content').html(`
 
 <select class="re_color" id="re_ah_weapons_color" required><option value="" selected>Weapon color</option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option><option value="orangered">Orange & Red</option></select>
 <select id="re_ah_weapons_bonuses_1" class="re_bonus" required></select>
+<input class="re_stats" type="number" id="re_ah_weapons_bonuses_1_perc" min="0" placeholder="Perc" title="Bonus percent">
 <select id="re_ah_weapons_bonuses_2" class="re_bonus" required></select>
+<input class="re_stats" type="number" id="re_ah_weapons_bonuses_2_perc" min="0" placeholder="Perc" title="Bonus percent">
 </div>
 
 <!-- Armor -->
@@ -168,7 +170,7 @@ function initSearchElements() {
     $('#re_ah_weapons_bonuses_1, #re_ah_weapons_bonuses_2, #re_ah_weapons_color').on('change', function() {
         filter('#types-tab-1');
     });
-    $('#re_ah_weapons_list_textbox, #re_ah_weapons_damage, #re_ah_weapons_accuracy').on('input', function() {
+    $('#re_ah_weapons_list_textbox, #re_ah_weapons_damage, #re_ah_weapons_accuracy, #re_ah_weapons_bonuses_1_perc, #re_ah_weapons_bonuses_2_perc').on('input', function() {
         filter('#types-tab-1');
     });
 
@@ -206,13 +208,22 @@ function nameFilter(element, searchTerm) {
 
 }
 
-function bonusFilter(element, b1, b2) {
+function bonusFilter(element, b1, b2, perc1, perc2) {
 
     //if bonus filters are not set, stop hiding based on bonus
-    if (b1 == "" && b2 == "") {
+    if (!b1 && !b2) {
         $(element).closest("li").removeClass("re_bonus_hide");
+    }
+    //if bonus perc filters are not set, stop hiding based on bonus perc
+    if (!perc1 && !perc2) {
+        $(element).closest("li").removeClass("re_bonus_perc_hide");
+    }
+    //just exit function if nothing is set, because no point in checking everything
+    if (!b1 && !b2 && !perc1 && !perc2) {
         return;
     }
+
+    const regex = /\d+/; // matches one or more digits
 
     //bonus elements
     bonuses = $(element).find('.bonus-attachment-icons');
@@ -226,6 +237,44 @@ function bonusFilter(element, b1, b2) {
         if (b1 && b2) {//then check if bonuses exist within each bonus elements, if not hide            
             if ((s1.indexOf(b1) !== -1 || s1.indexOf(b2) !== -1) && (s2.indexOf(b1) !== -1 || s2.indexOf(b2) !== -1)) {
                 $(element).closest("li").removeClass('re_bonus_hide');
+             
+                //now we check if bonus percs are set
+                if (perc1 && perc2) { // both are set
+
+                    //this is checking if both percentages exist in the bonuses, without knowing the order of the elements
+                    var matchFound = bonuses.filter(function(index, bonus1) {
+                        var $bonus1 = bonus1;
+                        return bonuses.not(bonus1).toArray().some(function(bonus2) {
+                          var title1 = $($bonus1).attr('title').toLowerCase();
+                          var title2 = $(bonus2).attr('title').toLowerCase();                      
+                          if (title1 && title2) {
+                            var num1 = parseInt(title1.match(regex)[0]); // extract the first number from title1
+                            var num2 = parseInt(title2.match(regex)[0]); // extract the first number from title2
+                            var hasPerc1AndB1 = num1 >= perc1 && title1.includes(b1);
+                            var hasPerc2AndB2 = num2 >= perc2 && title2.includes(b2);
+                            var hasPerc2AndB2InDifferentElements = num1 >= perc2 && title1.includes(b2) && num2 >= perc1 && title2.includes(b1);
+                            return (hasPerc1AndB1 && hasPerc2AndB2) || hasPerc2AndB2InDifferentElements;
+                          }
+                          return false;
+                        });
+                      });
+                                        
+                    if (matchFound.length > 0) {
+                        $(element).closest("li").removeClass("re_bonus_perc_hide");
+                    } else {
+                        $(element).closest("li").addClass("re_bonus_perc_hide");
+                    }
+
+                } else {//both are not set, so lets check individually
+                    if (perc1) {//only perc1
+                        
+                    }
+                    if (perc2) {
+
+                    }
+                }
+
+
             } else {
                 $(element).closest("li").addClass('re_bonus_hide');
             }
@@ -341,6 +390,10 @@ function filter(tab) {
         const bonus_2 = $('#re_ah_weapons_bonuses_2 option:selected').attr('data-name');
         const b1 = bonus_1 ? `<b>${bonus_1.toLowerCase()}</b>` : '';
         const b2 = bonus_2 ? `<b>${bonus_2.toLowerCase()}</b>` : '';
+        //bonus percentages
+        const perc1 = parseInt($('#re_ah_weapons_bonuses_1_perc').val());
+        const perc2 = parseInt($('#re_ah_weapons_bonuses_2_perc').val());
+
 
         //weapon stats
         const damage = parseFloat($('#re_ah_weapons_damage').val());
@@ -350,7 +403,7 @@ function filter(tab) {
         elements.each(function(index, element) {
             colorFilter($(element).find('.img-wrap .item.torn-item'), colorWeapon);
             nameFilter($(element).find('.title > .item-name'), nameWeapon);
-            bonusFilter($(element).find('.item-bonuses'), b1, b2);
+            bonusFilter($(element).find('.item-bonuses'), b1, b2, perc1, perc2);
             //damage
             statFilter($(element).find('.item-bonuses .infobonuses i[class="bonus-attachment-item-damage-bonus"]').siblings('span.label-value'), damage);
             //accuracy
