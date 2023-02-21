@@ -233,6 +233,10 @@ function bonusFilter(element, b1, b2, perc1, perc2) {
         const s1 = $(bonuses[0]).attr('title').toLowerCase();//bonus desc 1
         const s2 = $(bonuses[1]).attr('title').toLowerCase();//bonus desc 2
 
+        const num1 = parseInt(s1.match(regex)[0]); // extract the first number from title1
+        const num2 = parseInt(s2.match(regex)[0]); // extract the first number from title2
+
+
         //if b1 & b2 are not empty
         if (b1 && b2) {//then check if bonuses exist within each bonus elements, if not hide            
             if ((s1.indexOf(b1) !== -1 || s1.indexOf(b2) !== -1) && (s2.indexOf(b1) !== -1 || s2.indexOf(b2) !== -1)) {
@@ -243,16 +247,11 @@ function bonusFilter(element, b1, b2, perc1, perc2) {
 
                     //this is checking if both percentages exist in the bonuses, without knowing the order of the elements
                     var matchFound = bonuses.filter(function(index, bonus1) {
-                        var $bonus1 = bonus1;
                         return bonuses.not(bonus1).toArray().some(function(bonus2) {
-                          var title1 = $($bonus1).attr('title').toLowerCase();
-                          var title2 = $(bonus2).attr('title').toLowerCase();                      
-                          if (title1 && title2) {
-                            var num1 = parseInt(title1.match(regex)[0]); // extract the first number from title1
-                            var num2 = parseInt(title2.match(regex)[0]); // extract the first number from title2
-                            var hasPerc1AndB1 = num1 >= perc1 && title1.includes(b1);
-                            var hasPerc2AndB2 = num2 >= perc2 && title2.includes(b2);
-                            var hasPerc2AndB2InDifferentElements = num1 >= perc2 && title1.includes(b2) && num2 >= perc1 && title2.includes(b1);
+                          if (s1 && s2) {
+                            var hasPerc1AndB1 = num1 >= perc1 && s1.includes(b1);
+                            var hasPerc2AndB2 = num2 >= perc2 && s2.includes(b2);
+                            var hasPerc2AndB2InDifferentElements = num1 >= perc2 && s1.includes(b2) && num2 >= perc1 && s2.includes(b1);
                             return (hasPerc1AndB1 && hasPerc2AndB2) || hasPerc2AndB2InDifferentElements;
                           }
                           return false;
@@ -267,7 +266,16 @@ function bonusFilter(element, b1, b2, perc1, perc2) {
 
                 } else {//both are not set, so lets check individually
                     if (perc1) {//only perc1
-                        
+                        var hasPerc1AndB1InS1 = num1 >= perc1 && s1.includes(b1);
+                        var hasPerc1AndB1InS2 = num2 >= perc1 && s2.includes(b1);
+                        console.log(perc1, s1, b1, num1)
+                        console.log(perc1, s2, b1, num2)
+                        console.log(hasPerc1AndB1InS1,hasPerc1AndB1InS2)
+                        if ((hasPerc1AndB1InS1 || hasPerc1AndB1InS2)) {
+                            $(element).closest("li").removeClass("re_bonus_perc_hide");
+                        } else {
+                            $(element).closest("li").addClass("re_bonus_perc_hide");
+                        }
                     }
                     if (perc2) {
 
