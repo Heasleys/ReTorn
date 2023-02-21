@@ -150,7 +150,7 @@
       });
     
       const desktopSidebarObserver = new MutationObserver(function(mutations) {
-        if (document.querySelector('#sidebar div:last-child div[class^="toggle-content"]')) {
+        if (document.querySelector('#sidebar > div[class^="sidebar-block"]:last-child div[class^="toggle-content"]')) {
             insertNPCList();
         }
         if (document.querySelector('#sidebar:not([class*="mobile_"]) > div:first-of-type')) {
@@ -202,7 +202,7 @@
 
         if (screenType == "desktop") { //insert underneath enemy/friends list
         // find enemy/friend/staff lists and insert NPCs list at bottom of list of lists
-        $('h2[class^="header"]:contains("Lists")').siblings('div[class^="toggle-content"]').append(npc_list_base);
+        $('#sidebar > div[class^="sidebar-block"]:last-child div[class^="toggle-content"]').append(npc_list_base);
 
         // When NPC button is clicked, expand it for viewing
         $('.re_npcButton').click(function() {
