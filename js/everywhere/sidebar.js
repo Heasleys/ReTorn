@@ -349,6 +349,17 @@
             qlinksComplete = true;
             return;
         }
+        //check if all links are disabled
+        var d = 0;
+        for (const [key, value] of Object.entries(settings?.quick_links)) {
+          if (!value.enabled) {
+            d++;
+          }
+        }
+        if (d == Object.keys(settings?.quick_links).length) {
+          qlinksComplete = true;
+          return;
+        }
 
 
         $('#sidebar:not([class*="mobile_"]) > div[class*="sidebar-block_"').first().after(qlink_base);
