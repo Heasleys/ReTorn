@@ -10,7 +10,7 @@
   padding-right: 5px;
 }
 
-.re_spy_col > i:hover, .re_spy_col .re_spy_spy {
+.re_spy_ps, .re_spy_col .re_spy_spy {
   cursor: pointer;
 }
 
@@ -43,6 +43,23 @@
   text-align: center;
   padding-left: 5px;
   padding-right:5px;
+}
+
+
+/* Territory War */
+/* Faction Tag (hide because not needed) */
+.faction-war.re_territorywar .members-list .user.faction {
+  display: none;
+}
+
+/* Territory War Name Colomn */
+.d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .title .members, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .members-list .member {
+/* no need to change width of name */
+}
+
+/* Territory war Icons Column */
+.d .f-war-list.war-new  .faction-war.re_territorywar .tab-menu-cont .members-cont.profile-mode .user-icons {
+  width: 269px;
 }
 
 /* Planning OCs */

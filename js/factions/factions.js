@@ -1,6 +1,8 @@
 (function() {
 const target = document.querySelector('.content-wrapper');
 const obsOptions = {attributes: false, childList: true, characterData: false, subtree:true};
+const terrRegex = /war\/\d+/;
+
 
 
 var crimeObserver = new MutationObserver(function(mutations, observer) {
@@ -27,6 +29,15 @@ var rankedWarObserver = new MutationObserver(function(mutations, observer) {
   }
 });
 
+//territory war spy filter
+var territoryWarObserver = new MutationObserver(function(mutations, observer) {
+  const hash = location.hash;
+  if (hash.match(terrRegex) && $('div.faction-war').length == 1 && $('#re_rankedwar').length == 0) {
+    territoryWarObserver.disconnect();
+    territoryWar();
+  }
+});
+
 
 urlHandler();
 window.addEventListener('hashchange', hashHandler, false);
@@ -34,7 +45,7 @@ window.addEventListener('hashchange', hashHandler, false);
 
 function hashHandler() {
   var hash = location.hash;
-  if (hash.includes('tab=crimes') || hash.includes('tab=controls') || hash.includes('war/rank')) {
+  if (hash.includes('tab=crimes') || hash.includes('tab=controls') || hash.includes('war/rank') || hash.match(terrRegex)) {
      urlHandler();
   }
 }
@@ -57,6 +68,12 @@ function urlHandler() {
     rankedWarObserver.observe(target, obsOptions);
   } else {
     rankedWarObserver.disconnect();
+  }
+
+  if (url.match(terrRegex)) { //&& features?.pages?.factions?.territory_war_filter?.enabled
+    territoryWarObserver.observe(target, obsOptions);
+  } else {
+    territoryWarObserver.disconnect();
   }
 }
 
@@ -259,7 +276,7 @@ function rankedWar() {
   }
   
   //Insert Header
-  if ($('.re_container').length <= 0) {
+  if ($('.re_container[data-feature="ranked_war_filter"]').length <= 0) {
     insertHeader($("ul.f-war-list"), 'before', 'ranked_war_filter');
     $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
       <label class="re_title noselect">Disable filters</label>
@@ -269,7 +286,7 @@ function rankedWar() {
     //insert button into header menu to refresh Torn Stats War data manually
     $('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh war data</span></span></li>')
     //click event to refresh tornstats data
-    $('#re_war_refresh').click(function() {
+    $('#re_war_refresh').unbind("click").click(function() {
       //cleanup ranked war page first
       $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
       <p id="re_message" style="display: none;"></p>`);
@@ -417,49 +434,7 @@ function loadRankedWar() {
           }
         }
 
-        function shortnameStats(stat) {
-          switch (stat) {
-            case "defense":
-              return "DEF";  
-            break;
-            case "strength":
-              return "STR";  
-            break;
-            case "dexterity":
-              return "DEX";  
-            break;
-            case "speed":
-              return "SPD";  
-            break;
-            case "total":
-              return "TOTAL"
-            break;
-            default:
-              return stat;
-            break;
-          }
-        }
 
-        const SI_PREFIXES = [
-          { value: 1, symbol: '' },
-          { value: 1e3, symbol: 'K' },
-          { value: 1e6, symbol: 'M' },
-          { value: 1e9, symbol: 'B' },
-          { value: 1e12, symbol: 't' },
-          { value: 1e15, symbol: 'q' },
-          { value: 1e18, symbol: 'Q' },
-          { value: 1e21, symbol: 's' },
-          { value: 1e24, symbol: 'S' }
-        ]
-        
-        const abbreviateNumber = (number) => { //https://stackoverflow.com/questions/10599933/convert-long-number-into-abbreviated-string-in-javascript-with-a-special-shortn
-          if (number === 0) return number
-        
-          const tier = SI_PREFIXES.filter((n) => number >= n.value).pop()
-          const numberFixed = (number / tier.value).toFixed(1)
-        
-          return `${numberFixed}${tier.symbol}`
-        }
 
         let statTot;
 
@@ -840,6 +815,241 @@ function re_ranked_wars_fetch_eventListener() {
     filterUsers(filters);
   }
 }
+
+function territoryWar() {
+  //stop and ignore if ranked wars
+  if ($('.faction-war-info[class*="factionWarInfo_"]').length > 0) {
+    return;
+  }
+  //stop and ignore on raids
+  if ($('.desc-wrap.raid-members-list').length > 0) {
+    return;
+  }
+
+  //Insert Header
+  if ($('.re_container[data-feature="territory_war_filter"]').length <= 0) {
+    insertHeader($("ul.f-war-list"), 'before', 'territory_war_filter');
+    $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
+      <label class="re_title noselect">Disable filters</label>
+      <input type="checkbox" title="Disable filters">
+    </span>`);
+
+    //insert button into header menu to refresh Torn Stats War data manually
+    $('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh war data</span></span></li>')
+    //click event to refresh tornstats data
+    $('#re_war_refresh').unbind("click").click(function() {
+      //cleanup ranked war page first
+      $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
+      <p id="re_message" style="display: none;"></p>`);
+      featureCleanup('territory_war_filter');
+
+      var promises = [];
+      const a = $('.faction-war-info a[href*="step=profile&ID="');
+
+      if (a.length == 2) {
+        $.each(a, function(i,e) {
+          const factionID = $(e).attr('href').match(/\d+/);
+          var promise = getTornStats("spy/faction/"+factionID, 8, true);//get tornstats data, force overwrite cache
+          promises.push(promise);
+        });
+
+        // Wait for all promises to complete before calling loadTerritoryWar
+        Promise.all(promises).then(function() {
+          loadTerritoryWar();
+        });
+      }
+    });
+  }
+  
+  //Add loading dots
+  $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
+  <p id="re_message" style="display: none;"></p>`);
+
+
+    loadTerritoryWar();
+}
+
+function loadTerritoryWar() {
+  const a = $('.faction-war-info a[href*="step=profile&ID="');
+  //obtain factionIDs for each faction in the territory war
+  if (a.length == 2) {
+    
+    var promises = [];
+    const a = $('.faction-war-info a[href*="step=profile&ID="');
+
+    $.each(a, function(i,e) {
+      console.log(i,e)
+      const factionID = $(e).attr('href').match(/\d+/);
+      var promise = getTornStats("spy/faction/"+factionID);
+      promises.push(promise);
+    });
+
+    // Wait for all promises to complete before calling loadTerritoryWar
+    Promise.all(promises).then(function(dataArray) {
+      console.log(dataArray);
+      var psList = []; //personalstats list, for later adding to filter select 
+
+
+      $('.f-war-list .faction-war').addClass('re_territorywar'); //Used for CSS styling for less jumpy pages
+      $('.tab-menu-cont > div.members-cont > div.title > .members').after(`<div class="re_spy_title left">Spy</div>`);
+
+      const membersElements = $('.tab-menu-cont .members-list > li:not(.join)');
+
+      var allMembers = {};
+      dataArray.forEach((data) => {
+        console.log(data)
+        if (data?.faction?.members && Object.keys(data.faction.members)) {
+          for (const [id, member] of Object.entries(data.faction.members)) {
+            allMembers[id] = member;
+          }
+        }
+      });
+
+      if (Object.keys(allMembers)) {
+        const membersElements = $('.tab-menu-cont .members-list > li:not(.join)');
+        if (membersElements.length) {
+          $.each(membersElements, function(i,member) {
+            const userid = $(member).find(".user.name").attr("href").match(/\d+/);
+            if (allMembers[userid]) {
+              console.log(allMembers[userid]);
+
+              let psTitle, spyTitle;
+
+              //add personal stats to title
+              if (allMembers[userid] && allMembers[userid]["personalstats"]) {
+                psTitle = "<b><u>Personal Stats</u></b>";
+                for (const [index, value] of Object.entries(allMembers[userid]["personalstats"])) {
+                  if (index == "timestamp") {
+                    psTitle += `<br><b>Last Checked: </b>${timeDifference(Date.now(),value*1000)}`;
+                  } else {
+                    $(member).data(index, value);
+                    if (isNaN(value)) {
+                      psTitle += `<br><b>${index}: </b>${value}`;
+                    } else {
+                      psTitle += `<br><b>${index}: </b>${value.toLocaleString("en-US")}`;
+                    }
+        
+                    if (!psList.includes(index)) {
+                      psList.push(index);
+                    }
+                  }
+        
+                }
+              }
+
+
+
+              let statTot;
+
+              //if spy exists, add to title
+              if (allMembers[userid] && allMembers[userid]["spy"]) {
+                let timestampStr = "";
+                spyTitle = "<b><u>Battle Stats</u></b>";
+                for (const [index, value] of Object.entries(allMembers[userid]["spy"])) {
+                  if (index == "timestamp") {
+                    timestampStr = `<br><b>Last Spy: </b>${timeDifference(Date.now(),value*1000)}`;
+                  } else {
+                    $(member).data(index, value);
+                    if (isNaN(value)) {
+                      spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value}</span>`;
+                    } else {
+                      statTot = value;
+                      spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value.toLocaleString()}</span>`;
+                    }
+                  }
+        
+                }
+                spyTitle += timestampStr;
+              }
+
+
+              
+              if (psTitle) {
+                $(member).find(".member .user.name").after(`<i class="fas fa-info-circle re_spy_ps" style="padding-right: 5px; float: right; padding-top: 10.5px;"></i>`);
+      
+                if (spyTitle) {
+                  if (statTot) {//total stats available for abbreviated number
+                    $(member).find(".member").after(`<div class="re_spy_col left"><span class="re_spy_spy">${abbreviateNumber(statTot)}</span></div>`);
+                  } else { //no total stats, so place eye icon instead
+                    $(member).find(".member").after(`<div class="re_spy_col left"><i class="fas fa-eye re_spy_spy"></i></div>`);
+                  }
+                } else {//no spies
+                  $(member).find(".member").after(`<div class="re_spy_col left" title="Spy data not available.">N/A</div>`)
+                }
+              } else {//no spies or playerstats
+                $(member).find(".member").after(`<div class="re_spy_col left" title="No data available.">N/A</div>`)
+              }
+        
+              if (psTitle) {
+                $(member).find(".re_spy_ps").attr("title", psTitle);
+              }
+              if (spyTitle) {
+                $(member).find(".re_spy_spy").attr("title", spyTitle);
+              }
+
+
+            }
+          });
+        }
+      }
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+}
+
+function shortnameStats(stat) {
+  switch (stat) {
+    case "defense":
+      return "DEF";  
+    break;
+    case "strength":
+      return "STR";  
+    break;
+    case "dexterity":
+      return "DEX";  
+    break;
+    case "speed":
+      return "SPD";  
+    break;
+    case "total":
+      return "TOTAL"
+    break;
+    default:
+      return stat;
+    break;
+  }
+}
+
+const SI_PREFIXES = [
+  { value: 1, symbol: '' },
+  { value: 1e3, symbol: 'K' },
+  { value: 1e6, symbol: 'M' },
+  { value: 1e9, symbol: 'B' },
+  { value: 1e12, symbol: 't' },
+  { value: 1e15, symbol: 'q' },
+  { value: 1e18, symbol: 'Q' },
+  { value: 1e21, symbol: 's' },
+  { value: 1e24, symbol: 'S' }
+]
+
+const abbreviateNumber = (number) => { //https://stackoverflow.com/questions/10599933/convert-long-number-into-abbreviated-string-in-javascript-with-a-special-shortn
+  if (number === 0) return number
+
+  const tier = SI_PREFIXES.filter((n) => number >= n.value).pop()
+  const numberFixed = (number / tier.value).toFixed(1)
+
+  return `${numberFixed}${tier.symbol}`
+}
+
 
 })();
 
