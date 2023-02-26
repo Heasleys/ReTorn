@@ -23,7 +23,7 @@ var rosterObserver = new MutationObserver(function(mutations, observer) {
 
 var rankedWarObserver = new MutationObserver(function(mutations, observer) {
   let hash = location.hash;
-  if (hash.includes('war/rank') && $('div.faction-war').length == 1 && $('#re_faction_filter').length == 0) {
+  if (hash.includes('war/rank') && $('div.faction-war').length == 1 && $('#re_rankedwar').length == 0) {
     rankedWar();
     rankedWarObserver.disconnect();
   }
