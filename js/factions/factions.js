@@ -965,8 +965,6 @@ function loadTerritoryWar() {
 
               
               if (psTitle) {
-                $(member).find(".member .user.name").after(`<i class="fas fa-info-circle re_spy_ps" style="padding-right: 5px; float: right; padding-top: 10.5px;"></i>`);
-      
                 if (spyTitle) {
                   if (statTot) {//total stats available for abbreviated number
                     $(member).find(".member").after(`<div class="re_spy_col left"><span class="re_spy_spy">${abbreviateNumber(statTot)}</span></div>`);
@@ -979,7 +977,9 @@ function loadTerritoryWar() {
               } else {//no spies or playerstats
                 $(member).find(".member").after(`<div class="re_spy_col left" title="No data available.">N/A</div>`)
               }
-        
+
+              $(member).find(".member").after(`<div class="left"><i class="fas fa-info-circle re_spy_ps" style="position: absolute; margin-left: -18px; margin-top: 10.5px;"></i></div>`);
+
               if (psTitle) {
                 $(member).find(".re_spy_ps").attr("title", psTitle);
               }
