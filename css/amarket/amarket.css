@@ -1,4 +1,4 @@
-.re_color_hide, .re_bonus_hide, .re_name_hide, .re_damage_hide, .re_accuracy_hide, .re_defence_hide, .re_bonus_perc_hide {
+.re_color_hide, .re_bonus_hide, .re_name_hide, .re_damage_hide, .re_accuracy_hide, .re_defence_hide, .re_bonus_perc_hide, .re_category_hide {
     display: none;
 }
 
@@ -21,6 +21,21 @@
 
 .re_filter {
     padding: 10px 10px 0px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.re_filter > * {
+    margin-left: 2.5px;
+    margin-right: 2.5px;
+}
+/* small screen, add margin below first 4 filter elements */
+@media screen and (max-width: 784px) {
+    html:not(.html-manual-desktop) div#re_ah_weapons > :not(datalist):nth-child(-n+5) {
+        margin-bottom: 5px;
+    }  
 }
 
 
@@ -29,17 +44,10 @@
     width: 40px;
 }
 
-.re_filter select.re_color {
+.re_filter select.re_color, .re_filter input.re_name, .re_filter select.re_bonus, .re_filter select.re_category {
     width: 130px;
 }
 
-.re_filter input.re_name {
-    width: 140px;
-}
-
-.re_filter select.re_bonus {
-    width: 130px;
-}
 
 .re_filter ::-webkit-scrollbar {
     width: 12px;
@@ -63,4 +71,8 @@ select option[value=""] {
 /*Added for browser compatibility*/
 [hidden] {
   display: none;
+}
+
+input[disabled] {
+    opacity: 0.5;
 }
