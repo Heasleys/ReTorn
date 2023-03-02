@@ -52,14 +52,22 @@
   display: none;
 }
 
-/* Territory War Name Colomn */
+/* Territory War Name Column */
 .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .title .members, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .members-list .member {
-/* no need to change width of name */
+  width: 256px;
+}
+/* Territory War Level Column */
+.d .f-war-list.war-new .faction-war .tab-menu-cont .members-list .level, .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .level {
+  width: 33px;
 }
 
-/* Territory war Icons Column */
-.d .f-war-list.war-new  .faction-war.re_territorywar .tab-menu-cont .members-cont.profile-mode .user-icons {
-  width: 269px;
+/* Territory war Icons Column - Faction Profile */
+.d .f-war-list.war-new  .faction-war.re_territorywar .tab-menu-cont .members-cont.profile-mode .user-icons, .d .f-war-list.war-new  .faction-war.re_territorywar .tab-menu-cont .members-cont.profile-mode .title .user-icons {
+  width: 285px;
+}
+/* Territory war Icons Column - Your Faction Page */
+.d .f-war-list.war-new  .faction-war.re_territorywar .tab-menu-cont .members-cont .user-icons, .d .f-war-list.war-new  .faction-war.re_territorywar .tab-menu-cont .members-cont .title .user-icons {
+  width: 225px;
 }
 
 /* Planning OCs */
