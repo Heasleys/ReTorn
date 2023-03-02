@@ -107,5 +107,31 @@
         "relative_values": {
             "enabled": false
         }
+    },
+    "auction_filter": {
+        "weapons": {
+            "name": "",
+            "damage": "",
+            "accuracy": "",
+            "color": "",
+            "bonus_1": {
+                "name": "",
+                "percentage": ""
+            },
+            "bonus_2": {
+                "name": "",
+                "percentage": ""
+            }
+        },
+        "armor": {
+            "name": "",
+            "defense": "",
+            "color": "",
+            "percentage": ""
+        },
+        "items": {
+            "name": "",
+            "category": ""
+        }
     }
 }
