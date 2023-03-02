@@ -102,6 +102,10 @@
             "auction_filter": {
                 "enabled": true,
                 "description": "Adds a window that allows you to filter weapons, armor, and items on the auction house market."
+            },
+            "duplicate_pagination": {
+                "enabled": true,
+                "description": "Duplicates the pagination and modifies page arrows for easier auction house searching."
             }
         }
     },
