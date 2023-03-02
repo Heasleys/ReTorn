@@ -1221,13 +1221,14 @@ async function startup() {
 async function checkUpdate(version) {
   try {
     const settings = await getValue("settings", "sync");
+    const features = await getValue("features", "sync");
 
     //version 1.1.0
     if (settings?.hide_sidebar_icons == undefined) {
       settings["hide_sidebar_icons"] = "";
     }
     
-    //version 1.1.1
+    //version 1.2.0
     if (settings?.profile == undefined) {
       settings["profile"] = {};
       if (settings?.profile?.relative_values == undefined) {
@@ -1235,8 +1236,53 @@ async function checkUpdate(version) {
         settings["profile"]["relative_values"]["enabled"] = false;
       }
     }
+    if (features?.pages?.amarket == undefined) {
+      features["pages"]["amarket"] = {};
+      if (features?.pages?.amarket?.auction_filter == undefined) {
+        features["pages"]["amarket"]["auction_filter"] = {
+          "enabled": true,
+          "description": "Adds a window that allows you to filter weapons, armor, and items on the auction house market."
+        }
+      }
+      if (features?.pages?.amarket?.duplicate_pagination == undefined) {
+        features["pages"]["amarket"]["duplicate_pagination"] = {
+          "enabled": true,
+          "description": "Duplicates the pagination and modifies page arrows for easier auction house searching."
+        }
+      }
+    }
+    if (settings?.auction_filter == undefined) {
+      settings["auction_filter"] = {
+        "weapons": {
+          "name": "",
+          "damage": "",
+          "accuracy": "",
+          "color": "",
+          "bonus_1": {
+              "name": "",
+              "percentage": ""
+          },
+          "bonus_2": {
+              "name": "",
+              "percentage": ""
+          }
+        },
+        "armor": {
+            "name": "",
+            "defense": "",
+            "color": "",
+            "percentage": ""
+        },
+        "item": {
+            "name": "",
+            "category": ""
+        }
+      }
+    }
 
     await setValue({"settings": settings}, "sync");
+    await setValue({"features": features}, "sync");
+
   } catch(e) {
     console.error(e)
   }
