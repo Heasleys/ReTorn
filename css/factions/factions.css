@@ -70,6 +70,14 @@
   width: 225px;
 }
 
+
+/* Faction Profile Page */
+/* ranked war Faction Tag (hide because not needed) */
+.faction-info-wrap.re_faction_stats .members-list [class*="factionWrap"] {
+  display: none;
+}
+
+
 /* Planning OCs */
 .re_nnb .plans-list .item>li.nnb, .re_nnb .plan-list-scrollbar .title>li.nnb {
   width: 60px !important;
