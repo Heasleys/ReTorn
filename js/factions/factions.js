@@ -32,7 +32,7 @@ var rankedWarObserver = new MutationObserver(function(mutations, observer) {
 //territory war spy filter
 var territoryWarObserver = new MutationObserver(function(mutations, observer) {
   const hash = location.hash;
-  if (hash.match(terrRegex) && $('div.faction-war').length == 1 && $('#re_rankedwar').length == 0) {
+  if (hash.match(terrRegex) && $('div.faction-war').length == 1 && $('.re_territorywar').length == 0) {
     territoryWarObserver.disconnect();
     territoryWar();
   }

@@ -15,10 +15,32 @@ function updateState(domElement, newState) {
     instance.return.stateNode
   );
 }
+function updateHook(domElement, newState) {
+  var keys = Object.keys(domElement);
+  var instanceKey = keys.filter(prop =>
+    /__reactInternalInstance/.test(prop)
+  )[0];
+  var instance = domElement[instanceKey];
+
+  for (var state in newState) {
+    if (newState.hasOwnProperty(state)) {
+      instance.return.stateNode.state[state] = newState[state];
+    }
+  }
+  instance.return.stateNode.updater.enqueueForceUpdate(
+    instance.return.stateNode
+  );
+}
 document.addEventListener("updateState", function(msg) {
   if (msg?.detail?.newState != undefined && msg?.detail?.className != undefined) {
     const el = document.getElementsByClassName(msg.detail.className)[0]
     updateState(el, msg.detail.newState);
+  }
+});
+document.addEventListener("updateHook", function(msg) {
+  if (msg?.detail?.newState != undefined && msg?.detail?.className != undefined) {
+    const el = document.getElementsByClassName(msg.detail.className)[0]
+    updateHook(el, msg.detail.newState);
   }
 });
 
@@ -66,9 +88,14 @@ interceptFetch("torn.com","torn.com", (response, url) => {
 
 
 /* Faction War Filters */
- if (url.includes('faction_wars.php?') && url.includes('wardescid=rank')) {
+ if (url.includes('faction_wars.php?') && url.includes('wardescid=rank')) { //EXAMPLE: https://www.torn.com/faction_wars.php?redirect=false&step=getwardata&factionID=9533&userID=0&wardescid=rank&update=true
     faction_ranked_wars(response);
  }
+
+/* Faction Territory Wars */
+ if (url.includes('faction_wars.php?') && url.match(/wardescid=\d+/)) { //EXAMPLE: https://www.torn.com/faction_wars.php?redirect=false&step=getwardata&factionID=9533&userID=0&wardescid=31558&update=true 
+  faction_territory_wars(response);
+  }
 });
 
 
@@ -113,6 +140,11 @@ function miniProfiles(response) {
 /* Faction War Filters */
 function faction_ranked_wars(response) {
   const e = new CustomEvent("re_ranked_wars_fetch");
+  document.dispatchEvent(e);
+}
+/* Faction Territory Wars */
+function faction_territory_wars(response) {
+  const e = new CustomEvent("re_territory_wars_fetch");
   document.dispatchEvent(e);
 }
 
