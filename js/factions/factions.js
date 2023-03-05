@@ -39,6 +39,15 @@ var territoryWarObserver = new MutationObserver(function(mutations, observer) {
 });
 
 
+//faction page member battle stats
+var factionPageMemberStatsObserver = new MutationObserver(function(mutations, observer) {
+  if ($('.faction-info-wrap.another-faction .members-list .table-header .member').length == 1 && $('.re_faction_stats').length == 0) {
+    factionPageMemberStatsObserver.disconnect();
+    factionPageMemberStats();
+  }
+});
+
+
 urlHandler();
 window.addEventListener('hashchange', hashHandler, false);
 
@@ -75,6 +84,13 @@ function urlHandler() {
   } else {
     territoryWarObserver.disconnect();
   }
+
+  if (url.includes('step=profile&ID=')) { //&& features?.pages?.factions?.member_stats?.enabled
+    factionPageMemberStatsObserver.observe(target, obsOptions);
+  } else {
+    factionPageMemberStatsObserver.disconnect();
+  }
+
 }
 
 //Organized Crimes Tab
@@ -334,16 +350,7 @@ function loadRankedWar() {
       $('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
       
   
-      function sort_li_desc(a, b){
-        const b_total = $(b).data('total') != undefined ? $(b).data('total') : 0;
-        const a_total = $(a).data('total') != undefined ? $(a).data('total') : 0;
-        return (b_total) > (a_total) ? 1 : -1;    
-      }
-      function sort_li_asc(a, b){
-        const b_total = $(b).data('total') != undefined ? $(b).data('total') : 0;
-        const a_total = $(a).data('total') != undefined ? $(a).data('total') : 0;
-        return (b_total) < (a_total) ? 1 : -1;    
-      }
+
   
       //Sorting for spy column
       $('.re_spy_title').click(function() {
@@ -948,6 +955,85 @@ function shortnameStats(stat) {
   }
 }
 
+
+
+function factionPageMemberStats() {
+  console.log('factionPageMemberStats')
+  $('.members-list').parent('.faction-info-wrap').addClass('re_faction_stats');
+  $('.faction-info-wrap.re_faction_stats .members-list .table-header .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
+
+  const factionID = $('.faction-profile .faction-info').attr('data-faction');
+
+  getTornStats("spy/faction/"+factionID)
+  .then(function(data) {
+    console.log(data);
+
+    if (data?.faction?.members && Object.keys(data.faction.members)) {
+      for (const [id, member] of Object.entries(data.faction.members)) {
+        allMembers[id] = member;
+      }
+    }
+
+    const membersElements = $('.re_faction_stats ul.table-body li.table-row');
+
+    return genericSpyFunction(membersElements, `[class*='userWrap'] [class*='linkWrap']`)
+  })
+  .then(function() {
+      //Sorting for spy column
+      $('.re_spy_title').click(function() {
+        const spyCols = $('.re_spy_title');
+        
+        //send out a React State Change request to sort by player name first
+        const className = 'faction-info-wrap restyle another-faction re_faction_stats';
+
+        const newStateObj = {
+          "sorting": {
+            "field": "playername",
+            "direction": "desc"
+          }
+        }
+        const e = new CustomEvent("updateHook", {detail: {className: className, newState: newStateObj}});
+        document.dispatchEvent(e);
+        //React State Change Request
+
+        
+        const clickedSpyCol = $(this); //then spyCol that was clicked
+        const clickedIcon = clickedSpyCol.find('.re_sort_icon');
+        let dir = true;  //always sort by largest > smallest first
+        if (clickedIcon.hasClass('re_desc')) dir = false;
+
+        spyCols.each(function() {//now change icon for both spyCols to the correct direction
+          const spyCol = $(this); 
+          const icon = spyCol.find('.re_sort_icon');
+
+          const memberCont = spyCol.closest('.members-list');
+          const memberList = memberCont.find('ul.table-body');
+          
+          memberCont.find('div[class*="sortIcon_"]').removeClass(function (index, css) {
+            return (css.match (/(^|\s)desc_\S+/g) || []).join(' ');
+          }).removeClass(function (index, css) {
+            return (css.match (/(^|\s)asc_\S+/g) || []).join(' ');
+          });
+
+          //actually sort the players based on direction
+          if (dir) {
+            icon.removeClass('re_asc').addClass('re_desc');
+            memberList.find('li').sort(sort_li_desc).appendTo(memberList);
+          } else {
+            icon.removeClass('re_desc').addClass('re_asc');
+            memberList.find('li').sort(sort_li_asc).appendTo(memberList);
+          }
+        })
+      });
+      //if another column is clicked, then remove the classes from the spy column
+      $('.re_faction_stats .members-list ul.table-header > li.table-cell').click(function() {
+        $(this).closest('.members-list').find('.re_spy_title .re_sort_icon').removeClass('re_asc').removeClass('re_desc');
+      })
+  })
+  .catch((e) => console.error(e))
+}
+
+
 const SI_PREFIXES = [
   { value: 1, symbol: '' },
   { value: 1e3, symbol: 'K' },
@@ -1070,6 +1156,16 @@ function genericSpyFunction(membersElements, useridSelection) {
 })();
 
 
+function sort_li_desc(a, b){
+  const b_total = $(b).data('total') != undefined ? $(b).data('total') : 0;
+  const a_total = $(a).data('total') != undefined ? $(a).data('total') : 0;
+  return (b_total) > (a_total) ? 1 : -1;    
+}
+function sort_li_asc(a, b){
+  const b_total = $(b).data('total') != undefined ? $(b).data('total') : 0;
+  const a_total = $(a).data('total') != undefined ? $(a).data('total') : 0;
+  return (b_total) < (a_total) ? 1 : -1;    
+}
 
 
 function featureCleanup(feature) {
