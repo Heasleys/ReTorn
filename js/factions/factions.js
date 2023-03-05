@@ -51,7 +51,7 @@ function hashHandler() {
 }
 
 function urlHandler() {
-  let url = location.hash;
+  let url = location.href;
   if (url.includes('tab=crimes') && features?.pages?.factions?.oc_tab?.enabled) {
      crimeObserver.observe(target, obsOptions);
   } else {
@@ -717,7 +717,6 @@ function rankedWarFilters() {
   }
 }
 
-
 function filterUsers(filters) {
   //actually filter the players
   if (!$('#re_disable_filters input[type="checkbox"]').is(":checked")) { //if filter rules checkbox is not checked, proceed
@@ -778,7 +777,6 @@ function resetFilterInputs() {
   $('#re_ps_wrap').hide();
 }
 
-
 function showReadyOCs(checked) {
   $('ul.crimes-list > li.item-wrap').each(function() {
     if ($(this).find('ul.item li.status:contains("Ready")').length > 0) {
@@ -806,7 +804,6 @@ function countPlayerStatus() {
     $('.re_your_count .'+e+'Count').text(yourCount);
   });
 }
-
 
 function re_ranked_wars_fetch_eventListener() {
   const filters = settings?.ranked_war_filters;
