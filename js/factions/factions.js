@@ -2,7 +2,7 @@
 const target = document.querySelector('.content-wrapper');
 const obsOptions = {attributes: false, childList: true, characterData: false, subtree:true};
 const terrRegex = /war\/\d+/;
-
+var allMembers = {};
 
 
 var crimeObserver = new MutationObserver(function(mutations, observer) {
@@ -970,7 +970,6 @@ const abbreviateNumber = (number) => { //https://stackoverflow.com/questions/105
 }
 
 
-})();
 function genericSpyFunction(membersElements, useridSelection) {
   var psList = [];
   if (Object.keys(allMembers)) {
