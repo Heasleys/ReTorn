@@ -903,10 +903,19 @@ function loadTerritoryWar() {
 
       return genericSpyFunction(membersElements, `.user.name`);
     })
+    .then(function() {
+      /* event listener from interceptFetch for when user status changes */
+      document.addEventListener("re_territory_wars_fetch", re_territory_wars_fetch_eventListener);
+    })
   }
 
 
+  function re_territory_wars_fetch_eventListener() {
+    console.log("re_territory_wars_fetch_eventListener");
+    const membersElements = $('.tab-menu-cont .members-list > li:not(.join)');
 
+    return genericSpyFunction(membersElements, `.user.name`);
+  }
 
 
 
