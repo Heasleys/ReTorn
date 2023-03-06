@@ -12,6 +12,9 @@
   max-width:35px;
 }
 
+.re_spy_title {
+  cursor: pointer;
+}
 
 .re_faction_stats .re_spy_col {
   font-size: 11px;
