@@ -464,29 +464,32 @@ function bonusFilter(element, b1, b2, perc1, perc2) {
 
 //filter by color (weapon/armor)
 function colorFilter(element, color) {
+    if (!element) return;
+    
     if (color) {
+        const elementClass = $(element).attr('class');
+        const parent = $(element).closest("li");
+
+        console.log(color)
+        console.log($(element).attr('class'))
+
         if (color == "none") {
-            if ($(element).attr('class') != "item torn-item large ") {
-                $(element).closest("li").addClass("re_color_hide");
+            if (elementClass == "item torn-item large ") {
+                parent.removeClass("re_color_hide");
+                return;
             }
-            return;
         }
         if (color == "orangered") {
-            if (($(element).attr('class') == "item torn-item large ") || ($(element).hasClass("yellow"))) {
-                $(element).closest("li").addClass("re_color_hide");
+            if ($(element).hasClass("orange") || $(element).hasClass("red")) {
+                parent.removeClass("re_color_hide");
+                return;
             }
+        }
+        if ($(element).hasClass(color)) {
+            parent.removeClass("re_color_hide");
             return;
         }
-        const colorsList = ["yellow", "orange", "red"];
-        colorsList.forEach(function(c) {
-            if ($(element).hasClass(c)) {
-                if (color != c) {
-                    $(element).closest("li").addClass("re_color_hide");
-                } else {
-                    $(element).closest("li").removeClass("re_color_hide");
-                }
-            }
-        })
+        $(element).closest("li").addClass("re_color_hide");
     } else {
         $(element).closest('li').removeClass('re_color_hide');
     }
