@@ -15,32 +15,11 @@ function updateState(domElement, newState) {
     instance.return.stateNode
   );
 }
-function updateHook(domElement, newState) {
-  var keys = Object.keys(domElement);
-  var instanceKey = keys.filter(prop =>
-    /__reactInternalInstance/.test(prop)
-  )[0];
-  var instance = domElement[instanceKey];
 
-  for (var state in newState) {
-    if (newState.hasOwnProperty(state)) {
-      instance.return.stateNode.state[state] = newState[state];
-    }
-  }
-  instance.return.stateNode.updater.enqueueForceUpdate(
-    instance.return.stateNode
-  );
-}
 document.addEventListener("updateState", function(msg) {
   if (msg?.detail?.newState != undefined && msg?.detail?.className != undefined) {
     const el = document.getElementsByClassName(msg.detail.className)[0]
     updateState(el, msg.detail.newState);
-  }
-});
-document.addEventListener("updateHook", function(msg) {
-  if (msg?.detail?.newState != undefined && msg?.detail?.className != undefined) {
-    const el = document.getElementsByClassName(msg.detail.className)[0]
-    updateHook(el, msg.detail.newState);
   }
 });
 
