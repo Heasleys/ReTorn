@@ -556,7 +556,7 @@ function categoryFilter(element, category) {
 
 //main filter function, checks for each filter
 function filter(tab) {
-    const elements = $(`${tab} ul.items-list > li:not(.bg-blue,.clear) .item-cont-wrap`);
+    const elements = $(`${tab} ul.items-list > li:not(.bg-blue,.bg-green,.clear) .item-cont-wrap`); //ignore selling, highest bid, and empty list items
 
     
     /* Weapons */
