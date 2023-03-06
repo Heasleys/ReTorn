@@ -35,14 +35,7 @@ div.re_stats_list ul li span.stats {
   line-height: 14px;
 }
 
-@media screen and (max-width: 600px) {
-  div.re_stats_list ul li span.re_divider {
-    width: 110px;
-  }
-  div.re_stats_list ul li span.stats {
-    width: 125px;
-  }
-}
+
 
 
 /* Color CSS */
