@@ -993,20 +993,6 @@ function factionPageMemberStats() {
       $('.re_spy_title').click(function() {
         const spyCols = $('.re_spy_title');
         
-        //send out a React State Change request to sort by player name first
-        const className = 'faction-info-wrap restyle another-faction re_faction_stats';
-
-        const newStateObj = {
-          "sorting": {
-            "field": "playername",
-            "direction": "desc"
-          }
-        }
-        const e = new CustomEvent("updateHook", {detail: {className: className, newState: newStateObj}});
-        document.dispatchEvent(e);
-        //React State Change Request
-
-        
         const clickedSpyCol = $(this); //then spyCol that was clicked
         const clickedIcon = clickedSpyCol.find('.re_sort_icon');
         let dir = true;  //always sort by largest > smallest first
@@ -1028,10 +1014,10 @@ function factionPageMemberStats() {
           //actually sort the players based on direction
           if (dir) {
             icon.removeClass('re_asc').addClass('re_desc');
-            memberList.find('li').sort(sort_li_desc).appendTo(memberList);
+            memberList.find('li.table-row').sort(sort_li_desc).appendTo(memberList);
           } else {
             icon.removeClass('re_desc').addClass('re_asc');
-            memberList.find('li').sort(sort_li_asc).appendTo(memberList);
+            memberList.find('li.table-row').sort(sort_li_asc).appendTo(memberList);
           }
         })
       });
@@ -1075,85 +1061,89 @@ function genericSpyFunction(membersElements, useridSelection) {
           console.log(`already has a spy column`)
           return;
         }
-        const userid = $(member).find(`${useridSelection}`).attr("href").match(/\d+/);
-        if (allMembers[userid]) {
-          console.log(allMembers[userid]);
+        console.log(member)
+        const userEl = $(member).find(`${useridSelection}`);
+        if (userEl.length) {
+          const userid = userEl.attr("href").match(/\d+/);
+          if (allMembers[userid]) {
+            console.log(allMembers[userid]);
 
-          let psTitle, spyTitle;
+            let psTitle, spyTitle;
 
-          //add personal stats to title
-          if (allMembers[userid] && allMembers[userid]["personalstats"]) {
-            psTitle = "<b><u>Personal Stats</u></b>";
-            for (const [index, value] of Object.entries(allMembers[userid]["personalstats"])) {
-              if (index == "timestamp") {
-                psTitle += `<br><b>Last Checked: </b>${timeDifference(Date.now(),value*1000)}`;
-              } else {
-                $(member).data(index, value);
-                if (isNaN(value)) {
-                  psTitle += `<br><b>${index}: </b>${value}`;
+            //add personal stats to title
+            if (allMembers[userid] && allMembers[userid]["personalstats"]) {
+              psTitle = "<b><u>Personal Stats</u></b>";
+              for (const [index, value] of Object.entries(allMembers[userid]["personalstats"])) {
+                if (index == "timestamp") {
+                  psTitle += `<br><b>Last Checked: </b>${timeDifference(Date.now(),value*1000)}`;
                 } else {
-                  psTitle += `<br><b>${index}: </b>${value.toLocaleString("en-US")}`;
+                  $(member).data(index, value);
+                  if (isNaN(value)) {
+                    psTitle += `<br><b>${index}: </b>${value}`;
+                  } else {
+                    psTitle += `<br><b>${index}: </b>${value.toLocaleString("en-US")}`;
+                  }
+      
+                  if (!psList.includes(index)) {
+                    psList.push(index);
+                  }
                 }
-    
-                if (!psList.includes(index)) {
-                  psList.push(index);
-                }
+      
               }
-    
             }
-          }
 
 
 
-          let statTot;
+            let statTot;
 
-          //if spy exists, add to title
-          if (allMembers[userid] && allMembers[userid]["spy"]) {
-            let timestampStr = "";
-            spyTitle = "<b><u>Battle Stats</u></b>";
-            for (const [index, value] of Object.entries(allMembers[userid]["spy"])) {
-              if (index == "timestamp") {
-                timestampStr = `<br><b>Last Spy: </b>${timeDifference(Date.now(),value*1000)}`;
-              } else {
-                $(member).data(index, value);
-                if (isNaN(value)) {
-                  spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value}</span>`;
+            //if spy exists, add to title
+            if (allMembers[userid] && allMembers[userid]["spy"]) {
+              let timestampStr = "";
+              spyTitle = "<b><u>Battle Stats</u></b>";
+              for (const [index, value] of Object.entries(allMembers[userid]["spy"])) {
+                if (index == "timestamp") {
+                  timestampStr = `<br><b>Last Spy: </b>${timeDifference(Date.now(),value*1000)}`;
                 } else {
-                  statTot = value;
-                  spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value.toLocaleString()}</span>`;
+                  $(member).data(index, value);
+                  if (isNaN(value)) {
+                    spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value}</span>`;
+                  } else {
+                    statTot = value;
+                    spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value.toLocaleString()}</span>`;
+                  }
                 }
+      
               }
-    
+              spyTitle += timestampStr;
             }
-            spyTitle += timestampStr;
-          }
 
 
-          
-          if (psTitle) {
+            
+            if (psTitle) {
+              if (spyTitle) {
+                if (statTot) {//total stats available for abbreviated number
+                  $(member).find(".member").after(`<div class="re_spy_col left"><span class="re_spy_spy">${abbreviateNumber(statTot)}</span></div>`);
+                } else { //no total stats, so place eye icon instead
+                  $(member).find(".member").after(`<div class="re_spy_col left"><i class="fas fa-eye re_spy_spy"></i></div>`);
+                }
+              } else {//no spies
+                $(member).find(".member").after(`<div class="re_spy_col left" title="Spy data not available.">N/A</div>`)
+              }
+            } else {//no spies or playerstats
+              $(member).find(".member").after(`<div class="re_spy_col left" title="No data available.">N/A</div>`)
+            }
+
+            $(member).find(".member").after(`<div class="left"><i class="fas fa-info-circle re_spy_ps" style="position: absolute; margin-left: -18px; margin-top: 10.5px;"></i></div>`);
+
+            if (psTitle) {
+              $(member).find(".re_spy_ps").attr("title", psTitle);
+            }
             if (spyTitle) {
-              if (statTot) {//total stats available for abbreviated number
-                $(member).find(".member").after(`<div class="re_spy_col left"><span class="re_spy_spy">${abbreviateNumber(statTot)}</span></div>`);
-              } else { //no total stats, so place eye icon instead
-                $(member).find(".member").after(`<div class="re_spy_col left"><i class="fas fa-eye re_spy_spy"></i></div>`);
-              }
-            } else {//no spies
-              $(member).find(".member").after(`<div class="re_spy_col left" title="Spy data not available.">N/A</div>`)
+              $(member).find(".re_spy_spy").attr("title", spyTitle);
             }
-          } else {//no spies or playerstats
-            $(member).find(".member").after(`<div class="re_spy_col left" title="No data available.">N/A</div>`)
+
+
           }
-
-          $(member).find(".member").after(`<div class="left"><i class="fas fa-info-circle re_spy_ps" style="position: absolute; margin-left: -18px; margin-top: 10.5px;"></i></div>`);
-
-          if (psTitle) {
-            $(member).find(".re_spy_ps").attr("title", psTitle);
-          }
-          if (spyTitle) {
-            $(member).find(".re_spy_spy").attr("title", spyTitle);
-          }
-
-
         }
       });
     }
