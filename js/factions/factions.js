@@ -929,7 +929,7 @@ function loadTerritoryWar() {
 
   function re_territory_wars_fetch_eventListener() {
     console.log("re_territory_wars_fetch_eventListener");
-    const membersElements = $('.tab-menu-cont .members-list > li:not(.join)');
+    const membersElements = $('.tab-menu-cont .members-list > li:not(.join,.timer-wrap)');
 
     return genericSpyFunction(membersElements, `.user.name`);
   }
