@@ -1,13 +1,21 @@
 /* ranked war spy column */
 .re_spy_title, .re_spy_col {
-  width: 35px;
-  border-right: 1px solid var(--default-panel-divider-outer-side-color);
   text-align: center;
   height: 33px;
   line-height: 36px;
+  width: 35px;
+  border-right: 1px solid var(--default-panel-divider-outer-side-color);
   border-left: 1px solid var(--default-panel-divider-inner-side-color);
   padding-left: 5px;
   padding-right: 5px;
+  min-width:35px;
+  max-width:35px;
+}
+
+
+.re_faction_stats .re_spy_col {
+  font-size: 11px;
+  height: 35px;
 }
 
 .re_spy_ps, .re_spy_col .re_spy_spy {
