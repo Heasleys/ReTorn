@@ -291,7 +291,12 @@ function rankedWar() {
     return;
   }
   
-  //Insert Header
+  //check for other header
+  if ($('.re_container[data-feature="territory_war_filter"]').length) {
+    $('.re_container[data-feature="territory_war_filter"]').remove();
+  }
+
+    //Insert Header
   if ($('.re_container[data-feature="ranked_war_filter"]').length <= 0) {
     insertHeader($("ul.f-war-list"), 'before', 'ranked_war_filter');
     $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
@@ -830,6 +835,11 @@ function territoryWar() {
     return;
   }
 
+  //check for other header
+  if ($('.re_container[data-feature="ranked_war_filter"]').length) {
+    $('.re_container[data-feature="ranked_war_filter"]').remove();
+  }
+
   //Insert Header
   if ($('.re_container[data-feature="territory_war_filter"]').length <= 0) {
     insertHeader($("ul.f-war-list"), 'before', 'territory_war_filter');
@@ -839,10 +849,10 @@ function territoryWar() {
     </span>`);
 
     //insert button into header menu to refresh Torn Stats War data manually
-    $('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh war data</span></span></li>')
+    $('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh spy data</span></span></li>')
     //click event to refresh tornstats data
     $('#re_war_refresh').unbind("click").click(function() {
-      //cleanup ranked war page first
+      //cleanup territory page first
       $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
       <p id="re_message" style="display: none;"></p>`);
       featureCleanup('territory_war_filter');
