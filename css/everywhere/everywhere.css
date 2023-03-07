@@ -963,6 +963,7 @@ body.dark-mode .re_button button .close:hover {
 }
 
 
+/* sidebar icons hiding */
 
 #sidebar ul[class*="status-icons_"] li.re_hide {
   display: none;

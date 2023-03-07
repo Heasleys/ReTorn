@@ -99,6 +99,8 @@
                 qlinksComplete = false;
             } 
         }
+        const target = document.getElementById("sidebar");
+        iconWrapObserver.observe(target, observerParams);
         hideThoseIcons();
     });
 
@@ -162,24 +164,22 @@
 
       const iconWrapObserver = new MutationObserver(function(mutations) {
         iconWrapObserver.disconnect();
-        let sidebarIconsWrap = $("#sidebarroot ul[class*='status-icons_']");
-        if (sidebarIconsWrap.length) {
+        const target = $("#sidebarroot ul[class*='status-icons_']").parent()[0];
+        if (target) {
           hideThoseIcons();
-          const target = document.querySelector('#sidebar ul[class*="status-icons_"]');
-          iconWrapObserver.observe(target, { subtree: true, attributes: true });
+          iconWrapObserver.observe(target, observerParams);
         }
       });
       const sidebarrootObserver = new MutationObserver(function(mutations) {
         if (document.getElementById('sidebarroot')) {
-          const target = document.querySelector('#sidebar ul[class*="status-icons_"]');
+          const target = $("#sidebarroot ul[class*='status-icons_']").parent()[0];
           if (target) {
-            iconWrapObserver.observe(target, { subtree: true, attributes: true });
+            iconWrapObserver.observe(target, observerParams);
             hideThoseIcons();
             sidebarrootObserver.disconnect();
           }
         }
       });
-    
       //observer document to start other observers
       observerObserver.observe(document, observerParams);
       sidebarrootObserver.observe(document, observerParams);
@@ -488,6 +488,7 @@
 
     //function for hiding side bar icons
     function hideThoseIcons() {
+      console.log("[ReTorn] hidethoseicons")
       const iconString = settings?.hide_sidebar_icons;
       if (iconString) {
           const icons = iconString.split(',');
