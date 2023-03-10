@@ -100,8 +100,10 @@
             } 
         }
         const target = document.getElementById("sidebar");
-        iconWrapObserver.observe(target, observerParams);
-        hideThoseIcons();
+        if (target) {
+          iconWrapObserver.observe(target, observerParams);
+          hideThoseIcons();
+        }
     });
 
     //observer to observer document and start other observers based on when things appear in the DOM
