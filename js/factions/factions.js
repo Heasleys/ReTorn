@@ -562,12 +562,12 @@ function loadRankedWar() {
 
 
       $(`.faction-names .name.enemy`).append(`<div class="re_enemy_count re_mem_count">
-      <p>Showing <span class="re_enemy">0</span> of <span class="re_enemy_max">0</span> ${enemyFac} members</p>
+      <p class="re_showing">Showing <span class="re_enemy">0</span> of <span class="re_enemy_max">0</span> ${enemyFac} members</p>
       <p class="re_playercounts">${onlineIcon}<span class="onlineCount">0</span> ${idleIcon}<span class="idleCount">0</span> ${offlineIcon}<span class="offlineCount">0</span></p>
       </div>`);
 
       $(`.faction-names .name.your`).append(`<div class="re_your_count re_mem_count">
-      <p>Showing <span class="re_your">0</span> of <span class="re_your_max">0</span> ${friendlyFac} members</p>
+      <p class="re_showing">Showing <span class="re_your">0</span> of <span class="re_your_max">0</span> ${friendlyFac} members</p>
       <p class="re_playercounts">${onlineIcon}<span class="onlineCount">0</span> ${idleIcon}<span class="idleCount">0</span> ${offlineIcon}<span class="offlineCount">0</span></p>
       </div>`);
 

@@ -288,10 +288,6 @@ p.re_playercounts > span {
   .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
     width: 135px;
   }
-
-  html:not(.html-manual-desktop) .re_mem_count {
-    display: none;
-  }
 }
 
 @media screen and (max-width: 784px) {
@@ -364,8 +360,19 @@ p.re_playercounts > span {
 }
   
 
-  html:not(.html-manual-desktop) .re_mem_count {
+  html:not(.html-manual-desktop) .re_mem_count .re_showing {
     display: none;
+  }
+  html:not(.html-manual-desktop) .re_mem_count .re_playercounts {
+    display: inherit;
+  }
+  html:not(.html-manual-desktop) .re_mem_count {
+    display: inline-block;
+    margin: 0;
+  }
+
+  html:not(.html-manual-desktop) .r .f-war-list.war-new .faction-war.re_rankedwar .faction-names {
+    line-height: 24px;
   }
 }
 
