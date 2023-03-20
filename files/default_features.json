@@ -12,7 +12,11 @@
             "ranked_war_filter": {
                 "enabled": true,
                 "description": "Adds a window to the ranked war page that allows you to filter players. Requires Torn Stats."
-            }
+            },
+            "faction_name_in_tab": {
+                "enabled": true,
+                "description": "Adds the name of the faction in the browser tab."
+              }
         },
         "forums": {
             "discord_copy": {

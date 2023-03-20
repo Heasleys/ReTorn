@@ -4,6 +4,14 @@ const obsOptions = {attributes: false, childList: true, characterData: false, su
 const terrRegex = /war\/\d+/;
 var allMembers = {};
 
+const RW_FILTER = "ranked_war_filter";
+const FACTION_NAME = $('#factions .faction-info-wrap > .faction-info').attr("data-name");
+
+if (FACTION_NAME && window?.document?.title && features?.pages?.factions?.faction_name_in_tab?.enabled) {
+    window.document.title = `${FACTION_NAME} | TORN`;
+}
+
+
 
 var crimeObserver = new MutationObserver(function(mutations, observer) {
   let hash = location.hash;

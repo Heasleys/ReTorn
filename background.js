@@ -1279,6 +1279,12 @@ async function checkUpdate(version) {
         }
       }
     }
+    if (features?.pages?.factions?.faction_name_in_tab == undefined) {
+      features["pages"]["factions"]["faction_name_in_tab"] = {
+        "enabled": true,
+        "description": "Adds the name of the faction in the browser tab."
+      }
+    }
 
     await setValue({"settings": settings}, "sync");
     await setValue({"features": features}, "sync");
