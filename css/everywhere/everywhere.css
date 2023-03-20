@@ -106,7 +106,7 @@ a:hover {
 }
 
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 784px) {
   /* hide disable filters title on small screen */
   #re_disable_filters .re_title {
     display: none;
