@@ -556,9 +556,6 @@ function loadRankedWar() {
       </div>
       `);
 
-      const onlineIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="default___qrLNi " filter="" fill="url(&quot;#svg_status_online&quot;)" stroke="#fff" stroke-width="0" width="13" height="13" viewBox="-1.5 -1.2 14 14"><path d="M0,6a6,6,0,1,1,6,6A6,6,0,0,1,0,6Z"></path></svg>`;
-      const idleIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="default___qrLNi " filter="" fill="url(&quot;#svg_status_idle&quot;)" stroke="#fff" stroke-width="0" width="13" height="13" viewBox="-1.5 -1.2 14 14"><g xmlns="http://www.w3.org/2000/svg"><path d="M0,6a6,6,0,1,1,6,6A6,6,0,0,1,0,6Z"></path><path d="M5,3V7H9V6H6V3Z" fill="#f2f2f2"></path></g></svg>`;
-      const offlineIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="default___qrLNi " filter="" fill="url(&quot;#svg_status_offline&quot;)" stroke="#fff" stroke-width="0" width="13" height="13" viewBox="-1.5 -1.2 14 14"><g xmlns="http://www.w3.org/2000/svg"><path d="M0,6a6,6,0,1,1,6,6A6,6,0,0,1,0,6Z"></path><path d="M3,5H9V7H3Z" fill="#f2f2f2"></path></g></svg>`;    
 
 
       $(`.faction-names .name.enemy`).append(`<div class="re_enemy_count re_mem_count">
