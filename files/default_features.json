@@ -13,6 +13,18 @@
                 "enabled": true,
                 "description": "Adds a window to the ranked war page that allows you to filter players. Requires Torn Stats."
             },
+            "territory_war_stats": {
+                "enabled": true,
+                "description": "Adds a column to territory wall wars to show the stats of a player. Requires Torn Stats."
+            },
+            "faction_members_spies": {
+                "enabled": false,
+                "description": "Adds a spy column to the faction members list on the faction profile Requires Torn Stats."
+            },
+            "faction_profile_filter": {
+                "enabled": true,
+                "description": "Adds a window to the faction profile page that allows you to filter faction members."
+            },
             "faction_name_in_tab": {
                 "enabled": true,
                 "description": "Adds the name of the faction in the browser tab."
