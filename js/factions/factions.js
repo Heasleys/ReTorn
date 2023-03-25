@@ -5,6 +5,8 @@ const terrRegex = /war\/\d+/;
 var allMembers = {};
 
 const RW_FILTER = "ranked_war_filter";
+const TT_STATS = "territory_war_stats";
+const FACTION_FILTER = "faction_profile_filter";
 const FACTION_NAME = $('#factions .faction-info-wrap > .faction-info').attr("data-name");
 
 if (FACTION_NAME && window?.document?.title && features?.pages?.factions?.faction_name_in_tab?.enabled) {
@@ -46,12 +48,18 @@ var territoryWarObserver = new MutationObserver(function(mutations, observer) {
   }
 });
 
-
 //faction page member battle stats
 var factionPageMemberStatsObserver = new MutationObserver(function(mutations, observer) {
   if ($('.faction-info-wrap.another-faction .members-list .table-header .member').length == 1 && $('.re_faction_stats').length == 0) {
     factionPageMemberStatsObserver.disconnect();
     factionPageMemberStats();
+  }
+});
+
+var factionMembersFilterObserver = new MutationObserver(function(mutations, observer) {
+  if ($(".f-war-list.members-list").parent(".faction-info-wrap").length == 1 && $(`.re_container[data-feature="${FACTION_FILTER}"]`).length == 0) {
+    factionMembersFilterObserver.disconnect();
+    factionMembersFilter();
   }
 });
 
@@ -87,16 +95,22 @@ function urlHandler() {
     rankedWarObserver.disconnect();
   }
 
-  if (url.match(terrRegex)) { //&& features?.pages?.factions?.territory_war_filter?.enabled
+  if (url.match(terrRegex)) { //&& features?.pages?.factions?.territory_war_stats?.enabled
     territoryWarObserver.observe(target, obsOptions);
   } else {
     territoryWarObserver.disconnect();
   }
 
-  if (url.includes('step=profile&ID=')) { //&& features?.pages?.factions?.member_stats?.enabled
-    factionPageMemberStatsObserver.observe(target, obsOptions);
+  if (url.includes('step=profile&ID=')) {
+    if (features?.pages?.factions?.faction_members_spies?.enabled) {
+      factionPageMemberStatsObserver.observe(target, obsOptions);
+    }
+    if (features?.pages?.factions?.faction_profile_filter?.enabled) {
+      factionMembersFilterObserver.observe(target, obsOptions);
+    }
   } else {
     factionPageMemberStatsObserver.disconnect();
+    factionMembersFilterObserver.disconnect();
   }
 
 }
@@ -198,8 +212,6 @@ function crimesTab() {
   }
 }
 
-
-
 //Roster Tab
 function rosterTab() {
     getTornStats("faction/roster")
@@ -298,47 +310,67 @@ function rankedWar() {
   if ($('.desc-wrap.raid-members-list').length > 0) {
     return;
   }
-  
-  //check for other header
-  if ($('.re_container[data-feature="territory_war_filter"]').length) {
-    $('.re_container[data-feature="territory_war_filter"]').remove();
+  //check to see if territory header is in the way, if so delete it
+  if ($(`.re_container[data-feature="territory_war_stats"]`).length) {
+    $('.re_container[data-feature="territory_war_stats"]').remove();
   }
 
-    //Insert Header
-  if ($('.re_container[data-feature="ranked_war_filter"]').length <= 0) {
-    insertHeader($("ul.f-war-list"), 'before', 'ranked_war_filter');
-    $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
+  //Insert Header
+  if ($(`.re_container[data-feature="${RW_FILTER}"]`).length <= 0) {
+    insertHeader($("ul.f-war-list"), 'before', RW_FILTER);
+    const RE_CONTAINER = $(`.re_container[data-feature="${RW_FILTER}"]`);
+
+    //insert additional buttons to the header
+    RE_CONTAINER.find('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
       <label class="re_title noselect">Disable filters</label>
       <input type="checkbox" title="Disable filters">
     </span>`);
 
-    //insert button into header menu to refresh Torn Stats War data manually
-    $('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh war data</span></span></li>')
-    //click event to refresh tornstats data
-    $('#re_war_refresh').unbind("click").click(function() {
-      //cleanup ranked war page first
-      $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
-      <p id="re_message" style="display: none;"></p>`);
-      featureCleanup('ranked_war_filter');
-
-      getWarID()
-      .then((warID) => getTornStats("wars/"+warID, 8, true))//8 hours cached, force update
-      .then(() => {
-        loadRankedWar();//reload ranked war
-      })
-      .catch((e) => console.error(e))
-    });
+        //insert button into header menu to refresh Torn Stats War data manually
+        RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh war data</span></span></li>')
+        //click event to refresh tornstats data
+        RE_CONTAINER.find('#re_war_refresh').click(function() {
+          //cleanup ranked war page first
+          featureCleanup(RW_FILTER);
+          preloadRankedWar();
+          
+          getWarID()
+          .then((warID) => getTornStats("wars/"+warID, 8, true))//8 hours cached, force update
+          .then(() => {
+            loadRankedWar();//reload ranked war
+          })
+          .catch((e) => console.error(e))
+        });
   }
-  
+
+  if ($(`.re_container[data-feature="${RW_FILTER}"]`).length) {    
+    preloadRankedWar(); // Immedietely add elements to the page, so less jumpy page loading
+    loadRankedWar();
+  }
+}
+
+function preloadRankedWar() {
   //Add loading dots
-  $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
+  $(`.re_container[data-feature="${RW_FILTER}"]`).find('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
   <p id="re_message" style="display: none;"></p>`);
 
+  //player count elements
+  $(`.faction-names .name.enemy`).append(`<div class="re_enemy_count re_mem_count">
+  <p class="re_showing">&nbsp;</p>
+  <p class="re_playercounts">&nbsp;</p>
+  </div>`);
+  $(`.faction-names .name.your`).append(`<div class="re_your_count re_mem_count">
+  <p class="re_showing">&nbsp;</p>
+  <p class="re_playercounts">&nbsp;</p>
+  </div>`);
 
-  loadRankedWar();
+
+  // Ideally it should preload the columns, but that will be a bigger overhaul, maybe later
 }
 
 function loadRankedWar() {
+  const RE_CONTAINER = $(`.re_container[data-feature="${RW_FILTER}"]`);
+
   getWarID()
   //pull ranked war data from Torn Stats
   .then((warID) => getTornStats("wars/"+warID))
@@ -360,15 +392,16 @@ function loadRankedWar() {
       }
   
       $('.f-war-list .faction-war').addClass('re_rankedwar'); //Used for CSS styling for less jumpy pages
-      $('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
+      const RW_CONTAINER = $('.re_rankedwar');
       
-  
+      RW_CONTAINER.find('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
+      
+
 
   
       //Sorting for spy column
-      $('.re_spy_title').click(function() {
-        const spyCols = $('.re_spy_title');
-        const warDiv = $(this).closest('.faction-war.re_rankedwar')
+      RW_CONTAINER.find('.re_spy_title').click(function() {
+        const spyCols = RW_CONTAINER.find('.re_spy_title');
         
         //send out a React State Change request to sort by player name first
         const className = 'faction-war re_rankedwar';
@@ -382,7 +415,7 @@ function loadRankedWar() {
             "direction": "desc"
           }
         }
-        const e = new CustomEvent("updateState", {detail: {className: className, newState: newStateObj}});
+        const e = new CustomEvent("reUpdateState", {detail: {className: className, newState: newStateObj}});
         document.dispatchEvent(e);
         //React State Change Request
 
@@ -416,13 +449,13 @@ function loadRankedWar() {
         })
       });
       //if another column is clicked, then remove the classes from the spy column
-      $('div.members-cont > div > div[class*="tab_"]').click(function() {
+      RW_CONTAINER.find('div.members-cont > div > div[class*="tab_"]').click(function() {
         $(this).closest('.faction-war').find('.re_spy_title .re_sort_icon').removeClass('re_asc').removeClass('re_desc');
       })
   
   
   
-      $('ul.members-list > li').each(function() {
+      RW_CONTAINER.find('ul.members-list > li').each(function() {
         let member = $(this);
   
   
@@ -504,9 +537,9 @@ function loadRankedWar() {
       });
     } else {
       if (data.message == "re_torn_stats_apikey is empty.") {
-        $('.re_content').prepend(`<div class="re_row"><p>You must link your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account to filter by battle stats and personal stats. <a id='re_options'>Click here</a> to view the ReTorn options.</p></div>`)
+        RE_CONTAINER.find('.re_content').prepend(`<div class="re_row"><p>You must link your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account to filter by battle stats and personal stats. <a id='re_options'>Click here</a> to view the ReTorn options.</p></div>`)
       } else {
-        $('.re_content').prepend(`<div class="re_row"><p class="re_error">${data.message}</p></div>`)
+        RE_CONTAINER.find('.re_content').prepend(`<div class="re_row"><p class="re_error">${data.message}</p></div>`)
       }
     }
     
@@ -529,8 +562,8 @@ function loadRankedWar() {
     let friendlyFac = $('.faction-names .name.your [class*="text"]').text();
 
 
-    $('#re_loader').remove();
-    $('.re_content').prepend(`
+    RE_CONTAINER.find('#re_loader').remove();
+    RE_CONTAINER.find('.re_content').prepend(`
       <div class="re_row">
       <div>
         ${psStr}
@@ -557,16 +590,16 @@ function loadRankedWar() {
       `);
 
 
+      //add player counts to already inserted player count elements
+      //enemy
+      $('.re_enemy_count > .re_showing').html(`Showing <span class="re_enemy">0</span> of <span class="re_enemy_max">0</span> ${enemyFac} members`);
+      $('.re_enemy_count > .re_playercounts').html(`${onlineIcon}<span class="onlineCount">0</span> ${idleIcon}<span class="idleCount">0</span> ${offlineIcon}<span class="offlineCount">0</span>`);
+      //friendly      
+      $('.re_your_count > .re_showing').html(`Showing <span class="re_your">0</span> of <span class="re_your_max">0</span> ${friendlyFac} members`);
+      $('.re_your_count > .re_playercounts').html(`${onlineIcon}<span class="onlineCount">0</span> ${idleIcon}<span class="idleCount">0</span> ${offlineIcon}<span class="offlineCount">0</span>`);
 
-      $(`.faction-names .name.enemy`).append(`<div class="re_enemy_count re_mem_count">
-      <p class="re_showing">Showing <span class="re_enemy">0</span> of <span class="re_enemy_max">0</span> ${enemyFac} members</p>
-      <p class="re_playercounts">${onlineIcon}<span class="onlineCount">0</span> ${idleIcon}<span class="idleCount">0</span> ${offlineIcon}<span class="offlineCount">0</span></p>
-      </div>`);
 
-      $(`.faction-names .name.your`).append(`<div class="re_your_count re_mem_count">
-      <p class="re_showing">Showing <span class="re_your">0</span> of <span class="re_your_max">0</span> ${friendlyFac} members</p>
-      <p class="re_playercounts">${onlineIcon}<span class="onlineCount">0</span> ${idleIcon}<span class="idleCount">0</span> ${offlineIcon}<span class="offlineCount">0</span></p>
-      </div>`);
+  
 
       countPlayerStatus();
 
@@ -591,14 +624,14 @@ function loadRankedWar() {
         }
       });
 
-        //click events for disable filter label and checkbox
-      $('#re_disable_filters').click(function(e) {
+      //click events for disable filter label and checkbox
+      RE_CONTAINER.find('#re_disable_filters').click(function(e) {
         e.stopPropagation();
         const checkbox = $(this).find('input[type=checkbox]');
         checkbox.prop("checked", checkbox.prop("checked"));
         rankedWarFilters();
       });
-      $('.re_checkbox > label').click(function() {
+      RE_CONTAINER.find('.re_checkbox > label').click(function() {
         let checkbox = $(this).parent('.re_checkbox').find('input[type="checkbox"]');
         checkbox.prop("checked", !checkbox.prop("checked"));
         checkbox.trigger("change");
@@ -696,9 +729,9 @@ function loadRankedWar() {
   })
   .catch((err) => {
     console.log("[ReTorn][Ranked War Filter] Error: ", err);
-    $('#re_loader').remove();
-    $('#re_message').html(`<span class="re_error">${err}</span>`);
-    $('#re_message').show();
+    RE_CONTAINER.find('#re_loader').remove();
+    RE_CONTAINER.find('#re_message').html(`<span class="re_error">${err}</span>`);
+    RE_CONTAINER.find('#re_message').show();
   });
 }
 
@@ -735,8 +768,10 @@ function rankedWarFilters() {
 }
 
 function filterUsers(filters) {
+  const RE_CONTAINER = $(`.re_container[data-feature="${RW_FILTER}"]`);
+
   //actually filter the players
-  if (!$('#re_disable_filters input[type="checkbox"]').is(":checked")) { //if filter rules checkbox is not checked, proceed
+  if (!RE_CONTAINER.find('#re_disable_filters input[type="checkbox"]').is(":checked")) { //if filter rules checkbox is not checked, proceed
     $('ul.members-list > li').each(function() { //for each member
       $(this).show().addClass("re_show");
 
@@ -773,16 +808,16 @@ function filterUsers(filters) {
     
     });
   } else {
-    $('ul.members-list > li').show().addClass("re_show");
+    $('.faction-war ul.members-list > li').show().addClass("re_show");
   }
 
   //set the number of shown members for each faction
-  let yourCount = $('ul.members-list > li.your.re_show').length;
-  let enemyCount = $('ul.members-list > li.enemy.re_show').length;
+  let yourCount = $('.faction-war ul.members-list > li.your.re_show').length;
+  let enemyCount = $('.faction-war ul.members-list > li.enemy.re_show').length;
   $('.re_enemy_count .re_enemy').text(enemyCount);
-  $('.re_enemy_count .re_enemy_max').text($('ul.members-list > li.enemy').length);
+  $('.re_enemy_count .re_enemy_max').text($('.faction-war ul.members-list > li.enemy').length);
   $('.re_your_count .re_your').text(yourCount);
-  $('.re_your_count .re_your_max').text($('ul.members-list > li.your').length);
+  $('.re_your_count .re_your_max').text($('.faction-war ul.members-list > li.your').length);
 }
 
 function resetFilterInputs() {
@@ -814,10 +849,10 @@ function countPlayerStatus() {
   //count offline, online, idle
   const statuses = ["offline", "idle", "online"]
   statuses.forEach(function(e) {
-    let enemyCount = $('.enemy-faction ul.members-list .member.icons [id*="'+e+'"]').length;
+    let enemyCount = $('.faction-war .enemy-faction ul.members-list .member.icons [id*="'+e+'"]').length;
     $('.re_enemy_count .'+e+'Count').text(enemyCount);
 
-    let yourCount = $('.your-faction ul.members-list .member.icons [id*="'+e+'"]').length;
+    let yourCount = $('.faction-war .your-faction ul.members-list .member.icons [id*="'+e+'"]').length;
     $('.re_your_count .'+e+'Count').text(yourCount);
   });
 }
@@ -846,21 +881,19 @@ function territoryWar() {
   }
 
   //Insert Header
-  if ($('.re_container[data-feature="territory_war_filter"]').length <= 0) {
-    insertHeader($("ul.f-war-list"), 'before', 'territory_war_filter');
-    $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
-      <label class="re_title noselect">Disable filters</label>
-      <input type="checkbox" title="Disable filters">
-    </span>`);
+  if ($(`.re_container[data-feature="${TT_STATS}"]`).length <= 0) {
+    insertHeader($("ul.f-war-list"), 'before', TT_STATS);
+    const RE_CONTAINER = $(`.re_container[data-feature="${TT_STATS}"]`);
+    RE_CONTAINER.find('.re_head').removeClass("expanded");
+    RE_CONTAINER.find('.re_content').remove();
+    RE_CONTAINER.find('.re_icon_wrap').remove();
 
-    //insert button into header menu to refresh Torn Stats War data manually
-    $('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh spy data</span></span></li>')
+
+    //insert button into header menu to refresh Torn Stats spy data manually
+    RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh spy data</span></span></li>')
     //click event to refresh tornstats data
-    $('#re_war_refresh').unbind("click").click(function() {
-      //cleanup territory page first
-      $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
-      <p id="re_message" style="display: none;"></p>`);
-      featureCleanup('territory_war_filter');
+    RE_CONTAINER.find('#re_war_refresh').click(function() {
+      featureCleanup('territory_war_stats');
 
       var promises = [];
       const a = $('.faction-war-info a[href*="step=profile&ID="');
@@ -875,20 +908,21 @@ function territoryWar() {
         // Wait for all promises to complete before calling loadTerritoryWar
         Promise.all(promises).then(function() {
           loadTerritoryWar();
-        });
+        })
+        .catch((err) => {
+          console.log("[ReTorn][Territory War Filter] Error: ", err);
+        })
       }
     });
-  }
-  
-  //Add loading dots
-  $('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
-  <p id="re_message" style="display: none;"></p>`);
 
 
     loadTerritoryWar();
+  }
 }
 
 function loadTerritoryWar() {
+  const RE_CONTAINER = $(`.re_container[data-feature="${TT_STATS}"]`);
+
   const a = $('.faction-war-info a[href*="step=profile&ID="');
   //obtain factionIDs for each faction in the territory war
   if (a.length == 2) {
@@ -897,7 +931,6 @@ function loadTerritoryWar() {
     const a = $('.faction-war-info a[href*="step=profile&ID="');
 
     $.each(a, function(i,e) {
-      console.log(i,e)
       const factionID = $(e).attr('href').match(/\d+/);
       var promise = getTornStats("spy/faction/"+factionID);
       promises.push(promise);
@@ -906,10 +939,7 @@ function loadTerritoryWar() {
     // Wait for all promises to complete before calling loadTerritoryWar
     Promise.all(promises)
     .then(function(dataArray) {
-      console.log(dataArray);
-
       dataArray.forEach((data) => {
-        console.log(data)
         if (data?.faction?.members && Object.keys(data.faction.members)) {
           for (const [id, member] of Object.entries(data.faction.members)) {
             allMembers[id] = member;
@@ -919,23 +949,27 @@ function loadTerritoryWar() {
     })
     .then(function() {
       $('.f-war-list .faction-war').addClass('re_territorywar'); //Used for CSS styling for less jumpy pages
-      $('.tab-menu-cont > div.members-cont > div.title > .members').after(`<div class="re_spy_title left">Spy</div>`);
+      const TT_CONTAINER = $('.re_territorywar');    
+      TT_CONTAINER.find('.tab-menu-cont > div.members-cont > div.title > .members').after(`<div class="re_spy_title left">Spy</div>`);
 
-      const membersElements = $('.tab-menu-cont .members-list > li:not(.join)');
-
+      const membersElements = TT_CONTAINER.find('.tab-menu-cont .members-list > li:not(.join)');
       return genericSpyFunction(membersElements, `.user.name`);
     })
     .then(function() {
       /* event listener from interceptFetch for when user status changes */
       document.addEventListener("re_territory_wars_fetch", re_territory_wars_fetch_eventListener);
     })
+    .catch((err) => {
+      console.log("[ReTorn][Territory War Filter] Error: ", err);
+      RE_CONTAINER.find('#re_loader').remove();
+      RE_CONTAINER.find('#re_message').html(`<span class="re_error">${err}</span>`);
+      RE_CONTAINER.find('#re_message').show();
+    });
   }
 
 
   function re_territory_wars_fetch_eventListener() {
-    console.log("re_territory_wars_fetch_eventListener");
-    const membersElements = $('.tab-menu-cont .members-list > li:not(.join,.timer-wrap)');
-
+    const membersElements = $('.re_territorywar .tab-menu-cont .members-list > li:not(.join,.timer-wrap)');
     return genericSpyFunction(membersElements, `.user.name`);
   }
 
@@ -1035,6 +1069,23 @@ function factionPageMemberStats() {
 }
 
 
+function factionMembersFilter() {
+  if ($(`.re_container[data-feature="${FACTION_FILTER}"]`).length <= 0) {
+    insertHeader($(".f-war-list.members-list").parent(".faction-info-wrap"), 'before', FACTION_FILTER);
+
+    const RE_CONTAINER = $(`.re_container[data-feature="${FACTION_FILTER}"]`);
+
+    //insert additional buttons to the header
+    RE_CONTAINER.find('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
+      <label class="re_title noselect">Disable filters</label>
+      <input type="checkbox" title="Disable filters">
+    </span>`);
+
+    
+  }
+}
+
+
 const SI_PREFIXES = [
   { value: 1, symbol: '' },
   { value: 1e3, symbol: 'K' },
@@ -1063,7 +1114,7 @@ function genericSpyFunction(membersElements, useridSelection) {
     if (membersElements.length) {
       $.each(membersElements, function(i,member) {
         if ($(member).find('.re_spy_col').length) {
-          console.log(`already has a spy column`)
+          console.log(`ReTorn: already has a spy column`)
           return;
         }
         console.log(member)
@@ -1171,13 +1222,16 @@ function sort_li_asc(a, b){
   const a_total = $(a).data('total') != undefined ? $(a).data('total') : 0;
   return (b_total) < (a_total) ? 1 : -1;    
 }
-
-
 function featureCleanup(feature) {
   if (feature === `ranked_war_filter`) {
     $('.re_spy_title,.re_spy_col,.re_mem_count,.re_spy_ps,.re_spy_spy').remove();
     $('.re_rankedwar').removeClass('re_rankedwar');
     $('[class*="factionWrap"]').show();
     $('ul.members-list > li').show();//show all members in the list
+  }
+
+  if (feature === `territory_war_stats`) {
+    $('.re_spy_title,.re_spy_col,.re_spy_ps,.re_spy_spy').remove();
+    $('.re_territorywar').removeClass('re_territorywar');
   }
 }
