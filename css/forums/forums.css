@@ -135,14 +135,10 @@ body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .t
   body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .thread-list>li .confirm-wrap>ul.action-wrap>li:nth-child(n+6)+.right-part .forum-button {
     width: 64px;
   }
-
-  body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .thread-list>li .confirm-wrap>ul.action-wrap>li:nth-child(n+8)+.right-part .forum-button {
-    width: 34px;
-  }
 }
 
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 784px) {
   /* change all forum buttons to be 1px smaller */
   body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .thread-list>li .column-wrap .post-wrap .confirm-wrap>ul.action-wrap>li.forum-button {
     width: 29px;
@@ -176,6 +172,10 @@ body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .t
 
 
   body .content .content-wrapper.re_discord_copy .forums-thread-wrap .thread-list>li .confirm-wrap>ul.action-wrap>li:nth-child(n+7):not(.ban)+.right-part .forum-button {
+    width: 34px;
+  }
+
+  body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .thread-list>li .confirm-wrap>ul.action-wrap>li:nth-child(n+8)+.right-part .forum-button {
     width: 34px;
   }
 }
