@@ -1,5 +1,5 @@
 //React injection to update State https://stackoverflow.com/questions/57618119/is-it-possible-to-write-a-script-to-inject-props-on-a-react-component
-function updateState(domElement, newState) {
+function reUpdateState(domElement, newState) {
   var keys = Object.keys(domElement);
   var instanceKey = keys.filter(prop =>
     /__reactInternalInstance/.test(prop)
@@ -16,10 +16,10 @@ function updateState(domElement, newState) {
   );
 }
 
-document.addEventListener("updateState", function(msg) {
+document.addEventListener("reUpdateState", function(msg) {
   if (msg?.detail?.newState != undefined && msg?.detail?.className != undefined) {
     const el = document.getElementsByClassName(msg.detail.className)[0]
-    updateState(el, msg.detail.newState);
+    reUpdateState(el, msg.detail.newState);
   }
 });
 
