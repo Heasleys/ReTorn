@@ -376,174 +376,80 @@ function loadRankedWar() {
   .then((warID) => getTornStats("wars/"+warID))
   //add data to members lists
   .then((data) => {
-    let psList = [];
-    let players = {};
-
     if (data.status) {
       if (data.faction_a && data.faction_a.members) {
-        for (const [index, value] of Object.entries(data.faction_a.members)) {
-          players[index] = value;
+        for (const [id, member] of Object.entries(data.faction_a.members)) {
+          allMembers[id] = member;
         }
       }
       if (data.faction_b && data.faction_b.members) {
-        for (const [index, value] of Object.entries(data.faction_b.members)) {
-          players[index] = value;
+        for (const [id, member] of Object.entries(data.faction_b.members)) {
+          allMembers[id] = member;
         }
-      }
-  
-      $('.f-war-list .faction-war').addClass('re_rankedwar'); //Used for CSS styling for less jumpy pages
-      const RW_CONTAINER = $('.re_rankedwar');
-      
-      RW_CONTAINER.find('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
-      
-
-
-  
-      //Sorting for spy column
-      RW_CONTAINER.find('.re_spy_title').click(function() {
-        const spyCols = RW_CONTAINER.find('.re_spy_title');
-        
-        //send out a React State Change request to sort by player name first
-        const className = 'faction-war re_rankedwar';
-
-        const opponentActive = $('.faction-names .enemy').is('[class*=active_]');
-        //opponentActive is needed in case of small screen, we don't want to force switch the faction view
-        const newStateObj = {
-          "opponentActive": opponentActive,
-          "sorting": {
-            "field": "playername",
-            "direction": "desc"
-          }
-        }
-        const e = new CustomEvent("reUpdateState", {detail: {className: className, newState: newStateObj}});
-        document.dispatchEvent(e);
-        //React State Change Request
-
-        
-        const clickedSpyCol = $(this); //then spyCol that was clicked
-        const clickedIcon = clickedSpyCol.find('.re_sort_icon');
-        let dir = true;  //always sort by largest > smallest first
-        if (clickedIcon.hasClass('re_desc')) dir = false;
-
-        spyCols.each(function() {//now change icon for both spyCols to the correct direction
-          const spyCol = $(this); 
-          const icon = spyCol.find('.re_sort_icon');
-
-          const memberCont = spyCol.closest('.members-cont');
-          const memberList = memberCont.find('ul.members-list');
-          
-          memberCont.find('div[class*="sortIcon_"]').removeClass(function (index, css) {
-            return (css.match (/(^|\s)desc_\S+/g) || []).join(' ');
-          }).removeClass(function (index, css) {
-            return (css.match (/(^|\s)asc_\S+/g) || []).join(' ');
-          });
-
-          //actually sort the players based on direction
-          if (dir) {
-            icon.removeClass('re_asc').addClass('re_desc');
-            memberList.find('li').sort(sort_li_desc).appendTo(memberList);
-          } else {
-            icon.removeClass('re_desc').addClass('re_asc');
-            memberList.find('li').sort(sort_li_asc).appendTo(memberList);
-          }
-        })
-      });
-      //if another column is clicked, then remove the classes from the spy column
-      RW_CONTAINER.find('div.members-cont > div > div[class*="tab_"]').click(function() {
-        $(this).closest('.faction-war').find('.re_spy_title .re_sort_icon').removeClass('re_asc').removeClass('re_desc');
-      })
-  
-  
-  
-      RW_CONTAINER.find('ul.members-list > li').each(function() {
-        let member = $(this);
-  
-  
-        let url = member.find('div.member div[class*="userWrap"] a').attr("href");
-        let userid = url.replace("/profiles.php?XID=", "");
-        let psTitle, spyTitle, fullTitle;
-  
-        member.find('[class*="factionWrap"]').hide();
-  
-        //add personal stats to title
-        if (players[userid] && players[userid]["personalstats"]) {
-          psTitle = "<b><u>Personal Stats</u></b>";
-          for (const [index, value] of Object.entries(players[userid]["personalstats"])) {
-            if (index == "timestamp") {
-              psTitle += `<br><b>Last Checked: </b>${timeDifference(Date.now(),value*1000)}`;
-            } else {
-              member.data(index, value);
-              if (isNaN(value)) {
-                psTitle += `<br><b>${index}: </b>${value}`;
-              } else {
-                psTitle += `<br><b>${index}: </b>${value.toLocaleString("en-US")}`;
-              }
-  
-              if (!psList.includes(index)) {
-                psList.push(index);
-              }
-            }
-  
-          }
-        }
-
-
-
-        let statTot;
-
-        //if spy exists, add to title
-        if (players[userid] && players[userid]["spy"]) {
-          let timestampStr = "";
-          spyTitle = "<b><u>Battle Stats</u></b>";
-          for (const [index, value] of Object.entries(players[userid]["spy"])) {
-            if (index == "timestamp") {
-              timestampStr = `<br><b>Last Spy: </b>${timeDifference(Date.now(),value*1000)}`;
-            } else {
-              member.data(index, value);
-              if (isNaN(value)) {
-                spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value}</span>`;
-              } else {
-                statTot = value;
-                spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value.toLocaleString()}</span>`;
-              }
-            }
-  
-          }
-          spyTitle += timestampStr;
-        }
-        
-        if (psTitle) {
-          member.find(".member [class*='userInfoBox_']").append(`<i class="fas fa-info-circle re_spy_ps" style="margin-left: auto; padding-right: 3px;"></i>`);
-
-          if (spyTitle) {
-            if (statTot) {//total stats available for abbreviated number
-              member.find(".member").after(`<div class="re_spy_col left"><span class="re_spy_spy">${abbreviateNumber(statTot)}</span></div>`);
-            } else { //no total stats, so place eye icon instead
-              member.find(".member").after(`<div class="re_spy_col left"><i class="fas fa-eye re_spy_spy"></i></div>`);
-            }
-          } else {//no spies
-            member.find(".member").after(`<div class="re_spy_col left" title="Spy data not available.">N/A</div>`)
-          }
-        } else {//no spies or playerstats
-          member.find(".member").after(`<div class="re_spy_col left" title="No data available.">N/A</div>`)
-        }
-  
-        if (psTitle) {
-          member.find(".re_spy_ps").attr("title", psTitle);
-        }
-        if (spyTitle) {
-          member.find(".re_spy_spy").attr("title", spyTitle);
-        }
-      });
-    } else {
-      if (data.message == "re_torn_stats_apikey is empty.") {
-        RE_CONTAINER.find('.re_content').prepend(`<div class="re_row"><p>You must link your <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a></b> account to filter by battle stats and personal stats. <a id='re_options'>Click here</a> to view the ReTorn options.</p></div>`)
-      } else {
-        RE_CONTAINER.find('.re_content').prepend(`<div class="re_row"><p class="re_error">${data.message}</p></div>`)
       }
     }
-    
-    return psList;
+  })
+  .then(() => {
+    $('.f-war-list .faction-war').addClass('re_rankedwar'); //Used for CSS styling for less jumpy pages
+    const RW_CONTAINER = $('.re_rankedwar');
+    RW_CONTAINER.find('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
+
+    //Sorting for spy column
+    RW_CONTAINER.find('.re_spy_title').click(function() {
+      const spyCols = RW_CONTAINER.find('.re_spy_title');
+      
+      //send out a React State Change request to sort by player name first
+      const className = 'faction-war re_rankedwar';
+
+      const opponentActive = $('.faction-names .enemy').is('[class*=active_]');
+      //opponentActive is needed in case of small screen, we don't want to force switch the faction view
+      const newStateObj = {
+        "opponentActive": opponentActive,
+        "sorting": {
+          "field": "playername",
+          "direction": "desc"
+        }
+      }
+      const e = new CustomEvent("reUpdateState", {detail: {className: className, newState: newStateObj}});
+      document.dispatchEvent(e);
+      //React State Change Request
+
+      
+      const clickedSpyCol = $(this); //then spyCol that was clicked
+      const clickedIcon = clickedSpyCol.find('.re_sort_icon');
+      let dir = true;  //always sort by largest > smallest first
+      if (clickedIcon.hasClass('re_desc')) dir = false;
+
+      spyCols.each(function() {//now change icon for both spyCols to the correct direction
+        const spyCol = $(this); 
+        const icon = spyCol.find('.re_sort_icon');
+
+        const memberCont = spyCol.closest('.members-cont');
+        const memberList = memberCont.find('ul.members-list');
+        
+        memberCont.find('div[class*="sortIcon_"]').removeClass(function (index, css) {
+          return (css.match (/(^|\s)desc_\S+/g) || []).join(' ');
+        }).removeClass(function (index, css) {
+          return (css.match (/(^|\s)asc_\S+/g) || []).join(' ');
+        });
+
+        //actually sort the players based on direction
+        if (dir) {
+          icon.removeClass('re_asc').addClass('re_desc');
+          memberList.find('li').sort(sort_li_desc).appendTo(memberList);
+        } else {
+          icon.removeClass('re_desc').addClass('re_asc');
+          memberList.find('li').sort(sort_li_asc).appendTo(memberList);
+        }
+      })
+    });
+    //if another column is clicked, then remove the classes from the spy column
+    RW_CONTAINER.find('div.members-cont > div > div[class*="tab_"]').click(function() {
+      $(this).closest('.faction-war').find('.re_spy_title .re_sort_icon').removeClass('re_asc').removeClass('re_desc');
+    })
+
+    const membersElements = RW_CONTAINER.find('ul.members-list > li');
+    return genericSpyFunction(membersElements, `div.member div[class*="userWrap"] a`);
   })
   //insert information into header (buttons/text) and input functions
   .then((psList) => {
@@ -982,6 +888,7 @@ function loadTerritoryWar() {
 }
 
 function shortnameStats(stat) {
+  stat = stat.toLowerCase();
   switch (stat) {
     case "defense":
       return "DEF";  
@@ -1152,26 +1059,22 @@ function genericSpyFunction(membersElements, useridSelection) {
 
             let statTot;
 
-            //if spy exists, add to title
-            if (allMembers[userid] && allMembers[userid]["spy"]) {
-              let timestampStr = "";
-              spyTitle = "<b><u>Battle Stats</u></b>";
-              for (const [index, value] of Object.entries(allMembers[userid]["spy"])) {
-                if (index == "timestamp") {
-                  timestampStr = `<br><b>Last Spy: </b>${timeDifference(Date.now(),value*1000)}`;
-                } else {
-                  $(member).data(index, value);
-                  if (isNaN(value)) {
-                    spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value}</span>`;
-                  } else {
-                    statTot = value;
-                    spyTitle += `<br><b>${shortnameStats(index)}: </b><span style='float: right; padding-left: 5px;'>${value.toLocaleString()}</span>`;
-                  }
-                }
-      
-              }
-              spyTitle += timestampStr;
+          //if spy exists, add to title
+          if (allMembers[userid] && allMembers[userid]["spy"]) {
+            let timestampStr = "";
+            spyTitle = "<b><u>Battle Stats</u></b>";
+            let spy = allMembers[userid]["spy"];
+            statTot = spy.total;
+            spyTitle += `<br><b>${shortnameStats("strength")}: </b><span style='float: right; padding-left: 5px;'>${isNaN(spy["strength"]) ? spy["strength"] : spy["strength"].toLocaleString()}</span>`;
+            spyTitle += `<br><b>${shortnameStats("defense")}: </b><span style='float: right; padding-left: 5px;'>${isNaN(spy["defense"]) ? spy["defense"] : spy["defense"].toLocaleString()}</span>`;
+            spyTitle += `<br><b>${shortnameStats("speed")}: </b><span style='float: right; padding-left: 5px;'>${isNaN(spy["speed"]) ? spy["speed"] : spy["speed"].toLocaleString()}</span>`;
+            spyTitle += `<br><b>${shortnameStats("dexterity")}: </b><span style='float: right; padding-left: 5px;'>${isNaN(spy["dexterity"]) ? spy["dexterity"] : spy["dexterity"].toLocaleString()}</span>`;
+            spyTitle += `<br><b>${shortnameStats("total")}: </b><span style='float: right; padding-left: 5px;'>${isNaN(spy["total"]) ? spy["total"] : spy["total"].toLocaleString()}</span>`;
+            spyTitle += `<br><b>Last Spy: </b>${timeDifference(Date.now(),spy.timestamp*1000)}`;
+            for (const [index, value] of Object.entries(spy)) {
+              $(member).data(index, value);
             }
+          }
 
 
             
