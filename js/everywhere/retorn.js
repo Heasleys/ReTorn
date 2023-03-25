@@ -89,12 +89,13 @@ $(document).on('click', '#re_options', function(event){
 
 
 
-function insertHeader(element, where, feature, classes = "") {
-  if ($('div.re_container').length == 0) {
+function insertHeader(element, where, feature, extraClasses = "") {
+  console.log("[ReTorn] Inserting header for "+feature);
+  if ($(`div.re_container[data-feature="${feature}"]`).length == 0) {
     const title = feature.replaceAll('_', ' ');
 
     var header = `
-    <div class="re_container ${classes}" data-feature="${feature}">
+    <div class="re_container ${extraClasses}" data-feature="${feature}">
       <div class="re_head">
         <span class="re_title noselect"><span id="re_title">${title}</span></span>
           <div class="re_icon_wrap">
@@ -122,22 +123,24 @@ function insertHeader(element, where, feature, classes = "") {
       break;
     }
 
+    const RE_CONTAINER = $(`div.re_container[data-feature="${feature}"]`);
+
     const remove_me_button = `<li id="re_remove_feature"><span class="re_menu_item"><i class="fa-solid fa-trash-can"></i><span class="re_menu_item_text">Remove feature</span></span></li>`
     const settings_view = `<div class="re_menu_block noselect"><div class="re_menu"><ul id="re_features_settings_view">${remove_me_button}</ul></div></div>`
 
-    $('.re_head .re_title').after(`<span class="re_settings_icon"><i class="fas fa-gear" id="re_feature_settings" title="Feature Settings"></i>${settings_view}</span>`);
+    RE_CONTAINER.find('.re_head .re_title').after(`<span class="re_settings_icon"><i class="fas fa-gear" id="re_feature_settings" title="Feature Settings"></i>${settings_view}</span>`);
 
     $(document).on('click', function(e) { //hide feature menu if it's open when clicking anywhere else
-      $('#re_feature_settings').removeClass('re_active');
+      RE_CONTAINER.find('#re_feature_settings').removeClass('re_active');
     })
-    $('#re_feature_settings, .re_menu_block').click(function(e) { //open feature menu when clicking on cog icon or cog icon gradient
+    RE_CONTAINER.find('#re_feature_settings, .re_menu_block').click(function(e) { //open feature menu when clicking on cog icon or cog icon gradient
       e.stopPropagation();
-      $('#re_feature_settings').toggleClass('re_active');
+      RE_CONTAINER.find('#re_feature_settings').toggleClass('re_active');
     });
-    // $('.re_menu').click(function(e) { //don't hide menu or do any other click event when clicking on the menu
-    //   e.stopPropagation();
-    // })
-    $('#re_remove_feature').click(function(e) {
+
+
+
+    RE_CONTAINER.find('#re_remove_feature').on('click', function(e){
       const feature = $(this).closest('.re_container').data('feature');
       
       if (feature && locationURL) {
@@ -164,27 +167,28 @@ function insertHeader(element, where, feature, classes = "") {
     });
 
 
-
     if (settings?.headers[locationURL]?.expanded) {
-      $(".re_head").addClass("expanded");
-      $("div.re_content").show();
+      RE_CONTAINER.find(".re_head").addClass("expanded");
+      RE_CONTAINER.find("div.re_content").show();
     }
 
 
-    $(".re_head").click(function() {
+    RE_CONTAINER.find(".re_head").click(function() {
+      if ($(this).parent('.re_container').find('.re_content').length) {
         $(this).toggleClass("expanded");
         $(this).next("div.re_content").slideToggle("fast");
         $(this).find("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
         let expanded = $(this).hasClass("expanded");
         const obj = {"headers": {[locationURL]: {"expanded": expanded}}}
         sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
-        .catch((e) => console.error(e))      
+        .catch((e) => console.error(e)) 
+      }
     });
 
-    if ($('div.re_content').is(":visible")) {
-      $('span.re_icon').addClass('arrow_down');
+    if (RE_CONTAINER.find('div.re_content').is(":visible")) {
+      RE_CONTAINER.find('span.re_icon').addClass('arrow_down');
     } else {
-      $('span.re_icon').addClass('arrow_right');
+      RE_CONTAINER.find('span.re_icon').addClass('arrow_right');
     }
   }
 }
