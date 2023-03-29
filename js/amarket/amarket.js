@@ -112,7 +112,7 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
         <select class="re_category" id="re_ah_item_category" required></select>
         </div>
         <div class="re_row re_message">
-        <p>Showing <b><span id="shown">10</span></b> out of <b><span id="total">10</span></b> people.
+        <p>Showing <b><span id="shown">10</span></b> out of <b><span id="total">10</span></b>
         </div>
         `);
 
