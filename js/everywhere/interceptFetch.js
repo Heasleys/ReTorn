@@ -16,6 +16,12 @@ function reUpdateState(domElement, newState) {
   );
 }
 
+document.addEventListener("getTornRFC", function() {
+  const tornRFC = getRFC();
+  var e = new CustomEvent("RFCtoReTorn", {detail: tornRFC});
+  document.dispatchEvent(e);
+});
+
 document.addEventListener("reUpdateState", function(msg) {
   if (msg?.detail?.newState != undefined && msg?.detail?.className != undefined) {
     const el = document.getElementsByClassName(msg.detail.className)[0]
