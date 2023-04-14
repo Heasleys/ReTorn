@@ -62,7 +62,14 @@
   });
 
   var orderMain = 1;
+  var tornRFC;
   if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true" && features?.pages?.item?.quick_items?.enabled) { //Check for captcha and traveling  
+    document.addEventListener("RFCtoReTorn", function(e) {
+      tornRFC = e.detail;
+    }, false);
+    var rfcEv = new CustomEvent("getTornRFC");
+    document.dispatchEvent(rfcEv);
+
     insertHeader($("div.equipped-items-wrap"), 'before', 'quick_items', 'after');
 
     $('.re_content').html(`
@@ -195,7 +202,7 @@
 
   function sendItemUseRequest(itemID) {
     var options = {
-        url: "item.php",
+        url: "item.php?rfcv="+tornRFC,
         type: "post",
         data: { step: "useItem", itemID: itemID, item: itemID },
         beforeSend: function(xhr) {
