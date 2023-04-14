@@ -5,6 +5,7 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
   var timeToCrime;
   var n = 1;
   var url = window.location.href;
+  var tornRFC;
   insertHeader($("div.content-title"), 'after', 'quick_crimes');
   if (url.includes("?step=docrime")) {
     insertHeader($("div.content-wrapper"), 'prepend', 'quick_crimes');
@@ -18,6 +19,12 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
   $(".re_head").click(function() {
     re_container = $('div.re_container');
   });
+
+  document.addEventListener("RFCtoReTorn", function(e) {
+    tornRFC = e.detail;
+  }, false);
+  var rfcEv = new CustomEvent("getTornRFC");
+  document.dispatchEvent(rfcEv);
 
   //The click event to perform crimes, when clicked call do crime function
   $(document).on('click', '#re_docrime', function(event){
@@ -170,7 +177,7 @@ function sendCrimeDoRequest(crime) {
     var crimesContentWrapper = $('.content-wrapper');
 
     var options = {
-      url: crime.action,
+      url: crime.action + '&timestamp=' + Date.now() + '&rfcv=' + tornRFC,
       type: "post",
       data: { "nervetake": crime.nerve, "crime": crime.crime },
       beforeSend: function() {
