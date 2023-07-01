@@ -5,7 +5,7 @@ const urlParams = new URLSearchParams(queryString);
 const defenderID = urlParams.get('user2ID');
 
 const observer = new MutationObserver(function(mutations) {
-  if (!document.getElementById('attacker')) {
+  if (document.getElementById('defender')) {
     insertNPCtimer();
     observer.disconnect();
   }
@@ -39,9 +39,9 @@ function insertNPCtimer() {
         }
 
         let title = `<b>${loot_time.replace("_", " ").replace("hosp out", "loot 1")}:</b> ${attack_time}`;
-        
-        $("[id='playername_"+npc.name+"']").wrap(`<span class="re_lootwrap">`);
-        $("[id='playername_"+npc.name+"']").after(`<span id="re_loot_time">${title}</span>`);
+        const npcNameEl = $(`.user-name[id*="playername_${npc.name}"]`);
+        npcNameEl.wrap(`<span class="re_lootwrap">`);
+        npcNameEl.after(`<span id="re_loot_time">${title}</span>`);
 
         var t = 0;
         setInterval(function() {
@@ -58,8 +58,8 @@ function insertNPCtimer() {
           if ($('.re_lootwrap').length > 0) {
             $('#re_loot_time').html(title);
           } else {
-            $('#playername_'+npc.name).wrap(`<span class="re_lootwrap">`);
-            $('#playername_'+npc.name).after(`<span id="re_loot_time">${title}</span>`);
+            npcNameEl.wrap(`<span class="re_lootwrap">`);
+            npcNameEl.after(`<span id="re_loot_time">${title}</span>`);
           }
 
           if ($("div[id*='react-tooltip-Loot']").length != 0) {
