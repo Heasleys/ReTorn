@@ -108,7 +108,7 @@ function urlHandler() {
     rankedWarObserver.disconnect();
   }
 
-  if (url.match(terrRegex)) { //&& features?.pages?.factions?.territory_war_stats?.enabled
+  if (url.match(terrRegex)) { //&& features?.pages?.factions?.territory_war_spies?.enabled
     territoryWarObserver.observe(target, obsOptions);
   } else {
     territoryWarObserver.disconnect();
@@ -807,7 +807,7 @@ function territoryWar() {
   }
 
   //Insert Header
-  if ($(`.re_container[data-feature="${TT_STATS}"]`).length <= 0) {
+  if ($(`.re_container[data-feature="${TT_STATS}"]`).length == 0) {
     insertHeader($("ul.f-war-list"), 'before', TT_STATS);
     const RE_CONTAINER = $(`.re_container[data-feature="${TT_STATS}"]`);
     RE_CONTAINER.find('.re_head').removeClass("expanded");
@@ -840,14 +840,16 @@ function territoryWar() {
         })
       }
     });
-
-
-    loadTerritoryWar();
   }
+
+  loadTerritoryWar();
 }
 
 function loadTerritoryWar() {
   const RE_CONTAINER = $(`.re_container[data-feature="${TT_STATS}"]`);
+  if (RE_CONTAINER.length == 0) {
+    return;
+  }
 
   const a = $('.faction-war-info a[href*="step=profile&ID="');
   //obtain factionIDs for each faction in the territory war
@@ -893,18 +895,10 @@ function loadTerritoryWar() {
     });
   }
 
-
   function re_territory_wars_fetch_eventListener() {
     const membersElements = $('.re_territorywar .tab-menu-cont .members-list > li:not(.join,.timer-wrap)');
     return genericSpyFunction(membersElements, `.user.name`);
   }
-
-
-
-
-
-
-
 }
 
 function shortnameStats(stat) {
