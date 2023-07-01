@@ -5,7 +5,7 @@ const terrRegex = /war\/\d+/;
 var allMembers = {};
 
 const RW_FILTER = "ranked_war_filter";
-const TT_STATS = "territory_war_stats";
+const TT_STATS = "territory_war_spies";
 const FACTION_FILTER = "faction_profile_filter";
 const FACTION_NAME = $('#factions .faction-info-wrap > .faction-info').attr("data-name");
 
@@ -311,8 +311,8 @@ function rankedWar() {
     return;
   }
   //check to see if territory header is in the way, if so delete it
-  if ($(`.re_container[data-feature="territory_war_stats"]`).length) {
-    $('.re_container[data-feature="territory_war_stats"]').remove();
+  if ($(`.re_container[data-feature="territory_war_spies"]`).length) {
+    $('.re_container[data-feature="territory_war_spies"]').remove();
   }
 
   //Insert Header
@@ -799,7 +799,7 @@ function territoryWar() {
     RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh spy data</span></span></li>')
     //click event to refresh tornstats data
     RE_CONTAINER.find('#re_war_refresh').click(function() {
-      featureCleanup('territory_war_stats');
+      featureCleanup('territory_war_spies');
 
       var promises = [];
       const a = $('.faction-war-info a[href*="step=profile&ID="');
@@ -1133,7 +1133,7 @@ function featureCleanup(feature) {
     $('ul.members-list > li').show();//show all members in the list
   }
 
-  if (feature === `territory_war_stats`) {
+  if (feature === `territory_war_spies`) {
     $('.re_spy_title,.re_spy_col,.re_spy_ps,.re_spy_spy').remove();
     $('.re_territorywar').removeClass('re_territorywar');
   }

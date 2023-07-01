@@ -1279,14 +1279,14 @@ async function checkUpdate(version) {
         }
       }
     }
-    if (features?.pages?.factions?.territory_war_stats == undefined) {
-      features["pages"]["factions"]["territory_war_stats"] = {
+    if (features?.pages?.factions?.territory_war_spies == undefined) {
+      features["pages"]["factions"]["territory_war_spies"] = {
         "enabled": true,
-        "description": "Adds a column to territory wall wars to show the stats of a player. Requires Torn Stats."
+        "description": "Adds a spy column to territory wall wars for each player. Requires Torn Stats."
       }
     }
-    if (features?.pages?.factions?.faction_members_spies == undefined) {
-      features["pages"]["factions"]["faction_members_spies"] = {
+    if (features?.pages?.factions?.faction_profile_spies == undefined) {
+      features["pages"]["factions"]["faction_profile_spies"] = {
         "enabled": false,
         "description": "Adds a spy column to the faction members list on the faction profile page. Requires Torn Stats."
       }
