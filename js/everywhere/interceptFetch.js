@@ -30,7 +30,7 @@ document.addEventListener("reUpdateState", function(msg) {
 });
 
 
-document.addEventListener("initializeTooltip", function(msg) {
+document.addEventListener("initializeTooltip", function() {
     initializeTooltip('.content-wrapper', 'white-tooltip');
 });
 
