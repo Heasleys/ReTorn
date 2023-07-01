@@ -7,11 +7,6 @@ var allMembers = {};
 const RW_FILTER = "ranked_war_filter";
 const TT_STATS = "territory_war_spies";
 const FACTION_FILTER = "faction_profile_filter";
-const FACTION_NAME = $('#factions .faction-info-wrap > .faction-info').attr("data-name");
-
-if (FACTION_NAME && window?.document?.title && features?.pages?.factions?.faction_name_in_tab?.enabled) {
-    window.document.title = `${FACTION_NAME} | TORN`;
-}
 
 
 
@@ -45,6 +40,24 @@ var territoryWarObserver = new MutationObserver(function(mutations, observer) {
   if (hash.match(terrRegex) && $('div.faction-war').length == 1 && $('.re_territorywar').length == 0) {
     territoryWarObserver.disconnect();
     territoryWar();
+  }
+});
+
+//faction page other faction
+var factionPageOtherFactionObserver = new MutationObserver(function(mutations, observer) {
+  if ($('#factions .faction-info-wrap.faction-profile').length != 0) {
+      //obtain only the faction name, not the respect or any other children text
+      const FACTION_NAME = $('#factions .faction-info-wrap.faction-profile > div.title-black')
+      .clone()    //clone the element
+      .children() //select all the children
+      .remove()   //remove all the children
+      .end()  //again go back to selected element
+      .text();
+      
+      if (window?.document?.title && FACTION_NAME) {
+        window.document.title = `${FACTION_NAME} | TORN`;
+        factionPageOtherFactionObserver.disconnect();
+      }
   }
 });
 
@@ -101,14 +114,21 @@ function urlHandler() {
     territoryWarObserver.disconnect();
   }
 
-  if (url.includes('step=profile&ID=')) {
-    if (features?.pages?.factions?.faction_members_spies?.enabled) {
+  if (url.includes('step=profile')) {
+    if (features?.pages?.factions?.faction_name_in_tab?.enabled) {
+      factionPageOtherFactionObserver.observe(target, obsOptions);
+    }
+
+    if (features?.pages?.factions?.faction_profile_spies?.enabled) {
       factionPageMemberStatsObserver.observe(target, obsOptions);
     }
+
     if (features?.pages?.factions?.faction_profile_filter?.enabled) {
       factionMembersFilterObserver.observe(target, obsOptions);
     }
+
   } else {
+    factionPageOtherFactionObserver.disconnect();
     factionPageMemberStatsObserver.disconnect();
     factionMembersFilterObserver.disconnect();
   }
