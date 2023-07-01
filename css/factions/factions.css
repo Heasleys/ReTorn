@@ -63,6 +63,11 @@
   display: none;
 }
 
+/* the spy column cannot be filtered in territory wars */
+.re_territorywar .re_spy_title {
+  cursor: unset;
+}
+
 /* Territory War Name Column */
 .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .title .members, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .members-list .member {
   width: 256px;

@@ -72,6 +72,10 @@ a {
   text-decoration: none;
 }
 
+button {
+  cursor: pointer;
+}
+
 a:hover {
   color: var(--default-blue-hover-color);
 }
