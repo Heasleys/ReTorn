@@ -50,7 +50,12 @@ function interceptFetch(url,q, callback) {
             let dataurl = data.url.toString();
             if (dataurl.includes(url) && dataurl.includes(q)) {
                const clone = data.clone();
-               clone.json().then((response) => callback(response, data.url));
+               if (clone) {
+                  clone.json().then((response) => callback(response, data.url))
+                  .catch((error) => {
+                    console.log("[ReTorn][InterceptFetch] Error with clone.json(). Most likely not JSON data.", error)
+                  })
+               }
             }
             return data;
         });
