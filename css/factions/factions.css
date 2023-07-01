@@ -41,7 +41,7 @@
 /* ranked war member name column */
 .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
   width: 140px;
-}
+}/* Might change to be bigger later if own ranked war page looks fine with it being at 144px. Less cramped when using honor names */
 
 /* ranked war member level column */
 .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .level, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .level {
@@ -380,6 +380,74 @@ p.re_playercounts > span {
     line-height: 24px;
   }
 }
+
+[data-feature="faction_profile_filter"] .re_content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-feature="faction_profile_filter"] #re_filterbuttons {
+  padding: 1em;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#re_filterbuttons > div {
+  margin: 0.25em;
+}
+
+#re_filterbuttons label {
+  width: 75px;
+  height: 22px;
+  background: #f5f2ff;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 11px;
+  cursor: pointer;
+  padding-right: 5px;
+}
+
+body.dark-mode #re_filterbuttons label {
+  background: #151515;
+}
+body.dark-mode #re_filterbuttons label:hover {
+  background: #2f2f2f;
+}
+
+#re_filterbuttons input:checked ~ label {
+  background: #d7cff9;
+  box-shadow: 0 0 0 1px #000000;
+}
+body.dark-mode #re_filterbuttons input:checked ~ label {
+  background: #2f2f2f;
+  box-shadow: 0 0 0 1px #ffffff;
+}
+
+
+#re_filterbuttons input[type="checkbox"] {
+  display: none;
+}
+
+[data-feature="faction_profile_filter"] input[type='number'] {
+    padding: 0 0 0 4px;
+    border-radius: 5px;
+    width: 82px;
+    height: 22px;
+}
+
+.re_onlinestatus_hide, .re_status_hide {
+  display: none !important;
+}
+
+
+
+
+
+
 
 
 

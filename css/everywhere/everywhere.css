@@ -741,6 +741,47 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
 }
 
 
+.re_rounded_button {
+  border-radius: 100px;
+  border: 1px solid var(--default-panel-divider-outer-side-color);
+}
+
+.re_content .re_badge {
+  display: inline-block;
+  margin-left: 0.5em;
+  padding: 4px 2px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  vertical-align: middle;
+  border-radius: 100px;
+  color: #fff;
+  line-height: 6px;
+  text-align: center;
+  width: 17px;
+  text-shadow: 0px 0px 2px black;
+}
+
+.re_badge#re_online_count {
+  background-image: linear-gradient(#a3d900, #4c6600);
+}
+.re_badge#re_idle_count {
+  background-image: linear-gradient(#ffbf00, #b25900);
+}
+.re_badge#re_offline_count {
+  background-image: linear-gradient(#ccc, #666);
+}
+
+.re_badge#re_okay_count {
+  background-color: var(--user-status-green-color);
+}
+.re_badge.red {
+  background-color: var(--user-status-red-color);
+}
+.re_badge#re_travel_count {
+  background-color: var(--user-status-blue-color);
+}
+
 
 
 /* Color Related CSS */

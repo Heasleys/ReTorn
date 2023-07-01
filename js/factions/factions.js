@@ -72,7 +72,7 @@ var factionPageMemberStatsObserver = new MutationObserver(function(mutations, ob
 var factionMembersFilterObserver = new MutationObserver(function(mutations, observer) {
   if ($(".f-war-list.members-list").parent(".faction-info-wrap").length == 1 && $(`.re_container[data-feature="${FACTION_FILTER}"]`).length == 0) {
     factionMembersFilterObserver.disconnect();
-    factionMembersFilter();
+    factionMembersFilterInsert();
   }
 });
 
@@ -928,11 +928,42 @@ function shortnameStats(stat) {
 
 
 function factionPageMemberStats() {
-  console.log('factionPageMemberStats')
+  console.log('ReTorn: factionPageMemberStats');
+
+  // Check for factionID in $('.faction-profile .faction-info').attr('data-faction')
+  var factionID = $('.faction-profile .faction-info').attr('data-faction');
+  if (factionID) {
+    console.log('ReTorn: Found factionID:', factionID);
+  } else {
+    // Check for factionID in $('#top-page-links-list .view-wars').attr('href')
+    var href = $('#top-page-links-list .view-wars').attr('href');
+    var match = href.match(/\/ranked\/(\d+)/);
+    if (match) {
+      factionID = match[1];
+      console.log('ReTorn: Found factionID:', factionID);
+    } else {
+      // Check for factionID in $('.faction-info .f-info a[href*="city.php#factionID="]')
+      var link = $('.faction-info .f-info a[href*="city.php#factionID="]');
+      if (link.length) {
+        var hrefParts = link.attr('href').split('=');
+        if (hrefParts.length === 2) {
+          factionID = hrefParts[1];
+          console.log('ReTorn: Found factionID:', factionID);
+        } else {
+          console.log('ReTorn: Could not find factionID in any of the checked areas.');
+        }
+      } else {
+        console.log('ReTorn: Could not find factionID in any of the checked areas.');
+      }
+    }
+  }
+
+  if (!factionID) {
+    console.log("[ReTorn][factionPageMemberStats] Faction ID could not be found.");
+    return;
+  }
   $('.members-list').parent('.faction-info-wrap').addClass('re_faction_stats');
   $('.faction-info-wrap.re_faction_stats .members-list .table-header .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
-
-  const factionID = $('.faction-profile .faction-info').attr('data-faction');
 
   getTornStats("spy/faction/"+factionID)
   .then(function(data) {
@@ -990,11 +1021,12 @@ function factionPageMemberStats() {
 }
 
 
-function factionMembersFilter() {
+function factionMembersFilterInsert() {
   if ($(`.re_container[data-feature="${FACTION_FILTER}"]`).length <= 0) {
     insertHeader($(".f-war-list.members-list").parent(".faction-info-wrap"), 'before', FACTION_FILTER);
 
     const RE_CONTAINER = $(`.re_container[data-feature="${FACTION_FILTER}"]`);
+    const RE_CONTENT = RE_CONTAINER.find('.re_content');
 
     //insert additional buttons to the header
     RE_CONTAINER.find('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
@@ -1002,7 +1034,188 @@ function factionMembersFilter() {
       <input type="checkbox" title="Disable filters">
     </span>`);
 
+    const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="online"]');
+    const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="idle"]');
+    const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="offline"]');
+
+    const okayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.ok');
+    const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.traveling, .faction-info-wrap.another-faction .members-list .table-body .status > span.abroad');
+
+    const notokayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.not-ok:not(.traveling,.abroad)');
+    const jailDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.jail');
+    const hospDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.hospital');
+    const fedDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.federal');
+    const fallenDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen');
+
+    //count online/idle/offline for member table
+    let onlineCount = onlineDOMs.length;
+    let idleCount = idleDOMs.length;
+    let offlineCount = offlineDOMs.length;
+
+    let okayCount = okayDOMs.length;
+    let travelCount = travelDOMs.length;
+
+    let notokayCount = notokayDOMs.length;
+    let jailCount = jailDOMS.length;
+    let hospCount = hospDOMS.length;
+    let fedCount = fedDOMS.length;
+    let fallenCount = fallenDOMS.length;//unused count, setting in dropdown
+
     
+    // filter buttons
+    RE_CONTENT.append(`
+    <div id="re_filterbuttons">
+    <div>
+      <input type="checkbox" id="re_online_filter" class="re_onlinestatus_checkbox">
+      <label for="re_online_filter" class="noselect re_rounded_button">
+        Online <span class="re_badge" id="re_online_count">${onlineCount}</span>
+      </label>
+    </div>
+    <div>
+    <input type="checkbox" id="re_idle_filter" class="re_onlinestatus_checkbox">
+    <label for="re_idle_filter" class="noselect re_rounded_button">
+      Idle <span class="re_badge" id="re_idle_count">${idleCount}</span>
+    </label>
+    </div>
+    <div>
+    <input type="checkbox" id="re_offline_filter" class="re_onlinestatus_checkbox">
+    <label for="re_offline_filter" class="noselect re_rounded_button">
+      Offline <span class="re_badge" id="re_offline_count">${offlineCount}</span>
+    </label>
+    </div>
+
+    <div>
+    <input type="checkbox" id="re_okay_filter" class="re_status_checkbox">
+    <label for="re_okay_filter" class="noselect re_rounded_button">
+      Okay <span class="re_badge" id="re_okay_count">${okayCount}</span>
+    </label>
+    </div>
+
+    <div>
+    <input type="checkbox" id="re_hosp_filter" class="re_status_checkbox">
+    <label for="re_hosp_filter" class="noselect re_rounded_button">
+      Hospital <span class="re_badge red" id="re_hosp_count">${hospCount}</span>
+    </label>
+    </div>
+
+    <div>
+    <input type="checkbox" id="re_travel_filter" class="re_status_checkbox">
+    <label for="re_travel_filter" class="noselect re_rounded_button">
+      Travel <span class="re_badge" id="re_travel_count">${travelCount}</span>
+    </label>
+    </div>
+
+    <div>
+    <input type="checkbox" id="re_jail_filter" class="re_status_checkbox">
+    <label for="re_jail_filter" class="noselect re_rounded_button">
+      Jail <span class="re_badge red" id="re_jail_count">${jailCount}</span>
+    </label>
+    </div>
+
+    <div>
+    <input type="checkbox" id="re_fed_filter" class="re_status_checkbox">
+    <label for="re_fed_filter" class="noselect re_rounded_button">
+      Federal <span class="re_badge red" id="re_fed_count">${fedCount}</span>
+    </label>
+    </div>
+
+
+        <!--div>
+        <input id='re_level' type='number' min='0' max='100' placeholder="Max level" title="Max level">
+        </div-->
+    </div>
+    `);
+
+
+
+    $("#re_level").keyup(function () {
+      // if val is greater than 100, set to 100. If val is less than 0, set to 0.
+      if ($(this).val()) {
+        if (parseInt($(this).val()) >= 100) $(this).val(100);
+        if (parseInt($(this).val()) <= 0) $(this).val(0);
+      }
+    });
+
+    $('#re_filterbuttons input[type=checkbox]').change(function() {
+      factionMembersFilterCheck();
+    });
+  }
+
+
+}
+
+function factionMembersFilterCheck() {
+  //select elements to variables based on statuses
+  const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="online"]').closest('li.table-row');
+  const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="idle"]').closest('li.table-row');
+  const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="offline"]').closest('li.table-row');
+
+  const okayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.ok').closest('li.table-row');
+  const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.traveling, .faction-info-wrap.another-faction .members-list .table-body .status > span.abroad').closest('li.table-row');
+  
+  const notokayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.not-ok:not(.traveling,.abroad)').closest('li.table-row');
+  const jailDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.jail').closest('li.table-row');
+  const hospDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.hospital').closest('li.table-row');
+  const fedDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.federal').closest('li.table-row');
+  const fallenDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen').closest('li.table-row');
+
+
+  //select all elements to variable
+  const allElements = $('.faction-info-wrap.another-faction .members-list .table-body li.table-row');
+
+  
+
+  //if no checkboxes are checked, then don't hide any
+  if ($('#re_filterbuttons input[type=checkbox]:checked').length == 0) {
+    allElements.removeClass('re_onlinestatus_hide re_status_hide');
+    return;
+  }
+
+  //reset: add hide class to all elements
+  allElements.addClass('re_onlinestatus_hide re_status_hide');
+
+  //if no online status checkboxes are checked, then remove hide class based on online status
+  if ($('#re_filterbuttons .re_onlinestatus_checkbox:checked').length == 0) {
+    allElements.removeClass('re_onlinestatus_hide');
+  } else {
+    if ($('#re_online_filter').is(':checked')) {
+      onlineDOMs.removeClass('re_onlinestatus_hide');
+    }
+  
+    if ($('#re_idle_filter').is(':checked')) {
+      idleDOMs.removeClass('re_onlinestatus_hide');
+    } 
+  
+    if ($('#re_offline_filter').is(':checked')) {
+      offlineDOMs.removeClass('re_onlinestatus_hide');
+    } 
+  }
+
+
+  //if no status checkboxes are checked, then don't hide based on other status
+  if ($('#re_filterbuttons .re_status_checkbox:checked').length == 0) {
+    allElements.removeClass('re_status_hide');
+  } else {
+    if ($('#re_okay_filter').is(':checked')) {
+      okayDOMs.removeClass('re_status_hide');
+    }
+    if ($('#re_hosp_filter').is(':checked')) {
+      hospDOMs.removeClass('re_status_hide');
+    }
+    if ($('#re_travel_filter').is(':checked')) {
+      travelDOMs.removeClass('re_status_hide');
+    }
+    if ($('#re_jail_filter').is(':checked')) {
+      jailDOMs.removeClass('re_status_hide');
+    }
+    if ($('#re_fed_filter').is(':checked')) {
+      fedDOMs.removeClass('re_status_hide');
+    }
+
+
+    // if ($('#re_notokay_filter').is(':checked')) {
+    //   notokayDOMs.removeClass('re_status_hide');
+    // } 
   }
 }
 
