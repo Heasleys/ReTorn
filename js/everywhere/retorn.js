@@ -167,7 +167,7 @@ function insertHeader(element, where, feature, extraClasses = "") {
     });
 
 
-    if (settings?.headers[locationURL]?.expanded) {
+    if (settings?.headers?.[locationURL]?.[feature]?.expanded) {
       RE_CONTAINER.find(".re_head").addClass("expanded");
       RE_CONTAINER.find("div.re_content").show();
     }
@@ -175,11 +175,13 @@ function insertHeader(element, where, feature, extraClasses = "") {
 
     RE_CONTAINER.find(".re_head").click(function() {
       if ($(this).parent('.re_container').find('.re_content').length) {
+        const feature = $(this).closest('.re_container').data('feature');
         $(this).toggleClass("expanded");
         $(this).next("div.re_content").slideToggle("fast");
         $(this).find("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
         let expanded = $(this).hasClass("expanded");
-        const obj = {"headers": {[locationURL]: {"expanded": expanded}}}
+        const obj = {"headers": {[locationURL]: {[feature]: {"expanded": expanded}}}}
+        console.log(obj)
         sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
         .catch((e) => console.error(e)) 
       }
