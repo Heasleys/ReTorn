@@ -68,10 +68,24 @@
   cursor: unset;
 }
 
-/* Territory War Name Column */
+/* Territory War Name Column - desktop */
 .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .title .members, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .members-list .member {
   width: 256px;
 }
+@media screen and (max-width: 784px) {
+  .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .title .members, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .members-list .member {
+    width: 168px;
+  }
+  .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .title .attack, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .members-list .attack {
+      width: 48px;
+  }
+
+  .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont.profile-mode .title .members, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .profile-mode .members-list .member {
+    width: 243px;
+  }
+}
+
+
 /* Territory War Level Column */
 .d .f-war-list.war-new .faction-war .tab-menu-cont .members-list .level, .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .level {
   width: 33px;
@@ -165,7 +179,7 @@
 }
 
 /* ranked war divs should be half and half in desktop view*/
-.re_row > div {
+[data-feature="ranked_war_filter"] .re_row > div {
   box-sizing: border-box;
   width: 45%;
   max-width: 45%;
@@ -255,13 +269,13 @@ p.re_playercounts > span {
     display: none;
   }
 
-  html:not(.html-manual-desktop) .re_row > div {
+  html:not(.html-manual-desktop) [data-feature="ranked_war_filter"] .re_row > div {
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
   }
 
-  html:not(.html-manual-desktop) .re_row > div:not(:last-child) {
+  html:not(.html-manual-desktop) [data-feature="ranked_war_filter"] .re_row > div:not(:last-child) {
     margin-bottom: 20px;
   }
 }
@@ -324,7 +338,10 @@ p.re_playercounts > span {
 
 
   /* ranked war member name column */
-  .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
+  .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member {
+    width: 141px;
+  }
+  .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
     width: 140px;
   }
 
@@ -339,7 +356,9 @@ p.re_playercounts > span {
     border: 0;
     position: relative;
     width: 37px;
+    max-width: 37px; /* fix width because border is changed on mobile */
   }
+
   .re_spy_title:before {
     background: var(--default-divider-left-linear-gradient);
     bottom: 0;
@@ -385,10 +404,10 @@ p.re_playercounts > span {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 
 [data-feature="faction_profile_filter"] #re_filterbuttons {
-  padding: 1em;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -402,29 +421,30 @@ p.re_playercounts > span {
 #re_filterbuttons label {
   width: 75px;
   height: 22px;
-  background: #f5f2ff;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   font-size: 11px;
   cursor: pointer;
   padding-right: 5px;
-}
 
-body.dark-mode #re_filterbuttons label {
-  background: #151515;
+  color: var(--btn-color);
+  text-shadow: var(--btn-text-shadow);
+  background: var(--btn-background);
+  border: var(--btn-border);
 }
-body.dark-mode #re_filterbuttons label:hover {
-  background: #2f2f2f;
+#re_filterbuttons label:hover {
+  color: var(--btn-hover-color);
+  text-shadow: var(--btn-hover-text-shadow);
+  background: var(--btn-hover-background);
+  border: var(--btn-hover-border)
 }
 
 #re_filterbuttons input:checked ~ label {
-  background: #d7cff9;
   box-shadow: 0 0 0 1px #000000;
 }
 body.dark-mode #re_filterbuttons input:checked ~ label {
-  background: #2f2f2f;
-  box-shadow: 0 0 0 1px #ffffff;
+  box-shadow: 0 0 0 1px #d4d4d4;
 }
 
 
