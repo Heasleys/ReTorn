@@ -1064,65 +1064,68 @@ function factionMembersFilterInsert() {
     
     // filter buttons
     RE_CONTENT.append(`
-    <div id="re_filterbuttons">
-    <div>
-      <input type="checkbox" id="re_online_filter" class="re_onlinestatus_checkbox">
-      <label for="re_online_filter" class="noselect re_rounded_button">
-        Online <span class="re_badge" id="re_online_count">${onlineCount}</span>
+    <div class="re_row" id="re_filterbuttons">
+      <div>
+        <input type="checkbox" id="re_online_filter" class="re_onlinestatus_checkbox">
+        <label for="re_online_filter" class="noselect re_rounded_button">
+          Online <span class="re_badge" id="re_online_count">${onlineCount}</span>
+        </label>
+      </div>
+      <div>
+      <input type="checkbox" id="re_idle_filter" class="re_onlinestatus_checkbox">
+      <label for="re_idle_filter" class="noselect re_rounded_button">
+        Idle <span class="re_badge" id="re_idle_count">${idleCount}</span>
       </label>
-    </div>
-    <div>
-    <input type="checkbox" id="re_idle_filter" class="re_onlinestatus_checkbox">
-    <label for="re_idle_filter" class="noselect re_rounded_button">
-      Idle <span class="re_badge" id="re_idle_count">${idleCount}</span>
-    </label>
-    </div>
-    <div>
-    <input type="checkbox" id="re_offline_filter" class="re_onlinestatus_checkbox">
-    <label for="re_offline_filter" class="noselect re_rounded_button">
-      Offline <span class="re_badge" id="re_offline_count">${offlineCount}</span>
-    </label>
-    </div>
+      </div>
+      <div>
+      <input type="checkbox" id="re_offline_filter" class="re_onlinestatus_checkbox">
+      <label for="re_offline_filter" class="noselect re_rounded_button">
+        Offline <span class="re_badge" id="re_offline_count">${offlineCount}</span>
+      </label>
+      </div>
 
-    <div>
-    <input type="checkbox" id="re_okay_filter" class="re_status_checkbox">
-    <label for="re_okay_filter" class="noselect re_rounded_button">
-      Okay <span class="re_badge" id="re_okay_count">${okayCount}</span>
-    </label>
-    </div>
+      <div>
+      <input type="checkbox" id="re_okay_filter" class="re_status_checkbox">
+      <label for="re_okay_filter" class="noselect re_rounded_button">
+        Okay <span class="re_badge" id="re_okay_count">${okayCount}</span>
+      </label>
+      </div>
 
-    <div>
-    <input type="checkbox" id="re_hosp_filter" class="re_status_checkbox">
-    <label for="re_hosp_filter" class="noselect re_rounded_button">
-      Hospital <span class="re_badge red" id="re_hosp_count">${hospCount}</span>
-    </label>
-    </div>
+      <div>
+      <input type="checkbox" id="re_hosp_filter" class="re_status_checkbox">
+      <label for="re_hosp_filter" class="noselect re_rounded_button">
+        Hospital <span class="re_badge red" id="re_hosp_count">${hospCount}</span>
+      </label>
+      </div>
 
-    <div>
-    <input type="checkbox" id="re_travel_filter" class="re_status_checkbox">
-    <label for="re_travel_filter" class="noselect re_rounded_button">
-      Travel <span class="re_badge" id="re_travel_count">${travelCount}</span>
-    </label>
-    </div>
+      <div>
+      <input type="checkbox" id="re_travel_filter" class="re_status_checkbox">
+      <label for="re_travel_filter" class="noselect re_rounded_button">
+        Travel <span class="re_badge" id="re_travel_count">${travelCount}</span>
+      </label>
+      </div>
 
-    <div>
-    <input type="checkbox" id="re_jail_filter" class="re_status_checkbox">
-    <label for="re_jail_filter" class="noselect re_rounded_button">
-      Jail <span class="re_badge red" id="re_jail_count">${jailCount}</span>
-    </label>
-    </div>
+      <div>
+      <input type="checkbox" id="re_jail_filter" class="re_status_checkbox">
+      <label for="re_jail_filter" class="noselect re_rounded_button">
+        Jail <span class="re_badge red" id="re_jail_count">${jailCount}</span>
+      </label>
+      </div>
 
-    <div>
-    <input type="checkbox" id="re_fed_filter" class="re_status_checkbox">
-    <label for="re_fed_filter" class="noselect re_rounded_button">
-      Federal <span class="re_badge red" id="re_fed_count">${fedCount}</span>
-    </label>
-    </div>
+      <div>
+      <input type="checkbox" id="re_fed_filter" class="re_status_checkbox">
+      <label for="re_fed_filter" class="noselect re_rounded_button">
+        Federal <span class="re_badge red" id="re_fed_count">${fedCount}</span>
+      </label>
+      </div>
 
 
         <!--div>
         <input id='re_level' type='number' min='0' max='100' placeholder="Max level" title="Max level">
         </div-->
+    </div>
+    <div class="re_row re_message">
+      <p>Showing <b><span id="shown">X</span></b> out of <b><span id="total">X</span> members</b>
     </div>
     `);
 
