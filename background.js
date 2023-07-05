@@ -1303,7 +1303,21 @@ async function checkUpdate(version) {
         "description": "Adds the name of the faction in the browser tab."
       }
     }
+    if (settings?.faction_profile_filter == undefined) {
+      settings["faction_profile_filter"] = {
+        "hide_fallen": false,
+        "online": false,
+        "idle": false,
+        "offline": false,
+        "okay": false,
+        "hospital": false,
+        "travel": false,
+        "jail": false,
+        "federal": false
+      };
+    }
 
+    
     await setValue({"settings": settings}, "sync");
     await setValue({"features": features}, "sync");
 

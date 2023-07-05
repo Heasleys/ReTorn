@@ -206,7 +206,7 @@ function crimesTab() {
       </div>
     `);
 
-    $('#re_ready_ocs').prop( "checked", settings?.faction_ocs?.show_ready);
+    $('#re_ready_ocs').prop("checked", settings?.faction_ocs?.show_ready);
     showReadyOCs(settings?.faction_ocs?.show_ready);
 
     $('#re_ready_ocs').change(function() {
@@ -1034,6 +1034,36 @@ function factionMembersFilterInsert() {
       <input type="checkbox" title="Disable filters">
     </span>`);
 
+    //insert hide fallen member toggle
+    RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_toggle_fallen"><span class="re_menu_item"><input type="checkbox" id="re_fallen_toggle"><span class="re_menu_item_text">Hide fallen members</span></span></li>')
+
+    //click event for checkbox
+    $('#re_fallen_toggle').on("change", function(e) {
+      e.stopPropagation();
+      const checked = $('#re_fallen_toggle').prop("checked");
+
+      if (checked != undefined) {
+        const obj = {
+          "faction_profile_filter": {
+            "hide_fallen": checked
+          }
+        }
+
+        sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+        .then((r) => {
+            settings.faction_profile_filter.hide_fallen = checked;
+        })
+        .catch((e) => console.error(e))
+      }
+    });
+    //click event for checkbox text to toggle checkbox
+    $('#re_toggle_fallen .re_menu_item_text').click(function(e) {
+      e.stopPropagation();
+      let checkbox = $('#re_fallen_toggle');
+      checkbox.prop("checked", !checkbox.prop("checked"));
+      checkbox.trigger("change");
+    })
+
     const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="online"]');
     const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="idle"]');
     const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="offline"]');
@@ -1113,9 +1143,9 @@ function factionMembersFilterInsert() {
       </div>
 
       <div>
-      <input type="checkbox" id="re_fed_filter" class="re_status_checkbox">
-      <label for="re_fed_filter" class="noselect re_rounded_button">
-        Federal <span class="re_badge red" id="re_fed_count">${fedCount}</span>
+      <input type="checkbox" id="re_federal_filter" class="re_status_checkbox">
+      <label for="re_federal_filter" class="noselect re_rounded_button">
+        Federal <span class="re_badge red" id="re_federal_count">${fedCount}</span>
       </label>
       </div>
 
@@ -1125,10 +1155,28 @@ function factionMembersFilterInsert() {
         </div-->
     </div>
     <div class="re_row re_message">
-      <p>Showing <b><span id="shown">X</span></b> out of <b><span id="total">X</span> members</b>
+      <p>Showing <b><span id="shownFacProf">0</span></b> out of <b><span id="totalFacProf">0</span></b> members
     </div>
     `);
 
+    if (settings?.faction_profile_filter) {
+      console.log(settings?.faction_profile_filter);
+      Object.entries(settings?.faction_profile_filter).forEach(([key, enabled]) => {
+        console.log(key, enabled);
+
+        if (key == "hide_fallen") {
+          $('#re_fallen_toggle').prop("checked", enabled);
+        } else {
+          $(`#re_filterbuttons input[type="checkbox"][id*="${key}"]`).prop("checked", enabled);
+        }
+      });
+    }
+
+
+
+
+    $('#shownFacProf').text($('.faction-info-wrap.another-faction .members-list .table-body li.table-row:visible').length)
+    $('#totalFacProf').text($('.faction-info-wrap.another-faction .members-list .table-body li.table-row').length)
 
 
     $("#re_level").keyup(function () {
@@ -1141,13 +1189,54 @@ function factionMembersFilterInsert() {
 
     $('#re_filterbuttons input[type=checkbox]').change(function() {
       factionMembersFilterCheck();
+
+      const id = $(this).attr("id");
+      const key = id.replace("re_","").replace("_filter", "");
+      const checked = $(this).prop("checked");
+
+
+      if (checked != undefined && key != undefined) {
+        const obj = {
+          "faction_profile_filter": {
+            [key]: checked
+          }
+        }
+
+        sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+        .then((r) => {
+            settings.faction_profile_filter[key] = checked;
+        })
+        .catch((e) => console.error(e))
+      }
     });
+
+    factionMembersFilterCheck();
   }
-
-
 }
 
 function factionMembersFilterCheck() {
+    //select all elements to variable
+    const allElements = $('.faction-info-wrap.another-faction .members-list .table-body li.table-row');
+
+    //check fallen members first
+    const fallen_enabled = $('#re_fallen_toggle').prop("checked");
+    if (fallen_enabled) {
+      $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen').closest('li.table-row').hide();
+    } else {
+      $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen').closest('li.table-row').show();
+    }
+
+
+    //if no checkboxes are checked, then don't hide any
+    if ($('#re_filterbuttons input[type=checkbox]:checked').length == 0) {
+      allElements.removeClass('re_onlinestatus_hide re_status_hide');
+  
+      $('#shownFacProf').text($('.faction-info-wrap.another-faction .members-list .table-body li.table-row:visible').length)
+      $('#totalFacProf').text(allElements.length)
+      return;
+    }
+
+
   //select elements to variables based on statuses
   const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="online"]').closest('li.table-row');
   const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="idle"]').closest('li.table-row');
@@ -1161,18 +1250,6 @@ function factionMembersFilterCheck() {
   const hospDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.hospital').closest('li.table-row');
   const fedDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.federal').closest('li.table-row');
   const fallenDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen').closest('li.table-row');
-
-
-  //select all elements to variable
-  const allElements = $('.faction-info-wrap.another-faction .members-list .table-body li.table-row');
-
-  
-
-  //if no checkboxes are checked, then don't hide any
-  if ($('#re_filterbuttons input[type=checkbox]:checked').length == 0) {
-    allElements.removeClass('re_onlinestatus_hide re_status_hide');
-    return;
-  }
 
   //reset: add hide class to all elements
   allElements.addClass('re_onlinestatus_hide re_status_hide');
@@ -1211,7 +1288,7 @@ function factionMembersFilterCheck() {
     if ($('#re_jail_filter').is(':checked')) {
       jailDOMs.removeClass('re_status_hide');
     }
-    if ($('#re_fed_filter').is(':checked')) {
+    if ($('#re_federal_filter').is(':checked')) {
       fedDOMs.removeClass('re_status_hide');
     }
 
@@ -1220,6 +1297,9 @@ function factionMembersFilterCheck() {
     //   notokayDOMs.removeClass('re_status_hide');
     // } 
   }
+
+  $('#shownFacProf').text($('.faction-info-wrap.another-faction .members-list .table-body li.table-row:visible').length)
+  $('#totalFacProf').text(allElements.length)
 }
 
 

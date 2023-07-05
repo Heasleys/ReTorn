@@ -133,5 +133,16 @@
             "name": "",
             "category": ""
         }
+    },
+    "faction_profile_filter": {
+        "hide_fallen": false,
+        "online": false,
+        "idle": false,
+        "offline": false,
+        "okay": false,
+        "hospital": false,
+        "travel": false,
+        "jail": false,
+        "federal": false
     }
 }
