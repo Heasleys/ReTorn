@@ -65,7 +65,7 @@ function interceptFetch(url,q, callback) {
 interceptFetch("torn.com","torn.com", (response, url) => {
  console.log("[ReTorn][InterceptFetch] Found a fetch from: " + url, response);
 /* Mini Profiles */
- if (url.includes('step=getUserNameContextMenu')) {
+ if (url.includes('step=getUserNameContextMenu') || url.includes('step=getMiniProfile')) {
   if (ReTorn?.features?.general?.last_action_mini_profile?.enabled) {
     miniProfiles(response);
   }
