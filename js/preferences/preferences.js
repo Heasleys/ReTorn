@@ -23,6 +23,9 @@
 
         $("button#re_sync").click(() => {
             const key = $("#re_apikey").val();
+            $("#re_message").html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder" style="margin-left: 0; left: 0;">`);
+            $("#re_message").attr('hidden', false);
+            $("#re_message").parent().attr('hidden', false);
             if (key && key.length == 16) {
                 sendMessage({name: "set_api", apikey: key})
                 .then((r) => {
