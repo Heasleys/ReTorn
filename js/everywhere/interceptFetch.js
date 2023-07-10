@@ -44,8 +44,9 @@ document.addEventListener('re_fetchInject', function (r) {
 });
 
 function interceptFetch(url,q, callback) {
-    var originalFetch = window.fetch;
+    const originalFetch = window.fetch;
     window.fetch = function() {
+      return new Promise((resolve, reject) => {
         return originalFetch.apply(this, arguments).then(function(data) {
             let dataurl = data.url.toString();
             if (dataurl.includes(url) && dataurl.includes(q)) {
@@ -57,8 +58,9 @@ function interceptFetch(url,q, callback) {
                   })
                }
             }
-            return data;
+            resolve(data);
         });
+      });
     };
 }
 
