@@ -16,7 +16,7 @@
   });
 
   const refillObserver = new MutationObserver(function(mutations) {
-    if (document.getElementById('barEnergy') && document.getElementById('barNerve') && !document.getElementsByClassName('re_refill').length) {
+    if ($(`#sidebar [class*="bar_"][class*="energy_"]`).length && $(`#sidebar [class*="bar_"][class*="nerve_"]`).length && !document.getElementsByClassName('re_refill').length) {
       setRefills();
       refillObserver.disconnect();
     }
@@ -40,13 +40,13 @@
   function setRefills() {
     if (features?.general?.refill_reminder?.enabled) {
       if (data?.energy_refill_used == false) {
-        $("#barEnergy").find("p[class^='bar-name']").wrap('<a class="re_refill" id="re_energy" href="/points.php"></a>');
-        $("div[class^='bars-mobile'] #barEnergy").find("p[class^='bar-value']").wrap('<a class="re_refill" id="re_energy" href="/points.php"></a>');
+        $(`#sidebar [class*="bar_"][class*="energy_"]`).find("p[class^='bar-name']").wrap('<a class="re_refill" id="re_energy" href="/points.php"></a>');
+        $(`div[class*="bars-mobile"] [class*="bar_"][class*="energy_"]`).find("p[class*='bar-value']").wrap('<a class="re_refill" id="re_energy" href="/points.php"></a>');
       }
 
       if (data?.nerve_refill_used == false) {
-        $("#barNerve").find("p[class^='bar-name']").wrap('<a class="re_refill" id="re_nerve" href="/points.php"></a>');
-        $("div[class^='bars-mobile'] #barNerve").find("p[class^='bar-value']").wrap('<a class="re_refill" id="re_nerve" href="/points.php"></a>');
+        $(`#sidebar [class*="bar_"][class*="nerve_"]`).find("p[class^='bar-name']").wrap('<a class="re_refill" id="re_nerve" href="/points.php"></a>');
+        $(`div[class^='bars-mobile'] [class*="bar_"][class*="nerve_"]`).find("p[class^='bar-value']").wrap('<a class="re_refill" id="re_nerve" href="/points.php"></a>');
       }
     }
   }
