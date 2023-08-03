@@ -320,7 +320,7 @@ function initInputs() {
     if ($(this).val() == 0) {
       const key = $("#ts_apikey").val();
 
-      if (key && key.length == 16) {
+      if (key && key.length >= 16 && key.length <= 19) {
         if (confirm('By accepting, you agree to allow the api key you entered to be transmitted to tornstats.com.')) {
           sendMessage({name: "set_torn_stats_api", apikey: key})
           .then((r) => {

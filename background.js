@@ -766,7 +766,7 @@ async function fetchTornStats(apikey, selection) {
       return reject({status: false, message: "Torn Stats apikey does not exist."})
     }
 
-    if (apikey.length != 16) return reject({status: false, message: "Torn Stats apikey is invalid."})
+    if (apikey.length < 16 || apikey.length > 19) return reject({status: false, message: "Torn Stats apikey is invalid."})
     if (selection == undefined) return reject({status: false, message: "Torn Stats selection is invalid."})
 
     fetch('https://www.tornstats.com/api/v2/' + apikey + '/' + selection)
