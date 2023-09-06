@@ -4,9 +4,6 @@ const obsOptions = {attributes: false, childList: true, characterData: false, su
 const terrRegex = /war\/\d+/;
 var allMembers = {};
 
-const RW_FILTER = "ranked_war_filter";
-const TT_STATS = "territory_war_spies";
-const FACTION_FILTER = "faction_profile_filter";
 
 
 
