@@ -389,9 +389,7 @@ function insertSettingsSpyRefresh(feature, feature2 = null) {
   </li>
   `;
 
-  RE_CONTAINER.find('#re_features_settings_view').prepend(element)
-
-  RE_CONTAINER.find('#re_features_settings_view').prepend(element)
+  RE_CONTAINER.find('#re_features_settings_view').prepend(element);
 
   if (feature2) { //this is a terrible hack but idc. This should only trigger on memberlist spies refresh
     //Default click event to refresh tornstats data
