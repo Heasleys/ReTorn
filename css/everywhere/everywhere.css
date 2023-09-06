@@ -786,6 +786,9 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   background-color: var(--user-status-blue-color);
 }
 
+.re_red {
+  color: var(--user-status-red-color);
+}
 
 
 /* Color Related CSS */

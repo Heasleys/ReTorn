@@ -451,6 +451,7 @@ function genericSpyFunction(membersElements, useridSelection) {
 
 
             let statTot;
+            let elapsed;
 
           //if spy exists, add to title
           if (allMembers[userid] && allMembers[userid]["spy"]) {
@@ -463,7 +464,14 @@ function genericSpyFunction(membersElements, useridSelection) {
             spyTitle += `<br><b>${shortnameStats("speed")}: </b><span style='float: right; padding-left: 5px;'>${isNaN(spy["speed"]) ? spy["speed"] : spy["speed"].toLocaleString()}</span>`;
             spyTitle += `<br><b>${shortnameStats("dexterity")}: </b><span style='float: right; padding-left: 5px;'>${isNaN(spy["dexterity"]) ? spy["dexterity"] : spy["dexterity"].toLocaleString()}</span>`;
             spyTitle += `<br><b>${shortnameStats("total")}: </b><span style='float: right; padding-left: 5px;'>${isNaN(spy["total"]) ? spy["total"] : spy["total"].toLocaleString()}</span>`;
-            spyTitle += `<br><b>Last Spy: </b>${timeDifference(Date.now(),spy.timestamp*1000)}`;
+            
+            var c = "";
+            elapsed = Date.now() - (spy.timestamp*1000);
+            if (elapsed > OUTDATED_TIMESTAMP) {
+              c = "re_red";
+            }
+            
+            spyTitle += `<br><b>Last Spy: </b><span class=${c}>${timeDifference(Date.now(),spy.timestamp*1000)}</span>`;
             for (const [index, value] of Object.entries(spy)) {
               $(member).data(index, value);
             }
@@ -474,7 +482,14 @@ function genericSpyFunction(membersElements, useridSelection) {
             if (psTitle) {
               if (spyTitle) {
                 if (statTot) {//total stats available for abbreviated number
-                  $(member).find(".member").after(`<div class="re_spy_col left"><span class="re_spy_spy">${abbreviateNumber(statTot)}</span></div>`);
+                  
+                  var o = "";
+                  //add outdated icon if outdated
+                  if (elapsed && elapsed > OUTDATED_TIMESTAMP) {
+                    o = `<i class="fa-regular fa-calendar-xmark re_red re_outdated"></i>`;
+                  }
+
+                  $(member).find(".member").after(`<div class="re_spy_col left"><span class="re_spy_spy">${abbreviateNumber(statTot)}</span>${o}</div>`);
                 } else { //no total stats, so place eye icon instead
                   $(member).find(".member").after(`<div class="re_spy_col left"><i class="fas fa-eye re_spy_spy"></i></div>`);
                 }

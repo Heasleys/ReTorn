@@ -10,10 +10,18 @@
   padding-right: 5px;
   min-width:35px;
   max-width:35px;
+  position: relative;
 }
 
 .re_spy_title {
   cursor: pointer;
+}
+
+.re_outdated {
+  position: absolute;
+  font-size: 6px;
+  right: 1px;
+  top: 1px;
 }
 
 .re_faction_stats .re_spy_col {

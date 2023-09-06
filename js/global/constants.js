@@ -36,3 +36,5 @@ const SI_PREFIXES = [
     { value: 1e21, symbol: 's' },
     { value: 1e24, symbol: 'S' }
   ]
+
+const OUTDATED_TIMESTAMP = 25920000000; // 9 months
