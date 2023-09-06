@@ -61,7 +61,10 @@ function insertFactionMembersFilter() {
   const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="offline"]');
 
   const okayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.ok');
-  const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.traveling, .faction-info-wrap.another-faction .members-list .table-body .status > span.abroad');
+  //const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.traveling, .faction-info-wrap.another-faction .members-list .table-body .status > span.abroad');
+  const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .table-row .member-icons ul').find('li[id*="icon71_"]').closest('li.table-row');
+
+
 
   const notokayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.not-ok:not(.traveling,.abroad)');
   const jailDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.jail');
@@ -238,13 +241,17 @@ const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body
 const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="offline"]').closest('li.table-row');
 
 const okayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.ok').closest('li.table-row');
-const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.traveling, .faction-info-wrap.another-faction .members-list .table-body .status > span.abroad').closest('li.table-row');
+//const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.traveling, .faction-info-wrap.another-faction .members-list .table-body .status > span.abroad').closest('li.table-row');
 
-const notokayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.not-ok:not(.traveling,.abroad)').closest('li.table-row');
+const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .table-row .member-icons ul').find('li[id*="icon71_"]').closest('li.table-row');
+
+
 const jailDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.jail').closest('li.table-row');
 const hospDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.hospital').closest('li.table-row');
 const fedDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.federal').closest('li.table-row');
+
 const fallenDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen').closest('li.table-row');
+const notokayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.not-ok:not(.traveling,.abroad)').closest('li.table-row');
 
 //reset: add hide class to all elements
 allElements.addClass('re_onlinestatus_hide re_status_hide');
