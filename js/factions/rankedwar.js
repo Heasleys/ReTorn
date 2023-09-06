@@ -10,56 +10,56 @@ function rankedWar() {
       return;
     }
     //check to see if territory header is in the way, if so delete it
-    if ($(`.re_container[data-feature="territory_war_spies"]`).length) {
-      $('.re_container[data-feature="territory_war_spies"]').remove();
+    if ($(`.re_container[data-feature="${TT_STATS}"]`).length) {
+      $(`.re_container[data-feature="${TT_STATS}"]`).remove();
     }
 
 
-    if ($(`.re_container[data-feature="${RW_FILTER}"]`).length) {    
-        preloadRankedWar(); // Immedietely add elements to the page, so less jumpy page loading
-        loadRankedWar();
-    } else {
-        
+
+    //insert container if doesn't exist
+    if (!$(`.re_container[data-feature="${RW_FILTER}"]`).length) {
+      insert_ranked_war_container();
     }
 
-    if ($(`.re_container[data-feature="${RW_FILTER}"]`).length <= 0) {
-        //Insert container
-        const containerObject = {
-            "feature": `${RW_FILTER}`,
-            "insertLocation": "before",
-            "elementClasses": "",
-            "bar": false
-        }
-        insertContainer($("ul.f-war-list"), containerObject);
-        const RE_CONTAINER = $(`.re_container[data-feature="${RW_FILTER}"]`);
-  
-      //insert additional buttons to the header
-      RE_CONTAINER.find('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
-        <label class="re_title noselect">Disable filters</label>
-        <input type="checkbox" title="Disable filters">
-      </span>`);
-  
-          //insert button into header menu to refresh Torn Stats War data manually
-          RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh war data</span></span></li>')
-          //click event to refresh tornstats data
-          RE_CONTAINER.find('#re_war_refresh').click(function() {
-            //cleanup ranked war page first
-            featureCleanup(RW_FILTER);
-            preloadRankedWar();
-            
-            getWarID()
-            .then((warID) => getTornStats("wars/"+warID, 8, true))//8 hours cached, force update
-            .then(() => {
-              loadRankedWar();//reload ranked war
-            })
-            .catch((e) => console.error(e))
-          });
-    }
-  
+    preload_ranked_war(); // Immedietely add elements to the page, so less jumpy page loading
+    loadRankedWar();
+  }
 
+  function insert_ranked_war_container() {
+            //Insert container
+            const containerObject = {
+              "feature": `${RW_FILTER}`,
+              "insertLocation": "before",
+              "elementClasses": "",
+              "bar": false
+          }
+          insertContainer($("ul.f-war-list"), containerObject);
+          const RE_CONTAINER = $(`.re_container[data-feature="${RW_FILTER}"]`);
+    
+        //insert additional buttons to the header
+        RE_CONTAINER.find('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
+          <label class="re_title noselect">Disable filters</label>
+          <input type="checkbox" title="Disable filters">
+        </span>`);
+    
+        //insert button into header menu to refresh Torn Stats War data manually
+        RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_war_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh war data</span></span></li>')
+        //click event to refresh tornstats data
+        RE_CONTAINER.find('#re_war_refresh').click(function() {
+          //cleanup ranked war page first
+          featureCleanup(RW_FILTER);
+          preload_ranked_war();
+          
+          getWarID()
+          .then((warID) => getTornStats("wars/"+warID, 8, true))//8 hours cached, force update
+          .then(() => {
+            loadRankedWar();//reload ranked war
+          })
+          .catch((e) => console.error(e))
+        });
   }
   
-  function preloadRankedWar() {
+  function preload_ranked_war() {
     //Add loading dots
     $(`.re_container[data-feature="${RW_FILTER}"]`).find('.re_content').html(`<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" id="re_loader">
     <p id="re_message" style="display: none;"></p>`);
