@@ -738,6 +738,8 @@ function fetchAPI(apikey, type, selection, id) {
     })
     .then((response) => {
       if (response.status !== 200) {
+        const e = {status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status, code: response.status}
+        setValue({"re_last_error": e}, "local");
         console.log("[ReTorn][fetchAPI] There was a problem connecting to Torn servers. Status Code: " + response.status);
         return reject({status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status});
       } else {
