@@ -32,156 +32,172 @@ const paginationObserver = new MutationObserver(function(mutations) {
 
 //check if captcha or if user is logged out first, then start function
 if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length == 0) { 
-    const target = document.getElementById('auction-house-tabs');
-
-    if (features?.pages?.amarket?.duplicate_pagination?.enabled) {
-        if (target) {
-            paginationObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
-            $('.auction-market-main-cont').addClass('re_torn_ah');//used for changing class for pagination arrows        
-        }
-    }
-
     if (features?.pages?.amarket?.auction_filter?.enabled) {
-        //mutationObserver on auction house tabs
-        if (target) {
-            auctionTabObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
-        }
-
-        //watch for changes to url hash, switch filter view
-        window.addEventListener('hashchange', () => {
-            const hash = location.hash;
-            
-            if (hash.includes('itemtab=weapons')) {
-                $('#re_ah_weapons').show();
-                $('#re_ah_armor').hide();
-                $('#re_ah_items').hide();  
-            }
-            if (hash.includes('itemtab=armor')) {
-                $('#re_ah_weapons').hide();
-                $('#re_ah_armor').show();
-                $('#re_ah_items').hide();     
-            }
-            if (hash.includes('itemtab=items')) {
-                $('#re_ah_weapons').hide();
-                $('#re_ah_armor').hide();
-                $('#re_ah_items').show();  
-            }
-        }, false);
-
-        //insert auction head
-        insertHeader($("div#auction-house-tabs"), 'before', 'auction_filter');
-        $('.re_container').after(`<hr class="delimiter-999 m-top10">`);
-
-        //insert filter html
-        $('.re_content').html(`
-        <!-- Weapons -->
-        <div id="re_ah_weapons" class="re_filter" style="display: none;">
-        <input type="text" class="re_name" placeholder="Weapon name" list="re_ah_weapons_list" id="re_ah_weapons_list_textbox">
-        <datalist id="re_ah_weapons_list"></datalist>
-        <input class="re_stats" type="number" placeholder="Dmg" id="re_ah_weapons_damage" min="0" title="Weapon damage">
-        <input class="re_stats" type="number" placeholder="Acc" id="re_ah_weapons_accuracy" min="0" title="Weapon accuracy">
-
-        <select class="re_color" id="re_ah_weapons_color" required><option value="" selected>Weapon color</option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option><option value="orangered">Orange & Red</option></select>
-        <select id="re_ah_weapons_bonuses_1" class="re_bonus" required></select>
-        <input class="re_stats" type="number" id="re_ah_weapons_bonuses_1_perc" min="0" placeholder="Perc" title="Bonus percent" disabled>
-        <select id="re_ah_weapons_bonuses_2" class="re_bonus" required></select>
-        <input class="re_stats" type="number" id="re_ah_weapons_bonuses_2_perc" min="0" placeholder="Perc" title="Bonus percent" disabled>
-        </div>
-
-        <!-- Armor -->
-        <div id="re_ah_armor" class="re_filter" style="display: none;">
-        <input type="text" class="re_name" list="re_ah_armor_types" id="re_ah_armor_types_textbox" placeholder="Armor name">
-        <datalist id="re_ah_armor_types">
-        <option data-name="Riot" value="Riot">Impregnable</option>
-        <option data-name="Assault" value="Assault">Impenetrable</option>
-        <option data-name="Dune" value="Dune">Insurmountable</option>
-        <option data-name="Delta" value="Delta">Invulnerable</option>
-        <option data-name="Marauder" value="Marauder">Imperviable</option>
-        <option data-name="EOD" value="EOD">Impassable</option>
-        <option data-name="Welding Helmet" value="Welding Helmet"></option>
-        <option data-name="Hazmat Suit" value="Hazmat Suit">Radiation</option>
-        </datalist>
-        <input class="re_stats" type="number" id="re_ah_armor_defense" min="0" placeholder="Def" title="Armor defense">
-        <select class="re_color" id="re_ah_armor_color" required><option value="" selected>Armor color</option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option><option value="orangered">Orange & Red</option></select>
-        <input class="re_stats" type="number" id="re_ah_armor_bonus_perc" min="0" placeholder="Perc" title="Bonus percent">
-        </div>
-
-        <!-- Items -->
-        <div id="re_ah_items" class="re_filter" style="display: none;">
-        <input type="text" id="re_ah_items_textbox" class="re_name" placeholder="Item name">
-        <select class="re_category" id="re_ah_item_category" required></select>
-        </div>
-        <div class="re_row re_message">
-        <p>Showing <b><span id="shown">10</span></b> out of <b><span id="total">10</span></b>
-        </div>
-        `);
-
-        //fill datalist for Weapon Bonuses
-        var weaponBonusesList =`<option value="" selected>Weapon bonus</option>`;
-        $.each(RE_WEAPON_BONUSES, function(n,e) {
-            weaponBonusesList += '<option data-name="'+e+'">'+e+'</option>';
-        });
-        $('#re_ah_weapons_bonuses_1').html(weaponBonusesList);
-        $('#re_ah_weapons_bonuses_2').html(weaponBonusesList);
-
-        //fill select for Item Categories
-        var itemCategoriesList = `<option value="" selected>Item category</option>`
-        $.each(RE_ITEM_CATEGORIES, function(n,e) {
-            itemCategoriesList += '<option data-name="'+e+'">'+e+'</option>';
-        });
-        $('#re_ah_item_category').html(itemCategoriesList);
-
-        //pull item data from retorn, fill lists for weapons, items
-        sendMessage({name: "get_local", value: "re_items"})
-        .then((r) => {
-            if (r.status) {
-                re_items = r?.data?.items;
-                var weaponsList = '<option></option>';
-                $.each(re_items, function(n,e) {
-                    if (e?.weapon_type) {
-                        weaponsList += '<option data-name="'+e?.name+'">'+e?.name+'</option>';
-                    }
-                });
-                $('#re_ah_weapons_list').html(weaponsList);
-            }
-        })
-        .catch((e) => console.error(e))
-
-        if (settings?.auction_filter) {
-            let af = settings.auction_filter;
-            if (af?.weapons) {
-                let w = af.weapons;
-                //textboxese
-                w?.name && $('#re_ah_weapons_list_textbox').val(w?.name);
-                w?.damage && $('#re_ah_weapons_damage').val(w?.damage);
-                w?.accuracy && $('#re_ah_weapons_accuracy').val(w?.accuracy);
-                (w?.bonus_1 && w?.bonus_1?.percentage) && $('#re_ah_weapons_bonuses_1_perc').val(w?.bonus_1?.percentage);
-                (w?.bonus_2 && w?.bonus_2?.percentage) && $('#re_ah_weapons_bonuses_2_perc').val(w?.bonus_2?.percentage);
-
-                //selects
-                w?.color && $('#re_ah_weapons_color').find(`option[value="${w?.color}"]`).prop('selected', true);
-                (w?.bonus_1 && w?.bonus_1?.name) && $('#re_ah_weapons_bonuses_1').find(`option[data-name="${w?.bonus_1?.name}"]`).prop('selected', true);
-                (w?.bonus_2 && w?.bonus_2?.name) && $('#re_ah_weapons_bonuses_2').find(`option[data-name="${w?.bonus_2?.name}"]`).prop('selected', true);
-            }
-            if (af?.armor) {
-                let ar = af.armor;
-                ar?.color && $('#re_ah_armor_color').find(`option[value="${ar?.color}"]`).prop('selected', true);
-                ar?.defense && $('#re_ah_armor_defense').val(ar?.defense);
-                ar?.name && $('#re_ah_armor_types_textbox').val(ar?.name);
-                ar?.percentage && $('#re_ah_armor_bonus_perc').val(ar?.percentage);
-            }
-            if (af?.items) {
-                let it = af.items;
-                it?.category && $('#re_ah_item_category').find(`option[data-name="${it?.category}"]`).prop('selected', true);
-                it?.name && $('#re_ah_items_textbox').val(it?.name);
-            }
-            
-        }
-            
+        insertAMarketFilter();    
         initSearchElements();
         initShowFilter();
     }
+    if (features?.pages?.amarket?.duplicate_pagination?.enabled) {
+        enableDuplicatePagination();
+    }
 }
+
+function insertAMarketFilter() {
+    //check if container already exists
+    if ($(`.re_container[data-feature="${A_FILTER}"]`).length != 0) return;
+
+    const target = document.getElementById('auction-house-tabs');
+    //mutationObserver on auction house tabs
+    if (target) {
+        auctionTabObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+    }
+
+    //watch for changes to url hash, switch filter view
+    window.addEventListener('hashchange', () => {
+        const hash = location.hash;
+        
+        if (hash.includes('itemtab=weapons')) {
+            $('#re_ah_weapons').show();
+            $('#re_ah_armor').hide();
+            $('#re_ah_items').hide();  
+        }
+        if (hash.includes('itemtab=armor')) {
+            $('#re_ah_weapons').hide();
+            $('#re_ah_armor').show();
+            $('#re_ah_items').hide();     
+        }
+        if (hash.includes('itemtab=items')) {
+            $('#re_ah_weapons').hide();
+            $('#re_ah_armor').hide();
+            $('#re_ah_items').show();  
+        }
+    }, false);
+
+    const containerObject = {
+        "feature": `${A_FILTER}`,
+        "insertLocation": "before",
+        "elementClasses": "",
+        "bar": false
+    }
+    insertContainer($("div#auction-house-tabs"), containerObject);
+    const RE_CONTAINER = $(`.re_container[data-feature="${TT_STATS}"]`);
+    RE_CONTAINER.after(`<hr class="delimiter-999 m-top10">`);
+    
+    //insert filter html
+    $('.re_content').html(`
+    <!-- Weapons -->
+    <div id="re_ah_weapons" class="re_filter" style="display: none;">
+    <input type="text" class="re_name" placeholder="Weapon name" list="re_ah_weapons_list" id="re_ah_weapons_list_textbox">
+    <datalist id="re_ah_weapons_list"></datalist>
+    <input class="re_stats" type="number" placeholder="Dmg" id="re_ah_weapons_damage" min="0" title="Weapon damage">
+    <input class="re_stats" type="number" placeholder="Acc" id="re_ah_weapons_accuracy" min="0" title="Weapon accuracy">
+
+    <select class="re_color" id="re_ah_weapons_color" required><option value="" selected>Weapon color</option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option><option value="orangered">Orange & Red</option></select>
+    <select id="re_ah_weapons_bonuses_1" class="re_bonus" required></select>
+    <input class="re_stats" type="number" id="re_ah_weapons_bonuses_1_perc" min="0" placeholder="Perc" title="Bonus percent" disabled>
+    <select id="re_ah_weapons_bonuses_2" class="re_bonus" required></select>
+    <input class="re_stats" type="number" id="re_ah_weapons_bonuses_2_perc" min="0" placeholder="Perc" title="Bonus percent" disabled>
+    </div>
+
+    <!-- Armor -->
+    <div id="re_ah_armor" class="re_filter" style="display: none;">
+    <input type="text" class="re_name" list="re_ah_armor_types" id="re_ah_armor_types_textbox" placeholder="Armor name">
+    <datalist id="re_ah_armor_types">
+    <option data-name="Riot" value="Riot">Impregnable</option>
+    <option data-name="Assault" value="Assault">Impenetrable</option>
+    <option data-name="Dune" value="Dune">Insurmountable</option>
+    <option data-name="Delta" value="Delta">Invulnerable</option>
+    <option data-name="Marauder" value="Marauder">Imperviable</option>
+    <option data-name="EOD" value="EOD">Impassable</option>
+    <option data-name="Welding Helmet" value="Welding Helmet"></option>
+    <option data-name="Hazmat Suit" value="Hazmat Suit">Radiation</option>
+    </datalist>
+    <input class="re_stats" type="number" id="re_ah_armor_defense" min="0" placeholder="Def" title="Armor defense">
+    <select class="re_color" id="re_ah_armor_color" required><option value="" selected>Armor color</option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option><option value="orangered">Orange & Red</option></select>
+    <input class="re_stats" type="number" id="re_ah_armor_bonus_perc" min="0" placeholder="Perc" title="Bonus percent">
+    </div>
+
+    <!-- Items -->
+    <div id="re_ah_items" class="re_filter" style="display: none;">
+    <input type="text" id="re_ah_items_textbox" class="re_name" placeholder="Item name">
+    <select class="re_category" id="re_ah_item_category" required></select>
+    </div>
+    <div class="re_row re_message">
+    <p>Showing <b><span id="shown">10</span></b> out of <b><span id="total">10</span></b>
+    </div>
+    `);
+
+    //fill datalist for Weapon Bonuses
+    var weaponBonusesList =`<option value="" selected>Weapon bonus</option>`;
+    $.each(RE_WEAPON_BONUSES, function(n,e) {
+        weaponBonusesList += '<option data-name="'+e+'">'+e+'</option>';
+    });
+    $('#re_ah_weapons_bonuses_1').html(weaponBonusesList);
+    $('#re_ah_weapons_bonuses_2').html(weaponBonusesList);
+
+    //fill select for Item Categories
+    var itemCategoriesList = `<option value="" selected>Item category</option>`
+    $.each(RE_ITEM_CATEGORIES, function(n,e) {
+        itemCategoriesList += '<option data-name="'+e+'">'+e+'</option>';
+    });
+    $('#re_ah_item_category').html(itemCategoriesList);
+
+    //pull item data from retorn, fill lists for weapons, items
+    sendMessage({name: "get_local", value: "re_items"})
+    .then((r) => {
+        if (r.status) {
+            re_items = r?.data?.items;
+            var weaponsList = '<option></option>';
+            $.each(re_items, function(n,e) {
+                if (e?.weapon_type) {
+                    weaponsList += '<option data-name="'+e?.name+'">'+e?.name+'</option>';
+                }
+            });
+            $('#re_ah_weapons_list').html(weaponsList);
+        }
+    })
+    .catch((e) => showError(A_FILTER, e));
+
+    if (settings?.auction_filter) {
+        let af = settings.auction_filter;
+        if (af?.weapons) {
+            let w = af.weapons;
+            //textboxese
+            w?.name && $('#re_ah_weapons_list_textbox').val(w?.name);
+            w?.damage && $('#re_ah_weapons_damage').val(w?.damage);
+            w?.accuracy && $('#re_ah_weapons_accuracy').val(w?.accuracy);
+            (w?.bonus_1 && w?.bonus_1?.percentage) && $('#re_ah_weapons_bonuses_1_perc').val(w?.bonus_1?.percentage);
+            (w?.bonus_2 && w?.bonus_2?.percentage) && $('#re_ah_weapons_bonuses_2_perc').val(w?.bonus_2?.percentage);
+
+            //selects
+            w?.color && $('#re_ah_weapons_color').find(`option[value="${w?.color}"]`).prop('selected', true);
+            (w?.bonus_1 && w?.bonus_1?.name) && $('#re_ah_weapons_bonuses_1').find(`option[data-name="${w?.bonus_1?.name}"]`).prop('selected', true);
+            (w?.bonus_2 && w?.bonus_2?.name) && $('#re_ah_weapons_bonuses_2').find(`option[data-name="${w?.bonus_2?.name}"]`).prop('selected', true);
+        }
+        if (af?.armor) {
+            let ar = af.armor;
+            ar?.color && $('#re_ah_armor_color').find(`option[value="${ar?.color}"]`).prop('selected', true);
+            ar?.defense && $('#re_ah_armor_defense').val(ar?.defense);
+            ar?.name && $('#re_ah_armor_types_textbox').val(ar?.name);
+            ar?.percentage && $('#re_ah_armor_bonus_perc').val(ar?.percentage);
+        }
+        if (af?.items) {
+            let it = af.items;
+            it?.category && $('#re_ah_item_category').find(`option[data-name="${it?.category}"]`).prop('selected', true);
+            it?.name && $('#re_ah_items_textbox').val(it?.name);
+        }
+        
+    }
+}
+
+function enableDuplicatePagination() {
+    const target = document.getElementById('auction-house-tabs');
+    if (target) {
+        paginationObserver.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+        $('.auction-market-main-cont').addClass('re_torn_ah'); //used for changing class for pagination arrows        
+    }
+}
+
 
 function duplicatePager() {
     //duplicate pagination
@@ -470,9 +486,6 @@ function colorFilter(element, color) {
         const elementClass = $(element).attr('class');
         const parent = $(element).closest("li");
 
-        console.log(color)
-        console.log($(element).attr('class'))
-
         if (color == "none") {
             if (elementClass == "item torn-item large ") {
                 parent.removeClass("re_color_hide");
@@ -693,7 +706,7 @@ function updateAuctionSettings(new_settings) {
         .then((r) => {
             settings['auction_filter'] = new_settings["auction_filter"];
         })
-        .catch((e) => console.error(e))
+        .catch((e) => showError(A_FILTER, e));
     }
 }
 
