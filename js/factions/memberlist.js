@@ -29,7 +29,7 @@ function insertMemberListContainer() {
                 }
             }
             
-            factionMembersFilterCheck();
+            checkMemberListFilters();
     
             sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
             .then((r) => {
