@@ -1,4 +1,6 @@
-const manifestData = chrome.runtime.getManifest();
+var browser = browser || chrome;
+
+const manifestData = browser.runtime.getManifest();
 const default_quick_links = {
   amarket: {
     name: "Auction House",
@@ -58,7 +60,7 @@ function isEmpty(obj) { //function for easily checking if an object is empty
 }
 const sendMessage = (msg) => {
   return new Promise((resolve) => {
-    chrome.runtime.sendMessage(msg, (data) => {
+    browser.runtime.sendMessage(msg, (data) => {
       resolve(data);
     });
   });

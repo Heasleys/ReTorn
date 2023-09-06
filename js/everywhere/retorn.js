@@ -1,3 +1,5 @@
+var browser = browser || chrome;
+
   /* Send Mesages to background.js - Example Usage */
   /*
     sendMessage({"name": "merge_sync", "key": "notifications", "object": obj})
@@ -14,7 +16,7 @@
   */
  const sendMessage = (msg) => {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage(msg, (data) => {
+      browser.runtime.sendMessage(msg, (data) => {
         return resolve(data);
       });
     });
@@ -44,7 +46,7 @@ $(document).on('click', '#re_options', function(event){
     /* Inject FetchIntercept via js/everywhere/interceptFetch.js into Torn page */
     var ss = document.createElement("script");
     ss.setAttribute("type", "text/javascript");       
-    ss.setAttribute("src", chrome.runtime.getURL("/js/everywhere/interceptFetch.js"));
+    ss.setAttribute("src", browser.runtime.getURL("/js/everywhere/interceptFetch.js"));
     (document.head || document.documentElement).appendChild(ss);
     ss.onload = function() {
       console.log("ONLOAD")
@@ -90,7 +92,7 @@ $(document).on('click', '#re_options', function(event){
     if (settings.torn3d) {
       $( document ).ready(function() {
         var ss = document.createElement("script");
-        ss.src = chrome.runtime.getURL("/js/everywhere/torn3d.js");
+        ss.src = browser.runtime.getURL("/js/everywhere/torn3d.js");
         (document.head || document.documentElement).appendChild(ss);
       });
     }

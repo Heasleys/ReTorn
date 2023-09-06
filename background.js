@@ -1,5 +1,7 @@
+var browser = browser || chrome;
+
 //event listener for message passing
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   handleMessage(msg).then((data) => {
     sendResponse(data);
   })
@@ -15,7 +17,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 //});
 
 // Event Listener for Installing extension (update or new install)
-chrome.runtime.onInstalled.addListener((details) => {
+browser.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
     console.log('[ReTorn][onInstalled] New Installation, inserting defaults')
     newInstallation();
@@ -27,7 +29,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 // Chrome Alarm for pulling API data every 30 seconds
-chrome.alarms.onAlarm.addListener((alarm) => {
+browser.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name == "required_api") {
     getValue("re_apikey", "local")
     .then((key) => {
@@ -46,7 +48,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 });
 function clearAlarm(name) {
-  chrome.alarms.clear(name, (wasCleared) => {
+  browser.alarms.clear(name, (wasCleared) => {
     if (wasCleared) {
       console.log("[ReTorn] Alarm for API has been removed.");
     }
@@ -57,9 +59,9 @@ async function createAPIAlarm(minutes) {
   if (minutes == undefined) {
     minutes = 0.5;
   }
-  chrome.alarms.get("required_api", (alarm) => {
+  browser.alarms.get("required_api", (alarm) => {
     if (alarm == undefined) {
-      chrome.alarms.create("required_api", {periodInMinutes: minutes});
+      browser.alarms.create("required_api", {periodInMinutes: minutes});
     }
   });
 }
@@ -97,7 +99,7 @@ async function updateOldSettings() {
     try {
       newSettings["settings"] = await getValue("settings", "sync");
     } catch{
-      const sett = chrome.runtime.getURL('/files/default_settings.json');
+      const sett = browser.runtime.getURL('/files/default_settings.json');
       const settFetch = await fetch(sett);
       newSettings["settings"] = await settFetch.json();
     }
@@ -105,7 +107,7 @@ async function updateOldSettings() {
     try {
       newFeatures["features"] = await getValue("features", "sync");
     } catch{
-      const feat = chrome.runtime.getURL('/files/default_features.json');
+      const feat = browser.runtime.getURL('/files/default_features.json');
       const featFetch = await fetch(feat);
       newFeatures["features"] = await featFetch.json();
     }
@@ -113,7 +115,7 @@ async function updateOldSettings() {
     try {
       newNotifications["notifications"] = await getValue("notifications", "sync");
     } catch{
-      const noti = chrome.runtime.getURL('/files/default_notifications.json');
+      const noti = browser.runtime.getURL('/files/default_notifications.json');
       const notiFetch = await fetch(noti);
       newNotifications["notifications"] = await notiFetch.json();
     }
@@ -273,7 +275,7 @@ async function updateOldSettings() {
         await setValue(re_apikey, "local");
         pullRequiredAPI(oldAPI);
         createAPIAlarm();
-        chrome.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
+        browser.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
         removeValue("re_api_key", "sync");
       }
     } catch {}
@@ -392,7 +394,7 @@ async function updateOldSettings() {
 
 
 // On changes to Storage, check for differences in data for notifications
-chrome.storage.onChanged.addListener(async (changes, areaName) => {
+browser.storage.onChanged.addListener(async (changes, areaName) => {
   if (changes?.re_user_data == undefined) return;
     console.log("[ReTorn][re_user_data] changes found: ",{changes: changes, areaName: areaName});
 
@@ -408,9 +410,9 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
     const badgeCount = newValue?.notifications?.events + newValue?.notifications?.messages;
     if ((badgeCount) > 0) {
       const badgeText = badgeCount.toString();
-      chrome.action.setBadgeText({text: badgeText});
+      browser.action.setBadgeText({text: badgeText});
     } else {
-      chrome.action.setBadgeText({text: ""});
+      browser.action.setBadgeText({text: ""});
     }
     
     if (isEmpty(n)) return;
@@ -598,12 +600,12 @@ async function createNotification(name, title, message, actions, openURL = "http
 
     //if TTS is enabled, speak message body
     if (tts) {
-      chrome.tts.speak(
+      browser.tts.speak(
         message,
         {'rate': 0.8},
         function() {
-          if (chrome.runtime.lastError) {
-            console.error('[ReTorn][Text-to-Speech] Error: ' + chrome.runtime.lastError.message);
+          if (browser.runtime.lastError) {
+            console.error('[ReTorn][Text-to-Speech] Error: ' + browser.runtime.lastError.message);
           }
         }
       );
@@ -612,17 +614,17 @@ async function createNotification(name, title, message, actions, openURL = "http
 // Event Listener for Notification Button Clicks
 self.addEventListener('notificationclick', function (event) {
   if (event.action === 'Open' && event.notification.data.url) {
-    chrome.tabs.create({'url': event.notification.data.url});
+    browser.tabs.create({'url': event.notification.data.url});
   }
   event.notification.close();
-  chrome.tts.stop();
+  browser.tts.stop();
 });
 
 //get value
 const getValue = async function(key, loc) {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage[loc].get(key, function(v) {
+      browser.storage[loc].get(key, function(v) {
         if (isEmpty(v)) {
           console.log({status: false, message: key + " is empty."})
           reject({status: false, message: key + " is empty."});
@@ -641,7 +643,7 @@ const getValue = async function(key, loc) {
 const setValue = async function(obj, loc) {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage[loc]?.set(obj, function() {
+      browser.storage[loc]?.set(obj, function() {
         const keys = Object.keys(obj);
         console.log({status: true, message: keys[0] + " has been set."})
         resolve({status: true, message: keys[0] + " has been set."});
@@ -658,7 +660,7 @@ const emptyValue = async function(key, loc) {
   return new Promise((resolve, reject) => {
     try {
       const obj = {[key]:{}}
-      chrome.storage[loc]?.set(obj, function() {
+      browser.storage[loc]?.set(obj, function() {
         console.log({status: true, message: key + " has been emptied."})
         resolve({status: true, message: key + " has been emptied."});
       });
@@ -672,7 +674,7 @@ const emptyValue = async function(key, loc) {
 const removeValue = async function(key, loc) {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage[loc].remove(key, function() {
+      browser.storage[loc].remove(key, function() {
         console.log({status: true, message: key + " has been removed."})
         resolve({status: true, message: key + " has been removed."});
       });
@@ -867,10 +869,10 @@ async function handleMessage(msg) {
 
   switch (m.name) {    
     case "open_options":
-      if (chrome.runtime.openOptionsPage) {
-        chrome.runtime.openOptionsPage();
+      if (browser.runtime.openOptionsPage) {
+        browser.runtime.openOptionsPage();
       } else {
-        window.open(chrome.runtime.getURL('/pages/options.html'));
+        window.open(browser.runtime.getURL('/pages/options.html'));
       }
     break;
 
@@ -878,7 +880,7 @@ async function handleMessage(msg) {
       if (m.apikey) {
         await validateKey(m.apikey); //validate if the apikey is real and working
         await Promise.all([pullRequiredAPI(m.apikey), createAPIAlarm()]); //pull api data and create chrome.alarm to periodically pull api data
-        chrome.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
+        browser.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
         return {status: true, message: "Your apikey has been saved."}
       } else {
         throw {status: false, message: "The apikey was not passed correctly."}
@@ -1095,9 +1097,9 @@ function isEmpty(obj) { //function for easily checking if an object is empty
 
 // Delete all settings and restore to default
 function fullReset() {
-  chrome.storage.sync.clear();
-  chrome.storage.local.clear();
-  chrome.storage.session.clear();
+  browser.storage.sync.clear();
+  browser.storage.local.clear();
+  browser.storage.session.clear();
   clearAlarm("required_api");
 
   newInstallation();
@@ -1114,8 +1116,8 @@ async function logout() {
       //setValue({re_settings: {tornstats: {enabled: false}}}, "local")
       ]);
       console.log("[ReTorn][logout] Removed user data from storage", messages);
-      chrome.action.setPopup({popup: "pages/popup_start.html"});
-      chrome.action.setBadgeText({text: ""});
+      browser.action.setPopup({popup: "pages/popup_start.html"});
+      browser.action.setBadgeText({text: ""});
       clearAlarm("required_api");
       return {status: true, message: "You have been logged out."};
   }
@@ -1171,7 +1173,7 @@ async function clearTornStats() {
 }
 
 async function setItemsFromFile() {
-  const url = chrome.runtime.getURL('/files/items.json');
+  const url = browser.runtime.getURL('/files/items.json');
   const f = await fetch(url);
   const json = await f.json();
   await setValue({"re_items": json}, "local");
@@ -1179,12 +1181,12 @@ async function setItemsFromFile() {
 
 
 async function startup() {
-  chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"}); //set badge color
+  browser.action.setBadgeBackgroundColor({color: "#8ABEEF"}); //set badge color
   checkItemAPI();
   await clearTornStats();
   
   //check version, update version if needed  
-  const currentVersion = chrome.runtime.getManifest().version;
+  const currentVersion = browser.runtime.getManifest().version;
   try {
     const version = await getValue("version", "local");
 
@@ -1210,7 +1212,7 @@ async function startup() {
 
   try {
     const r = await getValue("re_user_data", "local");
-      chrome.action.setPopup({popup: "pages/popup.html"});
+      browser.action.setPopup({popup: "pages/popup.html"});
       createAPIAlarm();
   }
   catch (e) {
@@ -1330,9 +1332,9 @@ async function checkUpdate(version) {
 }
 
 async function newInstallation() {
-  const sett = chrome.runtime.getURL('/files/default_settings.json');
-  const feat = chrome.runtime.getURL('/files/default_features.json');
-  const noti = chrome.runtime.getURL('/files/default_notifications.json');
+  const sett = browser.runtime.getURL('/files/default_settings.json');
+  const feat = browser.runtime.getURL('/files/default_features.json');
+  const noti = browser.runtime.getURL('/files/default_notifications.json');
 
 
   const fetches = await Promise.all([fetch(sett),fetch(feat),fetch(noti)]);
