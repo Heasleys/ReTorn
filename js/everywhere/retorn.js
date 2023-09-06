@@ -40,6 +40,14 @@ $(document).on('click', '#re_options', function(event){
 
   Promise.all([sendMessage({name: "get_sync", value: "settings"}),sendMessage({name: "get_sync", value: "features"})])
   .then((r) =>  {
+    if (!r[0].status) {
+      console.error('[ReTorn]: Error | ', r[0].message);
+      return;
+    }
+    if (!r[1].status) {
+      console.error('[ReTorn]: Error | ', r[1].message);
+      return;
+    }
     settings = r[0].data;
     features = r[1].data;
     /* Create customEvent to communicate with interceptFetch.js/extension */
