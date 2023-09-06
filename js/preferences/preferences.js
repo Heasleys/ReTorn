@@ -1,10 +1,19 @@
 (function() {
     //make sure we are not logged out
     if ($('div.content-wrapper.logged-out').length == 0) {
-        insertHeader($("div.content-wrapper"), 'append', 'connect');
-        $('.re_head .re_title').prepend(`<span class="re_logo"><span class="re_yellow">Re</span>Torn: </span>`)
-        $('.re_settings_icon').remove();
-        $('.re_content').html(`
+        //Insert container
+        const containerObject = {
+            "feature": `${CONNECT}`,
+            "insertLocation": "append",
+            "elementClasses": "",
+            "bar": false
+        }
+        insertContainer($("div.content-wrapper"), containerObject);
+        const RE_CONTAINER = $(`.re_container[data-feature="${CONNECT}"]`);
+
+        RE_CONTAINER.find('.re_head .re_title').prepend(`<span class="re_logo"><span class="re_yellow">Re</span>Torn: </span>`)
+        RE_CONTAINER.find('.re_settings_icon').remove();
+        RE_CONTAINER.find('.re_content').html(`
         <div class="re_row">
             <p id="re_signin_message">You are not signed into ReTorn. Please enter your api key then click connect.</p>
         </div>

@@ -6,11 +6,29 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
   var n = 1;
   var url = window.location.href;
   var tornRFC;
-  insertHeader($("div.content-title"), 'after', 'quick_crimes');
-  if (url.includes("?step=docrime")) {
-    insertHeader($("div.content-wrapper"), 'prepend', 'quick_crimes');
-  }
-  $('.re_content').html(`
+
+    //Insert container
+    const containerObject = {
+        "feature": `${QUICK_CRIMES}`,
+        "insertLocation": "after",
+        "elementClasses": "",
+        "bar": false
+    }
+    insertContainer($("div.content-title"), containerObject);
+
+    if (url.includes("?step=docrime")) {
+      const containerObject2 = {
+        "feature": `${QUICK_CRIMES}`,
+        "insertLocation": "prepend",
+        "elementClasses": "",
+        "bar": false
+      }
+      insertContainer($("div.content-wrapper"), containerObject2);
+    }
+
+  const RE_CONTAINER = $(`.re_container[data-feature="${QUICK_CRIMES}"]`);
+
+  RE_CONTAINER.find('.re_content').html(`
     <p>Click on a crime's image to add it to this quick crimes list. Click the image in this list to remove it.</p>
     <div class="re_row" id="re_quick_crimes"></div>
     `);

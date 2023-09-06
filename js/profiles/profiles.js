@@ -34,9 +34,20 @@
   
   function profileHeader() {
     if ($('div.re_container').length == 0) {
-      insertHeader($("div.profile-wrapper.medals-wrapper"), 'before', 'profile_stats');
+      //Insert container
+      if ($(`.re_container[data-feature="${PROFILE_STATS}"]`).length != 0) return;
+      const containerObject = {
+          "feature": `${PROFILE_STATS}`,
+          "insertLocation": "before",
+          "elementClasses": "",
+          "bar": false
+      }
+      insertContainer($("div.profile-wrapper.medals-wrapper"), containerObject);
     }
-    $('.re_content').html(`
+    
+    const RE_CONTAINER = $(`.re_container[data-feature="${PROFILE_STATS}"]`);
+
+    RE_CONTAINER.find('.re_content').html(`
       <div class="re_row" id="re_loader">
         <img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" style="margin-left: 0; left: 0;">
       </div>
@@ -45,17 +56,17 @@
       <p id="re_message" style="display: none;"></p>
       `);
 
-    if ($('#re_ts_refresh').length == 0) {
+    if (RE_CONTAINER.find('#re_ts_refresh').length == 0) {
       //insert button into header menu to refresh Torn Stats profile data manually
-      $('#re_features_settings_view').prepend('<li id="re_ts_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh profile data</span></span></li>')
+      RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_ts_refresh"><span class="re_menu_item"><i class="fa-solid fa-arrows-rotate"></i><span class="re_menu_item_text">Refresh profile data</span></span></li>')
       //click event to refresh tornstats data
-      $('#re_ts_refresh').click(function() {
+      RE_CONTAINER.find('#re_ts_refresh').click(function() {
         loadTS(true);
       });
     }
     if ($('#re_difference').length == 0) {
       //insert button into header menu
-      $('#re_features_settings_view').prepend('<li id="re_difference"><span class="re_menu_item"><input type="checkbox" id="re_diff_toggle"><span class="re_menu_item_text">Show relative values</span></span></li>')
+      RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_difference"><span class="re_menu_item"><input type="checkbox" id="re_diff_toggle"><span class="re_menu_item_text">Show relative values</span></span></li>')
       //click event for checkbox
       $('#re_diff_toggle').on("change", function(e) {
         e.stopPropagation();
@@ -65,7 +76,6 @@
         const obj = {"profile": {"relative_values": {"enabled": enabled}}}
             sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
             .then((r) => {
-              console.log(r);
                 settings.profile.relative_values.enabled = enabled;
                 toggleDiff(enabled);
             })
