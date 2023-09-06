@@ -1,3 +1,10 @@
+const re_userlist_observer = new MutationObserver(function(mutations, observer) {
+  if ($(".f-war-list.members-list").parent(".faction-info-wrap").length == 1 && $(`.re_container[data-feature="${FACTION_FILTER}"]`).length == 1) {
+    checkMemberListFilters();
+    //update_filter_counts();
+  }
+});
+
 function insertMemberListContainer() {
     //Insert container
     if ($(`.re_container[data-feature="${FACTION_FILTER}"]`).length == 0) {
@@ -56,35 +63,7 @@ function insertFactionMembersFilter() {
   const RE_CONTAINER = $(`.re_container[data-feature="${FACTION_FILTER}"]`);
   const RE_CONTENT = RE_CONTAINER.find('.re_content');
 
-  const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="online"]');
-  const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="idle"]');
-  const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="offline"]');
-
-  const okayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.ok');
-  //const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.traveling, .faction-info-wrap.another-faction .members-list .table-body .status > span.abroad');
-  const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .table-row .member-icons ul').find('li[id*="icon71_"]').closest('li.table-row');
-
-
-
-  const notokayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.not-ok:not(.traveling,.abroad)');
-  const jailDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.jail');
-  const hospDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.hospital');
-  const fedDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.federal');
-  const fallenDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen');
-
-  //count online/idle/offline for member table
-  let onlineCount = onlineDOMs.length;
-  let idleCount = idleDOMs.length;
-  let offlineCount = offlineDOMs.length;
-
-  let okayCount = okayDOMs.length;
-  let travelCount = travelDOMs.length;
-
-  let notokayCount = notokayDOMs.length;
-  let jailCount = jailDOMS.length;
-  let hospCount = hospDOMS.length;
-  let fedCount = fedDOMS.length;
-  let fallenCount = fallenDOMS.length;//unused count, setting in dropdown
+  const c = getCounts();
 
   
   // filter buttons
@@ -93,54 +72,54 @@ function insertFactionMembersFilter() {
     <div>
       <input type="checkbox" id="re_online_filter" class="re_onlinestatus_checkbox">
       <label for="re_online_filter" class="noselect re_rounded_button">
-        Online <span class="re_badge" id="re_online_count">${onlineCount}</span>
+        Online <span class="re_badge" id="re_onlineCount">${c.onlineCount}</span>
       </label>
     </div>
     <div>
     <input type="checkbox" id="re_idle_filter" class="re_onlinestatus_checkbox">
     <label for="re_idle_filter" class="noselect re_rounded_button">
-      Idle <span class="re_badge" id="re_idle_count">${idleCount}</span>
+      Idle <span class="re_badge" id="re_idleCount">${c.idleCount}</span>
     </label>
     </div>
     <div>
     <input type="checkbox" id="re_offline_filter" class="re_onlinestatus_checkbox">
     <label for="re_offline_filter" class="noselect re_rounded_button">
-      Offline <span class="re_badge" id="re_offline_count">${offlineCount}</span>
+      Offline <span class="re_badge" id="re_offlineCount">${c.offlineCount}</span>
     </label>
     </div>
 
     <div>
     <input type="checkbox" id="re_okay_filter" class="re_status_checkbox">
     <label for="re_okay_filter" class="noselect re_rounded_button">
-      Okay <span class="re_badge" id="re_okay_count">${okayCount}</span>
+      Okay <span class="re_badge" id="re_okayCount">${c.okayCount}</span>
     </label>
     </div>
 
     <div>
     <input type="checkbox" id="re_hosp_filter" class="re_status_checkbox">
     <label for="re_hosp_filter" class="noselect re_rounded_button">
-      Hospital <span class="re_badge red" id="re_hosp_count">${hospCount}</span>
+      Hospital <span class="re_badge red" id="re_hospCount">${c.hospCount}</span>
     </label>
     </div>
 
     <div>
     <input type="checkbox" id="re_travel_filter" class="re_status_checkbox">
     <label for="re_travel_filter" class="noselect re_rounded_button">
-      Travel <span class="re_badge" id="re_travel_count">${travelCount}</span>
+      Travel <span class="re_badge" id="re_travelCount">${c.travelCount}</span>
     </label>
     </div>
 
     <div>
     <input type="checkbox" id="re_jail_filter" class="re_status_checkbox">
     <label for="re_jail_filter" class="noselect re_rounded_button">
-      Jail <span class="re_badge red" id="re_jail_count">${jailCount}</span>
+      Jail <span class="re_badge red" id="re_jailCount">${c.jailCount}</span>
     </label>
     </div>
 
     <div>
     <input type="checkbox" id="re_federal_filter" class="re_status_checkbox">
     <label for="re_federal_filter" class="noselect re_rounded_button">
-      Federal <span class="re_badge red" id="re_federal_count">${fedCount}</span>
+      Federal <span class="re_badge red" id="re_fedCount">${c.fedCount}</span>
     </label>
     </div>
 
@@ -198,6 +177,16 @@ function insertFactionMembersFilter() {
       .catch((e) => console.error(e))
     }
   });
+
+
+  try {
+    const target = document.querySelector('.f-war-list.members-list');
+    const obsOptions = {attributes: false, childList: true, characterData: false, subtree:true};
+    re_userlist_observer.observe(target, obsOptions);
+  }
+  catch (e) {
+    console.error("[ReTorn][FactionFilter] Observer error: ", e);
+  }
 
   checkMemberListFilters();
 }
@@ -304,6 +293,13 @@ $('#shownFacProf').text($('.faction-info-wrap.another-faction .members-list .tab
 $('#totalFacProf').text(allElements.length)
 }
 
+function update_filter_counts() {
+  const c = getCounts();
+  for (const [key, value] of Object.entries(c)) {
+    $(`#re_${key}`).text(value);
+  }
+}
+
 function initMemberListSpies() {
   insertMemberListSpyElements();
   getMemberListStats();
@@ -402,4 +398,55 @@ function getMemberListStats(forced = false) {
   });
 
 
+}
+
+function getCounts() {
+  const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="online"]');
+  const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="idle"]');
+  const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="offline"]');
+
+  const okayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.ok');
+  const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .table-row .member-icons ul').find('li[id*="icon71_"]').closest('li.table-row');
+
+
+
+  const notokayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.not-ok:not(.traveling,.abroad)');
+  const jailDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.jail');
+  const hospDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.hospital');
+  const fedDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.federal');
+  const fallenDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen');
+
+  //count online/idle/offline for member table
+  let onlineCount = onlineDOMs.length;
+  let idleCount = idleDOMs.length;
+  let offlineCount = offlineDOMs.length;
+
+  let okayCount = okayDOMs.length;
+  let travelCount = travelDOMs.length;
+
+  let notokayCount = notokayDOMs.length;
+  let jailCount = jailDOMS.length;
+  let hospCount = hospDOMS.length;
+  let fedCount = fedDOMS.length;
+  let fallenCount = fallenDOMS.length;//unused count, setting in dropdown
+  
+  
+  const wallDOMS = $('.faction-info-wrap.another-faction .members-list .table-body .table-row .member-icons ul').find('li[id*="icon75_"], li[id*="icon76_"]');
+  let wallCount = wallDOMS.length;
+
+  const obj = {
+      "onlineCount": onlineCount,
+      "idleCount": idleCount,
+      "offlineCount": offlineCount,
+      "okayCount": okayCount,
+      "hospCount": hospCount,
+      "jailCount": jailCount,
+      "travelCount": travelCount,
+      "wallCount": wallCount,
+      "notokayCount": notokayCount,
+      "fedCount": fedCount,
+      "fallenCount": fallenCount
+  }
+
+  return obj;
 }
