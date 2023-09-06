@@ -59,7 +59,10 @@ function interceptFetch(url,q, callback) {
                }
             }
             resolve(data);
-        });
+        })
+        .catch((error) => {
+          console.log("[ReTorn][InterceptFetch] Error with fetch.", error)
+        })
       });
     };
 }
