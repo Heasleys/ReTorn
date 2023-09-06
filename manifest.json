@@ -140,7 +140,7 @@
       },
       {
         "matches": ["https://*.torn.com/factions.php*"],
-        "js": ["js/factions/factions.js"],
+        "js": ["js/factions/factions.js", "js/factions/territory.js", "js/factions/rankedwar.js", "js/factions/memberlist.js"],
         "css": ["css/factions/factions.css"],
         "run_at": "document_end"
       },
