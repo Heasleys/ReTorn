@@ -93,12 +93,16 @@ a:hover {
   font-size: 15px;
 }
 
-.re_content .re_error {
-  color: #d83500;
+.re_container .re_error {
+  color: #d83500 !important;
 }
 
 .re_title .fas {
   color: var(--re-dm-title-color);
+}
+
+.re_title #re_message {
+  margin-left: 20px;
 }
 
 /* Torn Left Align only on large screen (not mobile view)*/
@@ -248,7 +252,7 @@ border-top-right-radius: 0px;
   margin: 0;
 }
 
-.re_row.re_message {
+.re_row.re_message, .re_row.re_error {
   justify-content: center;
 }
 
