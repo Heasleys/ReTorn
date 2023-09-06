@@ -467,7 +467,7 @@ body.dark-mode #re_filterbuttons input:checked ~ label {
     height: 22px;
 }
 
-.re_onlinestatus_hide, .re_status_hide {
+.re_onlinestatus_hide, .re_status_hide, .re_fallen_hide {
   display: none !important;
 }
 

@@ -16,7 +16,7 @@ function insertMemberListContainer() {
         //insert hide fallen member toggle in the settings view
         const fallen_li = "re_toggle_fallen";
         const fallen_checkbox = "re_fallen_toggle";
-        RE_CONTAINER.find('#re_features_settings_view').prepend(new settingsCheckbox(fallen_li, fallen_checkbox, "Hide fallen members"))
+        RE_CONTAINER.find('#re_features_settings_view').prepend(settingsCheckbox(fallen_li, fallen_checkbox, "Hide fallen members"))
         //click event for checkbox
         $(`#${fallen_checkbox}`).on("change", function(e) {
             e.stopPropagation();
@@ -219,9 +219,9 @@ function checkMemberListFilters() {
   //check fallen members first
   const fallen_enabled = $('#re_fallen_toggle').prop("checked");
   if (fallen_enabled) {
-    $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen').closest('li.table-row').hide();
+    $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen').closest('li.table-row').addClass('re_fallen_hide');
   } else {
-    $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen').closest('li.table-row').show();
+    $('.faction-info-wrap.another-faction .members-list .table-body .status > span.fallen').closest('li.table-row').removeClass('re_fallen_hide');
   }
 
 
