@@ -36,7 +36,7 @@ if ($('div.captcha').length == 0) {
       </div>
       `);
     if (settings?.headers?.gym?.expanded) loadTornStatsGraph();
-    $(".re_head").click(function() {
+    RE_CONTAINER.find(".re_head").click(function() {
       if ($('div#stats.loaded').length == 0) {
         loadTornStatsGraph();
       }
