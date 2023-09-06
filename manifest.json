@@ -26,7 +26,6 @@
   		"page": "/pages/options.html",
   		"open_in_tab": true
   	},
-    "options_page": "/pages/options.html",
     "background": {
     	"service_worker": "background.js"
   	},
