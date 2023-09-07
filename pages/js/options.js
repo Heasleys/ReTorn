@@ -615,6 +615,7 @@ function initChatHighlights() {
         wrap.find("input[type='checkbox']").prop("checked", value.enabled);
         wrap.find("input[name='text']").val(value.value);
         wrap.find("input[name='color']").val(value.color);
+        wrap.find("input[name='color']").show();
         wrap.find("input[name='color']")[0].jscolor.fromString(value.color);
       }
     }
@@ -627,7 +628,7 @@ function appendChatHighlights() {
     <div class="switch_wrap">
       <input type="checkbox">
       <input type="text" name="text" placeholder="@username or words">
-      <input type="text" name="color" data-jscolor="{}" value="#E0CE00">
+      <input type="text" name="color" data-jscolor="{}" value="#E0CE00" style="display: none;">
     </div>
     `)
 }
