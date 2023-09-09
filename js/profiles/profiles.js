@@ -67,15 +67,15 @@
       });
     }
 
-    if ($('#re_ts_arrange').length == 0) {
+    if ($('#re_ts_modify').length == 0) {
       //insert button into header menu
-      RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_ts_arrange"><span class="re_menu_item"><i class="fa-solid fa-up-down-left-right"></i><span class="re_menu_item_text">Reorder profile stats</span></span></li>')
+      RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_ts_modify"><span class="re_menu_item"><i class="fa-solid fa-up-down-left-right"></i><span class="re_menu_item_text">Modify profile stats</span></span></li>')
       //click event
-      $('#re_ts_arrange').click(function() {
-        if (!$('#re_compare .re_rearrange_active').length) {
-          begin_rearrange();
+      $('#re_ts_modify').click(function() {
+        if (!$('#re_compare .re_modify_active').length) {
+          begin_modify();
         } else {
-          end_rearrange();
+          end_modify();
         }
       });
     }
@@ -343,11 +343,12 @@
     });
   }
   
-  function begin_rearrange() {
+  function begin_modify() {
+    //Add modify features
     const grip = `<div class="re_grip"><i class="fa-solid fa-grip-lines"></i></div>`;
     const compare = $('#re_compare');
     const parent = compare.find('.re_infotable');
-    parent.addClass('re_rearrange_active');
+    parent.addClass('re_modify_active');
 
     parent.find('.re_table_title').prepend(`<div class="re_grip"></div>`);
     const li = parent.find('li.re_stat');
@@ -358,17 +359,19 @@
 
     parent.sortable({axis: "y", items: "> li.re_stat", handle: ".re_grip"});
 
-    const finish_button = `
-    <p><button id="re_end_rearrange">Save profile stats order</button></p>
+    const finish_buttons = `
+    <p><button id="re_save_modify">Save</button><button id="re_cancel_modify">Cancel</button></p>
     `;
 
     compare.append(finish_button);
 
-    $('#re_end_rearrange').click(end_rearrange);
+    $('#re_save_modify').click(save_modify);
+    $('#re_cancel_modify').click(end_modify);
+
   }
 
-  function end_rearrange() {
-    const parent = $('#re_compare .re_infotable.re_rearrange_active');
+  function save_modify() {
+    const parent = $('#re_compare .re_infotable.re_modify_active');
 
     var key_string = "";
     parent.find('.re_stat').each(function(i) {
@@ -400,7 +403,7 @@
        $('.re_grip').remove();
     // })
     // .catch((e) => {
-    //   console.error("[ReTorn][Rearrange Personal Stats] Error: ", e);
+    //   console.error("[ReTorn][Modify Personal Stats] Error: ", e);
     // })
 
     console.log("end rearrange obj", obj)

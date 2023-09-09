@@ -79,7 +79,7 @@
   width: 65px;
 }
 
-.re_rearrange_active li {
+.re_modify_active li {
   order: unset !important;
 }
 
@@ -107,7 +107,7 @@
 }
 
 
-#re_compare.re_rearrange_active .re_stat > .re_table_value {
+#re_compare.re_modify_active .re_stat > .re_table_value {
   text-overflow: clip;
 }
 
