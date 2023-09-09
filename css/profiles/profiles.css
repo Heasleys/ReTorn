@@ -79,7 +79,7 @@
   width: 65px;
 }
 
-.re_infotable li .re_table-value {
+.re_infotable li .re_table_value {
   margin: 0;
   padding: 0 10px;
   text-overflow: ellipsis;
