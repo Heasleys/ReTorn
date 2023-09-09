@@ -1,7 +1,7 @@
 const re_userlist_observer = new MutationObserver(function(mutations, observer) {
   if ($(".f-war-list.members-list").parent(".faction-info-wrap").length == 1 && $(`.re_container[data-feature="${FACTION_FILTER}"]`).length == 1) {
     checkMemberListFilters();
-    //update_filter_counts();
+    update_filter_counts();
   }
 });
 
