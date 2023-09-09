@@ -128,7 +128,7 @@
       },
       {
         "matches": ["https://*.torn.com/profiles.php*"],
-        "js": ["js/profiles/profiles.js"],
+        "js": ["js/profiles/profiles.js", "lib/jqueryui/jquery-ui.min.js"],
         "css": ["css/profiles/profiles.css"],
         "run_at": "document_start"
       },
