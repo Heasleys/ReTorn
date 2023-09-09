@@ -163,40 +163,40 @@
   
   
           let spyUL = `<ul class="re_infotable">`;
-          spyUL += `<li style="order: -1;"><div class="re_table-label"><span class="bold">Battle Stats</span></div><div class="re_table_value them"><span class="bold">Them</span></div><div class="re_table_value you"><span class="bold">You</span></div></li>`;
+          spyUL += `<li style="order: -1;"><div class="re_table_label"><span class="bold">Battle Stats</span></div><div class="re_table_value them"><span class="bold">Them</span></div><div class="re_table_value you"><span class="bold">You</span></div></li>`;
   
           //Strength Spy + User
-          spyUL += `<li class="re_stat"><div class="re_table-label"><span class="bold">Strength:</span></div>`;
+          spyUL += `<li class="re_stat"><div class="re_table_label"><span class="bold">Strength:</span></div>`;
           spyUL += `<div class="re_table_value them"><span>${data.spy.strength.toLocaleString()}</span></div>`;
           spyUL += `<div class="re_table_value you"><span class="${strCol}" data-color="${strCol}" data-diff="${strDiff}" data-stat="${deltaStrength}"></span></div>`;
           spyUL += `</li>`;
 
           //Defense Spy + User
-          spyUL += `<li class="re_stat"><div class="re_table-label"><span class="bold">Defense:</span></div>`;
+          spyUL += `<li class="re_stat"><div class="re_table_label"><span class="bold">Defense:</span></div>`;
           spyUL += `<div class="re_table_value them"><span>${data.spy.defense.toLocaleString()}</span></div>`;
           spyUL += `<div class="re_table_value you"><span class="${defCol}"  data-color="${defCol}" data-diff="${defDiff}" data-stat="${deltaDefense}"></span></div>`;
           spyUL += `</li>`;
   
           //Speed Spy + User
-          spyUL += `<li class="re_stat"><div class="re_table-label"><span class="bold">Speed:</span></div>`;
+          spyUL += `<li class="re_stat"><div class="re_table_label"><span class="bold">Speed:</span></div>`;
           spyUL += `<div class="re_table_value them"><span>${data.spy.speed.toLocaleString()}</span></div>`;
           spyUL += `<div class="re_table_value you"><span class="${speCol}"  data-color="${speCol}" data-diff="${speDiff}" data-stat="${deltaSpeed}"></span></div>`;
           spyUL += `</li>`;
 
           //Dexterity Spy + User
-          spyUL += `<li class="re_stat"><div class="re_table-label"><span class="bold">Dexterity:</span></div>`;
+          spyUL += `<li class="re_stat"><div class="re_table_label"><span class="bold">Dexterity:</span></div>`;
           spyUL += `<div class="re_table_value them"><span>${data.spy.dexterity.toLocaleString()}</span></div>`;
           spyUL += `<div class="re_table_value you"><span class="${dexCol}" data-color="${dexCol}" data-diff="${dexDiff}" data-stat="${deltaDexterity}"></span></div>`;
           spyUL += `</li>`;
 
           //Total Spy + User
-          spyUL += `<li class="re_stat"><div class="re_table-label"><span class="bold">Total:</span></div>`;
+          spyUL += `<li class="re_stat"><div class="re_table_label"><span class="bold">Total:</span></div>`;
           spyUL += `<div class="re_table_value them"><span>${data.spy.total.toLocaleString()}</span></div>`;
           spyUL += `<div class="re_table_value you"><span class="${totCol}" data-color="${totCol}" data-diff="${totDiff}" data-stat="${deltaTotal}"></span></div>`;
           spyUL += `</li>`;
 
   
-          spyUL += `<li style="order: 999;"><div class="re_table-label"><span class="bold">Last Spy:</span></div><div class="re_table_value them"><span>${data.spy.difference}</span></div><div class="re_table_value them"><span>Fair Fight Bonus: </span><span class="bold">x${data.spy.fair_fight_bonus.toFixed(2)}</span></div></div></li>`;
+          spyUL += `<li style="order: 999;"><div class="re_table_label"><span class="bold">Last Spy:</span></div><div class="re_table_value them"><span>${data.spy.difference}</span></div><div class="re_table_value them"><span>Fair Fight Bonus: </span><span class="bold">x${data.spy.fair_fight_bonus.toFixed(2)}</span></div></div></li>`;
           spyUL += "</ul>";
 
           if ($("#re_spy_attack").length == 0) {
@@ -216,7 +216,7 @@
               }
               $('#re_spy_attack').append(`<div id="re_spy" style="display: none;"></div>`);
 
-              $('#re_spy').html(`<ul class="re_infotable"><li style="order: 999;"><div class="re_table-label"><span>${data.spy.message}</span></div></li>`);
+              $('#re_spy').html(`<ul class="re_infotable"><li style="order: 999;"><div class="re_table_label"><span>${data.spy.message}</span></div></li>`);
               $('#re_spy').show();
               $('#re_spy').parent().show();
             }
@@ -226,7 +226,7 @@
         if (data.attacks.status) {
 
           let attackUL = `<ul class="re_infotable">`;
-          attackUL += `<li style="order: -1;"><div class="re_table-label center"><span class="bold">Attack History</span></div></li>`;
+          attackUL += `<li style="order: -1;"><div class="re_table_label center"><span class="bold">Attack History</span></div></li>`;
           
           Object.entries(data.attacks.data).forEach(([key, value]) => {
             attackUL += `<li><div class="re_table_value center"><span>${value}</span></div></li>`
@@ -246,7 +246,7 @@
   
         if (data.compare.status && data.compare.data) {
           let compareUL = `<ul class="re_infotable">`;
-          compareUL += `<li style="order: -1;"><div class="re_table-label"><span class="bold">Personal Stats</span></div><div class="re_table_value them"><span class="bold">Them</span></div><div class="re_table_value you"><span class="bold">You</span></div></li>`;
+          compareUL += `<li style="order: -1;"><div class="re_table_label"><span class="bold">Personal Stats</span></div><div class="re_table_value them"><span class="bold">Them</span></div><div class="re_table_value you"><span class="bold">You</span></div></li>`;
   
   
           Object.entries(data.compare.data).forEach(([key, value]) => {
@@ -264,7 +264,7 @@
             let absolute = Math.trunc((value.amount + value.difference)).toLocaleString();
 
             compareUL += `<li class="re_stat" style="order: ${value.order};">
-            <div class="re_table-label"><span class="bold">${key}</span></div>
+            <div class="re_table_label"><span class="bold">${key}</span></div>
             <div class="re_table_value them"><span>${value.amount.toLocaleString()}</span></div>
             <div class="re_table_value you"><span class="${color}" data-color="${color}" data-diff="${difference}" data-stat="${absolute}"></span></div>
             </li>`;
@@ -279,7 +279,7 @@
           if (data.compare.message) {
             if (data.compare.message.toLowerCase().includes('error')) {
               $('#re_ts_content').prepend(`<div id="re_compare" style="display: none;"></div>`)
-              $('#re_attacks').html(`<ul class="re_infotable"><li style="order: 999;"><div class="re_table-label"><span>${data.compare.message}</span></div></li>`);
+              $('#re_attacks').html(`<ul class="re_infotable"><li style="order: 999;"><div class="re_table_label"><span>${data.compare.message}</span></div></li>`);
               $('#re_compare').show();
             }
           }

@@ -58,7 +58,7 @@
   border-top: 1px solid var(--panel-divider-outer-side-color);
 }
 
-.re_infotable li .re_table-label {
+.re_infotable li .re_table_label {
   margin: 0;
   flex-grow: 1;
   background: 0 0;
@@ -67,13 +67,13 @@
   line-height: 14px;
 }
 
-#re_compare .re_infotable li .re_table-label {
+#re_compare .re_infotable li .re_table_label {
   min-width: 130px;
   max-width: 130px;
   width: 130px;
 }
 
-#re_spy .re_infotable li .re_table-label {
+#re_spy .re_infotable li .re_table_label {
   min-width: 65px;
   max-width: 65px;
   width: 65px;
