@@ -19,6 +19,9 @@ function insertMemberListContainer() {
         const RE_CONTAINER = $(`.re_container[data-feature="${FACTION_FILTER}"]`);
   
         disableFilterCheckbox(FACTION_FILTER);
+        $(RE_CONTAINER.find('#re_disable_filters input[type=checkbox]')).change(function() {
+          checkMemberListFilters();
+        });
 
         //insert hide fallen member toggle in the settings view
         const fallen_li = "re_toggle_fallen";
