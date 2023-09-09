@@ -492,7 +492,7 @@ function initQuickLinksList() {
     $('.quicklinks').append(optionStr);
 
     //initialize sortable feature for quick links
-    $( "#quicklinks" ).sortable({axis: "y", items: "> li:not(:last-child)", deactivate: function( event, ui ) {
+    $( "#quicklinks" ).sortable({axis: "y", items: "> li:not(:last-child)", handle: ".fa-li", deactivate: function( event, ui ) {
       let obj = {"quick_links": {}};
 
       $('#quicklinks > li:not(:last-child) .switch_wrap').each(function() {
