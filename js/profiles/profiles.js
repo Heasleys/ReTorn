@@ -1,6 +1,8 @@
 // @description  Add stat spies and profile info from torn stats to profile
 // @author       Heasleys4hemp [1468764]
 (function() {
+  var uid;
+  var TS_DATA;
   var profileobserver = new MutationObserver(function(mutations) {
     //check if captcha exists or if user is logged out
     if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.travelling').length == 0) {
@@ -18,7 +20,7 @@
   
   function loadTS(forced = false) {
     if (features?.pages?.profiles?.profile_stats?.enabled) {
-      const uid = parseInt($('a[href*="/playerreport.php?step=add&userID="]').attr("href").replace(/\D/g, ""));
+      uid = parseInt($('a[href*="/playerreport.php?step=add&userID="]').attr("href").replace(/\D/g, ""));
       if (uid) {
         profileHeader();
         getTornStats(`spy/user/${uid}`, 8, forced)
@@ -64,6 +66,20 @@
         loadTS(true);
       });
     }
+
+    if ($('#re_ts_arrange').length == 0) {
+      //insert button into header menu
+      RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_ts_arrange"><span class="re_menu_item"><i class="fa-solid fa-up-down-left-right"></i><span class="re_menu_item_text">Reorder profile stats</span></span></li>')
+      //click event
+      $('#re_ts_arrange').click(function() {
+        if (!$('#re_compare .re_rearrange_active').length) {
+          begin_rearrange();
+        } else {
+          end_rearrange();
+        }
+      });
+    }
+
     if ($('#re_difference').length == 0) {
       //insert button into header menu
       RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_difference"><span class="re_menu_item"><input type="checkbox" id="re_diff_toggle"><span class="re_menu_item_text">Show relative values</span></span></li>')
@@ -93,7 +109,8 @@
   
   function parseTornStatsData(data) {
     return new Promise((resolve, reject) => {
-      console.log("data", data)
+      console.log("data", data);
+      TS_DATA = data;
       if (data.status) {
         if (data.spy.status) {
           //colors and signs
@@ -246,8 +263,27 @@
   
         if (data.compare.status && data.compare.data) {
           let compareUL = `<ul class="re_infotable">`;
-          compareUL += `<li style="order: -1;"><div class="re_table_label"><span class="bold">Personal Stats</span></div><div class="re_table_value them"><span class="bold">Them</span></div><div class="re_table_value you"><span class="bold">You</span></div></li>`;
+          compareUL += `<li class="re_table_title" style="order: -1;"><div class="re_table_label"><span class="bold">Personal Stats</span></div><div class="re_table_value them"><span class="bold">Them</span></div><div class="re_table_value you"><span class="bold">You</span></div></li>`;
   
+          sorted = [];
+
+          Object
+          .keys(data.compare.data).sort(function(a, b){
+              return data.compare.data[a].order - data.compare.data[b].order;
+          })
+          .forEach(function(key) {
+              sorted.push({[key]: data.compare.data[key]});
+          });
+        
+          console.log("SORTED",sorted);
+          
+          
+          sorted.forEach((e) => {
+            const key = Object.keys(e)[0];
+            const value = Object.entries(e)[0];
+            console.log(key, value)
+          });
+
   
           Object.entries(data.compare.data).forEach(([key, value]) => {
             let color = "";
@@ -307,8 +343,67 @@
     });
   }
   
-  function beginRearrange() {
+  function begin_rearrange() {
+    const grip = `<div class="re_grip"><i class="fa-solid fa-grip-lines"></i></div>`;
+    const compare = $('#re_compare');
+    const parent = compare.find('.re_infotable');
+    parent.addClass('re_rearrange_active');
 
+    parent.find('.re_table_title').prepend(`<div class="re_grip"></div>`);
+    const li = parent.find('li.re_stat');
+
+    li.each(function() {
+      $(this).prepend(grip);
+    })
+
+    parent.sortable({axis: "y", items: "> li.re_stat", handle: ".re_grip"});
+
+    const finish_button = `
+    <p><button id="re_end_rearrange">Save profile stats order</button></p>
+    `;
+
+    compare.append(finish_button);
+
+    $('#re_end_rearrange').click(end_rearrange);
+  }
+
+  function end_rearrange() {
+    const parent = $('#re_compare .re_infotable.re_rearrange_active');
+
+    var key_string = "";
+    parent.find('.re_stat').each(function(i) {
+      const order = i++;
+      const t = $(this).find('.re_table_label').text();
+      const key = PERSONALSTATS.filter((p) => t == p.name).pop().key;
+      key_string += key + ","
+    });
+    key_string = key_string.replace(/,\s*$/, ""); //remove comma and whitespace
+
+    //update local storage  personalstats order
+    let obj = {
+      [`spy_user_${uid}`]: TS_DATA
+    }
+
+
+
+    // var i = 1;
+    // Object.entries(ts?.compare?.data).forEach(([key, value]) => {
+    //   console.log("TS to save", key, value);
+    //   console.log(obj)
+    //   obj[storageSelection].compare.data[key].order = i;
+    //   i++;
+    // });
+
+    // sendMessage({"name": "merge_local", "key": "torn_stats", "object": obj}).then(function() {
+       parent.sortable("destroy");
+       parent.removeClass('re_rearrange_active');
+       $('.re_grip').remove();
+    // })
+    // .catch((e) => {
+    //   console.error("[ReTorn][Rearrange Personal Stats] Error: ", e);
+    // })
+
+    console.log("end rearrange obj", obj)
   }
 
   function toggleDiff(diff = false) {
