@@ -484,7 +484,11 @@ function genericSpyFunction(membersElements, useridSelection) {
                   var o = "";
                   //add outdated icon if outdated
                   if (elapsed && elapsed > OUTDATED_TIMESTAMP) {
-                    o = `<i class="fa-regular fa-calendar-xmark re_red re_outdated"></i>`;
+                    o = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" class="re_red re_outdated" viewBox="0 0 16 16">
+                      <path d="M 4 6 A 0.5 0.5 0 0 1 5 5 L 8 8 L 11 5 A 0.5 0.5 0 1 1 12 6 L 9 9 L 12 12 A 0.5 0.5 0 0 1 11 13 L 8 10 L 5 13 A 0.5 0.5 0 0 1 4 12 L 7 9 L 4 6 A 0.5 0.5 0 0 1 5 5 Z M 3.5 0 A 0.5 0.5 0 0 1 4 0.5 V 1 H 12 V 0.5 A 0.5 0.5 0 0 1 13 0.5 V 1 H 14 A 2 2 0 0 1 16 3 V 14 A 2 2 0 0 1 14 16 H 2 A 2 2 0 0 1 0 14 V 3 A 2 2 0 0 1 2 1 H 3 V 0.5 A 0.5 0.5 0 0 1 3.5 0 Z M 1 4 V 14 A 1 1 0 0 0 2 15 H 14 A 1 1 0 0 0 15 14 V 4 H 1 Z"></path>
+                    </svg>
+                    `;
                   }
 
                   $(member).find(".member").after(`<div class="re_spy_col left"><span class="re_spy_spy">${abbreviateNumber(statTot)}</span>${o}</div>`);

@@ -22,6 +22,7 @@
   font-size: 6px;
   right: 1px;
   top: 1px;
+  fill: var(--user-status-red-color);
 }
 
 .re_faction_stats .re_spy_col {
