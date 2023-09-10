@@ -35,7 +35,9 @@ if ($('div.captcha').length == 0) {
         <p id="re_message" hidden></p>
       </div>
       `);
-    if (settings?.headers?.gym?.expanded) loadTornStatsGraph();
+    if (settings?.headers?.gym?.torn_stats_graph?.expanded) {
+      loadTornStatsGraph();
+    }
     RE_CONTAINER.find(".re_head").click(function() {
       if ($('div#stats.loaded').length == 0) {
         loadTornStatsGraph();
@@ -126,7 +128,7 @@ function insertTornStatsButtons() {
 
   $("button#re_tornstats_hof").click(function() {
     const num = $(this).val();
-    sendMessage({name: "get_torn_stats", selection: "hof/" + num}) //dont use getTornStats because this toggles hof, not 
+    sendMessage({name: "get_torn_stats", selection: "hof/" + num}) //dont use getTornStats because this toggles hof, not pulls info
     .then((data) => {
       if (data.status == true) {
         Message(data);
