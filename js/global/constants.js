@@ -72,7 +72,7 @@ const PERSONALSTATS = [
     {key: "incendiaryammoused", name: "Incendiary Ammo Used"},
     {key: "attackswonabroad", name: "Attacks Won Abroad"},
     {key: "defendslostabroad", name: "Defends Lost Abroad"},
-    {key: "retals", name: "Retaliations "},
+    {key: "retals", name: "Retaliations"},
     {key: "elo", name: "Elo Rating"},
     {key: "territoryjoins", name: "Territory Joins"},
     {key: "rankedwarhits", name: "Ranked War Hits"},
