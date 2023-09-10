@@ -112,7 +112,7 @@
       console.log("data", data);
       TS_DATA = data;
       if (data.status) {
-        if (data.spy.status) {
+        if (data?.spy?.status) {
           //colors and signs
           let strCol = "";
           let strSign = "";
@@ -226,7 +226,7 @@
           $('#re_spy').parent().show();
           $('#re_spy').show();
         } else {
-          if (data.spy.message) {
+          if (data?.spy?.message) {
             if (data.spy.message.toLowerCase().includes('error')) {
               if ($("#re_spy_attack").length == 0) {
                 $('#re_ts_content').append('<div id="re_spy_attack" style="display: none;"></div>')
@@ -240,7 +240,7 @@
           }
         }
   
-        if (data.attacks.status) {
+        if (data?.attacks?.status) {
 
           let attackUL = `<ul class="re_infotable">`;
           attackUL += `<li style="order: -1;"><div class="re_table_label center"><span class="bold">Attack History</span></div></li>`;
@@ -261,7 +261,7 @@
         }
   
   
-        if (data.compare.status && data.compare.data) {
+        if (data?.compare?.status && data?.compare?.data) {
           let compareUL = `<ul class="re_infotable">`;
           compareUL += `<li class="re_table_title" style="order: -1;"><div class="re_table_label"><span class="bold">Personal Stats</span></div><div class="re_table_value them"><span class="bold">Them</span></div><div class="re_table_value you"><span class="bold">You</span></div></li>`;
   
@@ -276,16 +276,12 @@
           });
         
           console.log("SORTED",sorted);
-          
-          
-          sorted.forEach((e) => {
-            const key = Object.keys(e)[0];
-            const value = Object.entries(e)[0];
-            console.log(key, value)
-          });
 
   
-          Object.entries(data.compare.data).forEach(([key, value]) => {
+          sorted.forEach((e) => {
+            const key = Object.keys(e)[0];
+            const value = Object.values(e)[0];
+
             let color = "";
             let sign = "";
             if (value.difference < 0) {
@@ -307,6 +303,8 @@
           });
           compareUL += `<li style="order: 999;"><div style="width: 100%; text-align: center;"><span><a href='https://www.tornstats.com/settings/script' target='_blank'>Change your script settings here</a></span></div></li>`;
           compareUL += "</ul>";
+
+          if ($('#re_compare').length) $('#re_compare').remove(); //refresh
 
           $('#re_ts_content').prepend(`<div id="re_compare" style="display: none;"></div>`)
           $('#re_compare').html(compareUL);
@@ -346,67 +344,183 @@
   function begin_modify() {
     //Add modify features
     const grip = `<div class="re_grip"><i class="fa-solid fa-grip-lines"></i></div>`;
+    const del = `<div class="re_delete"><i class="fa-solid fa-x re_red"></i></div>`;
     const compare = $('#re_compare');
     const parent = compare.find('.re_infotable');
     parent.addClass('re_modify_active');
 
     parent.find('.re_table_title').prepend(`<div class="re_grip"></div>`);
+    parent.find('.re_table_title').append(`<div class="re_delete"></div>`);
+
     const li = parent.find('li.re_stat');
 
     li.each(function() {
       $(this).prepend(grip);
-    })
+      $(this).append(del);
+    });
+
+    parent.find('.re_delete').click(function() {
+      $(this).closest('li.re_stat').hide();
+    });
 
     parent.sortable({axis: "y", items: "> li.re_stat", handle: ".re_grip"});
 
+    var stat_list = [];
+    parent.find('.re_stat:visible').each(function(i) {
+      const t = $(this).find('.re_table_label').text();
+      stat_list.push(t);
+    });
+
+    //fill datalist for Weapon Bonuses
+    var new_stat_input = `<input type="text" id="new_stat_input" list="new_stat_datalist" placeholder="Add personal stat">
+    <datalist id="new_stat_datalist">`;
+    $.each(PERSONALSTATS, function(n,e) {
+      if (!stat_list.includes(e.name)) {
+        new_stat_input += '<option data-name="'+e.name+'">'+e.name+'</option>';
+      }
+    });
+    new_stat_input += `</datalist>`;
+
     const finish_buttons = `
-    <p><button id="re_save_modify">Save</button><button id="re_cancel_modify">Cancel</button></p>
+    <div id="re_modify_form">
+      <div class="re_button_wrap">${new_stat_input}<button class="re_button" id="new_stat_button" style="display: none;">Add</button></div>
+      <div class="re_button_wrap"><button class="re_button" id="re_save_modify">Save</button><button class="re_button" id="re_cancel_modify">Cancel</button></div>
+    </div>
     `;
 
-    compare.append(finish_button);
+    compare.append(finish_buttons);
 
     $('#re_save_modify').click(save_modify);
     $('#re_cancel_modify').click(end_modify);
 
+    $('#new_stat_input').on('input', function() {
+      const val = $('#new_stat_input').val();
+      const opts = $('#new_stat_datalist > option');
+  
+      for (var i = 0; i < opts.length; i++) {
+        if ($(opts[i]).attr('data-name') === val) {
+          $('#new_stat_button').show();
+          break;
+        }
+      }
+    });
+
+    $('#new_stat_button').click(function() {
+      const val = $('#new_stat_input').val();
+      if (!val) return;
+      $.each(PERSONALSTATS, function(n,e) {
+        if (e.name != val) {
+          return;
+        }
+        if (stat_list.includes(val)) {
+          return;
+        }
+
+        let order = $('.re_stat:visible').length + 1;
+
+        const new_stat = `
+        <li class="re_stat re_new" data-name="${val}" style="order: ${order};"><div class="re_grip ui-sortable-handle"><i class="fa-solid fa-grip-lines"></i></div>
+            <div class="re_table_label"><span class="bold">${val}</span></div>
+            <div class="re_table_value them"><span></span></div>
+            <div class="re_table_value you"><span></span></div>
+            <div class="re_delete"><i class="fa-solid fa-x re_red"></i></div>
+        </li>
+        `;
+
+        $('#re_compare .re_stat').last().after(new_stat);
+        stat_list.push(val);
+        $(`#new_stat_datalist > option[data-name="${val}"]`).remove();
+        $('#new_stat_input').val("");
+        $('#new_stat_button').hide();
+      });
+    });
+
   }
 
-  function save_modify() {
+  async function save_modify() {
     const parent = $('#re_compare .re_infotable.re_modify_active');
-
     var key_string = "";
-    parent.find('.re_stat').each(function(i) {
-      const order = i++;
+
+    //modify stats order
+    parent.find('.re_stat:visible').each(function(i) {
+      const order = i + 1;
       const t = $(this).find('.re_table_label').text();
+      if (!TS_DATA.compare.data[t]) {
+        TS_DATA.compare.data[t] = {order: order}
+      } else {
+        TS_DATA.compare.data[t].order = order;
+      }
       const key = PERSONALSTATS.filter((p) => t == p.name).pop().key;
       key_string += key + ","
     });
     key_string = key_string.replace(/,\s*$/, ""); //remove comma and whitespace
 
-    //update local storage  personalstats order
-    let obj = {
-      [`spy_user_${uid}`]: TS_DATA
-    }
+    // remove deleted stats from TS_DATA
+    parent.find('.re_stat:not(:visible)').each(function() {
+      const t = $(this).find('.re_table_label').text();
+      delete TS_DATA.compare.data[t];
+      sendMessage({name: "delete_multi_nested_key", keys: ["torn_stats", `spy_user_${uid}`, "compare", "data", t], location: "local"})
+      .catch((e) => {console.error(e)})
+    });
+
+    console.log(key_string);
+
+    sendMessage({name: "get_torn_stats", selection: `settings&comparespy=1&comparepersonal=1&personalstats=${key_string}`})// Dont use getTornStats for this because this records new info, not pulls info
+    .then((data) => {
+      console.log("TORN STATS PS", data);
+      if (!data.status) {
+        throw data.message;
+      }
+      //if any new stats have been added, refresh TS
+      if ($('.re_new').length) {
+        var new_stats = [];
+        $('.re_new').each(function() {
+          const t = $(this).find('.re_table_label').text();
+          new_stats.push(t);
+        })
+        getTornStats(`spy/user/${uid}`, 8, true)
+        .then((data) => {
+          if (!data.status) {
+            throw data.message;
+          }
+          delete data.spy;
+          delete data.attacks;
+          TS_DATA.compare = data.compare;
+          parseTornStatsData(data);
+        })      
+      }
+    })
+    .then(() => {
+      //update local storage  personalstats order
+      let obj = {
+        [`spy_user_${uid}`]: TS_DATA
+      }
+
+      sendMessage({"name": "merge_local", "key": "torn_stats", "object": obj})
+      .then(function() {
+        $('.re_stat:not(:visible)').remove(); //remove deleted stats
+        end_modify();
+      })
+      .catch((e) => {
+        console.error("[ReTorn][Modify Personal Stats] Error: ", e);
+      })
+
+      console.log("end modify obj", obj)
+    })
+    .catch((err) => displayError(`Torn Stats Error: ${err}`))
 
 
 
-    // var i = 1;
-    // Object.entries(ts?.compare?.data).forEach(([key, value]) => {
-    //   console.log("TS to save", key, value);
-    //   console.log(obj)
-    //   obj[storageSelection].compare.data[key].order = i;
-    //   i++;
-    // });
+  }
 
-    // sendMessage({"name": "merge_local", "key": "torn_stats", "object": obj}).then(function() {
-       parent.sortable("destroy");
-       parent.removeClass('re_rearrange_active');
-       $('.re_grip').remove();
-    // })
-    // .catch((e) => {
-    //   console.error("[ReTorn][Modify Personal Stats] Error: ", e);
-    // })
-
-    console.log("end rearrange obj", obj)
+  function end_modify() {
+    const parent = $('#re_compare .re_infotable.re_modify_active');
+    parent.sortable("destroy");
+    parent.removeClass('re_modify_active');
+    $('.re_grip').remove();
+    $('.re_delete').remove();
+    $('.re_stat').show();
+    $('#re_modify_form').remove();
   }
 
   function toggleDiff(diff = false) {
