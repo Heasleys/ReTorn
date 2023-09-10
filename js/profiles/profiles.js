@@ -69,7 +69,7 @@
 
     if ($('#re_ts_modify').length == 0) {
       //insert button into header menu
-      RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_ts_modify"><span class="re_menu_item"><i class="fa-solid fa-up-down-left-right"></i><span class="re_menu_item_text">Modify profile stats</span></span></li>')
+      RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_ts_modify"><span class="re_menu_item"><i class="fa-regular fa-pen-to-square"></i><span class="re_menu_item_text">Modify profile stats</span></span></li>')
       //click event
       $('#re_ts_modify').click(function() {
         if (!$('#re_compare .re_modify_active').length) {
