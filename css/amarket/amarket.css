@@ -72,7 +72,3 @@ select option[value=""] {
 [hidden] {
   display: none;
 }
-
-input[disabled] {
-    opacity: 0.5;
-}

@@ -72,12 +72,16 @@ a {
   text-decoration: none;
 }
 
-button {
+button:hover {
   cursor: pointer;
 }
 
 a:hover {
   color: var(--default-blue-hover-color);
+}
+
+input[disabled] {
+  opacity: 0.5;
 }
 
 .re_logo {
@@ -252,7 +256,7 @@ border-top-right-radius: 0px;
   margin: 0;
 }
 
-.re_row.re_message, .re_row.re_error {
+.re_row.re_message, .re_row.re_error, .re_row#re_loader {
   justify-content: center;
 }
 
@@ -364,18 +368,9 @@ div.re_button_wrap > button {
     border-bottom: 1px solid rgb(235, 235, 235);
 }
 
-.re_row .re_button {
-  border-radius: 5px;
-  margin: 5px;
-}
-
 .re_row .re_button:active {
   position:relative;
 	top:1px;
-}
-
-.re_row .re_button:hover, .re_button > button:hover {
-  cursor: pointer;
 }
 
 /* chat css */

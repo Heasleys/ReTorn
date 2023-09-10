@@ -24,6 +24,11 @@ li.re_add_qitem {
   justify-content: center;
 }
 
+#re_quick_items .re_button {
+  margin: 5px;
+  border-radius: 5px;
+}
+
 #re_quick_items_response {
   justify-content: center;
 }
