@@ -264,6 +264,14 @@ border-top-right-radius: 0px;
   margin: 0px !important;
 }
 
+.re_button {
+  border-radius: 5px;
+}
+
+.re_button ~ .re_button, .re_torn_button ~ .re_torn_button {
+  margin-left: 5px;
+}
+
 .re_ptitle {
   font-weight: 700;
   font-size: 16px;
@@ -343,14 +351,19 @@ span.re_icon.arrow_down svg path {
 div.re_button_wrap {
   display: flex;
   flex-wrap: wrap;
+  margin-bottom: 2px;
 }
 
-div.re_button_wrap > button {
-  margin-bottom: 5px;
-  margin-right: 5px;
+div.re_button_wrap .re_button {
+  line-height: 14px;
+  height: 26px;
 }
 
-.re_button_wrap input[type="text"] {
+div.re_button_wrap input[type="text"] ~ .re_button {
+
+}
+
+div.re_button_wrap input[type="text"] {
   margin-right: 8px;
 }
 
