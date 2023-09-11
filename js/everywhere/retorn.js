@@ -148,12 +148,11 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
       if (selection.includes("spy/user/") && ts?.compare?.status && ts?.compare?.data) {
         console.log('TTTTT')
         var i = 1;
-        Object.entries(ts?.compare?.data).forEach(([key, value]) => {
-          console.log("TS to save", key, value);
-          console.log(obj)
+        for (const [key, value] of Object.entries(ts?.compare?.data)) {
+          console.log("TS to save", key, value, i);
           obj[storageSelection].compare.data[key].order = i;
           i++;
-        });
+        }
       }
 
       await sendMessage({"name": "merge_local", "key": "torn_stats", "object": obj})
