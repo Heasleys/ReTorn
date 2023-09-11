@@ -1063,6 +1063,110 @@ async function handleMessage(msg) {
       }
     break;
 
+
+    case "delete_keys_recursively": // ["objectKey", "deleteKey"], "location", "require_string"(*optional)
+      if (!m.keys || !m.location) {
+        throw {status: false, message: "Keys or location not sent with message."}
+      } else {
+        const obj_key = m.keys[0];
+        const delete_key = m.keys[m.keys.length - 1];
+        const require = (m.require) ? m.require : "";
+        console.log(obj_key, delete_key, require);
+  
+        const recursiveRemoveKey = (object, deleteKey) => {
+          delete object[deleteKey];
+          console.log("OBJECT", object);
+          for (const [k, v] of Object.entries(object)) {
+            console.log(k,v);
+            if (typeof v !== 'object') continue;
+            recursiveRemoveKey(v, deleteKey);
+          }
+        }
+
+        getValue(obj_key, m.location)
+        .then(async (obj) => {
+          console.log("start obj", obj)
+          if (require) {
+            for (const [top_k, top_v] of Object.entries(obj)) {
+              console.log(top_k,top_v);
+              if (!top_k.includes(require)) continue;
+              recursiveRemoveKey(top_v, delete_key);
+            }
+          } else {
+            recursiveRemoveKey(obj, delete_key);
+          }
+
+
+          
+          const final_obj = {[obj_key]: obj};
+  
+          console.log("delete_keys_recursively new obj", final_obj)
+          await setValue(final_obj, m.location);
+          return {status: true, message: `Key ${delete_key} was deleted.`}
+        })
+        .catch((e) => {
+          if (!e.status) {
+            throw {status: false, message: e.message}
+          } else {
+            throw {status: false, message: e}
+          }
+        });
+      }
+    break;
+
+
+    case "modify_keys_recursively": // ["objectKey", "modifyKey"], "new value" "location", "require_string"(*optional)
+    if (!m.keys || !m.new_value || !m.location) {
+      throw {status: false, message: "Keys, new value, or location not sent with message."}
+    } else {
+      const obj_key = m.keys[0];
+      const modify_key = m.keys[m.keys.length - 1];
+      const new_value = m.new_value;
+      const require = (m.require) ? m.require : "";
+      console.log(obj_key, modify_key, require);
+
+      const recursiveModifyKey = (object, modifyKey) => {
+        //delete object[modifyKey];
+        console.log("OBJECT", object);
+        for (const [k, v] of Object.entries(object)) {
+          console.log(k,v);
+          if (k == modifyKey) object[k] = new_value;
+          if (typeof v !== 'object') continue;
+          recursiveModifyKey(v, modifyKey);
+        }
+      }
+
+      getValue(obj_key, m.location)
+      .then(async (obj) => {
+        console.log("start obj", obj)
+        if (require) {
+          for (const [top_k, top_v] of Object.entries(obj)) {
+            console.log(top_k,top_v);
+            if (!top_k.includes(require)) continue;
+            recursiveModifyKey(top_v, modify_key);
+          }
+        } else {
+          recursiveModifyKey(obj, modify_key);
+        }
+
+
+        
+        const final_obj = {[obj_key]: obj};
+
+        console.log("modify_keys_recursively new obj", final_obj)
+        await setValue(final_obj, m.location);
+        return {status: true, message: `Key ${modify_key} was set to ${new_value}`}
+      })
+      .catch((e) => {
+        if (!e.status) {
+          throw {status: false, message: e.message}
+        } else {
+          throw {status: false, message: e}
+        }
+      });
+    }
+  break;
+
     case "full_reset":
       fullReset();
       return;
