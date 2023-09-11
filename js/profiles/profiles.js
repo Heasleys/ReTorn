@@ -445,6 +445,7 @@
     parent.find('.re_stat:visible').each(function(i) {
       const order = i + 1;
       const t = $(this).find('.re_table_label').text();
+      $(this).css("order", order);
       if (!TS_DATA.compare.data[t]) {
         TS_DATA.compare.data[t] = {order: order}
       } else {
@@ -459,11 +460,13 @@
     parent.find('.re_stat:not(:visible)').each(function() {
       const t = $(this).find('.re_table_label').text();
       delete TS_DATA.compare.data[t];
-      sendMessage({name: "delete_multi_nested_key", keys: ["torn_stats", `spy_user_${uid}`, "compare", "data", t], location: "local"})
-      .catch((e) => {console.error(e)})
+      sendMessage({name: "delete_keys_recursively", keys: ["torn_stats", t], location: "local", require: "spy_"})
+      .catch((e) => {displayError(e)})
     });
 
     console.log(key_string);
+
+    const new_ts_data = {[`spy_user_${uid}`]: TS_DATA}
 
     sendMessage({name: "get_torn_stats", selection: `settings&comparespy=1&comparepersonal=1&personalstats=${key_string}`})// Dont use getTornStats for this because this records new info, not pulls info
     .then((data) => {
@@ -471,6 +474,14 @@
       if (!data.status) {
         throw data.message;
       }
+    })
+    .then(() => sendMessage({"name": "merge_local", "key": "torn_stats", "object": new_ts_data}))
+    .then(() => sendMessage({name: "modify_keys_recursively", keys: ["torn_stats", "cache_until"], new_value: "1", location: "local", require: "spy_"}))       //since we have changed the order of personalstats, we need to fix personal stats of all user profiles. So we remove the cache_until to force update with Torn Stats next time they visit a player profile
+    .then((m) => {
+      if (m?.status == false) {
+        displayError(`${m?.message}`);
+      }
+
       //if any new stats have been added, refresh TS
       if ($('.re_new').length) {
         var new_stats = [];
@@ -478,34 +489,29 @@
           const t = $(this).find('.re_table_label').text();
           new_stats.push(t);
         })
-        getTornStats(`spy/user/${uid}`, 8, true)
-        .then((data) => {
-          if (!data.status) {
-            throw data.message;
-          }
-          delete data.spy;
-          delete data.attacks;
-          TS_DATA.compare = data.compare;
-          parseTornStatsData(data);
-        })      
+
+
+          getTornStats(`spy/user/${uid}`, 8, true)
+          .then((data) => {
+            console.log("get new spy",data)
+            if (data?.status == false) {
+              throw data.message;
+            }
+            delete data.spy;
+            delete data.attacks;
+            TS_DATA.compare = data.compare;
+            parseTornStatsData(data);
+          })  
+
+        .catch((e) => {
+          displayError(e);
+          console.error(e);
+        })    
       }
     })
     .then(() => {
-      //update local storage  personalstats order
-      let obj = {
-        [`spy_user_${uid}`]: TS_DATA
-      }
-
-      sendMessage({"name": "merge_local", "key": "torn_stats", "object": obj})
-      .then(function() {
         $('.re_stat:not(:visible)').remove(); //remove deleted stats
         end_modify();
-      })
-      .catch((e) => {
-        console.error("[ReTorn][Modify Personal Stats] Error: ", e);
-      })
-
-      console.log("end modify obj", obj)
     })
     .catch((err) => displayError(`Torn Stats Error: ${err}`))
 
