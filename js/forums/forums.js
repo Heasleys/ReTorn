@@ -8,11 +8,36 @@
           }
           if (true) {
             insertBlockButtons();
+            insertBlockList();
           }
+          
         }
       }
     });
   });
+  
+
+urlHandler();
+window.addEventListener('hashchange', hashHandler, false);
+
+
+function hashHandler() {
+  var hash = location.hash;
+  console.log(hash);
+  if (hash) {
+     urlHandler();
+  }
+}
+
+function urlHandler() {
+  let url = location.href;
+  console.log(url)
+
+  if (url == "https://www.torn.com/forums.php#/p=main" || url == "https://www.torn.com/forums.php") {
+    insertBlockList();
+  }
+
+}
 
   if (features?.pages?.forums?.discord_copy?.enabled) {
     insertDiscordButtons();
