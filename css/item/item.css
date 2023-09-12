@@ -57,6 +57,7 @@ li.re_add_qitem {
 
 #re_quick_items button > img {
   vertical-align: middle;
+  width: 60px;
 }
 
 #re_quick_items button {
