@@ -153,16 +153,41 @@ function insertBlockButtons() {
     if ($(this).find('.re_block_user_wrap').length == 0) {
       $(this).append(`
         <div class="re_block_user_wrap">
-          Block Me
+          <li class="re_block forum-button" title="Block user's forum posts">
+            <i class="fa-solid fa-user-slash"></i>
+            <span class="button-text">Block</span>
+          </li>
         </div>
       `);
     }
   });
   //used as an identifier for css
   $('.content-wrapper').addClass('re_block_users');
+
+  //click event
 }
 
+function insertBlockList() {
+  if (!$('#forums-page-wrap #updates').length || $('#blocked_list').length) return;
 
+  const block_list_html = `
+            <hr class="delimiter-999 m-top10 m-bottom10">
+            <div class="dashboard">
+              <div class="title-black title-toggle active" role="heading" aria-level="7">
+                <i class="arrow"></i>
+                Blocked Users
+              </div>
+              <div class="bottom-round panel-scrollbar scrollbar-bright" style="display: block;">
+                <ul class="panel fm-list" id="blocked_list">
+                </ul>
+              </div>
+            </div>
+  `;
 
+  $('#updates > .update-wrap').append(block_list_html);
 
+    //insert blocked users into block list
+    $('#blocked_list').append(`<li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li>`);
+  
+}
 })();

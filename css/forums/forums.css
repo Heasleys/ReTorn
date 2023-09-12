@@ -194,9 +194,7 @@ body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .t
 
 
 .re_block_user_wrap {
-  height: 22px;
-  line-height: 22px;
-  padding: 5px 10px;
+  line-height: 33px;
   border-top: 1px solid #ccc;
   border-top-color: var(--default-panel-divider-outer-side-color);
   white-space: nowrap;
@@ -205,4 +203,10 @@ body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .t
   width: 140px;
   position: absolute;
   bottom: 0;
+  padding: 0;
+  height: 33px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
 }
