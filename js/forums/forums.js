@@ -17,7 +17,7 @@
   if (features?.pages?.forums?.discord_copy?.enabled) {
     insertDiscordButtons();
   }
-  if (true) {
+  if (true) { //add block features
     insertBlockButtons();
   }
   const target = document.querySelector('div.content-wrapper');
@@ -25,6 +25,8 @@
 
 
 function insertDiscordButtons() {
+  if (!$('ul.thread-list > li ul.action-wrap').length) return;
+
   $('ul.thread-list > li ul.action-wrap').each(function() {
     if ($(this).find('.re_discord').length == 0) {
       $(this).find('li.right-part').before(`
@@ -149,6 +151,8 @@ async function copy_internal(text) {
 }
 
 function insertBlockButtons() {
+  if (!$('ul.thread-list > li div.poster-wrap').length) return;
+
   $('ul.thread-list > li div.poster-wrap').each(function() {
     if ($(this).find('.re_block_user_wrap').length == 0) {
       $(this).append(`
