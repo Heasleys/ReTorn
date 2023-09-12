@@ -216,8 +216,8 @@ function insertHead() {
   });
 
   RE_CONTAINER.find('.re_content #re_ct_friendsTextbox').change(function() {
-    let userid = $(this).val();
-    if (!isNaN(userid)) {
+    let userid = parseInt($(this).val());
+    if (!isNaN(userid) && userid > 0) {
       const obj = {
         "christmas_town": {
           "friends": {
