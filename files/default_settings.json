@@ -144,5 +144,8 @@
         "travel": false,
         "jail": false,
         "federal": false
+    },
+    "forums": {
+        "blocked_users": {}
     }
 }

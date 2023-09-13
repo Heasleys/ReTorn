@@ -210,3 +210,63 @@ body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .t
   align-items: center;
   width: 100%;
 }
+
+
+
+/* forum hide user main list */
+.re_block_list #blocked_list li {
+  padding-top: 0;
+  padding-left: 0;
+  display: flex;
+  flex-direction: row;
+  height: 37px;
+}
+.re_block_list #blocked_list li:last-child {
+  border-bottom: 0;
+}
+
+.re_block_list #blocked_list li:last-child div.re_icons_wrap, .re_block_list #blocked_list li:last-child div.re_post_wrap {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.re_block_list #blocked_list li > div.re_icons_wrap {
+  text-align: center;
+  width: 37px;
+  min-width: 37px;
+  height: 37px;
+  line-height: 36px;
+  border-right: 1px solid;
+  border-right-color: var(--default-panel-divider-outer-side-color);
+  padding-bottom: 4px;
+  margin-bottom: -4px;
+  padding-top: 1px;
+  margin-top: -1px;
+}
+
+.re_block_list #blocked_list li > div.re_post_wrap {
+  min-width: 0;
+  flex: 1 1 0;
+  border-left: 1px solid;
+  border-left-color: var(--default-panel-divider-inner-side-color);
+  padding-left: 10px;
+  height: 100%;
+  padding-bottom: 4px;
+  margin-bottom: -4px;
+  margin-top: -1px;
+  display: flex;
+  align-items: center;
+}
+
+#blocked_list li i {
+  background: url(/images/v2/forums/delete_from_subscribed.svg) left top no-repeat;
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+#blocked_list li i:hover {
+  background-position: 0 -11px
+}

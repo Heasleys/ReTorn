@@ -201,7 +201,7 @@ function insertBlockList() {
 
   const block_list_html = `
             <hr class="delimiter-999 m-top10 m-bottom10">
-            <div class="dashboard">
+            <div class="dashboard re_block_list">
               <div class="title-black title-toggle active" role="heading" aria-level="7">
                 <i class="arrow"></i>
                 Blocked Users
@@ -215,8 +215,20 @@ function insertBlockList() {
 
   $('#updates > .update-wrap').append(block_list_html);
 
-    //insert blocked users into block list
-    $('#blocked_list').append(`<li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li><li>Hotdog man</li>`);
+  user_id = 1;
+  username = "Cheddyburger";
+
+  var blocked_user = `<li>
+  <div class="re_icons_wrap"><a class="re_unblock_user" data-id="${user_id}"><i></i></a></div>
+  <div class="re_post_wrap">
+      <div class="bold t-overflow"><a href="profiles.php?XID=${user_id}" target="_blank">${username}</a></div>
+  </div>
+</li>`
+  
+  
+  
+  //insert blocked users into block list
+    $('#blocked_list').append(`${blocked_user}${blocked_user}${blocked_user}${blocked_user}${blocked_user}${blocked_user}`);
   
 }
 })();
