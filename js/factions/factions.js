@@ -415,12 +415,10 @@ function genericSpyFunction(membersElements, useridSelection) {
           console.log(`ReTorn: already has a spy column`)
           return;
         }
-        //console.log(member)
         const userEl = $(member).find(`${useridSelection}`);
         if (userEl.length) {
           const userid = userEl.attr("href").match(/\d+/);
           if (allMembers[userid]) {
-            //console.log(allMembers[userid]);
 
             let psTitle, spyTitle;
 

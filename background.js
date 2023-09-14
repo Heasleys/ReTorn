@@ -1103,7 +1103,6 @@ async function handleMessage(msg) {
           delete_key(obj, m.keys);
           const final_obj = {[obj_key]: obj}
   
-          console.log("delete_multi_nested_key new obj", final_obj)
           await setValue(final_obj, m.location);
           return {status: true, message: `Key ${m.key} was deleted.`}
         })
@@ -1125,13 +1124,10 @@ async function handleMessage(msg) {
         const obj_key = m.keys[0];
         const delete_key = m.keys[m.keys.length - 1];
         const require = (m.require) ? m.require : "";
-        console.log(obj_key, delete_key, require);
   
         const recursiveRemoveKey = (object, deleteKey) => {
           delete object[deleteKey];
-          console.log("OBJECT", object);
           for (const [k, v] of Object.entries(object)) {
-            console.log(k,v);
             if (typeof v !== 'object') continue;
             recursiveRemoveKey(v, deleteKey);
           }
@@ -1139,10 +1135,8 @@ async function handleMessage(msg) {
 
         getValue(obj_key, m.location)
         .then(async (obj) => {
-          console.log("start obj", obj)
           if (require) {
             for (const [top_k, top_v] of Object.entries(obj)) {
-              console.log(top_k,top_v);
               if (!top_k.includes(require)) continue;
               recursiveRemoveKey(top_v, delete_key);
             }
@@ -1154,7 +1148,6 @@ async function handleMessage(msg) {
           
           const final_obj = {[obj_key]: obj};
   
-          console.log("delete_keys_recursively new obj", final_obj)
           await setValue(final_obj, m.location);
           return {status: true, message: `Key ${delete_key} was deleted.`}
         })
@@ -1177,13 +1170,10 @@ async function handleMessage(msg) {
       const modify_key = m.keys[m.keys.length - 1];
       const new_value = m.new_value;
       const require = (m.require) ? m.require : "";
-      console.log(obj_key, modify_key, require);
 
       const recursiveModifyKey = (object, modifyKey) => {
         //delete object[modifyKey];
-        console.log("OBJECT", object);
         for (const [k, v] of Object.entries(object)) {
-          console.log(k,v);
           if (k == modifyKey) object[k] = new_value;
           if (typeof v !== 'object') continue;
           recursiveModifyKey(v, modifyKey);
@@ -1192,10 +1182,8 @@ async function handleMessage(msg) {
 
       getValue(obj_key, m.location)
       .then(async (obj) => {
-        console.log("start obj", obj)
         if (require) {
           for (const [top_k, top_v] of Object.entries(obj)) {
-            console.log(top_k,top_v);
             if (!top_k.includes(require)) continue;
             recursiveModifyKey(top_v, modify_key);
           }
@@ -1207,7 +1195,6 @@ async function handleMessage(msg) {
         
         const final_obj = {[obj_key]: obj};
 
-        console.log("modify_keys_recursively new obj", final_obj)
         await setValue(final_obj, m.location);
         return {status: true, message: `Key ${modify_key} was set to ${new_value}`}
       })

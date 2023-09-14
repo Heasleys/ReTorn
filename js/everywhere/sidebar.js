@@ -490,7 +490,6 @@
 
     //function for hiding side bar icons
     function hideThoseIcons() {
-      console.log("[ReTorn] hidethoseicons")
       const iconString = settings?.hide_sidebar_icons;
       if (iconString) {
           const icons = iconString.split(',');

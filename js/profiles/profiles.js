@@ -109,7 +109,6 @@
   
   function parseTornStatsData(data) {
     return new Promise((resolve, reject) => {
-      console.log("data", data);
       TS_DATA = data;
       if (data.status) {
         if (data?.spy?.status) {
@@ -275,8 +274,6 @@
               sorted.push({[key]: data.compare.data[key]});
           });
         
-          console.log("SORTED",sorted);
-
   
           sorted.forEach((e) => {
             const key = Object.keys(e)[0];
@@ -464,13 +461,10 @@
       .catch((e) => {displayError(e)})
     });
 
-    console.log(key_string);
-
     const new_ts_data = {[`spy_user_${uid}`]: TS_DATA}
 
     sendMessage({name: "get_torn_stats", selection: `settings&comparespy=1&comparepersonal=1&personalstats=${key_string}`})// Dont use getTornStats for this because this records new info, not pulls info
     .then((data) => {
-      console.log("TORN STATS PS", data);
       if (!data.status) {
         throw data.message;
       }
@@ -493,7 +487,6 @@
 
           getTornStats(`spy/user/${uid}`, 8, true)
           .then((data) => {
-            console.log("get new spy",data)
             if (data?.status == false) {
               throw data.message;
             }

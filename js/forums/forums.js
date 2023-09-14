@@ -4,7 +4,6 @@
 
   sendMessage({name: "get_local", value: "re_user"})
   .then((r) => {
-    console.log(r);
     if (!r?.status && !r?.data?.re_user?.player_id) {
       throw "[ReTorn][Block Users] Error: " + r?.message;
     }
@@ -32,7 +31,6 @@
 
   function hash_handler() {
     var hash = location.hash;
-    console.log(hash);
     if (hash) {
       url_handler();
     }
@@ -259,7 +257,6 @@ function insert_block_list() {
 
   var blocked_users_html = "";
 
-  console.log(JSON.stringify(blocked_users))
   if (blocked_users && Object.keys(blocked_users).length) {
     for (const [key, value] of Object.entries(blocked_users)) {
       user_id = key;
@@ -314,8 +311,6 @@ function insert_block_list() {
 }
 
 function block_users() {
-  console.log(JSON.stringify(blocked_users))
-
   if (!jQuery.isEmptyObject(blocked_users)) {
     var thread_posts = $('ul.thread-list > li');
     var quote_posts = $('div.quote blockquote:not(.re_blocked_quote)');

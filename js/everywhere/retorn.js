@@ -57,7 +57,6 @@ $(document).on('click', '#re_options', function(event){
     ss.setAttribute("src", browser.runtime.getURL("/js/everywhere/interceptFetch.js"));
     (document.head || document.documentElement).appendChild(ss);
     ss.onload = function() {
-      console.log("ONLOAD")
       document.dispatchEvent(new CustomEvent('re_fetchInject', 
       {
         "detail": 
@@ -130,7 +129,6 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
   if (local == undefined) {
     const ts = await sendMessage({"name": "get_torn_stats", "selection": selection})
     .then((r) => {
-      console.log("TS", r);
       return r;
     })
     .catch((e) => console.error(e))
@@ -141,15 +139,9 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
       }
       obj[storageSelection].timestamp = Math.round(Date.now()/1000);
       obj[storageSelection].cache_until = Math.round((Date.now()/1000)+(cacheHours*3600));
-
-      console.log(obj)
-
-      console.log(selection);
       if (selection.includes("spy/user/") && ts?.compare?.status && ts?.compare?.data) {
-        console.log('TTTTT')
         var i = 1;
         for (const [key, value] of Object.entries(ts?.compare?.data)) {
-          console.log("TS to save", key, value, i);
           obj[storageSelection].compare.data[key].order = i;
           i++;
         }
@@ -160,7 +152,6 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
 
 
     }
-    console.log("TS changed", ts)
     return ts;
   } else {
     return local;

@@ -1,6 +1,5 @@
 //function for adding the Ranked War filter header
 function rankedWar() {
-    console.log("RANKED")
     //stop and ignore if territory wars
     if ($('.faction-war-info').find('a[href*="#terrName"]').length > 0) {
       return;
