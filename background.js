@@ -1328,113 +1328,146 @@ async function startup() {
 
 async function checkUpdate(version) {
   try {
+    if (!version) version = "1.0.0";
     const settings = await getValue("settings", "sync");
     const features = await getValue("features", "sync");
 
     //version 1.1.0
-    if (settings?.hide_sidebar_icons == undefined) {
-      settings["hide_sidebar_icons"] = "";
-    }
+      if (settings?.hide_sidebar_icons == undefined) {
+        settings["hide_sidebar_icons"] = "";
+      }
     
     //version 1.2.0
-    if (settings?.profile == undefined) {
-      settings["profile"] = {};
-      if (settings?.profile?.relative_values == undefined) {
-        settings["profile"]["relative_values"] = {};
-        settings["profile"]["relative_values"]["enabled"] = false;
-      }
-    }
-    if (features?.pages?.amarket == undefined) {
-      features["pages"]["amarket"] = {};
-      if (features?.pages?.amarket?.auction_filter == undefined) {
-        features["pages"]["amarket"]["auction_filter"] = {
-          "enabled": true,
-          "description": "Adds a window that allows you to filter weapons, armor, and items on the auction house market."
+      if (settings?.profile == undefined) {
+        settings["profile"] = {};
+        if (settings?.profile?.relative_values == undefined) {
+          settings["profile"]["relative_values"] = {};
+          settings["profile"]["relative_values"]["enabled"] = false;
         }
       }
-      if (features?.pages?.amarket?.duplicate_pagination == undefined) {
-        features["pages"]["amarket"]["duplicate_pagination"] = {
-          "enabled": true,
-          "description": "Duplicates the pagination and modifies page arrows for easier auction house searching."
+      if (features?.pages?.amarket == undefined) {
+        features["pages"]["amarket"] = {};
+        if (features?.pages?.amarket?.auction_filter == undefined) {
+          features["pages"]["amarket"]["auction_filter"] = {
+            "enabled": true,
+            "description": "Adds a window that allows you to filter weapons, armor, and items on the auction house market."
+          }
+        }
+        if (features?.pages?.amarket?.duplicate_pagination == undefined) {
+          features["pages"]["amarket"]["duplicate_pagination"] = {
+            "enabled": true,
+            "description": "Duplicates the pagination and modifies page arrows for easier auction house searching."
+          }
         }
       }
-    }
-    if (settings?.auction_filter == undefined) {
-      settings["auction_filter"] = {
-        "weapons": {
-          "name": "",
-          "damage": "",
-          "accuracy": "",
-          "color": "",
-          "bonus_1": {
+      if (settings?.auction_filter == undefined) {
+        settings["auction_filter"] = {
+          "weapons": {
+            "name": "",
+            "damage": "",
+            "accuracy": "",
+            "color": "",
+            "bonus_1": {
+                "name": "",
+                "percentage": ""
+            },
+            "bonus_2": {
+                "name": "",
+                "percentage": ""
+            }
+          },
+          "armor": {
               "name": "",
+              "defense": "",
+              "color": "",
               "percentage": ""
           },
-          "bonus_2": {
+          "item": {
               "name": "",
-              "percentage": ""
+              "category": ""
           }
-        },
-        "armor": {
-            "name": "",
-            "defense": "",
-            "color": "",
-            "percentage": ""
-        },
-        "item": {
-            "name": "",
-            "category": ""
         }
       }
-    }
-    if (features?.pages?.factions?.territory_war_spies == undefined) {
-      features["pages"]["factions"]["territory_war_spies"] = {
-        "enabled": true,
-        "description": "Adds a spy column to territory wall wars for each player. Requires Torn Stats."
+      if (features?.pages?.factions?.territory_war_spies == undefined) {
+        features["pages"]["factions"]["territory_war_spies"] = {
+          "enabled": true,
+          "description": "Adds a spy column to territory wall wars for each player. Requires Torn Stats."
+        }
       }
-    }
-    if (features?.pages?.factions?.faction_profile_spies == undefined) {
-      features["pages"]["factions"]["faction_profile_spies"] = {
-        "enabled": false,
-        "description": "Adds a spy column to the faction members list on the faction profile page. Requires Torn Stats."
+      if (features?.pages?.factions?.faction_profile_spies == undefined) {
+        features["pages"]["factions"]["faction_profile_spies"] = {
+          "enabled": false,
+          "description": "Adds a spy column to the faction members list on the faction profile page. Requires Torn Stats."
+        }
       }
-    }
-    if (features?.pages?.factions?.faction_profile_filter == undefined) {
-      features["pages"]["factions"]["faction_profile_filter"] = {
-        "enabled": true,
-        "description": "Adds a window to the faction profile page that allows you to filter faction members."
+      if (features?.pages?.factions?.faction_profile_filter == undefined) {
+        features["pages"]["factions"]["faction_profile_filter"] = {
+          "enabled": true,
+          "description": "Adds a window to the faction profile page that allows you to filter faction members."
+        }
       }
-    }
-    if (features?.pages?.factions?.faction_name_in_tab == undefined) {
-      features["pages"]["factions"]["faction_name_in_tab"] = {
-        "enabled": true,
-        "description": "Adds the name of the faction in the browser tab."
+      if (features?.pages?.factions?.faction_name_in_tab == undefined) {
+        features["pages"]["factions"]["faction_name_in_tab"] = {
+          "enabled": true,
+          "description": "Adds the name of the faction in the browser tab."
+        }
       }
-    }
-    if (settings?.faction_profile_filter == undefined) {
-      settings["faction_profile_filter"] = {
-        "hide_fallen": false,
-        "online": false,
-        "idle": false,
-        "offline": false,
-        "okay": false,
-        "hospital": false,
-        "travel": false,
-        "jail": false,
-        "federal": false
-      };
-    }
-
+      if (settings?.faction_profile_filter == undefined) {
+        settings["faction_profile_filter"] = {
+          "hide_fallen": false,
+          "online": false,
+          "idle": false,
+          "offline": false,
+          "okay": false,
+          "hospital": false,
+          "travel": false,
+          "jail": false,
+          "federal": false
+        };
+      }
+      if (settings?.forums == undefined) {
+        settings["forums"] = {
+          "blocked_users": {},
+          "blocked_users_dashboard": {
+            "expanded": false
+          }
+        }
+      }
+      if (features?.pages?.forums?.blocked_users == undefined) {
+        features["pages"]["forums"]["blocked_users"] = {
+          "enabled": true,
+          "description": "Adds the option to block users on the forums. Adds block button on posts and block list on main forum page."
+        }
+      }
     
+
     await setValue({"settings": settings}, "sync");
     await setValue({"features": features}, "sync");
-
   } catch(e) {
     console.error(e)
   }
+}
 
-
-  
+function versionCompare(v1, v2) { // return 1 if v2 is smaller than v1 | return -1 if v2 is greater than v1 | return 0 if equal
+    var vnum1 = 0, vnum2 = 0;
+    for (var i = 0, j = 0; (i < v1.length || j < v2.length);) {
+        while (i < v1.length && v1[i] != '.') {
+            vnum1 = vnum1 * 10 + (v1[i] - '0');
+            i++;
+        }
+        while (j < v2.length && v2[j] != '.') {
+            vnum2 = vnum2 * 10 + (v2[j] - '0');
+            j++;
+        }
+        if (vnum1 > vnum2)
+            return 1;
+        if (vnum2 > vnum1)
+            return -1;
+        vnum1 = vnum2 = 0;
+        i++;
+        j++;
+    }
+    return 0;
 }
 
 async function newInstallation() {
