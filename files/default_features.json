@@ -34,6 +34,10 @@
             "discord_copy": {
                 "enabled": true,
                 "description": "Adds a button to every forum post that copies the post to a Discord format."
+            },
+            "blocked_users": {
+                "enabled": true,
+                "description": "Adds the option to block users on the forums. Adds block button on posts and block list on main forum page."
             }
         },
         "api": {

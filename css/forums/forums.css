@@ -211,6 +211,24 @@ body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .t
   width: 100%;
 }
 
+.re_block_user_wrap .re_block {
+  cursor: pointer;
+  padding: 0px 10px;
+}
+
+
+/* blocked content */
+.re_blocked_content.re_show {
+  height: auto !important;
+}
+.re_blocked_content.re_hide {
+  padding-bottom: 0 !important;
+  height: 0 !important;
+}
+.re_blocked_content_button {
+  cursor: pointer;
+}
+
 
 
 /* forum hide user main list */

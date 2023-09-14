@@ -1,14 +1,27 @@
 (function() {
+  var blocked_users = settings?.forums?.blocked_users;
+  var player_id;
+
+  sendMessage({name: "get_local", value: "re_user"})
+  .then((r) => {
+    console.log(r);
+    if (!r?.status && !r?.data?.re_user?.player_id) {
+      throw "[ReTorn][Block Users] Error: " + r?.message;
+    }
+    player_id = r?.data?.re_user?.player_id;
+  })
+  .catch((e) => console.error(e));
+
   var observer = new MutationObserver(function(mutations, observer) {
     mutations.forEach(function(mutation) {
       if (mutation.target && mutation.target && mutation.target.id && mutation.target.id == "forums-page-wrap") {
         if (mutation.addedNodes && mutation.addedNodes.length > 0) {
           if (features?.pages?.forums?.discord_copy?.enabled) {
-            insertDiscordButtons();
+            insert_discord_buttons();
           }
-          if (true) {
-            insertBlockButtons();
-            insertBlockList();
+          if (features?.pages?.forums?.blocked_users?.enabled) {
+            block_users();
+            insert_block_list();
           }
           
         }
@@ -17,39 +30,36 @@
   });
   
 
-urlHandler();
-window.addEventListener('hashchange', hashHandler, false);
-
-
-function hashHandler() {
-  var hash = location.hash;
-  console.log(hash);
-  if (hash) {
-     urlHandler();
-  }
-}
-
-function urlHandler() {
-  let url = location.href;
-  console.log(url)
-
-  if (url == "https://www.torn.com/forums.php#/p=main" || url == "https://www.torn.com/forums.php") {
-    insertBlockList();
+  function hash_handler() {
+    var hash = location.hash;
+    console.log(hash);
+    if (hash) {
+      url_handler();
+    }
   }
 
-}
+  function url_handler() {
+    let url = location.href;
+
+    if (url.includes("#/p=main") || url == "https://www.torn.com/forums.php") {
+      insert_block_list();
+    }
+  }
+
+  window.addEventListener('hashchange', hash_handler, false);
+  url_handler();
 
   if (features?.pages?.forums?.discord_copy?.enabled) {
-    insertDiscordButtons();
+    insert_discord_buttons();
   }
-  if (true) { //add block features
-    insertBlockButtons();
+  if (features?.pages?.forums?.blocked_users?.enabled) { //add block features
+    block_users();
   }
   const target = document.querySelector('div.content-wrapper');
   observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
 
 
-function insertDiscordButtons() {
+function insert_discord_buttons() {
   if (!$('ul.thread-list > li ul.action-wrap').length) return;
 
   $('ul.thread-list > li ul.action-wrap').each(function() {
@@ -175,7 +185,7 @@ async function copy_internal(text) {
   }
 }
 
-function insertBlockButtons() {
+function insert_block_buttons() {
   if (!$('ul.thread-list > li div.poster-wrap').length) return;
 
   $('ul.thread-list > li div.poster-wrap').each(function() {
@@ -194,20 +204,52 @@ function insertBlockButtons() {
   $('.content-wrapper').addClass('re_block_users');
 
   //click event
+  $('.re_block_user_wrap .re_block').click(function() {
+    var name = $(this).closest('.poster-wrap').find('.name-id .poster-name').text();
+    var id = parseInt($(this).closest('.poster-wrap').find('.name-id .poster-id').text().replace(/\D/g, ''));
+    
+    if (name && id && id != player_id) {
+      blocked_users[id] = {"name": name}
+
+
+      const obj = {
+        "forums": {
+          "blocked_users": {
+            [id]: {
+              "name": name
+            }
+          }
+        }
+      }
+
+      sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+      .then(block_users())
+      .catch((e) => console.error(e));
+    }
+  });
 }
 
-function insertBlockList() {
+function insert_block_list() {
   if (!$('#forums-page-wrap #updates').length || $('#blocked_list').length) return;
+
+  var active = "";
+  var expanded = "";
+  if (settings?.forums?.blocked_users_dashboard?.expanded) {
+    active = "active";
+    expanded = 'style="display: block;"';
+  } else {
+    expanded = 'style="display: none;"';
+  }
 
   const block_list_html = `
             <hr class="delimiter-999 m-top10 m-bottom10">
             <div class="dashboard re_block_list">
-              <div class="title-black title-toggle active" role="heading" aria-level="7">
+              <div class="title-black title-toggle ${active}" role="heading" aria-level="7">
                 <i class="arrow"></i>
                 Blocked Users
               </div>
-              <div class="bottom-round panel-scrollbar scrollbar-bright" style="display: block;">
-                <ul class="panel fm-list" id="blocked_list">
+              <div class="bottom-round panel-scrollbar scrollbar-bright" ${expanded}>
+                <ul class="panel fm-list" id="blocked_list")>
                 </ul>
               </div>
             </div>
@@ -215,20 +257,107 @@ function insertBlockList() {
 
   $('#updates > .update-wrap').append(block_list_html);
 
-  user_id = 1;
-  username = "Cheddyburger";
+  var blocked_users_html = "";
 
-  var blocked_user = `<li>
-  <div class="re_icons_wrap"><a class="re_unblock_user" data-id="${user_id}"><i></i></a></div>
-  <div class="re_post_wrap">
-      <div class="bold t-overflow"><a href="profiles.php?XID=${user_id}" target="_blank">${username}</a></div>
-  </div>
-</li>`
-  
-  
-  
+  console.log(JSON.stringify(blocked_users))
+  if (blocked_users && Object.keys(blocked_users).length) {
+    for (const [key, value] of Object.entries(blocked_users)) {
+      user_id = key;
+      username = value.name;
+    
+      var blocked_user = `<li>
+      <div class="re_icons_wrap"><a class="re_unblock_user" data-id="${user_id}"><i></i></a></div>
+      <div class="re_post_wrap">
+          <div class="bold t-overflow"><a href="profiles.php?XID=${user_id}" target="_blank">${username} [${user_id}]</a></div>
+      </div>
+      </li>`;
+
+      blocked_users_html += blocked_user;
+    }
+  } else {
+    blocked_users_html = no_blocked_users_html;
+  }
+
+
   //insert blocked users into block list
-    $('#blocked_list').append(`${blocked_user}${blocked_user}${blocked_user}${blocked_user}${blocked_user}${blocked_user}`);
-  
+  $('#blocked_list').append(`${blocked_users_html}`);
+
+
+  $('.re_block_list > div.title-toggle').click(function() {
+    var expanded = !$(this).hasClass('active');
+    const obj = {
+      "forums": {
+        "blocked_users_dashboard": {
+          "expanded": expanded
+        }
+      }
+    }
+    settings.forums.blocked_users_dashboard.expanded = expanded;
+    sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+    .catch((e) => console.error(e));
+  });
+
+  $('.re_unblock_user').click(function() {
+    const id = parseInt($(this).attr('data-id'));
+
+    sendMessage({"name": "delete_multi_nested_key", "object_key": "settings", "keys": ["forums", "blocked_users", id], "location": "sync"})
+    .then((r) => {
+      $(this).closest('li').remove();
+      delete blocked_users[id];
+
+      if (Object.keys(blocked_users).length == 0) {
+        $('#blocked_list').html(no_blocked_users_html);
+      }
+    })
+    .catch((e) => console.error(e))
+  });
+}
+
+function block_users() {
+  console.log(JSON.stringify(blocked_users))
+
+  if (!jQuery.isEmptyObject(blocked_users)) {
+    var thread_posts = $('ul.thread-list > li');
+    var quote_posts = $('div.quote blockquote:not(.re_blocked_quote)');
+    if (thread_posts.length) {
+      thread_posts.each(function() {
+        var post = $(this);
+        var id = parseInt($(this).find('.poster-wrap .info-wrap .name-id .poster-id').text().replace(/\D/g, ''));
+
+        if (blocked_users[id]) {
+          post.hide();
+        }
+      });
+    }
+    if (quote_posts.length) {
+      quote_posts.each(function() {
+        var quote = $(this);
+        var author_block = quote.children('.author-quote');
+        var message_block = quote.children('.quote-post');
+
+        const author = parseInt(author_block.find('a').attr('href').replace(/\D/g, ''));
+        if (blocked_users[author]) {
+          quote.addClass('re_blocked_quote');
+          author_block.html(`<strong><span class="t-blue h re_blocked_content_button" title="Show content">BLOCKED USER</span></strong>`);
+          message_block.addClass('re_blocked_content').addClass('re_hide');
+        }
+      });
+
+      $('.re_blocked_content_button').off("click").on("click", function() {
+        var blocked_content = $(this).closest('.author-quote').siblings('.re_blocked_content');
+        blocked_content.toggleClass('re_hide').toggleClass('re_show');
+      });
+    }
+  }
+  insert_block_buttons();
 }
 })();
+
+
+const no_blocked_users_html = `
+<li>
+  <div class="re_post_wrap">
+      <div class="bold t-overflow">You do not have anyone blocked.</div>
+  </div>
+</li>
+`;

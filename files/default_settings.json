@@ -146,6 +146,9 @@
         "federal": false
     },
     "forums": {
-        "blocked_users": {}
+        "blocked_users": {},
+        "blocked_users_dashboard": {
+            "expanded": false
+        }
     }
 }
