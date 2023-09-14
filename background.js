@@ -1063,6 +1063,60 @@ async function handleMessage(msg) {
       }
     break;
 
+    //["torn_stats", "compare", "data", "retaliations"], "local"
+    // first key in array is the key we need to pull for the object.
+    // then we go deep until the final key, which is the key to delete
+    case "delete_multi_nested_key": 
+      if (!m.object_key || !m.keys || !m.location) {
+        throw {status: false, message: "Keys or location not sent with message."}
+      } else {
+        const obj_key = m.object_key; //generally "settings"
+        getValue(obj_key, m.location)
+        .then(async (obj) => {
+          const delete_key = (object, keys) => {
+            // Check if the object is empty or if the keys array is empty.
+            if (!object || !keys.length) {
+              return;
+            }
+
+            // Get the current key.
+            const key = keys[0];
+
+            // If the key is not a property of the object, return.
+            if (!object.hasOwnProperty(key)) {
+              return;
+            }
+
+            // If the keys array has more than one element, recursively call the function
+            // on the nested object.
+            if (keys.length > 1) {
+              delete_key(object[key], keys.slice(1));
+            }
+
+            // If the keys array has only one element, delete the object at the given key.
+            else {
+              delete object[key];
+            }
+          }
+
+
+          delete_key(obj, m.keys);
+          const final_obj = {[obj_key]: obj}
+  
+          console.log("delete_multi_nested_key new obj", final_obj)
+          await setValue(final_obj, m.location);
+          return {status: true, message: `Key ${m.key} was deleted.`}
+        })
+        .catch((e) => {
+          if (!e.status) {
+            throw {status: false, message: e.message}
+          } else {
+            throw {status: false, message: e}
+          }
+        });
+        return {status: false, message: `Something went wrong in delete_multi_nested_key`}
+      }
+    break;
 
     case "delete_keys_recursively": // ["objectKey", "deleteKey"], "location", "require_string"(*optional)
       if (!m.keys || !m.location) {
