@@ -190,7 +190,7 @@ function insert_block_buttons() {
 
   $('ul.thread-list > li div.poster-wrap').each(function() {
     if ($(this).find('.re_block_user_wrap').length == 0) {
-      $(this).append(`
+      $(this).find('.info-wrap').append(`
         <div class="re_block_user_wrap">
           <li class="re_block forum-button" title="Block user's forum posts">
             <i class="fa-solid fa-user-slash"></i>
