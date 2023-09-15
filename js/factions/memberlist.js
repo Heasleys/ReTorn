@@ -310,6 +310,7 @@ function initMemberListSpies() {
 
 function insertMemberListSpyElements() {
   const RE_CONTAINER = $(`.re_container[data-feature="${FACTION_FILTER}"]`);
+  if (!RE_CONTAINER.length) return;
 
   //insert button into header menu to refresh Torn Stats spy data manually
   insertSettingsSpyRefresh(FACTION_FILTER, MEMBERLIST_SPIES); //This is technically the filter container, but whatever.
