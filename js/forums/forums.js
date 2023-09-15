@@ -125,7 +125,7 @@ function insert_discord_buttons() {
     var urls = text.match(/(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])/igm);
 
     //Title for discord format
-    discordFormat = `:speech_left: **${forum_title}** ${forum_url}\n${codeblock}diff\n--- ${timestamp}\n+ ${likes} upvotes\n- ${dislikes} downvotes\n${codeblock}\n`;
+    discordFormat = `:speech_left: **${forum_title}** <${forum_url}>\n${codeblock}diff\n--- ${timestamp}\n+ ${likes} upvotes\n- ${dislikes} downvotes\n${codeblock}\n`;
 
     //content
     discordFormat += `**${author}**:\n${codeblock}md\n${quote}${formattedText}\n${codeblock}`;
@@ -134,7 +134,7 @@ function insert_discord_buttons() {
       discordFormat += `\n`;
       urls.forEach((url,index) => {
         index++;
-        discordFormat += `${index}: ${url}\n`;
+        discordFormat += `${index}: <${url}>\n`;
       })
     }
 
