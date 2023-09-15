@@ -179,7 +179,9 @@ function showError(FEATURE, err, onlyBar = false) {
     clearError(FEATURE, onlyBar);
 
     const RE_CONTAINER = $(`.re_container[data-feature="${FEATURE}"]`);
-    console.log(`[ReTorn][${FEATURE}] Error: `, err);
+    console.error(`[ReTorn][${FEATURE}] Error: `, err);
+
+    if (!RE_CONTAINER.length) return;
 
     if (onlyBar) {
         if (RE_CONTAINER.find('.re_content').length == 0) {
@@ -196,10 +198,14 @@ function showError(FEATURE, err, onlyBar = false) {
 
 function clearError(FEATURE, onlyBar = false) {
     if (!FEATURE) {
-        console.error("[ReTorn] Feature not given with clear error function.", err);
+        console.error("[ReTorn] Feature not given with clear error function.");
         return;
     }
     const RE_CONTAINER = $(`.re_container[data-feature="${FEATURE}"]`);
+    if (!RE_CONTAINER.length) {
+        console.log(`[ReTorn] ${FEATURE} container could not be found.`);
+        return;
+    }
 
     RE_CONTAINER.find('#re_loader').remove();
     RE_CONTAINER.find('.re_error').remove();
