@@ -82,7 +82,7 @@ function insert_discord_buttons() {
     let quote = "";
 
     let forum_wrap = $(this).closest(".column-wrap");
-    let forum_title = $("#topic-title").text().replace(/(\r\n|\n|\r)/gm, "");
+    let forum_title = $("#topic-title").text().replace(/(\r\n|\n|\r)/gm, "").replace(/\s\s+/g, ' ');
     let post_id = "&to=" + forum_wrap.find('.post-wrap').attr("data-post");
     let forum_url = window.location.toString().replace(/\&to=\d*/g, "") + post_id;
 
@@ -95,7 +95,8 @@ function insert_discord_buttons() {
 
 
     let poster_wrap = forum_wrap.find(".poster-wrap");
-    let author = poster_wrap.find('.user.name.t-hide > span').prop("title");
+    let author = poster_wrap.find('.name-id').length ? poster_wrap.find('.name-id').text().trim() : "Author";
+    author = author.replace(/\s\s+/g, ' ');
 
     let post_container = forum_wrap.find(".post-container");
     let text = post_container.children('.origin-post-content').text();
