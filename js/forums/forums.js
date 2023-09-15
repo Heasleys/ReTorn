@@ -318,7 +318,18 @@ function block_users() {
         var id = parseInt($(this).find('.poster-wrap .info-wrap .name-id .poster-id').text().replace(/\D/g, ''));
 
         if (blocked_users[id]) {
-          post.hide();
+          if (post.hasClass('parent-post')) {
+            const name = post.find('.poster-name').text()
+            post.find('.poster').html(`<span class="arrow-left right"></span>${blocked_user_no_name}`);
+            post.find('.post').hide();
+            if (post.find('.edited').length) post.find('.edited').text(post.find('.edited').text().replace(name, "BLOCKED USER"));
+            post.find('.info-wrap').hide();
+            $('.poster .re_blocked_content_button').off("click").on("click", function() {
+              post.find('.post').toggle();
+            })
+          } else {
+            post.hide();
+          }
         }
       });
     }
@@ -331,12 +342,12 @@ function block_users() {
         const author = parseInt(author_block.find('a').attr('href').replace(/\D/g, ''));
         if (blocked_users[author]) {
           quote.addClass('re_blocked_quote');
-          author_block.html(`<strong><span class="t-blue h re_blocked_content_button" title="Show content">BLOCKED USER</span></strong>`);
+          author_block.html(blocked_user_no_name);
           message_block.addClass('re_blocked_content').addClass('re_hide');
         }
       });
 
-      $('.re_blocked_content_button').off("click").on("click", function() {
+      $('.re_blocked_quote .re_blocked_content_button').off("click").on("click", function() {
         var blocked_content = $(this).closest('.author-quote').siblings('.re_blocked_content');
         blocked_content.toggleClass('re_hide').toggleClass('re_show');
       });
@@ -353,4 +364,8 @@ const no_blocked_users_html = `
       <div class="bold t-overflow">You do not have anyone blocked.</div>
   </div>
 </li>
+`;
+
+const blocked_user_no_name = `
+<strong><span class="t-blue h re_blocked_content_button" title="Show content">BLOCKED USER</span></strong>
 `;
