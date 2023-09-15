@@ -11,8 +11,19 @@ if ($('div.captcha').length == 0) {
 
   if (features?.pages?.gym?.torn_stats_graph?.enabled) {
     //Torn Stats Graph
-    insertHeader($("div.content-wrapper"), 'append', 'torn_stats_graph');
-    $('.re_content').html(`
+    //Insert container
+    if ($(`.re_container[data-feature="${TS_GRAPH}"]`).length != 0) return;
+    const containerObject = {
+        "feature": `${TS_GRAPH}`,
+        "insertLocation": "append",
+        "elementClasses": "",
+        "bar": false
+    }
+    insertContainer($("div.content-wrapper"), containerObject);
+    const RE_CONTAINER = $(`.re_container[data-feature="${TS_GRAPH}"]`);
+
+
+    RE_CONTAINER.find('.re_content').html(`
       <div class="re_row" id="re_loader">
         <img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" style="margin-left: 0; left: 0;">
       </div>
@@ -24,8 +35,10 @@ if ($('div.captcha').length == 0) {
         <p id="re_message" hidden></p>
       </div>
       `);
-    if (settings?.headers?.gym?.expanded) loadTornStatsGraph();
-    $(".re_head").click(function() {
+    if (settings?.headers?.gym?.torn_stats_graph?.expanded) {
+      loadTornStatsGraph();
+    }
+    RE_CONTAINER.find(".re_head").click(function() {
       if ($('div#stats.loaded').length == 0) {
         loadTornStatsGraph();
       }
@@ -115,7 +128,7 @@ function insertTornStatsButtons() {
 
   $("button#re_tornstats_hof").click(function() {
     const num = $(this).val();
-    sendMessage({name: "get_torn_stats", selection: "hof/" + num}) //dont use getTornStats because this toggles hof, not 
+    sendMessage({name: "get_torn_stats", selection: "hof/" + num}) //dont use getTornStats because this toggles hof, not pulls info
     .then((data) => {
       if (data.status == true) {
         Message(data);

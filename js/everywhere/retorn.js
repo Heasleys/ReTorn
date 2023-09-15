@@ -1,3 +1,5 @@
+var browser = browser || chrome;
+
   /* Send Mesages to background.js - Example Usage */
   /*
     sendMessage({"name": "merge_sync", "key": "notifications", "object": obj})
@@ -14,7 +16,7 @@
   */
  const sendMessage = (msg) => {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage(msg, (data) => {
+      browser.runtime.sendMessage(msg, (data) => {
         return resolve(data);
       });
     });
@@ -38,16 +40,32 @@ $(document).on('click', '#re_options', function(event){
 
   Promise.all([sendMessage({name: "get_sync", value: "settings"}),sendMessage({name: "get_sync", value: "features"})])
   .then((r) =>  {
+    if (!r[0].status) {
+      console.error('[ReTorn]: Error | ', r[0].message);
+      return;
+    }
+    if (!r[1].status) {
+      console.error('[ReTorn]: Error | ', r[1].message);
+      return;
+    }
     settings = r[0].data;
     features = r[1].data;
     /* Create customEvent to communicate with interceptFetch.js/extension */
     /* Inject FetchIntercept via js/everywhere/interceptFetch.js into Torn page */
     var ss = document.createElement("script");
-    ss.src = chrome.runtime.getURL("/js/everywhere/interceptFetch.js");
+    ss.setAttribute("type", "text/javascript");       
+    ss.setAttribute("src", browser.runtime.getURL("/js/everywhere/interceptFetch.js"));
     (document.head || document.documentElement).appendChild(ss);
-    ss.onload = function(){
-      const interceptFetchEvent = new CustomEvent('re_fetchInject', { detail: {settings: r[0].data, features: r[1].data }}); //send settings and features with event details
-      document.dispatchEvent(interceptFetchEvent);
+    ss.onload = function() {
+      document.dispatchEvent(new CustomEvent('re_fetchInject', 
+      {
+        "detail": 
+        {
+          "settings": settings,
+          "features": features
+        }
+      }
+      ));
     };
 
     init();
@@ -81,7 +99,7 @@ $(document).on('click', '#re_options', function(event){
     if (settings.torn3d) {
       $( document ).ready(function() {
         var ss = document.createElement("script");
-        ss.src = chrome.runtime.getURL("/js/everywhere/torn3d.js");
+        ss.src = browser.runtime.getURL("/js/everywhere/torn3d.js");
         (document.head || document.documentElement).appendChild(ss);
       });
     }
@@ -89,105 +107,7 @@ $(document).on('click', '#re_options', function(event){
 
 
 
-function insertHeader(element, where, feature, classes = "") {
-  if ($('div.re_container').length == 0) {
-    const title = feature.replaceAll('_', ' ');
 
-    var header = `
-    <div class="re_container ${classes}" data-feature="${feature}">
-      <div class="re_head">
-        <span class="re_title noselect"><span id="re_title">${title}</span></span>
-          <div class="re_icon_wrap">
-            <span class="re_icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>
-            </span>
-          </div>
-      </div>
-      <div class="re_content" style="display: none;">
-
-      </div>
-    </div>`;
-    switch (where) {
-      case 'append':
-        element.append(header);
-      break;
-      case 'prepend':
-        element.prepend(header);
-      break;
-      case 'after':
-        element.after(header);
-      break;
-      case 'before':
-        element.before(header);
-      break;
-    }
-
-    const remove_me_button = `<li id="re_remove_feature"><span class="re_menu_item"><i class="fa-solid fa-trash-can"></i><span class="re_menu_item_text">Remove feature</span></span></li>`
-    const settings_view = `<div class="re_menu_block noselect"><div class="re_menu"><ul id="re_features_settings_view">${remove_me_button}</ul></div></div>`
-
-    $('.re_head .re_title').after(`<span class="re_settings_icon"><i class="fas fa-gear" id="re_feature_settings" title="Feature Settings"></i>${settings_view}</span>`);
-
-    $(document).on('click', function(e) { //hide feature menu if it's open when clicking anywhere else
-      $('#re_feature_settings').removeClass('re_active');
-    })
-    $('#re_feature_settings, .re_menu_block').click(function(e) { //open feature menu when clicking on cog icon or cog icon gradient
-      e.stopPropagation();
-      $('#re_feature_settings').toggleClass('re_active');
-    });
-    // $('.re_menu').click(function(e) { //don't hide menu or do any other click event when clicking on the menu
-    //   e.stopPropagation();
-    // })
-    $('#re_remove_feature').click(function(e) {
-      const feature = $(this).closest('.re_container').data('feature');
-      
-      if (feature && locationURL) {
-        const obj = {
-          "pages": {
-            [locationURL]: {
-              [feature]: {
-                "enabled": false
-              }
-            }
-          }
-        }
-        sendMessage({"name": "merge_sync", "key": "features", "object": obj})
-        .then((r) => {
-          if (r?.status) {
-            features["pages"][locationURL][feature]["enabled"] = false;
-            $(`.re_container[data-feature="${feature}"`).remove();
-            if (typeof featureCleanup === 'function') {
-              featureCleanup(feature);
-            }
-          }
-        })
-      }
-    });
-
-
-
-    if (settings?.headers[locationURL]?.expanded) {
-      $(".re_head").addClass("expanded");
-      $("div.re_content").show();
-    }
-
-
-    $(".re_head").click(function() {
-        $(this).toggleClass("expanded");
-        $(this).next("div.re_content").slideToggle("fast");
-        $(this).find("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
-        let expanded = $(this).hasClass("expanded");
-        const obj = {"headers": {[locationURL]: {"expanded": expanded}}}
-        sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
-        .catch((e) => console.error(e))      
-    });
-
-    if ($('div.re_content').is(":visible")) {
-      $('span.re_icon').addClass('arrow_down');
-    } else {
-      $('span.re_icon').addClass('arrow_right');
-    }
-  }
-}
 
 
 async function getTornStats(selection, cacheHours = 8, forced = false) { //default cached time to 8 hours
@@ -196,6 +116,7 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
   const local = await sendMessage({name: "get_local", value: "torn_stats"})
   .then((r) => {
     if (forced) return; //Force update data, regardless of previous cache data
+    if (!r?.status) return;
     const cache_until = r?.data[storageSelection]?.cache_until;
     const timestamp = r?.data[storageSelection]?.timestamp;
     if (r?.status && timestamp && cache_until) {
@@ -219,11 +140,19 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
       }
       obj[storageSelection].timestamp = Math.round(Date.now()/1000);
       obj[storageSelection].cache_until = Math.round((Date.now()/1000)+(cacheHours*3600));
+      if (selection.includes("spy/user/") && ts?.compare?.status && ts?.compare?.data) {
+        var i = 1;
+        for (const [key, value] of Object.entries(ts?.compare?.data)) {
+          obj[storageSelection].compare.data[key].order = i;
+          i++;
+        }
+      }
 
       await sendMessage({"name": "merge_local", "key": "torn_stats", "object": obj})
       .catch((e) => console.error(e))
-    }
 
+
+    }
     return ts;
   } else {
     return local;
@@ -302,41 +231,6 @@ function secondsToHmsShort(d) {
     }
 
     return dayDisplay + hDisplay + mDisplay + sDisplay;
-}
-
-function timeDifference(current, previous) {
-
-  var msPerMinute = 60 * 1000;
-  var msPerHour = msPerMinute * 60;
-  var msPerDay = msPerHour * 24;
-  var msPerMonth = msPerDay * 30;
-  var msPerYear = msPerDay * 365;
-
-  var elapsed = current - previous;
-
-  if (elapsed < msPerMinute) {
-       return Math.round(elapsed/1000) + ' seconds ago';
-  }
-
-  else if (elapsed < msPerHour) {
-       return Math.round(elapsed/msPerMinute) + ' minutes ago';
-  }
-
-  else if (elapsed < msPerDay ) {
-       return Math.round(elapsed/msPerHour ) + ' hours ago';
-  }
-
-  else if (elapsed < msPerMonth) {
-      return '' + Math.round(elapsed/msPerDay) + ' days ago';
-  }
-
-  else if (elapsed < msPerYear) {
-      return '' + Math.round(elapsed/msPerMonth) + ' months ago';
-  }
-
-  else {
-      return '' + Math.round(elapsed/msPerYear ) + ' years ago';
-  }
 }
 
 //Function to return colors darker/lighter/blended - https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors

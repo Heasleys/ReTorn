@@ -1,4 +1,6 @@
-const manifestData = chrome.runtime.getManifest();
+var browser = browser || chrome;
+
+const manifestData = browser.runtime.getManifest();
 const default_quick_links = {
   amarket: {
     name: "Auction House",
@@ -58,7 +60,7 @@ function isEmpty(obj) { //function for easily checking if an object is empty
 }
 const sendMessage = (msg) => {
   return new Promise((resolve) => {
-    chrome.runtime.sendMessage(msg, (data) => {
+    browser.runtime.sendMessage(msg, (data) => {
       resolve(data);
     });
   });
@@ -320,7 +322,7 @@ function initInputs() {
     if ($(this).val() == 0) {
       const key = $("#ts_apikey").val();
 
-      if (key && key.length == 16) {
+      if (key && key.length >= 16 && key.length <= 19) {
         if (confirm('By accepting, you agree to allow the api key you entered to be transmitted to tornstats.com.')) {
           sendMessage({name: "set_torn_stats_api", apikey: key})
           .then((r) => {
@@ -490,7 +492,7 @@ function initQuickLinksList() {
     $('.quicklinks').append(optionStr);
 
     //initialize sortable feature for quick links
-    $( "#quicklinks" ).sortable({axis: "y", items: "> li:not(:last-child)", deactivate: function( event, ui ) {
+    $( "#quicklinks" ).sortable({axis: "y", items: "> li:not(:last-child)", handle: ".fa-li", deactivate: function( event, ui ) {
       let obj = {"quick_links": {}};
 
       $('#quicklinks > li:not(:last-child) .switch_wrap').each(function() {
@@ -613,6 +615,7 @@ function initChatHighlights() {
         wrap.find("input[type='checkbox']").prop("checked", value.enabled);
         wrap.find("input[name='text']").val(value.value);
         wrap.find("input[name='color']").val(value.color);
+        wrap.find("input[name='color']").show();
         wrap.find("input[name='color']")[0].jscolor.fromString(value.color);
       }
     }
@@ -625,7 +628,7 @@ function appendChatHighlights() {
     <div class="switch_wrap">
       <input type="checkbox">
       <input type="text" name="text" placeholder="@username or words">
-      <input type="text" name="color" data-jscolor="{}" value="#E0CE00">
+      <input type="text" name="color" data-jscolor="{}" value="#E0CE00" style="display: none;">
     </div>
     `)
 }

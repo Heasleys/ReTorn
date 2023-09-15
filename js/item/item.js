@@ -62,10 +62,26 @@
   });
 
   var orderMain = 1;
+  var tornRFC;
   if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true" && features?.pages?.item?.quick_items?.enabled) { //Check for captcha and traveling  
-    insertHeader($("div.equipped-items-wrap"), 'before', 'quick_items', 'after');
+    document.addEventListener("RFCtoReTorn", function(e) {
+      tornRFC = e.detail;
+    }, false);
+    var rfcEv = new CustomEvent("getTornRFC");
+    document.dispatchEvent(rfcEv);
 
-    $('.re_content').html(`
+    //Insert container
+    if ($(`.re_container[data-feature="${QUICK_ITEMS}"]`).length != 0) return;
+    const containerObject = {
+        "feature": `${QUICK_ITEMS}`,
+        "insertLocation": "before",
+        "elementClasses": "after",
+        "bar": false
+    }
+    insertContainer($("div.equipped-items-wrap"), containerObject);
+    const RE_CONTAINER = $(`.re_container[data-feature="${QUICK_ITEMS}"]`);
+
+    RE_CONTAINER.find('.re_content').html(`
       <p>Click the <span class="option-equip wai-btn qitem-btn"></span> button on an item to add it to this quick items list.</p>
       <div class="re_row" id="re_quick_items"></div>
       <div class="re_row action-wrap use-act use-action" id="re_quick_items_response" style="display: none;"></div>
@@ -134,7 +150,7 @@
             const obj = {
               quick_items: {
                 [itemID]: {
-                  itemQty: itemQty,
+                  itemQty: itemQty
                 }
               }
             }
@@ -159,7 +175,7 @@
           $.each(items, (index, item) => {
             x++;
             $('#re_quick_items').prepend(`
-              <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/medium.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="close"></span></button></div>
+              <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/large@4x.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="close"></span></button></div>
             `);
           });
           orderMain = x;
@@ -191,17 +207,11 @@
           });    
       }
     })
-    chrome.runtime.sendMessage({name: "get_value", value: "re_qitems"}, (response) => {
-      if (response.status && response.status == true) {
-
-      }
-    });
-
   }
 
   function sendItemUseRequest(itemID) {
     var options = {
-        url: "item.php",
+        url: "item.php?rfcv="+tornRFC,
         type: "post",
         data: { step: "useItem", itemID: itemID, item: itemID },
         beforeSend: function(xhr) {
@@ -220,10 +230,16 @@
                     itemQty = 0;
                   }
 
-                  item.data("qty", itemQty);
-                  item.find('.re_qty').text(`x${itemQty}`);
+                  const obj = {
+                    quick_items: {
+                      [itemID]: {
+                        itemID: itemID,  
+                        itemQty: itemQty
+                      }
+                    }
+                  }
 
-                  chrome.runtime.sendMessage({name: "set_value", value_name: "re_qitems", value: {items: {[itemID]: {itemQty: itemQty}}}})
+                  sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
                   item.attr("data-qty", itemQty);
                   item.find('.re_qty').text(`x${itemQty}`);
 

@@ -5,11 +5,30 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
   var timeToCrime;
   var n = 1;
   var url = window.location.href;
-  insertHeader($("div.content-title"), 'after', 'quick_crimes');
-  if (url.includes("?step=docrime")) {
-    insertHeader($("div.content-wrapper"), 'prepend', 'quick_crimes');
-  }
-  $('.re_content').html(`
+  var tornRFC;
+
+    //Insert container
+    const containerObject = {
+        "feature": `${QUICK_CRIMES}`,
+        "insertLocation": "after",
+        "elementClasses": "",
+        "bar": false
+    }
+    insertContainer($("div.content-title"), containerObject);
+
+    if (url.includes("?step=docrime")) {
+      const containerObject2 = {
+        "feature": `${QUICK_CRIMES}`,
+        "insertLocation": "prepend",
+        "elementClasses": "",
+        "bar": false
+      }
+      insertContainer($("div.content-wrapper"), containerObject2);
+    }
+
+  const RE_CONTAINER = $(`.re_container[data-feature="${QUICK_CRIMES}"]`);
+
+  RE_CONTAINER.find('.re_content').html(`
     <p>Click on a crime's image to add it to this quick crimes list. Click the image in this list to remove it.</p>
     <div class="re_row" id="re_quick_crimes"></div>
     `);
@@ -19,7 +38,24 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
     re_container = $('div.re_container');
   });
 
+  document.addEventListener("RFCtoReTorn", function(e) {
+    tornRFC = e.detail;
+  }, false);
+  var rfcEv = new CustomEvent("getTornRFC");
+  document.dispatchEvent(rfcEv);
 
+  //The click event to perform crimes, when clicked call do crime function
+  $(document).on('click', '#re_docrime', function(event){
+    event.stopPropagation();
+    event.preventDefault();
+    let crime = {
+      "action": $(this).attr('data-action'),
+      "nerve": $(this).attr('data-nerve'),
+      "crime": $(this).attr('data-crime')
+    }
+    
+    sendCrimeDoRequest(crime);
+  });
 
 
   var observer = new MutationObserver(function(mutations) {
@@ -91,7 +127,7 @@ if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').length =
 var target = document.querySelector('div.content-wrapper');
 observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
 
-}//if captcha
+}//if captcha, if enabled
 
 function reloadCrimes() {
   sendMessage({name: "get_sync", value: "settings"})
@@ -104,10 +140,7 @@ function reloadCrimes() {
           Object.entries(crimes).forEach(([index, crime]) => {
             x++;
             $('#re_quick_crimes').prepend(`
-              <form action="`+crime.action+`" method="post" name="crimes" style="order: `+crime.order+`">
-                <div class="re_button" id="do_crimes">
-                  <input name="nervetake" type="hidden" value="`+crime.nerve+`">
-                  <input name="crime" type="hidden" value="`+crime.crime+`">
+                <div class="re_button" id="re_docrime" data-action="${crime.action}" data-nerve="${crime.nerve}" data-crime="${crime.crime}">
                   <span>
                     <button class="re_del_qcrime" data-cval="`+crime.crime+`">
                       <img width="30" height="30" src="`+crime.img+`">
@@ -115,7 +148,6 @@ function reloadCrimes() {
                       `+crime.text+` (-`+crime.nerve+` Nerve)
                   </span>
                 </div>
-              </form>
             `);
 
             $(".re_del_qcrime").off('click').click(function (event) {
@@ -155,4 +187,48 @@ function checkSafeCrime(item) {
 
 function featureCleanup() {
   observer.disconnect();
+}
+
+function sendCrimeDoRequest(crime) {
+  if (crime && crime.crime && crime.action && crime.nerve) {
+    var loadingPlaceholderContent = '<div class="content-title m-bottom10"><h4 class="left">Crimes</h4>\n' + '    <div class="clear"></div>\n' + '    <hr class="page-head-delimiter">\n' + '</div> <span class="ajax-preloader m-top10 m-bottom10"></span>'
+    var crimesContentWrapper = $('.content-wrapper');
+
+    var options = {
+      url: crime.action + '&timestamp=' + Date.now() + '&rfcv=' + tornRFC,
+      type: "post",
+      data: { "nervetake": crime.nerve, "crime": crime.crime },
+      beforeSend: function() {
+        crimesContentWrapper.html(loadingPlaceholderContent);
+      },
+      success: function(response) {
+        try {
+          //Cleanup response (remove scripts, check for timers)
+          let timerSeconds = response.match(/(?<=var TimeToNextMarker = )(\d*)(?=;)/gm) || 0;
+          response = response.replace(/<script[\s\S]*script>/gm, "");
+          crimesContentWrapper.html(response);
+
+          //set timers if timer thing exists
+          if ($('#defaultCountdown').length) {
+            var date = new Date().getTime() + (timerSeconds*1000);
+            //using jquery.countdown plugin
+            $('#defaultCountdown')
+            .countdown(date, function(event) {
+              var totalHours = event.offset.totalDays * 24 + event.offset.hours;
+              $('#defaultCountdown').text(
+                event.strftime(`${totalHours}:%M:%S`)
+              );
+            })
+          }
+
+          //reload quick crimes box
+          reloadCrimes();
+        } catch (e) {
+            console.error(e);
+        }
+      }
+  };
+
+  $.ajax(options);
+  }
 }

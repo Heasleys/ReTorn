@@ -14,7 +14,7 @@ function errorMessage(error) {
 }
 
 async function loginClickEvent() {
-  $("#re_message").html(`&nbsp;`); //clear error message
+  $("#re_message").html(`<img src="/images/ajax-loader.gif" class="preloader">`); //clear error message
   const key = $("#apikey").val();
   if (key && key.length == 16) {
     sendMessage({name: "set_api", apikey: key})

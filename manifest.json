@@ -1,6 +1,6 @@
 {
     "name": "ReTorn",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Its the return of a great Torn extension",
     "manifest_version": 3,
     "icons": {
@@ -22,15 +22,10 @@
       "notifications",
       "tts"
     ],
-    "host_permissions": [
-      "https://*.torn.com/*",
-      "https://www.tornstats.com/*"
-    ],
     "options_ui": {
   		"page": "/pages/options.html",
   		"open_in_tab": true
   	},
-    "options_page": "/pages/options.html",
     "background": {
     	"service_worker": "background.js"
   	},
@@ -62,7 +57,7 @@
                 "https://wiki.torn.com/*"
             ],
         "css": ["/lib/fontawesome/css/all.min.css","css/everywhere/everywhere.css", "css/everywhere/quicklinks.css", "css/everywhere/npclist.css", "css/everywhere/refills.css"],
-        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js", "js/everywhere/sidebar.js","js/everywhere/refills.js", "js/everywhere/chat.js", "js/everywhere/tornstats_events.js"],
+        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/global/constants.js","js/global/globalFunctions.js" , "js/everywhere/sidebar.js","js/everywhere/refills.js", "js/everywhere/chat.js", "js/everywhere/tornstats_events.js"],
         "run_at": "document_start"
       },
       {
@@ -103,7 +98,7 @@
       },
       {
         "matches": ["https://*.torn.com/crimes.php*"],
-        "js": ["js/crimes/crimes.js"],
+        "js": ["/lib/jquery.countdown.min.js","js/crimes/crimes.js"],
         "css": ["css/crimes/crimes.css"],
         "run_at": "document_end"
       },
@@ -133,7 +128,7 @@
       },
       {
         "matches": ["https://*.torn.com/profiles.php*"],
-        "js": ["js/profiles/profiles.js"],
+        "js": ["js/profiles/profiles.js", "lib/jqueryui/jquery-ui.min.js"],
         "css": ["css/profiles/profiles.css"],
         "run_at": "document_start"
       },
@@ -144,7 +139,7 @@
       },
       {
         "matches": ["https://*.torn.com/factions.php*"],
-        "js": ["js/factions/factions.js"],
+        "js": ["js/factions/factions.js", "js/factions/territory.js", "js/factions/rankedwar.js", "js/factions/memberlist.js"],
         "css": ["css/factions/factions.css"],
         "run_at": "document_end"
       },
@@ -182,6 +177,12 @@
         "matches": ["https://*.torn.com/bazaar.php*"],
         "js": ["js/bazaar/bazaar.js"],
         "css": ["css/bazaar/bazaar.css"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://*.torn.com/amarket.php*"],
+        "js": ["js/amarket/amarket.js"],
+        "css": ["css/amarket/amarket.css"],
         "run_at": "document_end"
       }
     ]

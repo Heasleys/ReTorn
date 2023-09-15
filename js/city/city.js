@@ -35,20 +35,30 @@ if (features?.pages?.city?.city_finds?.enabled) {
 
 
 function cityHeader() {
-    insertHeader($("div.content-title"), 'after', 'city_finds');
-    $('.re_content').html(`
-      <div class="re_row">
-        <p id="re_city_finds"><img id="re_loader" src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" style="margin-left: -20px;"></p>
-      </div>
-      `);
+  //Insert container
+  if ($(`.re_container[data-feature="${CITY_FINDS}"]`).length != 0) return;
+  const containerObject = {
+      "feature": `${CITY_FINDS}`,
+      "insertLocation": "after",
+      "elementClasses": "",
+      "bar": false
+  }
+  insertContainer($("div.content-title"), containerObject);
+  const RE_CONTAINER = $(`.re_container[data-feature="${CITY_FINDS}"]`);
+
+  RE_CONTAINER.find('.re_content').html(`
+  <div class="re_row">
+    <p id="re_city_finds"><img id="re_loader" src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10" style="margin-left: -20px;"></p>
+  </div>
+  `);
   
-    $(".re_head").click(function() {
-      $('#map').toggleClass('re_city_finds');
-    });
+  RE_CONTAINER.find(".re_head").click(function() {
+    $('#map').toggleClass('re_city_finds');
+  });
   
-    if ($('div.re_content').is(":visible")) {
-      $('#map').addClass('re_city_finds');
-    }
+  if (RE_CONTAINER.find('div.re_content').is(":visible")) {
+    $('#map').addClass('re_city_finds');
+  }
 }
 
 function startCityItems() {
@@ -56,7 +66,7 @@ function startCityItems() {
     var i = 0;
     var value = 0;
   
-    $('.leaflet-marker-pane img[src*="torn.com/images/items/"]').each(function() {
+    $('.leaflet-marker-pane img[src*="images/items/"]').each(function() {
       i++;
       let src = $(this).attr("src");
       let itemID = src.replace(/\D/g, "");

@@ -102,5 +102,53 @@
             "expanded": false
         }
     },
-    "hide_sidebar_icons": ""
+    "hide_sidebar_icons": "",
+    "profile": {
+        "relative_values": {
+            "enabled": false
+        }
+    },
+    "auction_filter": {
+        "weapons": {
+            "name": "",
+            "damage": "",
+            "accuracy": "",
+            "color": "",
+            "bonus_1": {
+                "name": "",
+                "percentage": ""
+            },
+            "bonus_2": {
+                "name": "",
+                "percentage": ""
+            }
+        },
+        "armor": {
+            "name": "",
+            "defense": "",
+            "color": "",
+            "percentage": ""
+        },
+        "items": {
+            "name": "",
+            "category": ""
+        }
+    },
+    "faction_profile_filter": {
+        "hide_fallen": false,
+        "online": false,
+        "idle": false,
+        "offline": false,
+        "okay": false,
+        "hospital": false,
+        "travel": false,
+        "jail": false,
+        "federal": false
+    },
+    "forums": {
+        "blocked_users": {},
+        "blocked_users_dashboard": {
+            "expanded": false
+        }
+    }
 }

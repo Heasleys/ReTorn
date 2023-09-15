@@ -62,14 +62,26 @@
   margin-right: 20px !important;
 }
 
+.center {
+  text-align: center;
+}
+
 a {
   cursor: pointer;
   color: var(--default-blue-color);
   text-decoration: none;
 }
 
+button:hover {
+  cursor: pointer;
+}
+
 a:hover {
   color: var(--default-blue-hover-color);
+}
+
+input[disabled] {
+  opacity: 0.5;
 }
 
 .re_logo {
@@ -85,12 +97,16 @@ a:hover {
   font-size: 15px;
 }
 
-.re_content .re_error {
-  color: #d83500;
+.re_container .re_error {
+  color: #d83500 !important;
 }
 
 .re_title .fas {
   color: var(--re-dm-title-color);
+}
+
+.re_title #re_message {
+  margin-left: 20px;
 }
 
 /* Torn Left Align only on large screen (not mobile view)*/
@@ -102,7 +118,7 @@ a:hover {
 }
 
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 784px) {
   /* hide disable filters title on small screen */
   #re_disable_filters .re_title {
     display: none;
@@ -127,7 +143,7 @@ a:hover {
     font-size: 12px;
 }
 
-.re_checkbox > label, .re_checkbox > input[type="checkbox"], .re_content select {
+.re_checkbox > label, .re_checkbox > input[type="checkbox"], .re_content select, input[type="checkbox"] {
   cursor: pointer;
 }
 
@@ -219,12 +235,14 @@ border-top-right-radius: 0px;
   line-height: 14px;
   height: 26px;
   text-align: left;
-  padding: 5px;
   display: inline-block;
   vertical-align: top;
   width: 178px;
   border-color: var(--input-border-color);
   background: var(--input-background-color);
+}
+.re_content input[type="text"], .re_content input[type="number"] {
+  padding: 5px;
 }
 
 .re_row {
@@ -238,12 +256,20 @@ border-top-right-radius: 0px;
   margin: 0;
 }
 
-.re_row.re_message {
+.re_row.re_message, .re_row.re_error, .re_row#re_loader {
   justify-content: center;
 }
 
 .re_row[hidden] {
   margin: 0px !important;
+}
+
+.re_button {
+  border-radius: 5px;
+}
+
+.re_button ~ .re_button, .re_torn_button ~ .re_torn_button {
+  margin-left: 5px;
 }
 
 .re_ptitle {
@@ -325,14 +351,19 @@ span.re_icon.arrow_down svg path {
 div.re_button_wrap {
   display: flex;
   flex-wrap: wrap;
+  margin-bottom: 2px;
 }
 
-div.re_button_wrap > button {
-  margin-bottom: 5px;
-  margin-right: 5px;
+div.re_button_wrap .re_button {
+  line-height: 14px;
+  height: 26px;
 }
 
-.re_button_wrap input[type="text"] {
+div.re_button_wrap input[type="text"] ~ .re_button {
+
+}
+
+div.re_button_wrap input[type="text"] {
   margin-right: 8px;
 }
 
@@ -350,18 +381,9 @@ div.re_button_wrap > button {
     border-bottom: 1px solid rgb(235, 235, 235);
 }
 
-.re_row .re_button {
-  border-radius: 5px;
-  margin: 5px;
-}
-
 .re_row .re_button:active {
   position:relative;
 	top:1px;
-}
-
-.re_row .re_button:hover, .re_button > button:hover {
-  cursor: pointer;
 }
 
 /* chat css */
@@ -612,9 +634,14 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   height: 0
 }
 
+#re_feature_settings {
+  padding: 6px 6px;
+  margin: -6px -6px;
+}
+
 #re_feature_settings.re_active+.re_menu_block:before {
   content: '';
-  z-index: 2;
+  z-index: 10000;
   width: 30px;
   height: 34px;
   top: -27px;
@@ -640,7 +667,7 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   right: -59px;
   top: 6px;
   box-shadow: 0 1px 2px rgb(0 0 0 / 45%);
-  z-index: 1;
+  z-index: 9999;
 }
 
 .re_menu ul li {
@@ -658,6 +685,11 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
 .re_menu_item i {
   padding: 8px;
   font-size: 16px;
+}
+.re_menu_item input[type="checkbox"] { /*same size as menu item icon*/
+  margin: 8px;
+  width: 16px;
+  height: 16px;
 }
 .re_menu_item .re_menu_item_text {
   font-size: 12px;
@@ -726,6 +758,50 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
 }
 
 
+.re_rounded_button {
+  border-radius: 100px;
+  border: 1px solid var(--default-panel-divider-outer-side-color);
+}
+
+.re_content .re_badge {
+  display: inline-block;
+  margin-left: 0.5em;
+  padding: 4px 2px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  vertical-align: middle;
+  border-radius: 100px;
+  color: #fff;
+  line-height: 6px;
+  text-align: center;
+  width: 17px;
+  text-shadow: 0px 0px 2px black;
+}
+
+.re_badge#re_onlineCount {
+  background-image: linear-gradient(#a3d900, #4c6600);
+}
+.re_badge#re_idleCount {
+  background-image: linear-gradient(#ffbf00, #b25900);
+}
+.re_badge#re_offlineCount {
+  background-image: linear-gradient(#ccc, #666);
+}
+
+.re_badge#re_okayCount {
+  background-color: var(--user-status-green-color);
+}
+.re_badge.red {
+  background-color: var(--user-status-red-color);
+}
+.re_badge#re_travelCount {
+  background-color: var(--user-status-blue-color);
+}
+
+.re_red {
+  color: var(--user-status-red-color) !important;
+}
 
 
 /* Color Related CSS */
@@ -952,6 +1028,7 @@ body.dark-mode .re_button button .close:hover {
 }
 
 
+/* sidebar icons hiding */
 
 #sidebar ul[class*="status-icons_"] li.re_hide {
   display: none;

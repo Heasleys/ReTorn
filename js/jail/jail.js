@@ -28,15 +28,25 @@ $(document).ready(function() {
 });
 
 function initJail() {
-  insertHeader($("div.content-title"), 'after', 'quick_jail');
-  $('#re_title').text("Jail");
-  $('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
+  //Insert container
+  if ($(`.re_container[data-feature="${QUICK_JAIL}"]`).length != 0) return;
+  const containerObject = {
+      "feature": `${QUICK_JAIL}`,
+      "insertLocation": "after",
+      "elementClasses": "",
+      "bar": false
+  }
+  insertContainer($("div.content-title"), containerObject);
+  const RE_CONTAINER = $(`.re_container[data-feature="${QUICK_JAIL}"]`);
+
+  RE_CONTAINER.find('#re_title').text("Jail");
+  RE_CONTAINER.find('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
   <label class="re_title noselect" >Disable filters</label>
     <input type="checkbox" title="Disable filters">
   </span>`)
-  $('.re_content').addClass('re_jail');
+  RE_CONTAINER.find('.re_content').addClass('re_jail');
 
-  $('.re_content').html(`
+  RE_CONTAINER.find('.re_content').html(`
     <div class="re_row">
       <div class="re_col">
         <div class="grid_wrap">
@@ -81,7 +91,7 @@ function initJail() {
     </div>
   `);
 
-  $('#re_disable_filters').click(function(event) {
+  RE_CONTAINER.find('#re_disable_filters').click(function(event) {
     event.stopPropagation();
     let checkbox = $(this).find('input[type="checkbox"]');
     checkbox.prop("checked", checkbox.prop("checked"));

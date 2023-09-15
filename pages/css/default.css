@@ -111,3 +111,11 @@ label {
     letter-spacing: 0.5px;
     font-weight: normal;
 }
+
+.preloader {
+    margin-left: 0; 
+    left: 0;
+}
+.dark .preloader {
+    content:url(/images/ajax-loader-dark.gif);
+}

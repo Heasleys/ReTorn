@@ -48,8 +48,18 @@ function initCT() {
 
 
 function insertHead() {
-  insertHeader($("#ct-wrap"), 'after', 'christmas_town_helper', 'mb2');
-  $('.re_content').html(`
+    //Insert container
+    if ($(`.re_container[data-feature="${CT_HELPER}"]`).length != 0) return;
+    const containerObject = {
+        "feature": `${CT_HELPER}`,
+        "insertLocation": "after",
+        "elementClasses": "mb2",
+        "bar": false
+    }
+    insertContainer($("#ct-wrap"), containerObject);
+    const RE_CONTAINER = $(`.re_container[data-feature="${CT_HELPER}"]`);
+
+    RE_CONTAINER.find('.re_content').html(`
     <div class="re_row" style="display: none;" id="re_ct_main">
       <div class="switch_wrap mb4" name="highlight">
         <p class="re_ptitle">Highlights</p>
@@ -169,16 +179,16 @@ function insertHead() {
 
   const ct_helper_button = `<li id="re_ct_gifts"><span class="re_menu_item"><i class="fa-solid fa-gears"></i><span class="re_menu_item_text">Helper settings</span></span></li>`
 
-  $('#re_features_settings_view').prepend(ct_helper_button);
+  RE_CONTAINER.find('#re_features_settings_view').prepend(ct_helper_button);
 
-  $('#re_ct_gifts').click(function(e) {
+  RE_CONTAINER.find('#re_ct_gifts').click(function(e) {
     e.stopPropagation();
     $('#re_ct_main').toggle();
     $('#re_ct_giftview').toggle();
     $('#re_feature_settings').removeClass('re_active');
   });
 
-  $('.re_content input[type="checkbox"]').change(function() {
+  RE_CONTAINER.find('.re_content input[type="checkbox"]').change(function() {
     let checked = this.checked;
     let name = $(this).attr('name');
     let category = $(this).closest('.switch_wrap').attr('name');
@@ -205,9 +215,9 @@ function insertHead() {
     .catch((e) => console.error(e))
   });
 
-  $('.re_content #re_ct_friendsTextbox').change(function() {
-    let userid = $(this).val();
-    if (!isNaN(userid)) {
+  RE_CONTAINER.find('.re_content #re_ct_friendsTextbox').change(function() {
+    let userid = parseInt($(this).val());
+    if (!isNaN(userid) && userid > 0) {
       const obj = {
         "christmas_town": {
           "friends": {
@@ -230,7 +240,7 @@ function insertHead() {
     }
   });
 
-  $('.re_checkbox > label').click(function() {
+  RE_CONTAINER.find('.re_checkbox > label').click(function() {
     let checkbox = $(this).parent('.re_checkbox').find('input[type="checkbox"]');
     checkbox.prop("checked", !checkbox.prop("checked"));
     checkbox.trigger("change");

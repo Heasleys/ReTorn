@@ -99,7 +99,11 @@
                 qlinksComplete = false;
             } 
         }
-        hideThoseIcons();
+        const target = document.getElementById("sidebar");
+        if (target) {
+          iconWrapObserver.observe(target, observerParams);
+          hideThoseIcons();
+        }
     });
 
     //observer to observer document and start other observers based on when things appear in the DOM
@@ -150,7 +154,7 @@
       });
     
       const desktopSidebarObserver = new MutationObserver(function(mutations) {
-        if (document.querySelector('#sidebar div:last-child div[class^="toggle-content"]')) {
+        if (document.querySelector('#sidebar > div[class^="sidebar-block"]:last-child div[class^="toggle-content"]')) {
             insertNPCList();
         }
         if (document.querySelector('#sidebar:not([class*="mobile_"]) > div:first-of-type')) {
@@ -162,24 +166,22 @@
 
       const iconWrapObserver = new MutationObserver(function(mutations) {
         iconWrapObserver.disconnect();
-        let sidebarIconsWrap = $("#sidebarroot ul[class*='status-icons_']");
-        if (sidebarIconsWrap.length) {
+        const target = $("#sidebarroot ul[class*='status-icons_']").parent()[0];
+        if (target) {
           hideThoseIcons();
-          const target = document.querySelector('#sidebar ul[class*="status-icons_"]');
-          iconWrapObserver.observe(target, { subtree: true, attributes: true });
+          iconWrapObserver.observe(target, observerParams);
         }
       });
       const sidebarrootObserver = new MutationObserver(function(mutations) {
         if (document.getElementById('sidebarroot')) {
-          const target = document.querySelector('#sidebar ul[class*="status-icons_"]');
+          const target = $("#sidebarroot ul[class*='status-icons_']").parent()[0];
           if (target) {
-            iconWrapObserver.observe(target, { subtree: true, attributes: true });
+            iconWrapObserver.observe(target, observerParams);
             hideThoseIcons();
             sidebarrootObserver.disconnect();
           }
         }
       });
-    
       //observer document to start other observers
       observerObserver.observe(document, observerParams);
       sidebarrootObserver.observe(document, observerParams);
@@ -202,7 +204,7 @@
 
         if (screenType == "desktop") { //insert underneath enemy/friends list
         // find enemy/friend/staff lists and insert NPCs list at bottom of list of lists
-        $('h2[class^="header"]:contains("Lists")').siblings('div[class^="toggle-content"]').append(npc_list_base);
+        $('#sidebar > div[class^="sidebar-block"]:last-child div[class^="toggle-content"]').append(npc_list_base);
 
         // When NPC button is clicked, expand it for viewing
         $('.re_npcButton').click(function() {
@@ -345,9 +347,20 @@
 
     //function to insert the quick links header and base
     function insertQuickLinksHead() {
-        if ((features?.sidebar?.quick_links?.enabled == false) || (Object.keys(settings?.quick_links).length === 0) || (document.getElementById('re_qlinks'))) {
+        if ((features?.sidebar?.quick_links?.enabled == false) ||  typeof settings?.quick_links == "undefined" || (Object.keys(settings?.quick_links).length === 0) || (document.getElementById('re_qlinks'))) {
             qlinksComplete = true;
             return;
+        }
+        //check if all links are disabled
+        var d = 0;
+        for (const [key, value] of Object.entries(settings?.quick_links)) {
+          if (!value.enabled) {
+            d++;
+          }
+        }
+        if (d == Object.keys(settings?.quick_links).length) {
+          qlinksComplete = true;
+          return;
         }
 
 
@@ -466,6 +479,10 @@
 
         if (url.includes('wiki.torn') || url.includes('torn.com/wiki')) {
           icon = `<svg xmlns="http://www.w3.org/2000/svg" filter="url(#defaultFilter)" fill="url(#sidebar_svg_gradient_regular_desktop)" stroke="transparent" stroke-width="0" width="30.016" height="23.462" viewBox="-6.01 -5.06 30.016 23.462"><path d="M9.24,6.49q-.15.28-.3.54c-.77,1.4-1.54,2.79-2.3,4.19a.28.28,0,0,1-.2.17.25.25,0,0,1-.31-.18h0L2.4,2.66c-.18-.41-.37-.82-.58-1.21A1.89,1.89,0,0,0,.24.45.25.25,0,0,1,0,.19.15.15,0,0,1,0,.08.16.16,0,0,1,.17,0h1A15.28,15.28,0,0,0,3.31,0,10.017,10.017,0,0,0,4.65-.06c.12,0,.15,0,.17.15s0,.06,0,.09c0,.21,0,.2-.2.21A1.38,1.38,0,0,0,3.9.7a.71.71,0,0,0-.3.83c.08.23.17.45.27.67q1.51,3.51,3.06,7v.03C7.63,8.1,8.24,7,8.86,5.81a.13.13,0,0,0,0-.12l-1.92-4c-.1-.2-.23-.39-.35-.58a1.26,1.26,0,0,0-1-.61H5.43A.18.18,0,0,1,5.3.31a.27.27,0,0,1,0-.26.13.13,0,0,1,.12,0H7.79A9.182,9.182,0,0,0,9.26-.03c.15,0,.19,0,.2.19v.1c0,.16,0,.17-.19.2A2.57,2.57,0,0,0,8.72.6a.47.47,0,0,0-.34.58s0,0,0,.06a3.43,3.43,0,0,0,.22.56L9.74,4.08a.43.43,0,0,1,0,.07h0c.39-.73.79-1.45,1.17-2.18a1.43,1.43,0,0,0,.2-.75.65.65,0,0,0-.37-.57A1.32,1.32,0,0,0,10.12.5c-.14,0-.15,0-.17-.17s.06-.29.25-.28l1.2.08a9.65,9.65,0,0,0,1.42,0h.8c.07,0,.12,0,.12.1a.43.43,0,0,1,0,.16c0,.13-.06.16-.19.18a5.59,5.59,0,0,0-.56.12,1.44,1.44,0,0,0-.75.56,10.82,10.82,0,0,0-.65,1c-.5.89-1,1.8-1.46,2.69a.17.17,0,0,0,0,.17c.67,1.34,1.33,2.7,2,4.05l.06.1c.1-.25.2-.48.3-.72l2.74-6.38a2,2,0,0,0,.18-.67.75.75,0,0,0-.6-.88h0a2.63,2.63,0,0,0-.39-.06c-.12,0-.14,0-.16-.15V.23c0-.19,0-.24.23-.23l1.2.08a7.61,7.61,0,0,0,1.35,0h.76C18,0,18,0,18,.14a.26.26,0,0,1-.22.31h0a1.58,1.58,0,0,0-1.31.89c-.24.44-.45.89-.65,1.34Q13.9,7,12,11.24a.263.263,0,0,1-.48.01l-.42-.89L9.3,6.6A.54.54,0,0,1,9.24,6.49Z"></path></svg>`;
+        }
+
+        if (url.includes('page.php?sid=bunker')) {
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" filter="url(#defaultFilter)" fill="url(#sidebar_svg_gradient_regular_desktop)" stroke="transparent" stroke-width="0" width="18" height="16" viewBox="0 0 18 16"><path d="M3,16H0v-7C0,4.03,4.03,0,9,0c4.97,0,8.99,4.03,9,9v7h-3v-7c0-3.31-2.69-6-6-6-3.31,0-6,2.69-6,6v7Zm11,0H4v-7c0-2.76,2.24-5,5-5,2.76,0,5,2.24,5,5v7Zm-8-6v1h6v-1H6Zm0-2v1h6v-1H6Z"></path></svg>`;
         }
       
         return icon;

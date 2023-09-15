@@ -1,5 +1,7 @@
+var browser = browser || chrome;
+
 //event listener for message passing
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   handleMessage(msg).then((data) => {
     sendResponse(data);
   })
@@ -15,7 +17,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 //});
 
 // Event Listener for Installing extension (update or new install)
-chrome.runtime.onInstalled.addListener((details) => {
+browser.runtime.onInstalled.addListener((details) => {
   if (details.reason == "install") {
     console.log('[ReTorn][onInstalled] New Installation, inserting defaults')
     newInstallation();
@@ -27,7 +29,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 // Chrome Alarm for pulling API data every 30 seconds
-chrome.alarms.onAlarm.addListener((alarm) => {
+browser.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name == "required_api") {
     getValue("re_apikey", "local")
     .then((key) => {
@@ -46,7 +48,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 });
 function clearAlarm(name) {
-  chrome.alarms.clear(name, (wasCleared) => {
+  browser.alarms.clear(name, (wasCleared) => {
     if (wasCleared) {
       console.log("[ReTorn] Alarm for API has been removed.");
     }
@@ -57,9 +59,9 @@ async function createAPIAlarm(minutes) {
   if (minutes == undefined) {
     minutes = 0.5;
   }
-  chrome.alarms.get("required_api", (alarm) => {
+  browser.alarms.get("required_api", (alarm) => {
     if (alarm == undefined) {
-      chrome.alarms.create("required_api", {periodInMinutes: minutes});
+      browser.alarms.create("required_api", {periodInMinutes: minutes});
     }
   });
 }
@@ -97,7 +99,7 @@ async function updateOldSettings() {
     try {
       newSettings["settings"] = await getValue("settings", "sync");
     } catch{
-      const sett = chrome.runtime.getURL('/files/default_settings.json');
+      const sett = browser.runtime.getURL('/files/default_settings.json');
       const settFetch = await fetch(sett);
       newSettings["settings"] = await settFetch.json();
     }
@@ -105,7 +107,7 @@ async function updateOldSettings() {
     try {
       newFeatures["features"] = await getValue("features", "sync");
     } catch{
-      const feat = chrome.runtime.getURL('/files/default_features.json');
+      const feat = browser.runtime.getURL('/files/default_features.json');
       const featFetch = await fetch(feat);
       newFeatures["features"] = await featFetch.json();
     }
@@ -113,7 +115,7 @@ async function updateOldSettings() {
     try {
       newNotifications["notifications"] = await getValue("notifications", "sync");
     } catch{
-      const noti = chrome.runtime.getURL('/files/default_notifications.json');
+      const noti = browser.runtime.getURL('/files/default_notifications.json');
       const notiFetch = await fetch(noti);
       newNotifications["notifications"] = await notiFetch.json();
     }
@@ -273,7 +275,7 @@ async function updateOldSettings() {
         await setValue(re_apikey, "local");
         pullRequiredAPI(oldAPI);
         createAPIAlarm();
-        chrome.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
+        browser.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
         removeValue("re_api_key", "sync");
       }
     } catch {}
@@ -392,7 +394,7 @@ async function updateOldSettings() {
 
 
 // On changes to Storage, check for differences in data for notifications
-chrome.storage.onChanged.addListener(async (changes, areaName) => {
+browser.storage.onChanged.addListener(async (changes, areaName) => {
   if (changes?.re_user_data == undefined) return;
     console.log("[ReTorn][re_user_data] changes found: ",{changes: changes, areaName: areaName});
 
@@ -408,9 +410,9 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
     const badgeCount = newValue?.notifications?.events + newValue?.notifications?.messages;
     if ((badgeCount) > 0) {
       const badgeText = badgeCount.toString();
-      chrome.action.setBadgeText({text: badgeText});
+      browser.action.setBadgeText({text: badgeText});
     } else {
-      chrome.action.setBadgeText({text: ""});
+      browser.action.setBadgeText({text: ""});
     }
     
     if (isEmpty(n)) return;
@@ -598,12 +600,12 @@ async function createNotification(name, title, message, actions, openURL = "http
 
     //if TTS is enabled, speak message body
     if (tts) {
-      chrome.tts.speak(
+      browser.tts.speak(
         message,
         {'rate': 0.8},
         function() {
-          if (chrome.runtime.lastError) {
-            console.error('[ReTorn][Text-to-Speech] Error: ' + chrome.runtime.lastError.message);
+          if (browser.runtime.lastError) {
+            console.error('[ReTorn][Text-to-Speech] Error: ' + browser.runtime.lastError.message);
           }
         }
       );
@@ -612,17 +614,17 @@ async function createNotification(name, title, message, actions, openURL = "http
 // Event Listener for Notification Button Clicks
 self.addEventListener('notificationclick', function (event) {
   if (event.action === 'Open' && event.notification.data.url) {
-    chrome.tabs.create({'url': event.notification.data.url});
+    browser.tabs.create({'url': event.notification.data.url});
   }
   event.notification.close();
-  chrome.tts.stop();
+  browser.tts.stop();
 });
 
 //get value
 const getValue = async function(key, loc) {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage[loc].get(key, function(v) {
+      browser.storage[loc].get(key, function(v) {
         if (isEmpty(v)) {
           console.log({status: false, message: key + " is empty."})
           reject({status: false, message: key + " is empty."});
@@ -641,7 +643,7 @@ const getValue = async function(key, loc) {
 const setValue = async function(obj, loc) {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage[loc]?.set(obj, function() {
+      browser.storage[loc]?.set(obj, function() {
         const keys = Object.keys(obj);
         console.log({status: true, message: keys[0] + " has been set."})
         resolve({status: true, message: keys[0] + " has been set."});
@@ -658,7 +660,7 @@ const emptyValue = async function(key, loc) {
   return new Promise((resolve, reject) => {
     try {
       const obj = {[key]:{}}
-      chrome.storage[loc]?.set(obj, function() {
+      browser.storage[loc]?.set(obj, function() {
         console.log({status: true, message: key + " has been emptied."})
         resolve({status: true, message: key + " has been emptied."});
       });
@@ -672,7 +674,7 @@ const emptyValue = async function(key, loc) {
 const removeValue = async function(key, loc) {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage[loc].remove(key, function() {
+      browser.storage[loc].remove(key, function() {
         console.log({status: true, message: key + " has been removed."})
         resolve({status: true, message: key + " has been removed."});
       });
@@ -736,6 +738,8 @@ function fetchAPI(apikey, type, selection, id) {
     })
     .then((response) => {
       if (response.status !== 200) {
+        const e = {status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status, code: response.status}
+        setValue({"re_last_error": e}, "local");
         console.log("[ReTorn][fetchAPI] There was a problem connecting to Torn servers. Status Code: " + response.status);
         return reject({status: false, message: "There was a problem connecting to Torn servers. Status Code: " + response.status});
       } else {
@@ -766,7 +770,7 @@ async function fetchTornStats(apikey, selection) {
       return reject({status: false, message: "Torn Stats apikey does not exist."})
     }
 
-    if (apikey.length != 16) return reject({status: false, message: "Torn Stats apikey is invalid."})
+    if (apikey.length < 16 || apikey.length > 19) return reject({status: false, message: "Torn Stats apikey is invalid."})
     if (selection == undefined) return reject({status: false, message: "Torn Stats selection is invalid."})
 
     fetch('https://www.tornstats.com/api/v2/' + apikey + '/' + selection)
@@ -867,10 +871,10 @@ async function handleMessage(msg) {
 
   switch (m.name) {    
     case "open_options":
-      if (chrome.runtime.openOptionsPage) {
-        chrome.runtime.openOptionsPage();
+      if (browser.runtime.openOptionsPage) {
+        browser.runtime.openOptionsPage();
       } else {
-        window.open(chrome.runtime.getURL('/pages/options.html'));
+        window.open(browser.runtime.getURL('/pages/options.html'));
       }
     break;
 
@@ -878,7 +882,7 @@ async function handleMessage(msg) {
       if (m.apikey) {
         await validateKey(m.apikey); //validate if the apikey is real and working
         await Promise.all([pullRequiredAPI(m.apikey), createAPIAlarm()]); //pull api data and create chrome.alarm to periodically pull api data
-        chrome.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
+        browser.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
         return {status: true, message: "Your apikey has been saved."}
       } else {
         throw {status: false, message: "The apikey was not passed correctly."}
@@ -1059,6 +1063,151 @@ async function handleMessage(msg) {
       }
     break;
 
+    //["torn_stats", "compare", "data", "retaliations"], "local"
+    // first key in array is the key we need to pull for the object.
+    // then we go deep until the final key, which is the key to delete
+    case "delete_multi_nested_key": 
+      if (!m.object_key || !m.keys || !m.location) {
+        throw {status: false, message: "Keys or location not sent with message."}
+      } else {
+        const obj_key = m.object_key; //generally "settings"
+        getValue(obj_key, m.location)
+        .then(async (obj) => {
+          const delete_key = (object, keys) => {
+            // Check if the object is empty or if the keys array is empty.
+            if (!object || !keys.length) {
+              return;
+            }
+
+            // Get the current key.
+            const key = keys[0];
+
+            // If the key is not a property of the object, return.
+            if (!object.hasOwnProperty(key)) {
+              return;
+            }
+
+            // If the keys array has more than one element, recursively call the function
+            // on the nested object.
+            if (keys.length > 1) {
+              delete_key(object[key], keys.slice(1));
+            }
+
+            // If the keys array has only one element, delete the object at the given key.
+            else {
+              delete object[key];
+            }
+          }
+
+
+          delete_key(obj, m.keys);
+          const final_obj = {[obj_key]: obj}
+  
+          await setValue(final_obj, m.location);
+          return {status: true, message: `Key ${m.key} was deleted.`}
+        })
+        .catch((e) => {
+          if (!e.status) {
+            throw {status: false, message: e.message}
+          } else {
+            throw {status: false, message: e}
+          }
+        });
+        return {status: false, message: `Something went wrong in delete_multi_nested_key`}
+      }
+    break;
+
+    case "delete_keys_recursively": // ["objectKey", "deleteKey"], "location", "require_string"(*optional)
+      if (!m.keys || !m.location) {
+        throw {status: false, message: "Keys or location not sent with message."}
+      } else {
+        const obj_key = m.keys[0];
+        const delete_key = m.keys[m.keys.length - 1];
+        const require = (m.require) ? m.require : "";
+  
+        const recursiveRemoveKey = (object, deleteKey) => {
+          delete object[deleteKey];
+          for (const [k, v] of Object.entries(object)) {
+            if (typeof v !== 'object') continue;
+            recursiveRemoveKey(v, deleteKey);
+          }
+        }
+
+        getValue(obj_key, m.location)
+        .then(async (obj) => {
+          if (require) {
+            for (const [top_k, top_v] of Object.entries(obj)) {
+              if (!top_k.includes(require)) continue;
+              recursiveRemoveKey(top_v, delete_key);
+            }
+          } else {
+            recursiveRemoveKey(obj, delete_key);
+          }
+
+
+          
+          const final_obj = {[obj_key]: obj};
+  
+          await setValue(final_obj, m.location);
+          return {status: true, message: `Key ${delete_key} was deleted.`}
+        })
+        .catch((e) => {
+          if (!e.status) {
+            throw {status: false, message: e.message}
+          } else {
+            throw {status: false, message: e}
+          }
+        });
+      }
+    break;
+
+
+    case "modify_keys_recursively": // ["objectKey", "modifyKey"], "new value" "location", "require_string"(*optional)
+    if (!m.keys || !m.new_value || !m.location) {
+      throw {status: false, message: "Keys, new value, or location not sent with message."}
+    } else {
+      const obj_key = m.keys[0];
+      const modify_key = m.keys[m.keys.length - 1];
+      const new_value = m.new_value;
+      const require = (m.require) ? m.require : "";
+
+      const recursiveModifyKey = (object, modifyKey) => {
+        //delete object[modifyKey];
+        for (const [k, v] of Object.entries(object)) {
+          if (k == modifyKey) object[k] = new_value;
+          if (typeof v !== 'object') continue;
+          recursiveModifyKey(v, modifyKey);
+        }
+      }
+
+      getValue(obj_key, m.location)
+      .then(async (obj) => {
+        if (require) {
+          for (const [top_k, top_v] of Object.entries(obj)) {
+            if (!top_k.includes(require)) continue;
+            recursiveModifyKey(top_v, modify_key);
+          }
+        } else {
+          recursiveModifyKey(obj, modify_key);
+        }
+
+
+        
+        const final_obj = {[obj_key]: obj};
+
+        await setValue(final_obj, m.location);
+        return {status: true, message: `Key ${modify_key} was set to ${new_value}`}
+      })
+      .catch((e) => {
+        if (!e.status) {
+          throw {status: false, message: e.message}
+        } else {
+          throw {status: false, message: e}
+        }
+      });
+    }
+  break;
+
     case "full_reset":
       fullReset();
       return;
@@ -1095,9 +1244,9 @@ function isEmpty(obj) { //function for easily checking if an object is empty
 
 // Delete all settings and restore to default
 function fullReset() {
-  chrome.storage.sync.clear();
-  chrome.storage.local.clear();
-  chrome.storage.session.clear();
+  browser.storage.sync.clear();
+  browser.storage.local.clear();
+  browser.storage.session.clear();
   clearAlarm("required_api");
 
   newInstallation();
@@ -1114,8 +1263,8 @@ async function logout() {
       //setValue({re_settings: {tornstats: {enabled: false}}}, "local")
       ]);
       console.log("[ReTorn][logout] Removed user data from storage", messages);
-      chrome.action.setPopup({popup: "pages/popup_start.html"});
-      chrome.action.setBadgeText({text: ""});
+      browser.action.setPopup({popup: "pages/popup_start.html"});
+      browser.action.setBadgeText({text: ""});
       clearAlarm("required_api");
       return {status: true, message: "You have been logged out."};
   }
@@ -1163,7 +1312,8 @@ async function clearTornStats() {
   }
   catch (e) {
     if (e?.message == "torn_stats is empty.") {
-      console.log("[ReTorn][clearTornStats] torn_stats data doesn't exist yet", e)
+      console.log("[ReTorn][clearTornStats] torn_stats data doesn't exist yet", e);
+      setValue({torn_stats: {}}, "local");
     } else {
       console.error("[ReTorn][clearTornStats] Clearing TornStats data error:", e)
     } 
@@ -1171,7 +1321,7 @@ async function clearTornStats() {
 }
 
 async function setItemsFromFile() {
-  const url = chrome.runtime.getURL('/files/items.json');
+  const url = browser.runtime.getURL('/files/items.json');
   const f = await fetch(url);
   const json = await f.json();
   await setValue({"re_items": json}, "local");
@@ -1179,12 +1329,12 @@ async function setItemsFromFile() {
 
 
 async function startup() {
-  chrome.action.setBadgeBackgroundColor({color: "#8ABEEF"}); //set badge color
+  browser.action.setBadgeBackgroundColor({color: "#8ABEEF"}); //set badge color
   checkItemAPI();
   await clearTornStats();
   
   //check version, update version if needed  
-  const currentVersion = chrome.runtime.getManifest().version;
+  const currentVersion = browser.runtime.getManifest().version;
   try {
     const version = await getValue("version", "local");
 
@@ -1210,7 +1360,7 @@ async function startup() {
 
   try {
     const r = await getValue("re_user_data", "local");
-      chrome.action.setPopup({popup: "pages/popup.html"});
+      browser.action.setPopup({popup: "pages/popup.html"});
       createAPIAlarm();
   }
   catch (e) {
@@ -1220,25 +1370,152 @@ async function startup() {
 
 async function checkUpdate(version) {
   try {
+    if (!version) version = "1.0.0";
     const settings = await getValue("settings", "sync");
+    const features = await getValue("features", "sync");
 
-    if (settings?.hide_sidebar_icons == undefined) {
-      settings["hide_sidebar_icons"] = "";
-    }
+    //version 1.1.0
+      if (settings?.hide_sidebar_icons == undefined) {
+        settings["hide_sidebar_icons"] = "";
+      }
+    
+    //version 1.2.0
+      if (settings?.profile == undefined) {
+        settings["profile"] = {};
+        if (settings?.profile?.relative_values == undefined) {
+          settings["profile"]["relative_values"] = {};
+          settings["profile"]["relative_values"]["enabled"] = false;
+        }
+      }
+      if (features?.pages?.amarket == undefined) {
+        features["pages"]["amarket"] = {};
+        if (features?.pages?.amarket?.auction_filter == undefined) {
+          features["pages"]["amarket"]["auction_filter"] = {
+            "enabled": true,
+            "description": "Adds a window that allows you to filter weapons, armor, and items on the auction house market."
+          }
+        }
+        if (features?.pages?.amarket?.duplicate_pagination == undefined) {
+          features["pages"]["amarket"]["duplicate_pagination"] = {
+            "enabled": true,
+            "description": "Duplicates the pagination and modifies page arrows for easier auction house searching."
+          }
+        }
+      }
+      if (settings?.auction_filter == undefined) {
+        settings["auction_filter"] = {
+          "weapons": {
+            "name": "",
+            "damage": "",
+            "accuracy": "",
+            "color": "",
+            "bonus_1": {
+                "name": "",
+                "percentage": ""
+            },
+            "bonus_2": {
+                "name": "",
+                "percentage": ""
+            }
+          },
+          "armor": {
+              "name": "",
+              "defense": "",
+              "color": "",
+              "percentage": ""
+          },
+          "item": {
+              "name": "",
+              "category": ""
+          }
+        }
+      }
+      if (features?.pages?.factions?.territory_war_spies == undefined) {
+        features["pages"]["factions"]["territory_war_spies"] = {
+          "enabled": true,
+          "description": "Adds a spy column to territory wall wars for each player. Requires Torn Stats."
+        }
+      }
+      if (features?.pages?.factions?.faction_profile_spies == undefined) {
+        features["pages"]["factions"]["faction_profile_spies"] = {
+          "enabled": false,
+          "description": "Adds a spy column to the faction members list on the faction profile page. Requires Torn Stats."
+        }
+      }
+      if (features?.pages?.factions?.faction_profile_filter == undefined) {
+        features["pages"]["factions"]["faction_profile_filter"] = {
+          "enabled": true,
+          "description": "Adds a window to the faction profile page that allows you to filter faction members."
+        }
+      }
+      if (features?.pages?.factions?.faction_name_in_tab == undefined) {
+        features["pages"]["factions"]["faction_name_in_tab"] = {
+          "enabled": true,
+          "description": "Adds the name of the faction in the browser tab."
+        }
+      }
+      if (settings?.faction_profile_filter == undefined) {
+        settings["faction_profile_filter"] = {
+          "hide_fallen": false,
+          "online": false,
+          "idle": false,
+          "offline": false,
+          "okay": false,
+          "hospital": false,
+          "travel": false,
+          "jail": false,
+          "federal": false
+        };
+      }
+      if (settings?.forums == undefined) {
+        settings["forums"] = {
+          "blocked_users": {},
+          "blocked_users_dashboard": {
+            "expanded": false
+          }
+        }
+      }
+      if (features?.pages?.forums?.blocked_users == undefined) {
+        features["pages"]["forums"]["blocked_users"] = {
+          "enabled": true,
+          "description": "Adds the option to block users on the forums. Adds block button on posts and block list on main forum page."
+        }
+      }
+    
 
     await setValue({"settings": settings}, "sync");
+    await setValue({"features": features}, "sync");
   } catch(e) {
     console.error(e)
   }
+}
 
-
-  
+function versionCompare(v1, v2) { // return 1 if v2 is smaller than v1 | return -1 if v2 is greater than v1 | return 0 if equal
+    var vnum1 = 0, vnum2 = 0;
+    for (var i = 0, j = 0; (i < v1.length || j < v2.length);) {
+        while (i < v1.length && v1[i] != '.') {
+            vnum1 = vnum1 * 10 + (v1[i] - '0');
+            i++;
+        }
+        while (j < v2.length && v2[j] != '.') {
+            vnum2 = vnum2 * 10 + (v2[j] - '0');
+            j++;
+        }
+        if (vnum1 > vnum2)
+            return 1;
+        if (vnum2 > vnum1)
+            return -1;
+        vnum1 = vnum2 = 0;
+        i++;
+        j++;
+    }
+    return 0;
 }
 
 async function newInstallation() {
-  const sett = chrome.runtime.getURL('/files/default_settings.json');
-  const feat = chrome.runtime.getURL('/files/default_features.json');
-  const noti = chrome.runtime.getURL('/files/default_notifications.json');
+  const sett = browser.runtime.getURL('/files/default_settings.json');
+  const feat = browser.runtime.getURL('/files/default_features.json');
+  const noti = browser.runtime.getURL('/files/default_notifications.json');
 
 
   const fetches = await Promise.all([fetch(sett),fetch(feat),fetch(noti)]);

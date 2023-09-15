@@ -1,16 +1,36 @@
 /* ranked war spy column */
 .re_spy_title, .re_spy_col {
-  width: 35px;
-  border-right: 1px solid var(--default-panel-divider-outer-side-color);
   text-align: center;
   height: 33px;
   line-height: 36px;
+  width: 35px;
+  border-right: 1px solid var(--default-panel-divider-outer-side-color);
   border-left: 1px solid var(--default-panel-divider-inner-side-color);
   padding-left: 5px;
   padding-right: 5px;
+  min-width:35px;
+  max-width:35px;
+  position: relative;
 }
 
-.re_spy_col > i:hover, .re_spy_col .re_spy_spy {
+.re_spy_title {
+  cursor: pointer;
+}
+
+.re_outdated {
+  position: absolute;
+  font-size: 6px;
+  right: 1px;
+  top: 1px;
+  fill: var(--user-status-red-color);
+}
+
+.re_faction_stats .re_spy_col {
+  font-size: 11px;
+  height: 35px;
+}
+
+.re_spy_ps, .re_spy_col .re_spy_spy {
   cursor: pointer;
 }
 
@@ -30,7 +50,7 @@
 /* ranked war member name column */
 .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
   width: 140px;
-}
+}/* Might change to be bigger later if own ranked war page looks fine with it being at 144px. Less cramped when using honor names */
 
 /* ranked war member level column */
 .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .level, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .level {
@@ -44,6 +64,58 @@
   padding-left: 5px;
   padding-right:5px;
 }
+
+
+/* Territory War */
+/* Faction Tag (hide because not needed) */
+.faction-war.re_territorywar .members-list .user.faction {
+  display: none;
+}
+
+/* the spy column cannot be filtered in territory wars */
+.re_territorywar .re_spy_title {
+  cursor: unset;
+}
+
+/* Territory War Name Column - desktop */
+.d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .title .members, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .members-list .member {
+  width: 256px;
+}
+@media screen and (max-width: 784px) {
+  .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .title .members, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .members-list .member {
+    width: 168px;
+  }
+  .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .title .attack, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .members-list .attack {
+      width: 48px;
+  }
+
+  .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont.profile-mode .title .members, .d .f-war-list.war-new .faction-war.faction-war.re_territorywar .tab-menu-cont .profile-mode .members-list .member {
+    width: 243px;
+  }
+}
+
+
+/* Territory War Level Column */
+.d .f-war-list.war-new .faction-war .tab-menu-cont .members-list .level, .d .f-war-list.war-new .faction-war.re_territorywar .tab-menu-cont .members-cont .level {
+  width: 33px;
+}
+
+/* Territory war Icons Column - Faction Profile */
+.d .f-war-list.war-new  .faction-war.re_territorywar .tab-menu-cont .members-cont.profile-mode .user-icons, .d .f-war-list.war-new  .faction-war.re_territorywar .tab-menu-cont .members-cont.profile-mode .title .user-icons {
+  width: 285px;
+}
+/* Territory war Icons Column - Your Faction Page */
+.d .f-war-list.war-new  .faction-war.re_territorywar .tab-menu-cont .members-cont .user-icons, .d .f-war-list.war-new  .faction-war.re_territorywar .tab-menu-cont .members-cont .title .user-icons {
+  width: 225px;
+}
+
+
+/* Faction Profile Page */
+/* ranked war Faction Tag (hide because not needed) */
+.faction-info-wrap.re_faction_stats .members-list [class*="factionWrap"] {
+  display: none;
+}
+
 
 /* Planning OCs */
 .re_nnb .plans-list .item>li.nnb, .re_nnb .plan-list-scrollbar .title>li.nnb {
@@ -116,7 +188,7 @@
 }
 
 /* ranked war divs should be half and half in desktop view*/
-.re_row > div {
+[data-feature="ranked_war_filter"] .re_row > div {
   box-sizing: border-box;
   width: 45%;
   max-width: 45%;
@@ -185,6 +257,14 @@
   padding-top: 2px;
 }
 
+p.re_playercounts > svg {
+  vertical-align: middle;
+  margin-right: 2px;
+}
+p.re_playercounts > span {
+  vertical-align: bottom;
+}
+
 
 
 @media screen and (max-width: 784px) {
@@ -198,13 +278,13 @@
     display: none;
   }
 
-  html:not(.html-manual-desktop) .re_row > div {
+  html:not(.html-manual-desktop) [data-feature="ranked_war_filter"] .re_row > div {
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
   }
 
-  html:not(.html-manual-desktop) .re_row > div:not(:last-child) {
+  html:not(.html-manual-desktop) [data-feature="ranked_war_filter"] .re_row > div:not(:last-child) {
     margin-bottom: 20px;
   }
 }
@@ -235,10 +315,6 @@
   /* ranked war member name column */
   .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
     width: 135px;
-  }
-
-  html:not(.html-manual-desktop) .re_mem_count {
-    display: none;
   }
 }
 
@@ -271,7 +347,10 @@
 
 
   /* ranked war member name column */
-  .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member, .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
+  .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member {
+    width: 141px;
+  }
+  .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
     width: 140px;
   }
 
@@ -286,7 +365,9 @@
     border: 0;
     position: relative;
     width: 37px;
+    max-width: 37px; /* fix width because border is changed on mobile */
   }
+
   .re_spy_title:before {
     background: var(--default-divider-left-linear-gradient);
     bottom: 0;
@@ -312,10 +393,90 @@
 }
   
 
-  html:not(.html-manual-desktop) .re_mem_count {
+  html:not(.html-manual-desktop) .re_mem_count .re_showing {
     display: none;
   }
+  html:not(.html-manual-desktop) .re_mem_count .re_playercounts {
+    display: inherit;
+  }
+  html:not(.html-manual-desktop) .re_mem_count {
+    display: inline-block;
+    margin: 0;
+  }
+
+  html:not(.html-manual-desktop) .r .f-war-list.war-new .faction-war.re_rankedwar .faction-names {
+    line-height: 24px;
+  }
 }
+
+[data-feature="faction_profile_filter"] .re_content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+[data-feature="faction_profile_filter"] #re_filterbuttons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#re_filterbuttons > div {
+  margin: 0.25em;
+}
+
+#re_filterbuttons label {
+  width: 75px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 11px;
+  cursor: pointer;
+  padding-right: 5px;
+
+  color: var(--btn-color);
+  text-shadow: var(--btn-text-shadow);
+  background: var(--btn-background);
+  border: var(--btn-border);
+}
+#re_filterbuttons label:hover {
+  color: var(--btn-hover-color);
+  text-shadow: var(--btn-hover-text-shadow);
+  background: var(--btn-hover-background);
+  border: var(--btn-hover-border)
+}
+
+#re_filterbuttons input:checked ~ label {
+  box-shadow: 0 0 0 1px #000000;
+}
+body.dark-mode #re_filterbuttons input:checked ~ label {
+  box-shadow: 0 0 0 1px #d4d4d4;
+}
+
+
+#re_filterbuttons input[type="checkbox"] {
+  display: none;
+}
+
+[data-feature="faction_profile_filter"] input[type='number'] {
+    padding: 0 0 0 4px;
+    border-radius: 5px;
+    width: 82px;
+    height: 22px;
+}
+
+.re_onlinestatus_hide, .re_status_hide, .re_fallen_hide {
+  display: none !important;
+}
+
+
+
+
+
+
 
 
 

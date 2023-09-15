@@ -12,12 +12,32 @@
             "ranked_war_filter": {
                 "enabled": true,
                 "description": "Adds a window to the ranked war page that allows you to filter players. Requires Torn Stats."
-            }
+            },
+            "territory_war_spies": {
+                "enabled": true,
+                "description": "Adds a spy column to territory wall wars for each player. Requires Torn Stats."
+            },
+            "faction_profile_spies": {
+                "enabled": false,
+                "description": "Adds a spy column to the faction members list on the faction profile page. Requires Torn Stats."
+            },
+            "faction_profile_filter": {
+                "enabled": true,
+                "description": "Adds a window to the faction profile page that allows you to filter faction members."
+            },
+            "faction_name_in_tab": {
+                "enabled": true,
+                "description": "Adds the name of the faction in the browser tab."
+              }
         },
         "forums": {
             "discord_copy": {
                 "enabled": true,
                 "description": "Adds a button to every forum post that copies the post to a Discord format."
+            },
+            "blocked_users": {
+                "enabled": true,
+                "description": "Adds the option to block users on the forums. Adds block button on posts and block list on main forum page."
             }
         },
         "api": {
@@ -96,6 +116,16 @@
             "christmas_town_helper": {
                 "enabled": true,
                 "description": "Adds a window with a large assortment of features for Christmas Town including: showing invisible walls, game cheats, items/chest locations, etc."
+            }
+        },
+        "amarket": {
+            "auction_filter": {
+                "enabled": true,
+                "description": "Adds a window that allows you to filter weapons, armor, and items on the auction house market."
+            },
+            "duplicate_pagination": {
+                "enabled": true,
+                "description": "Duplicates the pagination and modifies page arrows for easier auction house searching."
             }
         }
     },

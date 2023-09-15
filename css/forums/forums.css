@@ -135,14 +135,10 @@ body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .t
   body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .thread-list>li .confirm-wrap>ul.action-wrap>li:nth-child(n+6)+.right-part .forum-button {
     width: 64px;
   }
-
-  body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .thread-list>li .confirm-wrap>ul.action-wrap>li:nth-child(n+8)+.right-part .forum-button {
-    width: 34px;
-  }
 }
 
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 784px) {
   /* change all forum buttons to be 1px smaller */
   body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .thread-list>li .column-wrap .post-wrap .confirm-wrap>ul.action-wrap>li.forum-button {
     width: 29px;
@@ -178,4 +174,117 @@ body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .t
   body .content .content-wrapper.re_discord_copy .forums-thread-wrap .thread-list>li .confirm-wrap>ul.action-wrap>li:nth-child(n+7):not(.ban)+.right-part .forum-button {
     width: 34px;
   }
+
+  body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .thread-list>li .confirm-wrap>ul.action-wrap>li:nth-child(n+8)+.right-part .forum-button {
+    width: 34px;
+  }
+}
+
+
+
+
+/* forum hide user feature */
+.content-wrapper.re_block_users ul.thread-list > li > div.column-wrap .poster-wrap {
+  position: relative;
+}
+
+.content-wrapper.re_block_users ul.thread-list > li > div.column-wrap .poster-wrap .info-wrap {
+  margin-bottom: 33px;
+}
+
+
+.re_block_user_wrap {
+  line-height: 33px;
+  border-top: 1px solid #ccc;
+  border-top-color: var(--default-panel-divider-outer-side-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 140px;
+  position: absolute;
+  bottom: 0;
+  padding: 0;
+  height: 33px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+}
+
+.re_block_user_wrap .re_block {
+  cursor: pointer;
+  padding: 0px 10px;
+}
+
+
+/* blocked content */
+.re_blocked_content.re_show {
+  height: auto !important;
+}
+.re_blocked_content.re_hide {
+  padding-bottom: 0 !important;
+  height: 0 !important;
+}
+.re_blocked_content_button {
+  cursor: pointer;
+}
+
+
+
+/* forum hide user main list */
+.re_block_list #blocked_list li {
+  padding-top: 0;
+  padding-left: 0;
+  display: flex;
+  flex-direction: row;
+  height: 37px;
+}
+.re_block_list #blocked_list li:last-child {
+  border-bottom: 0;
+}
+
+.re_block_list #blocked_list li:last-child div.re_icons_wrap, .re_block_list #blocked_list li:last-child div.re_post_wrap {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.re_block_list #blocked_list li > div.re_icons_wrap {
+  text-align: center;
+  width: 37px;
+  min-width: 37px;
+  height: 37px;
+  line-height: 36px;
+  border-right: 1px solid;
+  border-right-color: var(--default-panel-divider-outer-side-color);
+  padding-bottom: 4px;
+  margin-bottom: -4px;
+  padding-top: 1px;
+  margin-top: -1px;
+}
+
+.re_block_list #blocked_list li > div.re_post_wrap {
+  min-width: 0;
+  flex: 1 1 0;
+  border-left: 1px solid;
+  border-left-color: var(--default-panel-divider-inner-side-color);
+  padding-left: 10px;
+  height: 100%;
+  padding-bottom: 4px;
+  margin-bottom: -4px;
+  margin-top: -1px;
+  display: flex;
+  align-items: center;
+}
+
+#blocked_list li i {
+  background: url(/images/v2/forums/delete_from_subscribed.svg) left top no-repeat;
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+#blocked_list li i:hover {
+  background-position: 0 -11px
 }

@@ -1,0 +1,74 @@
+.re_color_hide, .re_bonus_hide, .re_name_hide, .re_damage_hide, .re_accuracy_hide, .re_defence_hide, .re_bonus_perc_hide, .re_category_hide {
+    display: none;
+}
+
+.auction-market-main-cont.re_torn_ah .pagination-right {
+    float: right;
+    margin: 0;
+    top: 8px;
+    padding-right: 10px;
+}
+.auction-market-main-cont.re_torn_ah .pagination-left {
+    float: left;
+    margin: 0;
+    top: 8px;
+    margin-left: 10px;
+}
+
+.auction-market-main-cont.re_torn_ah .gallery-wrapper.pagination >a.page-show:not(.page-number) {
+    display: inline;
+}
+
+.re_filter {
+    padding: 10px 10px 0px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.re_filter > * {
+    margin-left: 2.5px;
+    margin-right: 2.5px;
+}
+/* small screen, add margin below first 4 filter elements */
+@media screen and (max-width: 784px) {
+    html:not(.html-manual-desktop) div#re_ah_weapons > :not(datalist):nth-child(-n+5) {
+        margin-bottom: 5px;
+    }  
+}
+
+
+.re_filter input.re_stats {
+    text-align: center;
+    width: 40px;
+}
+
+.re_filter select.re_color, .re_filter input.re_name, .re_filter select.re_bonus, .re_filter select.re_category {
+    width: 130px;
+}
+
+
+.re_filter ::-webkit-scrollbar {
+    width: 12px;
+}
+
+.re_filter ::-webkit-scrollbar-track {
+    background-color: var(--default-panel-divider-outer-side-color);
+}
+
+.re_filter ::-webkit-scrollbar-thumb {
+    background-color: var(--default-bg-panel-active-color);
+    border-radius: 20px;
+    border: 2px solid var(--default-panel-divider-outer-side-color);
+}
+
+select:invalid,
+select option[value=""] {
+  color: #757575 !important;
+}
+
+/*Added for browser compatibility*/
+[hidden] {
+  display: none;
+}

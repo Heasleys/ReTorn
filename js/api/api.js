@@ -1,8 +1,9 @@
 // @description  Add API key to API key textbox, auto start on try it page,
+var browser = browser || chrome;
 
 const sendMessage = (msg) => {
   return new Promise((resolve) => {
-    chrome.runtime.sendMessage(msg, (data) => {
+    browser.runtime.sendMessage(msg, (data) => {
       return resolve(data);
     });
   });
@@ -26,7 +27,7 @@ Promise.all([sendMessage({name: "get_sync", value: "features"}), sendMessage({na
 
     /* Inject AjaxComplete into page */
     var ss = document.createElement("script");
-    ss.src = chrome.runtime.getURL("/js/api/apiAjaxComplete.js");
+    ss.src = browser.runtime.getURL("/js/api/apiAjaxComplete.js");
     (document.head || document.documentElement).appendChild(ss);
 
 
