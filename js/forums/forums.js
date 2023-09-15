@@ -200,7 +200,7 @@ function insert_block_buttons() {
   $('.content-wrapper').addClass('re_block_users');
 
   //click event
-  $('.re_block_user_wrap .re_block').click(function() {
+  $('.re_block_user_wrap .re_block').off("click").on("click", function() {
     var name = $(this).closest('.poster-wrap').find('.name-id .poster-name').text();
     var id = parseInt($(this).closest('.poster-wrap').find('.name-id .poster-id').text().replace(/\D/g, ''));
     
