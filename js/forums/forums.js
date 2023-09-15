@@ -4,10 +4,7 @@
 
   sendMessage({name: "get_local", value: "re_user"})
   .then((r) => {
-    if (!r?.status && !r?.data?.re_user?.player_id) {
-      throw "[ReTorn][Block Users] Error: " + r?.message;
-    }
-    player_id = r?.data?.re_user?.player_id;
+    player_id = r?.data?.re_user?.player_id ? r?.data?.re_user?.player_id : 0;
   })
   .catch((e) => console.error(e));
 
