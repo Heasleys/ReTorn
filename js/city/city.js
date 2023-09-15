@@ -66,7 +66,7 @@ function startCityItems() {
     var i = 0;
     var value = 0;
   
-    $('.leaflet-marker-pane img[src*="torn.com/images/items/"]').each(function() {
+    $('.leaflet-marker-pane img[src*="images/items/"]').each(function() {
       i++;
       let src = $(this).attr("src");
       let itemID = src.replace(/\D/g, "");
