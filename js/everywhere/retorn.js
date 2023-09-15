@@ -116,6 +116,7 @@ async function getTornStats(selection, cacheHours = 8, forced = false) { //defau
   const local = await sendMessage({name: "get_local", value: "torn_stats"})
   .then((r) => {
     if (forced) return; //Force update data, regardless of previous cache data
+    if (!r?.status) return;
     const cache_until = r?.data[storageSelection]?.cache_until;
     const timestamp = r?.data[storageSelection]?.timestamp;
     if (r?.status && timestamp && cache_until) {

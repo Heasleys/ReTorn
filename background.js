@@ -1312,7 +1312,8 @@ async function clearTornStats() {
   }
   catch (e) {
     if (e?.message == "torn_stats is empty.") {
-      console.log("[ReTorn][clearTornStats] torn_stats data doesn't exist yet", e)
+      console.log("[ReTorn][clearTornStats] torn_stats data doesn't exist yet", e);
+      setValue({torn_stats: {}}, "local");
     } else {
       console.error("[ReTorn][clearTornStats] Clearing TornStats data error:", e)
     } 
