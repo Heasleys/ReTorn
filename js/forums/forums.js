@@ -312,6 +312,7 @@ function block_users() {
   if (!jQuery.isEmptyObject(blocked_users)) {
     var thread_posts = $('ul.thread-list > li');
     var quote_posts = $('div.quote blockquote:not(.re_blocked_quote)');
+    var thread_list = $('ul.threads-list');
     if (thread_posts.length) {
       thread_posts.each(function() {
         var post = $(this);
@@ -339,7 +340,8 @@ function block_users() {
         var author_block = quote.children('.author-quote');
         var message_block = quote.children('.quote-post');
 
-        const author = parseInt(author_block.find('a').attr('href').replace(/\D/g, ''));
+        const author = author_block.find('a').length ? parseInt(author_block.find('a').attr('href').replace(/\D/g, '')) : 0;
+
         if (blocked_users[author]) {
           quote.addClass('re_blocked_quote');
           author_block.html(blocked_user_no_name);
@@ -351,6 +353,15 @@ function block_users() {
         var blocked_content = $(this).closest('.author-quote').siblings('.re_blocked_content');
         blocked_content.toggleClass('re_hide').toggleClass('re_show');
       });
+    }
+    if (thread_list.length) {
+      thread_list.find('li').each(function() {
+        const info = $(this).find('.thread-info-wrap');
+        const id = info.find('.starter > a').length ? parseInt(info.find('.starter > a').attr('href').replace(/\D/g, '')) : 0;
+        if (blocked_users[id]) {
+          $(this).hide();
+        }
+      })
     }
   }
   insert_block_buttons();
