@@ -120,6 +120,21 @@
   margin-top: 5px;
 }
 
+/* age to year/month/days */
+.d .profile-wrapper .re_age_to_text .box-info {
+  margin-bottom: 26px;
+}
+.d .profile-wrapper .re_age_to_text .box-info.age {
+  margin-bottom: 6px;
+}
+
+.d .profile-wrapper .re_age_text {
+  text-align: center;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+
 
 
 @media screen and (min-width: 785px) {  

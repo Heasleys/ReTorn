@@ -8,6 +8,7 @@
     if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.travelling').length == 0) {
       if ($("div.profile-wrapper.medals-wrapper").length == 1 && $('div.re_container').length == 0) {
         loadTS();
+        insert_age_text();
         profileobserver.disconnect();
       }
     }
@@ -540,6 +541,17 @@
       $(this).attr('title', `<div class="${$(this).attr('data-color')}" style="text-align: center;">${title}</div>`);
     })
 
+  }
+
+  function insert_age_text() {
+    if (!features?.pages?.profiles?.age_to_text?.enabled) return;
+    const profile_info_wrap = $('.profile-information-wrapper');
+    const days = parseInt(profile_info_wrap.find('.box-info.age ul.box-value').text());
+    const days_string = days ? getStringFromDays(days) : "0 days";
+
+    profile_info_wrap.addClass("re_age_to_text");
+    const age_box = profile_info_wrap.find('.box-info.age');
+    age_box.after(`<div class="re_age_text">${days_string}</div>`);
   }
   
   })();

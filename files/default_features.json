@@ -86,6 +86,10 @@
             "profile_stats": {
                 "enabled": true,
                 "description": "Adds a window that shows information about the player from Torn Stats. Requires Torn Stats."
+            },
+            "age_to_text": {
+                "enabled": true,
+                "description": "Converts Torn age to text format on user profiles."
             }
         },
         "city": {

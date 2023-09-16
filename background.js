@@ -1489,6 +1489,12 @@ async function checkUpdate(version) {
           "description": "Hide the level up link on the sidebar and on the homepage."
         }
       }
+      if (features?.pages?.profiles?.age_to_text == undefined) {
+        features["pages"]["profiles"]["age_to_text"] = {
+          "enabled": true,
+          "description": "Converts Torn age to text format on user profiles."
+        }
+      }
 
     await setValue({"settings": settings}, "sync");
     await setValue({"features": features}, "sync");
