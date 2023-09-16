@@ -1,4 +1,3 @@
-const target = document.querySelector('.content-wrapper');
 const obsOptions = {attributes: false, childList: true, characterData: false, subtree:true};
 
 //Hide level up banner
