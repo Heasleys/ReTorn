@@ -113,8 +113,8 @@ function insert_effective_stats() {
     titles[4] = "<div>"+bonuses[4].toLocaleString()+"</div>";
   }
   statsContainer.append(`
-    <div class="re_head expanded flat-top">
-      <span class="re_title"><span id="re_title">Effective Stats</span></span>
+    <div class="title-black">
+      <span id="re_title">Effective Stats</span>
     </div>
     <div class="re_stats_list cont-gray bottom-round">
 
