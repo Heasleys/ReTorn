@@ -1482,6 +1482,13 @@ async function checkUpdate(version) {
         }
       }
     
+    //version 1.3
+      if (features?.general?.hide_level_up == undefined) {
+        features["general"]["hide_level_up"] = {
+          "enabled": false,
+          "description": "Hide the level up link on the sidebar and on the homepage."
+        }
+      }
 
     await setValue({"settings": settings}, "sync");
     await setValue({"features": features}, "sync");

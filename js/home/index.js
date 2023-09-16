@@ -1,6 +1,19 @@
 const target = document.querySelector('.content-wrapper');
 const obsOptions = {attributes: false, childList: true, characterData: false, subtree:true};
 
+//Hide level up banner
+const level_up_observer = new MutationObserver(function(mutations, observer) {
+  if (typeof features?.general?.hide_level_up?.enabled == "undefined") return;
+  if (!features?.general?.hide_level_up?.enabled) {
+    level_up_observer.disconnect();
+    return;
+  }
+  if (features?.general?.hide_level_up?.enabled) {
+    hide_level_up();
+  }
+});
+level_up_observer.observe(document, obsOptions);
+
 //effective stats
 const effective_stats_observer = new MutationObserver(function(mutations, observer) {
   if (typeof features?.pages?.index?.effective_stats?.enabled == "undefined") return;
@@ -208,6 +221,21 @@ function insert_max_abroad_button() {
   });
 }
 
+function hide_level_up() {
+  const info_msg = $('.info-msg-cont');
+  if (info_msg.length) {
+    const msg = info_msg.find('.info-msg *:contains("Congratulations! You have enough experience to go up to level")');
+    if (msg.length) {
+      info_msg.hide();
+      info_msg.next('hr.page-head-delimiter').hide();
+      level_up_observer.disconnect();
+    }
 
+    const msg2 = info_msg.find('.info-msg *:contains("VKEY")');
+    if (msg2.length) {
+      info_msg.hide();
+      info_msg.next('hr.page-head-delimiter').hide();
+      level_up_observer.disconnect();
+    }
   }
 }

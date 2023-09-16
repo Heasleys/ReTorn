@@ -159,6 +159,10 @@
         "last_action_mini_profile": {
             "enabled": true,
             "description": "Adds a user's last action to the mini profile."
+        },
+        "hide_level_up": {
+            "enabled": false,
+            "description": "Hide the level up link on the sidebar and on the homepage."
         }
     },
     "chat": {
