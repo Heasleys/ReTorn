@@ -22,7 +22,7 @@ const effective_stats_observer = new MutationObserver(function(mutations, observ
     return;
   }
   if ($('#body').attr('data-traveling') == "true" || $('#body').attr('data-abroad') == "true") {
-    effective_stats_observer.disconnect;
+    effective_stats_observer.disconnect();
     return;
   }
 
@@ -55,7 +55,7 @@ live_networth_observer.observe(document, obsOptions);
 //Max button abroad
 const max_abroad_observer = new MutationObserver(function(mutations, observer) {
   if (typeof features?.pages?.index?.max_buy_abroad?.enabled == "undefined") return;
-  if (!features?.pages?.index?.max_buy_abroad?.enabled ) {
+  if (!features?.pages?.index?.max_buy_abroad?.enabled) {
     max_abroad_observer.disconnect();
     return;
   }
@@ -71,7 +71,7 @@ const max_abroad_observer = new MutationObserver(function(mutations, observer) {
     }
   });
 });
-live_networth_observer.observe(document, obsOptions);
+max_abroad_observer.observe(document, obsOptions);
 
 function insert_effective_stats() {
   if ($('#re_title:contains("Effective Stats")').length) return;
@@ -226,13 +226,6 @@ function hide_level_up() {
   if (info_msg.length) {
     const msg = info_msg.find('.info-msg *:contains("Congratulations! You have enough experience to go up to level")');
     if (msg.length) {
-      info_msg.hide();
-      info_msg.next('hr.page-head-delimiter').hide();
-      level_up_observer.disconnect();
-    }
-
-    const msg2 = info_msg.find('.info-msg *:contains("VKEY")');
-    if (msg2.length) {
       info_msg.hide();
       info_msg.next('hr.page-head-delimiter').hide();
       level_up_observer.disconnect();
