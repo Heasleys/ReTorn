@@ -243,6 +243,7 @@
     function setNPCs() {
         let npc_list = ``;
         let i = 0;
+        if (typeof LOOT != "object") return;
         Object.entries(LOOT).forEach(([key, value]) => {
             if (value?.torn_id != undefined) {
                 npc_list += addNPC(value);
