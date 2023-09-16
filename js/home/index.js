@@ -210,7 +210,7 @@ function insert_live_networth() {
 
 function insert_max_abroad_button() {
   $('.user-info .delimiter .msg').wrapInner("<span id='re_trav_wrap'>");
-  $('.user-info .delimiter .msg').append(`<button class="re_torn_button" id="re_max" title="Fill Max Items">Max</button>`);
+  $('.user-info .delimiter .msg').append(`<button class="re_torn_button" id="re_max" title="Fill item amount to max">Max</button>`);
   $('.user-info .delimiter .msg').addClass("re_trav");
 
   $('#re_max').off("click").click(function() {
