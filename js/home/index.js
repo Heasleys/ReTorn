@@ -65,9 +65,14 @@ const max_abroad_observer = new MutationObserver(function(mutations, observer) {
   }
 
   mutations.forEach(function(mutation) {
-    if (mutation.target && mutation.target.className && mutation.target.className.includes("msg") && $('#re_max').length == 0 && $('#re_trav_wrap').length == 0) {
-      insert_max_abroad_button();
-      max_abroad_observer.disconnect();
+    if ($('#re_max').length != 0 && $('#re_trav_wrap').length != 0) {
+      return;
+    }
+    if (mutation?.target?.className) {
+      const mutation_class_name = mutation.target.className;
+      if (typeof mutation_class_name == "string" && mutation_class_name.indexOf('msg') > -1) {
+        insert_max_abroad_button();
+      }
     }
   });
 });
