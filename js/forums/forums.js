@@ -324,8 +324,9 @@ function block_users() {
             post.find('.poster').html(`<span class="arrow-left right"></span>${blocked_user_no_name}`);
             post.find('.post').hide();
             if (post.find('.edited').length) post.find('.edited').text(post.find('.edited').text().replace(name, "BLOCKED USER"));
-            post.find('.info-wrap').hide();
-            $('.poster .re_blocked_content_button').off("click").on("click", function() {
+            post.find('.info-wrap').empty();
+            $('.poster .re_blocked_content_button').off("click").on("click", function(e) {
+              e.stopPropagation();
               post.find('.post').toggle();
             })
           } else {
