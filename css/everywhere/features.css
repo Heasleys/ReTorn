@@ -1,0 +1,3 @@
+.re_hide_level_up #sidebar a[href*="level2.php"] {
+    display:none;
+}

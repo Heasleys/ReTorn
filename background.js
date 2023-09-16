@@ -1482,6 +1482,19 @@ async function checkUpdate(version) {
         }
       }
     
+    //version 1.3
+      if (features?.general?.hide_level_up == undefined) {
+        features["general"]["hide_level_up"] = {
+          "enabled": false,
+          "description": "Hide the level up link on the sidebar and on the homepage."
+        }
+      }
+      if (features?.pages?.profiles?.age_to_text == undefined) {
+        features["pages"]["profiles"]["age_to_text"] = {
+          "enabled": true,
+          "description": "Converts Torn age to text format on user profiles."
+        }
+      }
 
     await setValue({"settings": settings}, "sync");
     await setValue({"features": features}, "sync");

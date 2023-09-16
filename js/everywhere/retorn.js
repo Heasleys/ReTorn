@@ -103,6 +103,10 @@ $(document).on('click', '#re_options', function(event){
         (document.head || document.documentElement).appendChild(ss);
       });
     }
+
+    if (features?.general?.hide_level_up?.enabled) {
+      root.classList.add("re_hide_level_up");
+    }
   } 
 
 

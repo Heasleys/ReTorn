@@ -396,6 +396,14 @@ input.re_chat_search {
   display: none;
 }
 
+body.dark-mode input.re_chat_search {
+  background-color: #181818;
+  color: #ccc;
+}
+body.dark-mode [class*="chat-box-title"][title="Trade"]:hover input.re_chat_search, body.dark-mode input.re_chat_search:hover {
+  background-color: #444;
+}
+
 div[class*="chat-active"] > div > div > input.re_chat_search {
   display: inline;
 }
