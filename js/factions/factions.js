@@ -105,7 +105,7 @@ function urlHandler() {
     rankedWarObserver.disconnect();
   }
 
-  if (url.match(terrRegex)) { //&& features?.pages?.factions?.territory_war_spies?.enabled
+  if (url.match(terrRegex) && features?.pages?.factions?.territory_war_spies?.enabled) {
     territoryWarObserver.observe(target, obsOptions);
   } else {
     territoryWarObserver.disconnect();
