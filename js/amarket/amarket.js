@@ -487,18 +487,18 @@ function colorFilter(element, color) {
         const parent = $(element).closest("li");
 
         if (color == "none") {
-            if (elementClass == "item torn-item large ") {
+            if (elementClass == "item-plate ") {
                 parent.removeClass("re_color_hide");
                 return;
             }
         }
         if (color == "orangered") {
-            if ($(element).hasClass("orange") || $(element).hasClass("red")) {
+            if ($(element).hasClass("glow-orange") || $(element).hasClass("glow-red")) {
                 parent.removeClass("re_color_hide");
                 return;
             }
         }
-        if ($(element).hasClass(color)) {
+        if ($(element).hasClass(`glow-${color}`)) {
             parent.removeClass("re_color_hide");
             return;
         }
@@ -621,7 +621,7 @@ function filter(tab) {
         }
 
         elements.each(function(index, element) {
-            colorFilter($(element).find('.img-wrap .item.torn-item'), colorWeapon);
+            colorFilter($(element).find('.img-wrap .item-plate'), colorWeapon);
             nameFilter($(element).find('.title > .item-name'), nameWeapon);
             bonusFilter($(element).find('.item-bonuses'), b1, b2, perc1, perc2);
             //damage
@@ -633,7 +633,7 @@ function filter(tab) {
 
         case "#types-tab-2"://armor
         elements.each(function(index, element) {
-            colorFilter($(element).find('.img-wrap .item.torn-item'), colorArmor);
+            colorFilter($(element).find('.img-wrap .item-plate'), colorArmor);
             nameFilter($(element).find('.title > .item-name'), nameArmor);
             statFilter($(element).find('.item-bonuses .infobonuses i[class="bonus-attachment-item-defence-bonus"]').siblings('span.label-value'), defense);
             armorBonusPercFilter($(element).find('.item-bonuses'), percArmor);
