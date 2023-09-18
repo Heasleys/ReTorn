@@ -981,7 +981,7 @@ async function handleMessage(msg) {
     break;
 
     case "del_settings_index":
-      if (m.key && m.setting) {
+      if (m.key != "undefined" && m.setting != "undefined") {
         const s = await getValue("settings", "sync");
         let newsettings = {[m.setting]: {}}
         let obj = s[m.setting];
