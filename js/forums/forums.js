@@ -1,12 +1,14 @@
 (function() {
   var blocked_users = settings?.forums?.blocked_users;
-  var player_id;
+  var player_id = get_player_id_from_page();
 
-  sendMessage({name: "get_local", value: "re_user"})
-  .then((r) => {
-    player_id = r?.data?.re_user?.player_id ? r?.data?.re_user?.player_id : 0;
-  })
-  .catch((e) => console.error(e));
+  if (!player_id) {
+    sendMessage({name: "get_local", value: "re_user"})
+    .then((r) => {
+      player_id = r?.data?.re_user?.player_id ? r?.data?.re_user?.player_id : 0;
+    })
+    .catch((e) => console.error(e));
+  }
 
   var observer = new MutationObserver(function(mutations, observer) {
     mutations.forEach(function(mutation) {
@@ -184,7 +186,11 @@ async function copy_internal(text) {
 function insert_block_buttons() {
   if (!$('ul.thread-list > li div.poster-wrap').length) return;
 
+
   $('ul.thread-list > li div.poster-wrap').each(function() {
+    var id = parseInt($(this).find('.name-id .poster-id').text().replace(/\D/g, ''));
+    if (id == player_id) return;
+
     if ($(this).find('.re_block_user_wrap').length == 0) {
       $(this).find('.info-wrap').append(`
         <div class="re_block_user_wrap">
