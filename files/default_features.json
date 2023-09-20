@@ -43,7 +43,7 @@
         "api": {
             "autofill_api": {
                 "enabled": true,
-                "description": "Autofull api input with your apikey, clickable and control+clickable fields, and other QoL improvements."
+                "description": "Autofull API input with your API key, clickable and control+clickable fields, and other QoL improvements."
             }
         },
         "gym": {

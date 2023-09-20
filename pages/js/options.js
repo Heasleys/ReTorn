@@ -43,6 +43,18 @@ const default_quick_links = {
     url: ""
   }
 }
+
+function fix_case_acronyms(text) {
+  //"""Replaces "oc", "ocs", "npc", "npcs", "api", or "apis" with "OC", "OCs", "NPC", "NPCs", "API", or "APIs", but not within a word."""
+  const regex = /(?<!\w)(oc|ocs|npc|npcs|api|apis)(?!\w)/gi;
+  const found = text.match(regex);
+  if (found) {
+    text = text.replace(regex, found[0].toUpperCase()).replace("S", "s");
+  }
+
+  return text;
+}
+
 function titleCase(str) {
   var splitStr = str.toLowerCase().split(' ');
   for (var i = 0; i < splitStr.length; i++) {
@@ -105,7 +117,7 @@ async function createFeaturesList() {
           $(`#features_card .category`).last().append(switchWrap(key,val.description,val.enabled))
         } 
       } else {
-        $('#features_card .category').last().append(`<div class="block" data-page="${key}"><h5>${key}:</h5></div>`);
+        $('#features_card .category').last().append(`<div class="block" data-page="${key}"><h5>${fix_case_acronyms(key)}:</h5></div>`);
         if (typeof val === 'object' && val !== null) {
           iterateFeatures(val);
         }
