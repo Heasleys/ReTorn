@@ -167,6 +167,23 @@ function disableFilterCheckbox(FEATURE) {
     });
 }
 
+function get_player_id_from_page() {
+    var player_id = 0;
+
+    //get player_id by cookie
+    player_id = parseInt(getCookieValue("uid"));
+    if (player_id) return player_id;
+
+    //get player_id by chat script in DOM
+    player_id = $('script[type="text/javascript"][uid]').attr('uid') ? parseInt($('script[type="text/javascript"][uid]').attr('uid')) : 0;
+    if (player_id) return player_id;
+
+    //get player_id by sidebar
+    player_id = parseInt($('#sidebarroot [class*="user-information"] [class*="menu-name_"]').next('a').attr('href').replace(/\D/g, ''));
+    if (player_id) return player_id;
+
+    return player_id;
+}
 
 
 function showError(FEATURE, err, onlyBar = false) {
@@ -292,7 +309,7 @@ function timeDifference(current, previous) {
     else {
         return '' + Math.round(elapsed/msPerYear ) + ' years ago';
     }
-  }
+}
 
 function getStringFromDays(numberOfDays) {
     var years = Math.floor(numberOfDays / 365);
@@ -303,4 +320,8 @@ function getStringFromDays(numberOfDays) {
     var monthsDisplay = months > 0 ? months + (months == 1 ? " month " : " months ") : "";
     var daysDisplay = days > 0 ? days + (days == 1 ? " day" : " days") : "";
     return yearsDisplay + monthsDisplay + daysDisplay; 
-    }
+}
+
+const getCookieValue = (name) => ( //https://stackoverflow.com/a/25490531/22230696
+    document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+  )

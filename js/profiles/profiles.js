@@ -426,6 +426,9 @@
         `;
 
         $('#re_compare .re_stat').last().after(new_stat);
+        $("#re_compare .re_stat.re_new").find('.re_delete').click(function() {
+          $(this).closest('li.re_stat').hide();
+        });
         stat_list.push(val);
         $(`#new_stat_datalist > option[data-name="${val}"]`).remove();
         $('#new_stat_input').val("");
@@ -464,7 +467,7 @@
 
     const new_ts_data = {[`spy_user_${uid}`]: TS_DATA}
 
-    sendMessage({name: "get_torn_stats", selection: `settings&comparespy=1&comparepersonal=1&personalstats=${key_string}`})// Dont use getTornStats for this because this records new info, not pulls info
+    sendMessage({name: "get_torn_stats", selection: `settings&personalstats=${key_string}`})// Dont use getTornStats for this because this records new info, not pulls info
     .then((data) => {
       if (!data.status) {
         throw data.message;
@@ -478,11 +481,12 @@
       }
 
       //if any new stats have been added, refresh TS
-      if ($('.re_new').length) {
+      if ($('.re_new:visible').length) {
         var new_stats = [];
-        $('.re_new').each(function() {
+        $('.re_new:visible').each(function() {
           const t = $(this).find('.re_table_label').text();
           new_stats.push(t);
+          $(this).removeClass('.re_new');
         })
 
 
@@ -520,6 +524,7 @@
     $('.re_grip').remove();
     $('.re_delete').remove();
     $('.re_stat').show();
+    $('.re_new').remove();
     $('#re_modify_form').remove();
   }
 

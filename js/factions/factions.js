@@ -80,7 +80,7 @@ window.addEventListener('hashchange', hashHandler, false);
 
 function hashHandler() {
   var hash = location.hash;
-  if (hash.includes('tab=crimes') || hash.includes('tab=controls') || hash.includes('war/rank') || hash.match(terrRegex)) {
+  if (hash.includes('tab=crimes') || hash.includes('tab=controls') || hash.includes('war/rank') || hash.match(terrRegex) || hash.includes('tab=info')) {
      urlHandler();
   }
 }
@@ -105,10 +105,23 @@ function urlHandler() {
     rankedWarObserver.disconnect();
   }
 
-  if (url.match(terrRegex)) { //&& features?.pages?.factions?.territory_war_spies?.enabled
+  if (url.match(terrRegex) && features?.pages?.factions?.territory_war_spies?.enabled) {
     territoryWarObserver.observe(target, obsOptions);
   } else {
     territoryWarObserver.disconnect();
+  }
+
+  if (url.includes('tab=info')) {
+    if (features?.pages?.factions?.faction_profile_filter?.enabled) {
+      factionMembersFilterObserver.observe(target, obsOptions);
+    }
+
+    if (features?.pages?.factions?.faction_profile_spies?.enabled) {
+      factionPageMemberStatsObserver.observe(target, obsOptions);
+    }
+  } else {
+    factionPageMemberStatsObserver.disconnect();
+    factionMembersFilterObserver.disconnect();
   }
 
   if (url.includes('step=profile')) {
@@ -126,8 +139,10 @@ function urlHandler() {
 
   } else {
     factionPageOtherFactionObserver.disconnect();
-    factionPageMemberStatsObserver.disconnect();
-    factionMembersFilterObserver.disconnect();
+    if (!url.includes('tab=info')) {
+      factionPageMemberStatsObserver.disconnect();
+      factionMembersFilterObserver.disconnect();
+    }
   }
 
 }

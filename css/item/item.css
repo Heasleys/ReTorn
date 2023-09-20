@@ -169,12 +169,36 @@ width: 172px !important;
   }
 
   html:not(.html-manual-desktop) .re_qitemWrap.actions .actions-wrap li {
-    width: 77px !important;
+    width: 77px;
   }
 
   html:not(.html-manual-desktop) .d .re_qitemWrap.actions .actions-wrap>li:first-child {
     border-left: 1px solid;
     border-left-color: var(--default-panel-divider-outer-side-color);
+  }
+}
+
+@media screen and (max-width: 784px) {
+  html:not(.html-manual-desktop) .d .re_qitemWrap .option-use, html:not(.html-manual-desktop) .d .re_qitemWrap .option-turn-on, html:not(.html-manual-desktop) .d .re_qitemWrap .option-equip, html:not(.html-manual-desktop) .d .re_qitemWrap .option-unequip, html:not(.html-manual-desktop) .d .re_qitemWrap .option-sell, html:not(.html-manual-desktop) .d .re_qitemWrap .option-send, html:not(.html-manual-desktop) .d .re_qitemWrap .option-delete, html:not(.html-manual-desktop) .d .re_qitemWrap .option-return-to-faction, html:not(.html-manual-desktop) .d .re_qitemWrap .option-donate-faction {
+    width: 29px;
+  }
+
+  html:not(.html-manual-desktop) .d .re_qitemWrap .actions-wrap li {
+    text-align: left;
+  }
+}
+
+@media screen and (max-width: 386px) {
+  html:not(.html-manual-desktop) .re_qitemWrap.actions .actions-wrap li {
+    width: 64px;
+  }
+
+  html:not(.html-manual-desktop) .r .items-cont .re_qitemWrap.actions {
+    width: 321px !important;
+  }
+
+  html:not(.html-manual-desktop) .d .re_qitemWrap .option-use, html:not(.html-manual-desktop) .d .re_qitemWrap .option-turn-on, html:not(.html-manual-desktop) .d .re_qitemWrap .option-equip, html:not(.html-manual-desktop) .d .re_qitemWrap .option-unequip, html:not(.html-manual-desktop) .d .re_qitemWrap .option-sell, html:not(.html-manual-desktop) .d .re_qitemWrap .option-send, html:not(.html-manual-desktop) .d .re_qitemWrap .option-delete, html:not(.html-manual-desktop) .d .re_qitemWrap .option-return-to-faction, html:not(.html-manual-desktop) .d .re_qitemWrap .option-donate-faction {
+    width: 24px;
   }
 }
 

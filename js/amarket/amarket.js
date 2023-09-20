@@ -621,7 +621,7 @@ function filter(tab) {
         }
 
         elements.each(function(index, element) {
-            colorFilter($(element).find('.img-wrap .item.item-plate'), colorWeapon);
+            colorFilter($(element).find('.img-wrap .item-plate'), colorWeapon);
             nameFilter($(element).find('.title > .item-name'), nameWeapon);
             bonusFilter($(element).find('.item-bonuses'), b1, b2, perc1, perc2);
             //damage
