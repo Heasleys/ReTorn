@@ -151,7 +151,7 @@ function switchWrap(key,desc,toggle,order=0,value=0) {
   return `
   <div class="switch-holder" ${orderText}>
     <input type="checkbox" id="${key}" ${checked}/><label class="switch-label" for="${key}">Toggle</label>
-    <span for="${key}" class="tooltip-right" data-tooltip="${desc}">${titleCase(key.replaceAll('_'," "))}</span>
+    <span for="${key}" class="tooltip-right" data-tooltip="${desc}">${fix_case_acronyms(titleCase(key.replaceAll('_'," ")))}</span>
     ${inputElement}
   </div>
   `;
