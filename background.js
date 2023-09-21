@@ -1,4 +1,5 @@
 var browser = browser || chrome;
+import { deepExtend } from "/lib/modules/deep-extend/deep-extend.js";
 
 //event listener for message passing
 browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
@@ -12,9 +13,9 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 // Event Listener for Starting Up chrome/extension
-//chrome.runtime.onStartup.addListener(() => {
-  //console.log("onStartup")
-//});
+browser.runtime.onStartup.addListener(() => {
+  serviceWorkerStart();
+});
 
 // Event Listener for Installing extension (update or new install)
 browser.runtime.onInstalled.addListener((details) => {
@@ -820,7 +821,7 @@ function parseAPI(data) {
   });
 }
 
-const deepExtend = function(out) {
+const deep_extend_old = function(out) {
   out = out || {};
 
   for (var i = 1, len = arguments.length; i < len; ++i) {
@@ -837,7 +838,7 @@ const deepExtend = function(out) {
 
       // based on https://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
       if (Object.prototype.toString.call(obj[key]) === '[object Object]') {
-        out[key] = deepExtend(out[key], obj[key]);
+        out[key] = deep_extend_old(out[key], obj[key]);
         continue;
       }
 
@@ -929,7 +930,7 @@ async function handleMessage(msg) {
     case "merge_session":
       if (m.key && !isEmpty(m.object)) {
         const g = await getValue(m.key, "session");
-        const merg = deepExtend(g, m.object);
+        const merg = deep_extend_old(g, m.object);
         let obj = {};
         obj[m.key] = merg;
         await setValue(obj, "session");
@@ -951,7 +952,7 @@ async function handleMessage(msg) {
     case "merge_local":
       if (m.key && !isEmpty(m.object)) {
         const g = await getValue(m.key, "local");
-        const merg = deepExtend(g, m.object);
+        const merg = deep_extend_old(g, m.object);
         let obj = {};
         obj[m.key] = merg;
         await setValue(obj, "local");
@@ -973,7 +974,7 @@ async function handleMessage(msg) {
     case "merge_sync":
       if (m.key && !isEmpty(m.object)) {
         const g = await getValue(m.key, "sync");
-        const merg = deepExtend(g, m.object);
+        const merg = deep_extend_old(g, m.object);
         let obj = {};
         obj[m.key] = merg;
         await setValue(obj, "sync");
@@ -993,7 +994,7 @@ async function handleMessage(msg) {
           delete obj[m.key];
           const newobj = fixIndexAfterDelete(m.key, obj);
           newsettings[m.setting] = newobj;
-          const merg = deepExtend(s, newsettings);
+          const merg = deep_extend_old(s, newsettings);
           let finalobj = {};
           finalobj["settings"] = JSON.parse(JSON.stringify(merg));
 
@@ -1032,7 +1033,7 @@ async function handleMessage(msg) {
               [keys[1]]: JSON.parse(JSON.stringify(obj))
             }
           }
-          const merg = deepExtend(settings, newobj);
+          const merg = deep_extend_old(settings, newobj);
           finalobj["settings"] = JSON.parse(JSON.stringify(merg));
         } else {
           const obj = settings[m.item];
@@ -1054,7 +1055,7 @@ async function handleMessage(msg) {
           const newobj = {
             [m.item]: JSON.parse(JSON.stringify(obj))
           }
-          const merg = deepExtend(settings, newobj);
+          const merg = deep_extend_old(settings, newobj);
           finalobj["settings"] = JSON.parse(JSON.stringify(merg));
         }
 
