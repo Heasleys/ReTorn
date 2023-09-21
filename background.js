@@ -1337,14 +1337,16 @@ async function startup() {
   checkItemAPI();
   await clearTornStats();
   
+  validate_sync_data();
+
   //check version, update version if needed  
   const currentVersion = browser.runtime.getManifest().version;
   try {
     const version = await getValue("version", "local");
 
     if (version != currentVersion) {// !=
-      console.log("[ReTorn][startup] New extension version detected. Checking for updates...");
-      checkUpdate(version);
+      console.log("[ReTorn][startup] New extension version detected.");
+      //checkUpdate(version);
       const obj = {
         version: currentVersion
       }
@@ -1357,7 +1359,7 @@ async function startup() {
       version: currentVersion
     }
     await setValue(obj, "local");
-    checkUpdate(currentVersion);
+    //checkUpdate(currentVersion);
   }
 
 
@@ -1507,26 +1509,45 @@ async function checkUpdate(version) {
   }
 }
 
-function versionCompare(v1, v2) { // return 1 if v2 is smaller than v1 | return -1 if v2 is greater than v1 | return 0 if equal
-    var vnum1 = 0, vnum2 = 0;
-    for (var i = 0, j = 0; (i < v1.length || j < v2.length);) {
-        while (i < v1.length && v1[i] != '.') {
-            vnum1 = vnum1 * 10 + (v1[i] - '0');
-            i++;
-        }
-        while (j < v2.length && v2[j] != '.') {
-            vnum2 = vnum2 * 10 + (v2[j] - '0');
-            j++;
-        }
-        if (vnum1 > vnum2)
-            return 1;
-        if (vnum2 > vnum1)
-            return -1;
-        vnum1 = vnum2 = 0;
-        i++;
-        j++;
+async function validate_sync_data() {
+  const sett = browser.runtime.getURL('/files/default_settings.json');
+  const feat = browser.runtime.getURL('/files/default_features.json');
+  const noti = browser.runtime.getURL('/files/default_notifications.json');
+
+  const fetches = await Promise.all([fetch(sett),fetch(feat),fetch(noti)]);
+  const jsons = await Promise.all([fetches[0].json(), fetches[1].json(), fetches[2].json()])
+
+  const settings_file = jsons[0];
+  const features_file = jsons[1];
+  const notifications_file = jsons[2];
+
+  const syncs = await Promise.all([getValue("settings", "sync"), getValue("features", "sync"), getValue("notifications", "sync")])
+
+  const settings_sync = syncs[0];
+  const features_sync = syncs[1];
+  const notifications_sync = syncs[2];
+
+  const settings_merged = deepExtend({}, settings_file, settings_sync);
+  const features_merged = deepExtend({}, features_file, features_sync);
+  const notifications_merged = deepExtend({}, notifications_file, notifications_sync);
+
+  validate_features_descriptions(features_merged, features_file);
+
+  await Promise.all([setValue({"settings": settings_merged}, "sync"), setValue({"features": features_merged}, "sync"), setValue({"notifications": notifications_merged}, "sync")])
+}
+
+
+function validate_features_descriptions(object1, object2) {
+  for (const key in object1) {
+    if (typeof object1[key] === 'object') {
+      validate_features_descriptions(object1[key], object2[key]);
+    } else {
+      if (key === "description" && object1[key] !== object2[key]) {
+        object1[key] = object2[key];
+        continue;
+      }
     }
-    return 0;
+  }
 }
 
 async function newInstallation() {
