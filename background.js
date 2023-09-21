@@ -941,7 +941,7 @@ async function handleMessage(msg) {
     break;
     
     case "get_local":
-      if (m.value) {
+      if (m.value || m.value === null) {
         const r = await getValue(m.value, "local");
         return {status: true, message: m.value+ " has been retrieved from storage.", data: r}
       } else {
@@ -963,7 +963,7 @@ async function handleMessage(msg) {
     break;
 
     case "get_sync":
-      if (m.value) {
+      if (m.value || m.value === null) {
         const r = await getValue(m.value, "sync");
         return {status: true, message: m.value+ " has been retrieved from storage.", data: r}
       } else {
