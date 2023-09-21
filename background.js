@@ -630,6 +630,9 @@ const getValue = async function(key, loc) {
           reject({status: false, message: key + " is empty."});
         } else {
           console.log({status: true, message: key + " has been retrieved."})
+          if (key === null) {
+            resolve(v);
+          }
           resolve(v[key]);
         }
       });

@@ -415,6 +415,29 @@ function initInputs() {
       alert("Items Cache have been refreshed.")
     })
   });
+
+  $("button#copy_sync_to_clipboard").click(function() {
+    sendMessage({name: "get_sync", value: null})
+    .then((r) => {
+      if (!r?.status) {
+        console.error(r);
+        return;
+      }
+      console.log(r);
+      copy_internal(JSON.stringify(r?.data, null, 2));
+    })
+  });
+
+  $("button#copy_local_to_clipboard").click(function() {
+    sendMessage({name: "get_local", value: null})
+    .then((r) => {
+      if (!r?.status) {
+        console.error(r);
+        return;
+      }
+      copy_internal(JSON.stringify(r?.data, null, 2));
+    })
+  });
 }
 
 function initSettings() {
@@ -723,4 +746,33 @@ function wc_hex_is_light(color) {
   const c_b = parseInt(hex.substr(4, 2), 16);
   const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
   return brightness > 82; //originally 155
+}
+//copy to clipboard function taken from internet -> https://pastebin.com/ikVzSiq9
+async function copy_internal(text) {
+  if (!navigator.clipboard) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // fall back if clipboard api does not exist
+  let textArea = document.createElement("textarea");
+  textArea.value = text;
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    return document.execCommand("copy");
+  } catch {
+    return false;
+  } finally {
+    document.body.removeChild(textArea);
+  }
 }
