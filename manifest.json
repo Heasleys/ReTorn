@@ -189,6 +189,11 @@
         "js": ["js/amarket/amarket.js"],
         "css": ["css/amarket/amarket.css"],
         "run_at": "document_end"
+      },
+      {
+        "matches": ["https://*.torn.com/displaycase.php*"],
+        "js": ["js/displaycase/displaycase.js"],
+        "run_at": "document_end"
       }
     ]
   }

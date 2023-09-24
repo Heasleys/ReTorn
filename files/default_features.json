@@ -131,6 +131,12 @@
                 "enabled": true,
                 "description": "Duplicates the pagination and modifies page arrows for easier auction house searching."
             }
+        },
+        "displaycase": {
+            "case_management": {
+                "enabled": true,
+                "description": "Adds extra buttons to the Display Case management page for easier sorting."
+            }
         }
     },
     "sidebar": {

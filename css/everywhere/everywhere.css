@@ -943,6 +943,65 @@ body.dark-mode .re_button button .close:hover {
   color: #999;
 }
 
+.re_move_down, .re_move_up {
+  position: relative;
+  overflow: hidden;
+  height: 36px;
+  width: 35px;
+  border-right: 1px solid #ccc;
+  border-right-color: var(--default-panel-divider-outer-side-color);
+  text-align: left;
+  cursor: pointer;
+}
+
+.re_move_down > i, .re_move_up > i {
+  position: absolute;
+  height: 9px;
+  width: 14px;
+  margin: 16px 0px 0px 10px;
+  filter: drop-shadow(0 1px 0 #fff);
+  background: url(/images/v2/mobile/arrows_expand.svg) left top no-repeat;
+}
+
+.re_move_up > i {
+  transform: rotate(180deg);
+  margin: 14px 0px 0px 11px;
+  filter: drop-shadow(0 -1px 0 #fff)
+}
+
+.re_move_down:hover > i, .re_move_up:hover > i {
+  background-position: right bottom !important;
+}
+
+.dark-mode .re_move_down:hover > i, .dark-mode .re_move_up:hover > i {
+  background-position: right top !important;
+}
+
+.dark-mode .re_move_down > i, .dark-mode .re_move_up > i {
+  background: url(/images/v2/mobile/arrows_expand.svg) left bottom no-repeat;
+  filter: drop-shadow(0 1px 1px #111111b5);
+}
+.dark-mode .re_move_up > i {
+  transform: rotate(180deg);
+  margin: 14px 0px 0px 11px;
+  filter: drop-shadow(0 -1px 1px #111111b5)
+}
+
+.re_dc_management li:first-child .re_move_up {
+  cursor: default;
+}
+.re_dc_management li:first-child .re_move_up > i {
+  display:none;
+}
+
+.re_dc_management li:last-child .re_move_down {
+  cursor: default;
+}
+.re_dc_management li:last-child .re_move_down > i {
+  display:none;
+}
+
+
 
 
 /* Chrome, Safari, Edge, Opera */
