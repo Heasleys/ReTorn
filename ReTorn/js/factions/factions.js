@@ -294,41 +294,52 @@ function rosterTab() {
         $('td.verified[data-verified=1]').addClass('green');
 
         $('#ts-roster').click(function() {
-          rosterClick();
+          rosterClick(true);
         });
 
         $('ul.control-tabs > li > a:not("#ts-roster")').click(function() {
-          $('div#tornstats-roster').hide();
-          let last_tab = $('#ts-roster').data('last-tab');
-          if ($(this).attr('href') == last_tab) {
-            $(this).parent().addClass("ui-tabs-active ui-state-active").attr('tabindex', 0).attr('aria-selected', 'true');
-            $(last_tab).show();
-            if (location.hash.includes("option=")) {
-              location.replace(location.hash.replace(/(?<=option=).*$/, last_tab.replace('#option-', '')));
-            } else {
-              location.replace(location.hash.replace(/(?<=tab=).*$/, `controls&option=${last_tab.replace('#option-', '')}`));
-            }
-          }
+          rosterClick(false);
+        });
+
+        $('#controls-nav-list').append(`<option value="ts-roster" class="f-modification">Torn Stats Roster</option>`);
+        
+        $('#controls-nav-list').on('change', function() {
+          if (this.value == "ts-roster") rosterClick(true);
+          else rosterClick(false);
         });
 
         if (location.hash.includes('option=tornstats')) {
-          rosterClick();
+          rosterClick(true);
         }
       }
     })
 }
 
 //Function for clicking the Roster button on desktop
-function rosterClick() {
-  $('div.control-tab-section').hide();
-  $('#ts-roster').data('last-tab', $('ul.control-tabs li.ui-state-default[tabindex=0]').children('a').attr('href'));
-  $('li.ui-state-default[tabindex=0]').removeClass("ui-tabs-active ui-state-active").attr('tabindex', -1).attr('aria-selected', 'false');
-  $('div.control-tab-section[aria-expanded="true"]').attr('aria-expanded', 'false').attr('aria-hidden', 'true');
-  $('div#tornstats-roster').show();
-  if (location.hash.includes("option=")) {
-    location.replace(location.hash.replace(/(?<=option=).*$/, "tornstats"));
+function rosterClick(active) {
+  if (active) {
+    $('div.control-tab-section').hide();
+    $('#ts-roster').data('last-tab', $('ul.control-tabs li.ui-state-default[tabindex=0]').children('a').attr('href'));
+    $('li.ui-state-default[tabindex=0]').removeClass("ui-tabs-active ui-state-active").attr('tabindex', -1).attr('aria-selected', 'false');
+    $('div.control-tab-section[aria-expanded="true"]').attr('aria-expanded', 'false').attr('aria-hidden', 'true');
+    $('div#tornstats-roster').show();
+    if (location.hash.includes("option=")) {
+      location.replace(location.hash.replace(/(?<=option=).*$/, "tornstats"));
+    } else {
+      location.replace(location.hash.replace(/(?<=tab=).*$/, "controls&option=tornstats"));
+    }
   } else {
-    location.replace(location.hash.replace(/(?<=tab=).*$/, "controls&option=tornstats"));
+    $('div#tornstats-roster').hide();
+    let last_tab = $('#ts-roster').data('last-tab');
+    if ($('ul.control-tabs > li > a:not("#ts-roster")').attr('href') == last_tab) {
+      $(this).parent().addClass("ui-tabs-active ui-state-active").attr('tabindex', 0).attr('aria-selected', 'true');
+      $(last_tab).show();
+      if (location.hash.includes("option=")) {
+        location.replace(location.hash.replace(/(?<=option=).*$/, last_tab.replace('#option-', '')));
+      } else {
+        location.replace(location.hash.replace(/(?<=tab=).*$/, `controls&option=${last_tab.replace('#option-', '')}`));
+      }
+    }
   }
 }
 
