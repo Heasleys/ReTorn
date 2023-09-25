@@ -115,6 +115,9 @@
 .faction-info-wrap.re_faction_stats .members-list [class*="factionWrap"] {
   display: none;
 }
+.faction-info-wrap.re_faction_stats .members-list [class*="userWrap_"] {
+  margin-left: -5px;
+}
 
 
 /* Planning OCs */
