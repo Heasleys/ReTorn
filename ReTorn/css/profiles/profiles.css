@@ -132,6 +132,7 @@
   text-align: center;
   font-weight: 600;
   font-size: 11px;
+  color: #999;
 }
 
 
@@ -245,6 +246,10 @@
     overflow: hidden;
     white-space: nowrap;
     max-width: 100%;
+  }
+
+  .d .profile-wrapper .re_age_text {
+    padding: 0px 5px 0px 5px;
   }
 
 }
