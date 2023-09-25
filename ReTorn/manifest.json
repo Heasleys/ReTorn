@@ -133,7 +133,7 @@
       },
       {
         "matches": ["https://*.torn.com/profiles.php*"],
-        "js": ["lib/jqueryui/jquery-ui.min.js", "js/profiles/profiles.js"],
+        "js": ["lib/jqueryui/jquery-ui.min.js", "lib/jqueryui/jquery.ui.touch-punch.min.js", "js/profiles/profiles.js"],
         "css": ["css/profiles/profiles.css"],
         "run_at": "document_start"
       },
