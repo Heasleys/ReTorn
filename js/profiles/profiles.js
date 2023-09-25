@@ -81,6 +81,33 @@
       });
     }
 
+    
+    if ($('#re_show_abr').length == 0) {
+      //insert button into header menu
+      RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_show_abr"><span class="re_menu_item"><input type="checkbox" id="re_show_abr_toggle"><span class="re_menu_item_text">Abbreviate stats</span></span></li>')
+      //click event for checkbox
+      $('#re_show_abr_toggle').on("change", function(e) {
+        e.stopPropagation();
+        let enabled = $('#re_show_abr_toggle').prop("checked");
+
+        //set toggle settings
+        const obj = {"profile": {"abbreviate_values": {"enabled": enabled}}}
+            sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+            .then((r) => {
+                settings.profile.abbreviate_values.enabled = enabled;
+                toggle_abbreviate(enabled);
+            })
+      });
+
+      //click event for checkbox text to toggle checkbox
+      $('#re_show_abr .re_menu_item_text').click(function(e) {
+        e.stopPropagation();
+        let checkbox = $('#re_show_abr_toggle');
+        checkbox.prop("checked", !checkbox.prop("checked"));
+        checkbox.trigger("change");
+      })
+    }
+
     if ($('#re_difference').length == 0) {
       //insert button into header menu
       RE_CONTAINER.find('#re_features_settings_view').prepend('<li id="re_difference"><span class="re_menu_item"><input type="checkbox" id="re_diff_toggle"><span class="re_menu_item_text">Show relative values</span></span></li>')
@@ -113,116 +140,49 @@
       TS_DATA = data;
       if (data.status) {
         if (data?.spy?.status) {
-          //colors and signs
-          let strCol = "";
-          let strSign = "";
-          let defCol = "";
-          let defSign = "";
-          let speCol = "";
-          let speSign = "";
-          let dexCol = "";
-          let dexSign = "";
-          let totCol = "";
-          let totSign = "";
-          if (data.spy.deltaStrength < 0) {
-            strCol = "red";
-          }
-          if (data.spy.deltaStrength > 0) {
-            strCol = "green";
-            strSign = "+";
-          }
-  
-          if (data.spy.deltaDefense < 0) {
-            defCol = "red";
-          }
-          if (data.spy.deltaDefense > 0) {
-            defCol = "green";
-            defSign = "+";
-          }
-  
-          if (data.spy.deltaSpeed < 0) {
-            speCol = "red";
-          }
-          if (data.spy.deltaSpeed > 0) {
-            speCol = "green";
-            speSign = "+";
-          }
-  
-          if (data.spy.deltaDexterity < 0) {
-            dexCol = "red";
-          }
-          if (data.spy.deltaDexterity > 0) {
-            dexCol = "green";
-            dexSign = "+";
-          }
-  
-          if (data.spy.deltaTotal < 0) {
-            totCol = "red";
-          }
-          if (data.spy.deltaTotal > 0) {
-            totCol = "green";
-            totSign = "+";
-          }
-  
-          //Actual battle stats
-          let deltaStrength = isNaN(data.spy.strength) ? data.spy.deltaStrength.toLocaleString() : Math.trunc((data.spy.strength + data.spy.deltaStrength)).toLocaleString();
-          let deltaDefense = isNaN(data.spy.defense) ? data.spy.deltaDefense.toLocaleString() : Math.trunc((data.spy.defense + data.spy.deltaDefense)).toLocaleString();
-          let deltaSpeed = isNaN(data.spy.speed) ? data.spy.deltaSpeed.toLocaleString() : Math.trunc((data.spy.speed + data.spy.deltaSpeed)).toLocaleString();
-          let deltaDexterity = isNaN(data.spy.dexterity) ? data.spy.deltaDexterity.toLocaleString() : Math.trunc((data.spy.dexterity + data.spy.deltaDexterity)).toLocaleString();
-          let deltaTotal = isNaN(data.spy.total) ? data.spy.deltaTotal.toLocaleString() : Math.trunc((data.spy.total + data.spy.deltaTotal)).toLocaleString();
+          const STATS_ARRAY = ["strength", "defense", "speed", "dexterity", "total"];
+          const STATS_ABR_ARRAY = ["Str", "Def", "Spd", "Dex", "Tot"];
+          let spy_UL = `<ul class="re_infotable">`;
+          spy_UL += `<li style="order: -1;"><div class="re_table_label"><span class="re_regular bold">Battle Stats</span><span class="re_xsmall bold" title="Battle Stats">BS:</span></div><div class="re_table_value them"><span class="bold">Them</span></div><div class="re_table_value you"><span class="bold">You</span></div></li>`;
+          STATS_ARRAY.forEach(function(STAT_NAME, i) {
+            let stat_color = "";
+            let stat_sign = "";
+            const stat_title = STAT_NAME.charAt(0).toUpperCase()+STAT_NAME.slice(1); //First character capitalized
+            const delta_string = "delta" + stat_title;
 
-          //Difference between spy and user battle stats
-          let strDiff = `${strSign}${Math.trunc(strSign+data.spy.deltaStrength).toLocaleString()}`;
-          let defDiff = `${defSign}${Math.trunc(defSign+data.spy.deltaDefense).toLocaleString()}`;
-          let speDiff = `${speSign}${Math.trunc(speSign+data.spy.deltaSpeed).toLocaleString()}`;
-          let dexDiff = `${dexSign}${Math.trunc(dexSign+data.spy.deltaDexterity).toLocaleString()}`;
-          let totDiff = `${totSign}${Math.trunc(totSign+data.spy.deltaTotal).toLocaleString()}`;
-  
-  
-          let spyUL = `<ul class="re_infotable">`;
-          spyUL += `<li style="order: -1;"><div class="re_table_label"><span class="bold">Battle Stats</span></div><div class="re_table_value them"><span class="bold">Them</span></div><div class="re_table_value you"><span class="bold">You</span></div></li>`;
-  
-          //Strength Spy + User
-          spyUL += `<li class="re_stat"><div class="re_table_label"><span class="bold">Strength:</span></div>`;
-          spyUL += `<div class="re_table_value them"><span>${data.spy.strength.toLocaleString()}</span></div>`;
-          spyUL += `<div class="re_table_value you"><span class="${strCol}" data-color="${strCol}" data-diff="${strDiff}" data-stat="${deltaStrength}"></span></div>`;
-          spyUL += `</li>`;
+            if (data?.spy?.[delta_string] < 0) {
+              stat_color = "red";
+            }
+            if (data?.spy?.[delta_string] > 0) {
+              stat_color = "green";
+              stat_sign = "+";
+            }
 
-          //Defense Spy + User
-          spyUL += `<li class="re_stat"><div class="re_table_label"><span class="bold">Defense:</span></div>`;
-          spyUL += `<div class="re_table_value them"><span>${data.spy.defense.toLocaleString()}</span></div>`;
-          spyUL += `<div class="re_table_value you"><span class="${defCol}"  data-color="${defCol}" data-diff="${defDiff}" data-stat="${deltaDefense}"></span></div>`;
-          spyUL += `</li>`;
-  
-          //Speed Spy + User
-          spyUL += `<li class="re_stat"><div class="re_table_label"><span class="bold">Speed:</span></div>`;
-          spyUL += `<div class="re_table_value them"><span>${data.spy.speed.toLocaleString()}</span></div>`;
-          spyUL += `<div class="re_table_value you"><span class="${speCol}"  data-color="${speCol}" data-diff="${speDiff}" data-stat="${deltaSpeed}"></span></div>`;
-          spyUL += `</li>`;
+            const delta_stat_num = isNaN(data?.spy?.[STAT_NAME]) ? data?.spy?.[delta_string] : Math.trunc((data?.spy?.[STAT_NAME] + data?.spy?.[delta_string]));
+            const delta_stat = delta_stat_num.toLocaleString();
+            const delta_stat_abr = abbreviateNumber(delta_stat_num);
 
-          //Dexterity Spy + User
-          spyUL += `<li class="re_stat"><div class="re_table_label"><span class="bold">Dexterity:</span></div>`;
-          spyUL += `<div class="re_table_value them"><span>${data.spy.dexterity.toLocaleString()}</span></div>`;
-          spyUL += `<div class="re_table_value you"><span class="${dexCol}" data-color="${dexCol}" data-diff="${dexDiff}" data-stat="${deltaDexterity}"></span></div>`;
-          spyUL += `</li>`;
 
-          //Total Spy + User
-          spyUL += `<li class="re_stat"><div class="re_table_label"><span class="bold">Total:</span></div>`;
-          spyUL += `<div class="re_table_value them"><span>${data.spy.total.toLocaleString()}</span></div>`;
-          spyUL += `<div class="re_table_value you"><span class="${totCol}" data-color="${totCol}" data-diff="${totDiff}" data-stat="${deltaTotal}"></span></div>`;
-          spyUL += `</li>`;
+            const diff_stat_num = Math.trunc(stat_sign+data?.spy?.[delta_string]);
+            const diff_stat = `${stat_sign}${diff_stat_num.toLocaleString()}`;
+            const diff_stat_abr = `${stat_sign}${abbreviateNumber(diff_stat_num)}`;
 
-  
-          spyUL += `<li style="order: 999;"><div class="re_table_label"><span class="bold">Last Spy:</span></div><div class="re_table_value them"><span>${data.spy.difference}</span></div><div class="re_table_value them"><span>Fair Fight Bonus: </span><span class="bold">x${data.spy.fair_fight_bonus.toFixed(2)}</span></div></div></li>`;
-          spyUL += "</ul>";
+
+            spy_UL += `<li class="re_stat"><div class="re_table_label"><span class="re_regular bold">${stat_title}:</span><span class="re_xsmall bold" title="${stat_title}">${STATS_ABR_ARRAY[i]}:</span></div>`;
+            spy_UL += `<div class="re_table_value them"><span class="re_full_stat">${data?.spy?.[STAT_NAME].toLocaleString()}</span><span class="re_abr" title="${data?.spy?.[STAT_NAME].toLocaleString()}">${abbreviateNumber(data?.spy?.[STAT_NAME])}</span></div>`;
+            spy_UL += `<div class="re_table_value you"><span class="re_full_stat ${stat_color}" data-color="${stat_color}" data-diff="${diff_stat}" data-stat="${delta_stat}"></span><span class="re_abr ${stat_color}" data-color="${stat_color}" data-diff="${diff_stat_abr}" data-stat="${delta_stat_abr}"></span></div>`;
+            spy_UL += `</li>`;
+          })
+
+          spy_UL += `<li style="order: 999;"><div class="re_table_label"><span class="re_regular bold">Last Spy:</span><span class="re_xsmall bold" title="Last Spy">Spy:</span></div><div class="re_table_value them"><span>${data.spy.difference}</span></div><div class="re_table_value them"><span class="re_regular">Fair Fight Bonus:</span><span class="re_xsmall" title="Fair Fight Bonus">FF:</span><span class="bold"> x${data.spy.fair_fight_bonus.toFixed(2)}</span></div></div></li>`;
+          spy_UL += "</ul>";
 
           if ($("#re_spy_attack").length == 0) {
             $('#re_ts_content').append('<div id="re_spy_attack" style="display: none;"></div>')
           }
-          $('#re_spy_attack').append(`<div id="re_spy" style="display: none;"></div>`)
+          $('#re_spy_attack').append(`<div id="re_spy" style="display: none;"></div>`);
 
-
-          $('#re_spy').html(spyUL);
+          $('#re_spy').html(spy_UL);
           $('#re_spy').parent().show();
           $('#re_spy').show();
         } else {
@@ -263,7 +223,18 @@
   
         if (data?.compare?.status && data?.compare?.data) {
           let compareUL = `<ul class="re_infotable">`;
-          compareUL += `<li class="re_table_title" style="order: -1;"><div class="re_table_label"><span class="bold">Personal Stats</span></div><div class="re_table_value them"><span class="bold">Them</span></div><div class="re_table_value you"><span class="bold">You</span></div></li>`;
+          compareUL += `
+          <li class="re_table_title" style="order: -1;">
+            <div class="re_table_label ellipsify">
+              <span class="bold">Personal Stats</span>
+            </div>
+            <div class="re_table_value them">
+              <span class="bold">Them</span>
+            </div>
+            <div class="re_table_value you">
+              <span class="bold">You</span>
+            </div>
+          </li>`;
   
           sorted = [];
 
@@ -294,7 +265,7 @@
             let absolute = Math.trunc((value.amount + value.difference)).toLocaleString();
 
             compareUL += `<li class="re_stat" style="order: ${value.order};">
-            <div class="re_table_label"><span class="bold">${key}</span></div>
+            <div class="re_table_label ellipsify"><span class="bold">${key}</span></div>
             <div class="re_table_value them"><span>${value.amount.toLocaleString()}</span></div>
             <div class="re_table_value you"><span class="${color}" data-color="${color}" data-diff="${difference}" data-stat="${absolute}"></span></div>
             </li>`;
@@ -324,6 +295,14 @@
         } else {
           toggleDiff();
         }
+
+        //initial toggle_abbreviate
+        if (settings?.profile?.abbreviate_values?.enabled) {
+          $('#re_show_abr_toggle').prop("checked", true);
+          toggle_abbreviate(true);
+        } else {
+          toggle_abbreviate();
+        }
         
       $('#re_ts_content').show();
       } else {
@@ -334,6 +313,19 @@
         }
       }
       $('#re_loader').remove();
+
+      $('.ellipsify').each(function() {
+        const parent = $(this);
+        const text = parent.children('span');
+        if (!parent.length || !text.length) return;
+        const parent_width = parseFloat(parent.width())
+        const text_width = parseFloat(text.width())
+      
+        if (text_width > parent_width) {
+          parent.attr('title', text.text());
+        }
+      });
+
       const e = new CustomEvent("initializeTooltip");
       document.dispatchEvent(e);
     });
@@ -419,7 +411,7 @@
         const new_stat = `
         <li class="re_stat re_new" data-name="${val}" style="order: ${order};"><div class="re_grip ui-sortable-handle"><i class="fa-solid fa-grip-lines"></i></div>
             <div class="re_table_label"><span class="bold">${val}</span></div>
-            <div class="re_table_value them"><span></span></div>
+            <div class="re_table_value them ellipsify"><span></span></div>
             <div class="re_table_value you"><span></span></div>
             <div class="re_delete"><i class="fa-solid fa-x re_red"></i></div>
         </li>
@@ -528,9 +520,9 @@
     $('#re_modify_form').remove();
   }
 
-  function toggleDiff(diff = false) {
+  function toggleDiff(active = false) {
     //default to difference being the hover title and the actual stat being the text
-    if (diff) {
+    if (active) {
       var strTitle = 'data-stat';
       var strText = 'data-diff';
     } else {
@@ -546,6 +538,14 @@
       $(this).attr('title', `<div class="${$(this).attr('data-color')}" style="text-align: center;">${title}</div>`);
     })
 
+  }
+
+  function toggle_abbreviate(active = false) {
+    if (active) {
+      $('#re_spy').addClass('re_abr_show');
+    } else {
+      $('#re_spy').removeClass('re_abr_show');
+    }
   }
 
   function insert_age_text() {

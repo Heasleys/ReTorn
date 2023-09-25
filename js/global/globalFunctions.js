@@ -244,11 +244,15 @@ Operation functions
 ###################
 */
 const abbreviateNumber = (number) => { //https://stackoverflow.com/questions/10599933/convert-long-number-into-abbreviated-string-in-javascript-with-a-special-shortn
-    if (number === 0) return number
-  
+    const og_num = number;
+    if (number === 0) return number;
+    if (isNaN(parseInt(number))) return "NaN";
+    number = Math.abs(parseInt(number));
+      
     const tier = SI_PREFIXES.filter((n) => number >= n.value).pop()
     const numberFixed = (number / tier.value).toFixed(1)
   
+    if (og_num < 0) return `-${numberFixed}${tier.symbol}`
     return `${numberFixed}${tier.symbol}`
 }
   

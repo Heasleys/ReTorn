@@ -106,6 +106,9 @@
     "profile": {
         "relative_values": {
             "enabled": false
+        },
+        "abbreviate_values": {
+            "enabled": false
         }
     },
     "auction_filter": {
