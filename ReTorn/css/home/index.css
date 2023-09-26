@@ -36,6 +36,11 @@ div.re_stats_list ul li span.stats {
 }
 
 
+@media screen and (max-width: 386px) {
+  div.re_stats_list ul li span.re_divider {
+    width: 110px;
+  }
+}
 
 
 /* Color CSS */
