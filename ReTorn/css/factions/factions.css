@@ -274,6 +274,15 @@ p.re_playercounts > span {
   html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual-desktop) #tornstats-roster td.rank, html:not(.html-manual-desktop) #tornstats-roster td a span.userid {
     display: none;
   }
+
+  .re_rankedwar .faction-names > div.name {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .re_rankedwar .faction-names > div.name .re_mem_count {
+    flex: 0 0 100%;
+  }
 }
 
 @media screen and (max-width: 1000px) {
@@ -409,6 +418,23 @@ p.re_playercounts > span {
 
   html:not(.html-manual-desktop) .r .f-war-list.war-new .faction-war.re_rankedwar .faction-names {
     line-height: 24px;
+  }
+}
+
+@media screen and (max-width: 386px) {
+  .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .member {
+    width: 136px;
+  }
+  .d .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .member {
+    width: 135px;
+  }
+
+  /*status*/
+  .d.r .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont div div.status {
+    width: 55px !important;
+  }
+  .d.r .f-war-list.war-new .faction-war.re_rankedwar .tab-menu-cont .members-cont .members-list .status {
+    width: 54px !important;
   }
 }
 
