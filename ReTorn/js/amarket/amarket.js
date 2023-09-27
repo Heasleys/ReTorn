@@ -108,6 +108,7 @@ function insertAMarketFilter() {
     <option data-name="Dune" value="Dune">Insurmountable</option>
     <option data-name="Delta" value="Delta">Invulnerable</option>
     <option data-name="Marauder" value="Marauder">Imperviable</option>
+    <option data-name="Sentinel" value="Sentinel">Immutable</option>
     <option data-name="EOD" value="EOD">Impassable</option>
     <option data-name="Welding Helmet" value="Welding Helmet"></option>
     <option data-name="Hazmat Suit" value="Hazmat Suit">Radiation</option>

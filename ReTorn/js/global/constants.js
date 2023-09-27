@@ -2,7 +2,7 @@ const RE_ITEM_CATEGORIES = ["Alcohol","Artifact", "Book", "Booster", "Candy", "C
 
 const RE_WEAPON_BONUSES = ["Achilles","Assassinate","Backstab","Berserk","Bleed","Blindfire","Blindside","Bloodlust","Burning","Comeback","Conserve","Cripple","Crusher","Cupid","Deadeye","Deadly","Demoralized","Disarm","Double Tap","Double-edged","Emasculate","Empower","Eviscerate","Execute","Expose","Finale","Focus","Freeze","Frenzy","Fury","Grace","Hazardous","Home Run","Irradiate","Laceration","Motivation","Paralyzed","Parry","Penetrate","Plunder","Poisoned","Powerful","Proficience","Puncture","Quicken","Rage","Revitalize","Roshambo","Severe Burning","Sleep","Slow","Smurf","Specialist","Spray","Storage","Stricken","Stun","Suppress","Sure Shot","Throttle","Toxin","Warlord","Weaken","Wind-up","Wither"]
 
-const RE_ADVANCED_ARMOR = ["Riot","Assault","Dune","Delta","Marauder","EOD"];
+const RE_ADVANCED_ARMOR = ["Riot","Assault","Dune","Delta","Marauder","Sentinel","EOD"];
 
 
 const onlineIcon = `<svg xmlns="http://www.w3.org/2000/svg" filter="" fill="url(&quot;#svg_status_online&quot;)" stroke="#fff" stroke-width="0" width="13" height="13" viewBox="-1.5 -1.2 14 14"><path d="M0,6a6,6,0,1,1,6,6A6,6,0,0,1,0,6Z"></path></svg>`;
