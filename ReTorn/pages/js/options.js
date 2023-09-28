@@ -438,6 +438,17 @@ function initInputs() {
       copy_internal(JSON.stringify(r?.data, null, 2));
     })
   });
+
+  $('#npc_list').change(function() {
+    const v = $(this).find(":selected").val();
+    if (!v) return;
+
+    const obj = {"npc_list": {"location": v}}
+    if (!isEmpty(obj)) {
+      sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+      .catch((e) => console.error(e))
+    }
+  })
 }
 
 function initSettings() {
@@ -463,6 +474,10 @@ function initSettings() {
 
     //chat highlights
     initChatHighlights();
+
+    if (d?.npc_list?.location) {
+      $('#npc_list > select').find(`option[value=${d?.npc_list?.location}]`).attr("selected", "selected");
+    }
 
   })
   .then(() => {

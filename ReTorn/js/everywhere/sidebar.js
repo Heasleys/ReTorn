@@ -203,8 +203,22 @@
         } 
 
         if (screenType == "desktop") { //insert underneath enemy/friends list
-        // find enemy/friend/staff lists and insert NPCs list at bottom of list of lists
-        $('#sidebar > div[class^="sidebar-block"]:last-child div[class^="toggle-content"]').append(npc_list_base);
+        // find enemy/friend/staff lists and insert NPCs list 
+
+        //bottom of sidebar within the player lists area
+        if (!settings?.npc_list?.location || settings?.npc_list?.location == 1) {
+          $('#sidebar:not([class*="mobile_"]) > div[class^="sidebar-block"]:last-child div[class^="toggle-content"]').append(npc_list_base);
+        }
+
+        //above message/events/awards
+        if (settings?.npc_list?.location == 2) {
+          $('#sidebar:not([class*="mobile_"]) > div[class*="sidebar-block_"').first().find('div[class*="account-links-wrap_"]').before(npc_list_base);
+        }
+
+        //below message/events/awards
+        if (settings?.npc_list?.location == 3) {
+          $('#sidebar:not([class*="mobile_"]) > div[class*="sidebar-block_"').first().find('div[class*="account-links-wrap_"]').after(npc_list_base);
+        }
 
         // When NPC button is clicked, expand it for viewing
         $('.re_npcButton').click(function() {

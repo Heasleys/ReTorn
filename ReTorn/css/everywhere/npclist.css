@@ -5,6 +5,12 @@ body.hospital .list_parent {
   margin-top: 2px;
   overflow: hidden;
 }
+/* npc list above messages/events/awards */
+[class*="user-information"] + .list_parent {
+  margin-top: 0px;
+  margin-bottom: 2px;
+}
+
 .list_parent:last-child {
   margin-bottom: 2px;
 }

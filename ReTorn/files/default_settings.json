@@ -95,7 +95,8 @@
     "npc_list": {
         "4": {
             "loot_time": "loot_4"
-        }
+        },
+        "location": 1
     },
     "headers": {
         "city": {
