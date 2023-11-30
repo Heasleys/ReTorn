@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" lang="en" class="dark">
+  <head>
+    <title>Options - ReTorn</title>
+    <link rel="icon" href="/images/ReTorn@Default.png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="css/colors.css">
+    <link rel="stylesheet" href="css/default.css">
+
+    <link rel="stylesheet" href="css/options.css">
+    <link rel="stylesheet" href="/lib/tooltip/tooltip.css">
+
+    <!--3rd party libraries -->
+      <!-- jquery -->
+      <script src="/lib/jquery-3.6.0.min.js"></script>
+      <script src="/lib/jqueryui/jquery-ui.min.js"></script>
+      <script src="/lib/jqueryui/jquery.ui.touch-punch.min.js"></script>
+      <link rel="stylesheet" href="/lib/jqueryui/jquery-ui.min.css">
+      <!-- jscolor -->
+      <script src="/lib/jscolor/jscolor.min.js"></script>
+      <!-- fontawesome -->
+      <link rel="stylesheet" href="/lib/fontawesome/css/all.min.css">
+
+
+    <script src="js/options.js"></script>
+  </head>
+
+  <body>
+    <div class="main_container">
+      <div class="sidenav">
+        <span class="title"><button class="mobile"><i class="fas fa-bars"></i></button><span class="logo"><span class="yellow">Re</span>Torn</span></span>
+        <ul class="tabs">
+          <li data-tab="notifications"><i class="fas fa-bell"></i> Notifications</li>
+          <li data-tab="features"><i class="fas fa-tasks"></i> Features</li>
+          <li data-tab="settings"><i class="fas fa-cog"></i> Settings</li>
+          <li data-tab="tornstats"><img src="../images/TornStats.png" width="16px" height="16px" style="vertical-align:middle;"> <span>Torn Stats</span></li>
+          <li data-tab="discord"><i class="fa-brands fa-discord"></i> Discord</li>
+          <li data-tab="attributions"><i class="fa-brands fa-creative-commons-by"></i> Attributions</li>
+        </ul>
+        <span class="version float-topright"></span>
+      </div>
+
+      <div class="mainview">
+        <div class="tab_groups">
+
+          <div class="tab_container" id="notifications">
+            <h3 class="menu_title">Notifications</h3>
+
+            <section class="card-container">
+              <article class="card">
+                <div class="card-content" id="notifications_card">
+                </div>
+              </article>
+            </section>
+
+          </div><!-- end of tab container -->
+
+          <div class="tab_container" id="features">
+            <h3 class="menu_title">Features</h3>
+              <section class="card-container">
+                <article class="card">
+                  <div class="card-content" id="features_card">
+                  </div>
+                </article>
+              </section>
+
+          </div><!-- end of tab container -->
+
+          <div class="tab_container" id="settings">
+            <h3 class="menu_title">Settings</h3>
+
+            <section class="card-container">
+
+              <article class="card">
+                <div class="card-content">
+                  <div class="category wide"><h4 class="capitalize">ReTorn Settings:</h4>
+                    <div class="switch-holder">
+                      <input type="checkbox" id="darkmode"><label class="switch-label" for="darkmode">Toggle</label>
+                      <span for="darkmode" class="tooltip-right" data-tooltip="Darkmode within ReTorn (options/popup)">Darkmode</span>  
+                    </div>
+                  </div>
+                  <div class="category wide"><h4 class="capitalize">ReTorn Header:</h4>
+                    <div class="re_head">
+                      <span class="re_title"><span id="re_title">Example Title</span></span>
+                    </div>
+                    <div class="switch-holder">
+                      <input type="text" data-jscolor="{}" id="header_color">
+                    </div>
+                    <h5><b>Color Suggestions:</b></h5>
+                    <div class="colorcodes">
+                      <button class="color_code" style="color: #E0CE00;" data-color="#E0CE00">ReTorn</button>
+                      <button class="color_code" style="color: #8ABEEF;" data-color="#8ABEEF">Torn Stats</button>
+                      <button class="color_code" style="color: #663399;" data-color="#663399">DocTorn</button>
+                      <button class="color_code" style="color: #627E0D;" data-color="#627E0D">TornTools</button>
+                      <button class="color_code" style="color: #555555;" data-color="#555555">Torn</button>
+                      <button class="color_code" style="color: #FF69B4;" data-color="#FF69B4">Hot Pink</button>
+
+                    </div>
+                  </div>
+
+                  <div class="category wide"><h4 class="capitalize">Quick Links:</h4>
+                    <ul class="fa-ul" id="quicklinks"></ul>
+                  </div>
+                  <div class="category wide"><h4 class="capitalize">Chat Highlights:<i class="tooltip-left float-right text-normal" data-tooltip="Start text with @ to match usernames in chat. Start text with * to match any. Otherwise, text matches exact."><i class="fas fa-info-circle"></i></i>
+                  </h4>
+                    <div id="chat_highlights">
+
+                    </div>
+                  </div>
+                  <div class="category wide"><h4 class="capitalize">NPC List:</h4>
+                    <div id="npc_list">
+                      <select>
+                        <option value="1">Bottom of player lists</option>
+                        <option value="2">Above messages/events/awards</option>
+                        <option value="3">Below messages/events/awards</option>
+                      </select>
+                    </div>
+                  </div>
+
+                </div>
+              </article>
+
+            </section>
+          </div><!-- end of tab container -->
+
+          <div class="tab_container" id="discord">
+            <h3 class="menu_title">Discord</h3>
+            <section class="card-container">
+              <article class="card">
+                <div class="card-content">
+
+                  <div class="category wide">
+                    <span>Join the ReTorn Discord to report bugs and request new features!</span>
+                    <div class="mb20"><a href="https://discord.gg/SqKDND7FBA" target="_blank">https://discord.gg/SqKDND7FBA</a></div>
+                  </div>
+
+                </div>
+              </article>
+            </section>
+          </div><!-- end of tab container -->
+
+          <div class="tab_container" id="tornstats">
+            <h3 class="menu_title">Torn Stats</h3>
+            <section class="card-container">
+              <article class="card">
+                <div class="card-content">
+
+                  <div class="category wide">
+                    <span>
+                      Many ReTorn features rely on the <a href="https://www.tornstats.com/api"  target="_blank">Torn Stats API</a>.
+                    </span>
+                    <p>
+                      In order to use these Torn Stats related features, you must have a <b><a href="https://www.tornstats.com/"  target="_blank">Torn Stats account</a></b> and then use the button below to link your Torn Stats account with ReTorn.
+                    </p>
+                    <div id="tornstats">
+                      <p>Torn Stats Status: <b><span id="ts_status"></span></b></p>
+                      <span id="ts_link_wrap">
+                        <b><p>Please enter the <a href="https://www.torn.com/preferences.php#tab=api" target="_blank">API key</a> you use for <a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>:</p></b>
+                        <input id="ts_apikey" type="text" maxlength="19" required></input>
+                      </span>
+                      <button class="mb10" id="tornstats">Link Account</button>
+                      <p class="re_message" id="ts_message" hidden></p>
+                    </div>
+                  </div>
+
+                </div>
+              </article>
+            </section>
+          </div><!-- end of tab container -->
+
+          
+
+          <div class="tab_container" id="attributions">
+            <h3 class="menu_title">Credits and Attributions</h3>
+            <section class="card-container">
+              <article class="card">
+                <div class="card-content">
+                  <div class="category wide">
+                    <ul class='credits'>
+                      <li><span>ReTorn was made by me: <a href="https://www.torn.com/profiles.php?XID=1468764" target="_blank">Heasleys4hemp [1468764]</a>. I am epic.</span></li>
+                      <li><span>Thank you to <a href="https://www.torn.com/profiles.php?XID=776"  target="_blank">IceBlueFire [776]</a> for your wonderful integration with <a href="https://www.tornstats.com/"  target="_blank">Torn Stats</a>.</span></li>
+                      <li><span>Thank you to all of my friends for always being supportive of my work.</span></li>
+                      <li><span><a href="https://www.flaticon.com/free-icon/rifle_2062174"  target="_blank">Rifle Icon</a> provided by <a href="https://www.freepik.com" title="Freepik"  target="_blank">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"  target="_blank">www.flaticon.com</a></span></li>
+                      <li><span>Icons provided for free by <a href="https://fontawesome.com/" target="_blank" title="FontAwesome">FontAwesome</a></span></li>
+                    </ul>
+                    <p><a href='https://www.retorn.rocks/privacy' target='_blank'>Privacy Policy</a></p>
+                    <ul class="tabs"><li data-tab="advanced"><a>Advanced Settings</a></li></ul>
+                </div>
+                </div>
+              </article>
+            </section>
+          </div><!-- end of tab container -->
+
+          <div class="tab_container" id="advanced">
+            <h3 class="menu_title">Advanced Settings</h3>
+            <section class="card-container">
+              <article class="card">
+                <div class="card-content">
+                  <div class="category">
+                    <h4 class="capitalize">Debug buttons:</h4>
+                    <button id="reset" class="m10">Reset ReTorn Settings</button>
+                    <button id="force_torn_items" class="m10" tooltip="Refresh Items Cache" flow="top">Force Refresh Items Cache</button>
+                    <button id="test_notification" class="m10">Test Notification</button>
+                    <button id="copy_sync_to_clipboard" class="m10">Copy Sync Settings to Clipboard</button>
+                    <button id="copy_local_to_clipboard" class="m10">Copy Local Settings to Clipboard</button>
+                  </div>
+
+                  <div class="category category-fluid " style="display: none;">
+                    <h4 class="capitalize">ReTorn logs:</h4>
+
+                    <table class="mb20" id="retorn_notifications">
+                      <caption>ReTorn Notifications</caption>
+                      <thead>
+                        <tr>
+                          <th data-label="Time" scope="col">Time</th>
+                          <th data-label="Notification" scope="col">Notification</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td data-label="Time">06:12:24 - 05/09/22</td>
+                          <td data-label="Notification">Your drug cooldown has expired. EXAMPLE</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <table class="mb20" id="api_usage">
+                      <caption>Torn API Usage</caption>
+                      <thead>
+                        <tr>
+                          <th data-label="Time" scope="col">Time</th>
+                          <th data-label="Request" scope="col">Request</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td data-label="Time">06:12:24 - 05/09/22</td>
+                          <td data-label="Request">EXAMPLE /user/1468764?selections=basic,bars,icons,money,notifications,cooldowns,travel,education,networth,refills,perks,timestamp&comment=ReTorn</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <table class="mb20" id="ts_api_usage">
+                      <caption>Torn Stats API Usage</caption>
+                      <thead>
+                        <tr>
+                          <th data-label="Time" scope="col">Time</th>
+                          <th data-label="Request" scope="col">Request</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td data-label="Time">06:12:24 - 05/09/22</td>
+                          <td data-label="Request">faction/roster EXAMPLE</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <table class="mb20" id="api_errors">
+                      <caption>Torn API Errors</caption>
+                      <thead>
+                        <tr>
+                          <th data-label="Time" scope="col">Time</th>
+                          <th data-label="Code" scope="col">Code</th>
+                          <th data-label="Message" scope="col">Message</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td data-label="Time">06:12:24 - 05/09/22</td>
+                          <td data-label="Code">9</td>
+                          <td data-label="Message">API disabled EXAMPLE</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <table class="mb20" id="ts_api_errors">
+                      <caption>Torn Stats API Errors</caption>
+                      <thead>
+                        <tr>
+                          <th data-label="Time" scope="col">Time</th>
+                          <th data-label="Code" scope="col">Code</th>
+                          <th data-label="Message" scope="col">Message</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td data-label="Time">06:12:24 - 05/09/22</td>
+                          <td data-label="Code">9</td>
+                          <td data-label="Message">API disabled EXAMPLE</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+
+                  </div>
+                </div>
+                <ul class="tabs beyond"><li data-tab="beyond"><a>The Great Beyond</a></li></ul>
+              </article>
+            </section>
+          </div><!-- end of tab container -->
+
+          <div class="tab_container" id="beyond">
+            <h3 class="menu_title">The Great Beyond</h3>
+            <section class="card-container">
+              <article class="card">
+                <div class="card-content">
+
+                  <div class="category"><h4 class="capitalize">Secret Settings:</h4>
+                    <div class="switch-holder">
+                      <input type="checkbox" id="torn3d"><label class="switch-label" for="torn3d">Toggle</label>
+                      <span for="torn3d" class="tooltip-right" data-tooltip="Turn Torn 3D!!!!!">Torn 3D</span>  
+                    </div>
+                  </div>
+
+                </div>
+              </article>
+            </section>
+          </div><!-- end of tab container -->
+
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+</html>

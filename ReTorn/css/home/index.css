@@ -1,0 +1,93 @@
+.sortable-box .re_head {
+  cursor: default;
+}
+
+div.re_stats_list ul {
+  list-style: none;
+}
+
+div.re_stats_list ul li {
+  border-bottom: 1px solid;
+}
+div.re_stats_list ul li:last-child {
+  border-bottom: 0px;
+}
+
+div.re_stats_list ul li span.re_divider {
+  line-height: 14px;
+  display: inline-block;
+  width: 172px;
+  padding: 5px 10px;
+  border-right: 1px solid;
+}
+
+div.re_stats_list ul li span.re_divider span {
+  padding-right: 3px;
+  font-weight: bold;
+}
+
+div.re_stats_list ul li span.stats {
+  display: inline-block;
+  width: 127px;
+  padding: 5px 8px 5px 0px;
+  border-right: 1px solid;
+  text-align: right;
+  line-height: 14px;
+}
+
+
+@media screen and (max-width: 386px) {
+  div.re_stats_list ul li span.re_divider {
+    width: 110px;
+  }
+}
+
+
+/* Color CSS */
+div.re_stats_list {
+  background-color: #f2f2f2;
+}
+body.dark-mode div.re_stats_list {
+  background-color: #333;
+}
+
+div.re_stats_list ul li {
+  border-bottom-color: #ddd;
+}
+body.dark-mode div.re_stats_list ul li {
+  border-bottom-color: #222;
+}
+
+div.re_stats_list ul li span.re_divider, div.re_stats_list ul li .stats {
+  border-right-color: #ddd !important;
+}
+body.dark-mode div.re_stats_list ul li span.re_divider, body.dark-mode div.re_stats_list ul li .stats {
+  border-right-color: #222 !important;
+}
+
+.red {
+  color: #d83500;
+}
+.green {
+  color: #678c00;
+}
+
+
+/* modified Torn CSS */
+.d .sortable-list .cont-gray.battle {
+  border-bottom: 0px;
+}
+
+
+/* CSS for Traveling */
+
+body[data-abroad="true"] .user-info .delimiter .msg.re_trav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#re_max {
+  margin-left: 10px;
+  margin-right: 10px;
+}
