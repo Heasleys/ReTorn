@@ -158,7 +158,7 @@ function rankedWar() {
       })
   
       const membersElements = RW_CONTAINER.find('ul.members-list > li');
-      return genericSpyFunction(membersElements, `div.member div[class*="userWrap"] a`);
+      return genericSpyFunction(membersElements, `div.member div[class*="honorWrap"] a`);
     })
     //insert information into header (buttons/text) and input functions
     .then((psList) => {
@@ -411,7 +411,7 @@ function rankedWar() {
   
           //user activity (offline, idle, online)
           if (data.option == "offline" || data.option == "idle" || data.option == "online") {
-            const domID = $(this).find('[class*="userStatusWrap_"]').attr('id');
+            const domID = $(this).find('[class*="userStatusWrap_"]').find('svg').attr('fill');
             if (domID.includes(data.option)) $(this).hide().removeClass("re_show");
           }
   

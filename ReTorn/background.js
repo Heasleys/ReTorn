@@ -1,5 +1,5 @@
-var browser = browser || chrome;
 import { deepExtend } from "/lib/modules/deep-extend/deep-extend.js";
+var browser = browser || chrome;
 
 //event listener for message passing
 browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {

@@ -1,10 +1,12 @@
+var browser = browser || chrome;
+
 var interval = [];
 const bars = ["energy", "nerve", "happy", "life"];
 const cooldowns = ["booster", "medical", "drug"];
 
 //recursive function for getting updated popup data
 function popupDataMessenger() {
-    chrome.alarms.get("required_api")
+    browser.alarms.get("required_api")
     .then((alarm) => {
       if (alarm != undefined) { //alarm might not exist immedietely, especially if user has just entered an API key, so check if alarm exists, otherwise, wait 1 second and try again
         let scheduledTime = alarm.scheduledTime;
@@ -162,7 +164,7 @@ $( document ).ready(function() {
             if (r.status) {
                 $('#re_user').text(`${r.data?.name}`);
             } else {
-            chrome.action.setPopup({popup: "pages/popup_start.html"});
+            browser.action.setPopup({popup: "pages/popup_start.html"});
             window.location.href="/pages/popup_start.html";
             }
         })
@@ -182,7 +184,7 @@ $( document ).ready(function() {
         sendMessage({name: "logout"})
         .then((r) => {
             if (r.status) {
-                chrome.action.setPopup({popup: "pages/popup_start.html"});
+                browser.action.setPopup({popup: "pages/popup_start.html"});
                 window.location.href="/pages/popup_start.html";
             } else {
                 errorMessage(response);
