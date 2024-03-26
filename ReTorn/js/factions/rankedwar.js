@@ -464,10 +464,10 @@ function rankedWar() {
     //count offline, online, idle
     const statuses = ["offline", "idle", "online"]
     statuses.forEach(function(e) {
-      let enemyCount = $('.faction-war .enemy-faction ul.members-list .member.icons [id*="'+e+'"]').length;
+      let enemyCount = $('.faction-war .enemy-faction ul.members-list .member.icons [fill*="'+e+'"]').length;
       $('.re_enemy_count .'+e+'Count').text(enemyCount);
   
-      let yourCount = $('.faction-war .your-faction ul.members-list .member.icons [id*="'+e+'"]').length;
+      let yourCount = $('.faction-war .your-faction ul.members-list .member.icons [fill*="'+e+'"]').length;
       $('.re_your_count .'+e+'Count').text(yourCount);
     });
   }
