@@ -405,9 +405,9 @@ function getMemberListStats(forced = false) {
 }
 
 function getCounts() {
-  const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="online"]');
-  const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="idle"]');
-  const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="offline"]');
+  const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"] [fill*="online"]');
+  const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"] [fill*="idle"]');
+  const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"] [fill*="offline"]');
 
   const okayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.ok');
   const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .table-row .member-icons ul').find('li[id*="icon71_"]').closest('li.table-row');
