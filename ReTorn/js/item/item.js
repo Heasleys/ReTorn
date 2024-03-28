@@ -93,7 +93,7 @@
 
       loadItems();
 
-      $(document).on('click', '.re_add_qitem', function(event){
+      $(document).on('click', '.re_add_qitem', function(event){ //click event for add quick item buttons next to items
         event.stopPropagation();
         event.preventDefault();
         
@@ -133,17 +133,17 @@
     }
   } //if captcha
 
-  function updateQtyCategory(target, category) {
+  function updateQtyCategory(target, category) { //update qty based on observed change on Torn item page
     if ($('#re_quick_items').find('div[data-category="'+category+'"]').length > 0 && $(target).children(`li[data-item]`).length != 0) {
       $('#re_quick_items').find('div[data-category="'+category+'"]').each(function() {
         let itemQty;
-        let itemID = $(this).attr('data-itemid');
-        let lastQty = $(this).attr("data-qty");
+        let itemID = $(this).data('itemid');
+        let lastQty = $(this).data("qty");
 
-        if ($(target).children(`li[data-item='${itemID}']`).length == 0) {
+        if ($(target).children(`li[data-item='${itemID}']`).length == 0) { //check if Torn item node exists
           itemQty = 0;
         } else {
-          itemQty = $(target).children(`li[data-item='${itemID}']`).attr("data-qty");
+          itemQty = $(target).children(`li[data-item='${itemID}']`).attr("data-qty"); //set qty from Torn item node qty
         }
 
         if (lastQty != itemQty) {
@@ -157,6 +157,7 @@
             sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
             .then((r) => {
               $(this).attr("data-qty", itemQty);
+              $(this).data("qty", itemQty);
               $(this).find('.re_qty').text(`x${itemQty}`);
             })
             .catch((e) => console.error(e))
@@ -240,7 +241,8 @@
                   }
 
                   sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
-                  item.attr("data-qty", itemQty);
+                  item.attr("data-qty", itemQty);//set attribute data
+                  item.data("qty", itemQty);//set object data
                   item.find('.re_qty').text(`x${itemQty}`);
 
                   if (msg.items && msg.items.itemAppear) {
