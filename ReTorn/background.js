@@ -1291,7 +1291,7 @@ async function checkItemAPI(force = false) {
         console.log("[ReTorn][Items API] Items updated via API.");
       }
       catch (error) { //API key hasn't been set yet or some issue with fetching, so get old list of Torn items from file
-        if (i.timestamp && force == false) {
+        if (i?.timestamp && force == false) {
           console.log("[ReTorn][Items API] Item timestampe exists, do no overwrite item data.")
           return;
         } //do not overwrite items data if timestamp exists. Timestamp only exists if API has been contacted before.
