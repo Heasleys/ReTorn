@@ -1282,13 +1282,19 @@ async function logout() {
 async function checkItemAPI(force = false) {
   try {
     const i = await getValue("re_items", "local");
-    if ((Math.floor(Date.now() / 1000) - parseInt(i?.timestamp)) > 86400 || force) { //has items been updated in 1 day?
+    if (!i?.timestamp || (Math.floor(Date.now() / 1000) - parseInt(i?.timestamp)) > 86400 || force) { //has items been updated in 1 day?
       try {
+        console.log("[ReTorn][Items API] Attempting to update items API...");
         const key = await getValue("re_apikey", "local");
         const r = await fetchAPI(key, 'torn', 'items,timestamp');
-        setValue({"re_items": r}, "local")
+        setValue({"re_items": r}, "local");
+        console.log("[ReTorn][Items API] Items updated via API.");
       }
       catch (error) { //API key hasn't been set yet or some issue with fetching, so get old list of Torn items from file
+        if (i.timestamp && force == false) {
+          console.log("[ReTorn][Items API] Item timestampe exists, do no overwrite item data.")
+          return;
+        } //do not overwrite items data if timestamp exists. Timestamp only exists if API has been contacted before.
         await setItemsFromFile();
       }
     }
@@ -1296,8 +1302,14 @@ async function checkItemAPI(force = false) {
   catch (e) {
     await setItemsFromFile();
   }
+}
 
-  //.finally(logger("api", "torn", "Torn item data", {type: "torn", id: "", selection: "items,timestamp&comment=ReTorn", timestamp: Date.now()}))
+async function setItemsFromFile() {
+  const url = browser.runtime.getURL('/files/items.json');
+  const f = await fetch(url);
+  const json = await f.json();
+  await setValue({"re_items": json}, "local");
+  console.log("[ReTorn][Items API] Items API updating from local storage.")
 }
 
 async function clearTornStats() {
@@ -1323,14 +1335,6 @@ async function clearTornStats() {
     } 
   }
 }
-
-async function setItemsFromFile() {
-  const url = browser.runtime.getURL('/files/items.json');
-  const f = await fetch(url);
-  const json = await f.json();
-  await setValue({"re_items": json}, "local");
-}
-
 
 async function startup() {
   browser.action.setBadgeBackgroundColor({color: "#8ABEEF"}); //set badge color
