@@ -76,13 +76,13 @@
         "feature": `${QUICK_ITEMS}`,
         "insertLocation": "before",
         "elementClasses": "after",
-        "bar": false
+        "bar": false,
+        "info": `Click the Add to Quick Items <span class='option-equip wai-btn qitem-btn re_info'></span> button on an item to add it to this quick items list.`
     }
     insertContainer($("div.equipped-items-wrap"), containerObject);
     const RE_CONTAINER = $(`.re_container[data-feature="${QUICK_ITEMS}"]`);
 
     RE_CONTAINER.find('.re_content').html(`
-      <p>Click the <span class="option-equip wai-btn qitem-btn"></span> button on an item to add it to this quick items list.</p>
       <div class="re_row" id="re_quick_items"></div>
       <div class="re_row action-wrap use-act use-action" id="re_quick_items_response" style="display: none;"></div>
       `);

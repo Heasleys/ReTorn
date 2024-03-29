@@ -17,6 +17,11 @@ li.re_add_qitem {
 .qitem-btn {
   filter: sepia(50%) hue-rotate(144deg) saturate(100%) !important;
 }
+.qitem-btn.re_info {
+  background-position: -8px -42px !important;
+  height: 20px !important;
+  width: 17px !important;
+}
 
 #re_quick_items {
   display: flex;
