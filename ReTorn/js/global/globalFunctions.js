@@ -1,10 +1,11 @@
 //Object Template
 /*
 const headerObject = {
-    "feature": `${}`,
-    "insertLocation": "append",
-    "elementClasses": "",
-    "bar": false
+    "feature": `${}`, // The feature name (e.g. quick_items)
+    "insertLocation": "append", //The location the header will be inserted (e.g. append, prepend)
+    "elementClasses": "", // Additional classes (e.g. mb1)
+    "bar": false // Boolean for if the bar will only be a bar or have the extra box below it
+    "info": "" // Optional: If included it will add a info circle to the Header Title that can hovered over for additional information (see Quick Items for example)
 }
 */
 function insertHeader() {
@@ -16,6 +17,7 @@ function insertContainer(element, object) {
     const insertLocation = object?.insertLocation;
     const elementClasses = object?.elementClasses;
     const barOnly = object?.bar;
+    const infoText = object?.info;
 
     //if header already exists, ignore
     if ($(`div.re_container[data-feature="${feature}"]`).length) return;       
@@ -26,7 +28,15 @@ function insertContainer(element, object) {
     <div class="re_container ${elementClasses}" data-feature="${feature}">
         <div class="re_head">
             <span class="re_title noselect">
-                <span id="re_title">${title}</span>
+                <span id="re_title">${title}</span>`;
+
+    if (infoText) {
+        headerElement += `
+        <i class="ml1 fa-solid fa-circle-info" title="${infoText}"></i>
+        `;
+    }
+
+    headerElement += `          
             </span>
     `;
     if (!barOnly) {
