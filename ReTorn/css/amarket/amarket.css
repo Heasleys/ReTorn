@@ -1,4 +1,4 @@
-.re_color_hide, .re_bonus_hide, .re_name_hide, .re_damage_hide, .re_accuracy_hide, .re_defence_hide, .re_bonus_perc_hide, .re_category_hide {
+.re_color_hide, .re_bonus_hide, .re_name_hide, .re_damage_hide, .re_accuracy_hide, .re_defence_hide, .re_bonus_perc_hide, .re_category_hide, .re_weapons_type_hide {
     display: none;
 }
 
@@ -31,9 +31,12 @@
     margin-left: 2.5px;
     margin-right: 2.5px;
 }
-/* small screen, add margin below first 4 filter elements */
+html div#re_ah_weapons > :not(datalist):nth-child(-n+7) {
+    margin-bottom: 5px;
+}  
+/* small screen, add margin below first 6 filter elements */
 @media screen and (max-width: 784px) {
-    html:not(.html-manual-desktop) div#re_ah_weapons > :not(datalist):nth-child(-n+5) {
+    html:not(.html-manual-desktop) div#re_ah_weapons > :not(datalist):nth-child(-n+7) {
         margin-bottom: 5px;
     }  
 }
