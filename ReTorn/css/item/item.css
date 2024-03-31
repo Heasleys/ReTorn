@@ -96,11 +96,19 @@ li.re_add_qitem {
 }
 
 .re-pack-open-result .cache-item {
-  background: url(/images/v2/items/gentleman/100x50.svg) left top no-repeat;
-  background-size: 100% 100%;
   margin: 5px;
-  width: 100px;
+  display: block;
   height: 50px;
+  width: 100px;
+  border-right: none;
+  border-left: none;
+  border-top: none;
+  border-bottom: 1px solid #fff;
+  border-radius: 6px;
+  background: var(--items-plate-background-color) var(--items-plate-background);
+  border: var(--items-plate-border);
+  border-color: var(--items-plate-border-color);
+  box-shadow: var(--items-plate-box-shadow);
 }
 
 .re-pack-open-result .item-image-container {
