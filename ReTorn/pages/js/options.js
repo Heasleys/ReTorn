@@ -412,7 +412,8 @@ function initInputs() {
     // // force api or items list doc to refill local items storage
     sendMessage({"name": "force_torn_items"})
     .then(() => {
-      alert("Items Cache have been refreshed.")
+      items_update();
+      alert("Items Cache have been refreshed.");
     })
   });
 
@@ -491,8 +492,23 @@ function initSettings() {
     console.error(e)
   })
 
+  items_update();
+}
 
-  
+function items_update() {
+  //get last updated for items api
+  sendMessage({name: "get_local", value: "re_items"})
+  .then((r) => {
+      if (r.status) {
+        let timestamp = r?.data?.timestamp;
+        if (timestamp) {
+          $('#items_last_update').text(`${timeDifference(Date.now(),timestamp*1000)}`);
+        } else {
+          $('#items_last_update').text(`Never. Using default item data.`);
+        }
+      }
+  })
+  .catch((e) => console.error(e))
 }
 
 //initialize torn stats tab
@@ -789,5 +805,40 @@ async function copy_internal(text) {
     return false;
   } finally {
     document.body.removeChild(textArea);
+  }
+}
+
+function timeDifference(current, previous) {
+
+  var msPerMinute = 60 * 1000;
+  var msPerHour = msPerMinute * 60;
+  var msPerDay = msPerHour * 24;
+  var msPerMonth = msPerDay * 30;
+  var msPerYear = msPerDay * 365;
+
+  var elapsed = current - previous;
+
+  if (elapsed < msPerMinute) {
+       return Math.round(elapsed/1000) + ' seconds ago';
+  }
+
+  else if (elapsed < msPerHour) {
+       return Math.round(elapsed/msPerMinute) + ' minutes ago';
+  }
+
+  else if (elapsed < msPerDay ) {
+       return Math.round(elapsed/msPerHour ) + ' hours ago';
+  }
+
+  else if (elapsed < msPerMonth) {
+      return '' + Math.round(elapsed/msPerDay) + ' days ago';
+  }
+
+  else if (elapsed < msPerYear) {
+      return '' + Math.round(elapsed/msPerMonth) + ' months ago';
+  }
+
+  else {
+      return '' + Math.round(elapsed/msPerYear ) + ' years ago';
   }
 }

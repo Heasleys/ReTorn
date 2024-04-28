@@ -1218,7 +1218,7 @@ async function handleMessage(msg) {
     break;
 
     case "force_torn_items":
-      checkItemAPI(true);
+      await checkItemAPI(true);
       return;
     break;
 
@@ -1282,7 +1282,7 @@ async function logout() {
 async function checkItemAPI(force = false) {
   try {
     const i = await getValue("re_items", "local");
-    if (!i?.timestamp || (Math.floor(Date.now() / 1000) - parseInt(i?.timestamp)) > 86400 || force) { //has items been updated in 1 day?
+    if (!i?.timestamp || (Math.floor(Date.now() / 1000) - parseInt(i?.timestamp)) > 43200 || force) { //has items been updated in 12 hours?
       try {
         console.log("[ReTorn][Items API] Attempting to update items API...");
         const key = await getValue("re_apikey", "local");
