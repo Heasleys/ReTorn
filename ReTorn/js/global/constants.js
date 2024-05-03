@@ -1,4 +1,4 @@
-const RE_ITEM_CATEGORIES = ["Alcohol","Artifact", "Book", "Booster", "Candy", "Car", "Clothing", "Collectible", "Defensive", "Drug", "Electronic", "Energy Drink", "Enhancer", "Flower", "Jewelry", "Medical", "Melee", "Other", "Plushie", "Primary", "Secondary", "Special", "Supply Pack", "Temporary", "Unused", "Virus"];
+const RE_ITEM_CATEGORIES = ["Alcohol","Artifact", "Book", "Booster", "Candy", "Car", "Clothing", "Collectible", "Defensive", "Drug", "Energy Drink", "Enhancer", "Flower", "Jewelry", "Materials", "Medical", "Melee", "Other", "Plushie", "Primary", "Secondary", "Special", "Supply Pack", "Temporary", "Tools", "Unused", "Virus"];
 
 const RE_WEAPON_CATEGORIES = ["Primary", "Secondary", "Melee", "Temporary"];
 
