@@ -1264,7 +1264,6 @@ async function logout() {
       removeValue("re_user", "local"),
       removeValue("re_user_data", "local"),
       removeValue("re_tornstats_apikey", "local"),
-      //setValue({re_settings: {tornstats: {enabled: false}}}, "local")
       ]);
       console.log("[ReTorn][logout] Removed user data from storage", messages);
       browser.action.setPopup({popup: "pages/popup_start.html"});
@@ -1535,16 +1534,20 @@ async function validate_sync_data() {
   const features_merged = deepExtend({}, features_file, features_sync);
   const notifications_merged = deepExtend({}, notifications_file, notifications_sync);
 
-  validate_features_descriptions(features_merged, features_file);
+  validate_features(features_merged, features_file);
 
   await Promise.all([setValue({"settings": settings_merged}, "sync"), setValue({"features": features_merged}, "sync"), setValue({"notifications": notifications_merged}, "sync")])
 }
 
 
-function validate_features_descriptions(object1, object2) {
+function validate_features(object1, object2) {
   for (const key in object1) {
+    if (typeof object2[key] === 'undefined') {
+      delete object1[key];
+      continue;
+    }
     if (typeof object1[key] === 'object') {
-      validate_features_descriptions(object1[key], object2[key]);
+      validate_features(object1[key], object2[key]);
     } else {
       if (key === "description" && object1[key] !== object2[key]) {
         object1[key] = object2[key];
