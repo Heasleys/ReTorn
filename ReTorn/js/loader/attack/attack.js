@@ -23,12 +23,12 @@ function insertNPCtimer() {
 
         const npcNameEl = $(`.user-name[id*="playername_${npc.name}"]`).closest(`div[class*="header_"]`);
         if (!npcNameEl.length) return;
-        const insertElement = npcNameEl.siblings(`[class*="playerArea_"]`).find(`[class*="playerWindow_"]`);
+        const insertElement = npcNameEl.parent(`[class*="headerWrapper_"]`).siblings(`[class*="playerArea_"]`).find(`[class*="playerWindow_"]`);
         insertElement.prepend(`<div class="re_lootwrap"><span id="re_loot_time"></span></div>`);
 
 
-        change_loot_time(npc, insertElement);
-        setInterval(function() { change_loot_time(npc, insertElement) }, 1000);
+        change_loot_time(npc);
+        setInterval(function() { change_loot_time(npc) }, 1000);
       }
     }
   })
@@ -38,7 +38,7 @@ function insertNPCtimer() {
   }
 
 
-function change_loot_time(npc, insertElement) {
+function change_loot_time(npc) {
   t++; //increase interval time count by 1 second
   let attack_time, loot_time;
   if (settings?.npc_list[defenderID] && settings?.npc_list[defenderID].loot_time) {
