@@ -1123,24 +1123,6 @@ body.dark-mode .re_button button .close:hover {
 }
 
 
-/* sidebar icons hiding */
-
-#sidebar ul[class*="status-icons_"] li.re_hide {
-  display: none;
-  margin: 0;
-}
-
-#sidebar ul[class*="status-icons_"] li:not(.re_six_icon) {
-  margin-right: 10px !important;
-}
-
-html.html-manual-desktop #sidebar ul[class*="status-icons_"] li.re_six_icon {
-  margin-right: 0;
-}
-
-
-@media screen and (min-width: 1001px) {
-  #sidebar ul[class*="status-icons_"] li.re_six_icon {
-    margin-right: 0;
-  }
+.re_hide {
+  display: none !important;
 }
