@@ -229,7 +229,7 @@ border-bottom-left-radius: 0px;
 border-bottom-right-radius: 0px;
 }
 
-div.re_head.flat-top {
+div.re_container.flat-top div.re_head, div.re_head.flat-top {
 border-top: none;
 border-top-left-radius: 0px;
 border-top-right-radius: 0px;
