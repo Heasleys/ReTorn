@@ -115,6 +115,8 @@
     "auction_filter": {
         "weapons": {
             "name": "",
+            "category": "",
+            "weapon_type": "",
             "damage": "",
             "accuracy": "",
             "color": "",
