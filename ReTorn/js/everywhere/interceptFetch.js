@@ -68,7 +68,9 @@ function interceptFetch(url,q, callback) {
 }
 
 interceptFetch("torn.com","torn.com", (response, url) => {
- console.log("[ReTorn][InterceptFetch] Found a fetch from: " + url, response);
+  if (ReTorn?.settings?.interceptFetch_logs) {
+    console.log("[ReTorn][InterceptFetch] Found a fetch from: " + url, response);
+  }
 
 /* Mini Profiles */
  if (url.includes('step=getUserNameContextMenu') || url.includes('step=getMiniProfile') || url.includes('sid=UserMiniProfile')) {

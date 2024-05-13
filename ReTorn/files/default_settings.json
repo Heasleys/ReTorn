@@ -154,5 +154,6 @@
         "blocked_users_dashboard": {
             "expanded": false
         }
-    }
+    },
+    "interceptFetch_logs": false
 }

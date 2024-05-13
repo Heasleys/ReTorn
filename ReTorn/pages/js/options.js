@@ -241,7 +241,7 @@ function initInputs() {
       }
     }
 
-    if (key == 'settings' || key == 'beyond') {
+    if (key == 'settings' || key == 'beyond' || key == 'advanced') {
       key = 'settings';
       obj[type] = enabled;
     }
@@ -479,6 +479,9 @@ function initSettings() {
     if (d?.npc_list?.location) {
       $('#npc_list > select').find(`option[value=${d?.npc_list?.location}]`).attr("selected", "selected");
     }
+
+    //debug logs
+    $('#interceptFetch_logs').prop('checked', d?.interceptFetch_logs)
 
   })
   .then(() => {
