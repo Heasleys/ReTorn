@@ -176,7 +176,7 @@ width: 172px !important;
     width: auto !important;
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 784px) {
   html:not(.html-manual-desktop) .r .items-cont .re_qitemWrap.actions {
     width: 386px !important;
   }
@@ -195,10 +195,6 @@ width: 172px !important;
   html:not(.html-manual-desktop) .d .re_qitemWrap .option-use, html:not(.html-manual-desktop) .d .re_qitemWrap .option-turn-on, html:not(.html-manual-desktop) .d .re_qitemWrap .option-equip, html:not(.html-manual-desktop) .d .re_qitemWrap .option-unequip, html:not(.html-manual-desktop) .d .re_qitemWrap .option-sell, html:not(.html-manual-desktop) .d .re_qitemWrap .option-send, html:not(.html-manual-desktop) .d .re_qitemWrap .option-delete, html:not(.html-manual-desktop) .d .re_qitemWrap .option-return-to-faction, html:not(.html-manual-desktop) .d .re_qitemWrap .option-donate-faction {
     width: 29px;
   }
-
-  html:not(.html-manual-desktop) .d .re_qitemWrap .actions-wrap li {
-    text-align: left;
-  }
 }
 
 @media screen and (max-width: 386px) {
@@ -211,8 +207,17 @@ width: 172px !important;
   }
 
   html:not(.html-manual-desktop) .d .re_qitemWrap .option-use, html:not(.html-manual-desktop) .d .re_qitemWrap .option-turn-on, html:not(.html-manual-desktop) .d .re_qitemWrap .option-equip, html:not(.html-manual-desktop) .d .re_qitemWrap .option-unequip, html:not(.html-manual-desktop) .d .re_qitemWrap .option-sell, html:not(.html-manual-desktop) .d .re_qitemWrap .option-send, html:not(.html-manual-desktop) .d .re_qitemWrap .option-delete, html:not(.html-manual-desktop) .d .re_qitemWrap .option-return-to-faction, html:not(.html-manual-desktop) .d .re_qitemWrap .option-donate-faction {
-    width: 24px;
+    width: 27px;
   }
+
+  html:not(.html-manual-desktop) .r .items-wrap .re_qitemWrap.actions i, html:not(.html-manual-desktop) .r .items-wrap .re_qitemWrap.actions .wai-btn {
+    margin-left: -7px;
+  }
+
+  html:not(.html-manual-desktop) .r .items-wrap .re_qitemWrap.actions .opt-name {
+    margin-left: -2px;
+  }
+
 }
 
 /* Color CSS */
