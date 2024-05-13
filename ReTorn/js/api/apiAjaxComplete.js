@@ -1,4 +1,4 @@
-var ajaxI;
+var ajaxI = 0;
 
 $( document ).ajaxComplete(function( event, request, settings ) {
     //make api response body collapsable
