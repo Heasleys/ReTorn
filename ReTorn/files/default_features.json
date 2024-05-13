@@ -74,6 +74,10 @@
             "quick_items": {
                 "enabled": true,
                 "description": "Adds a window that allows you to quickly use items."
+            },
+            "item_values": {
+                "enabled": false,
+                "description": "Adds a value indicator next to each item."
             }
         },
         "attack": {
@@ -136,6 +140,12 @@
             "case_management": {
                 "enabled": true,
                 "description": "Adds extra buttons to the Display Case management page for easier sorting."
+            }
+        },
+        "war": {
+            "cache_value": {
+                "enabled": true,
+                "description": "Adds the total value of the caches earned for each faction in the ranked war report."
             }
         }
     },
