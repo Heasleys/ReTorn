@@ -41,6 +41,15 @@ const SI_PREFIXES = [
     { value: 1e24, symbol: 'S' }
   ]
 
+
+const CACHE_NAMES_TO_ID = {
+  "Armor Cache": "1118",
+  "Melee Cache": "1119",
+  "Small Arms Cache": "1120",
+  "Medium Arms Cache": "1121",
+  "Heavy Arms Cache": "1122"
+}
+
 const OUTDATED_TIMESTAMP = 25920000000; // 9 months
 
 
