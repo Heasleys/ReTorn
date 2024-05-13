@@ -1,33 +1,40 @@
 (function() {
+  var items;
+  const qitem_categories = ['Medical', 'Drug', 'Energy Drink', 'Alcohol', 'Candy', 'Booster', 'Supply Pack', 'Special']
+  const exceptionItemList = ["403", "283"]; //tissues, donator packs
+
   const observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
-  
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         if (mutation.target && mutation.target.nodeName && mutation.target.nodeName === "UL") {
           if (mutation.target.parentElement && mutation.target.parentElement.id && mutation.target.parentElement.id == "category-wrap") {
-            if (mutation.previousSibling == null) {
-  
-              if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-placeholder") ) {
-                return;
-              }
-              //update item qtys
-              if (mutation.target.dataset && mutation.target.dataset.info) {
-                updateQtyCategory(mutation.target, mutation.target.dataset.info);
-              }
-  
-              for (const element of mutation.addedNodes) {
-                let itemID = element.dataset.item;
+            //if (mutation.previousSibling != null) return;
+
+            if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-placeholder")) return;
+              
+            if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-item-loader")) return;
+
+            if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-preloader")) return;
+
+            if (mutation.addedNodes[0] && mutation.addedNodes[0].className && mutation.addedNodes[0].className.includes("ajax-item-loader")) return;
+
+            for (const element of mutation.addedNodes) {
+              let itemID = element.dataset.item;
+
+              if (features?.pages?.item?.quick_items?.enabled) {
                 let itemCategory = element.dataset.category;
-  
-                if (itemCategory == 'Medical' || itemCategory == 'Drug' || itemCategory == 'Energy Drink' || itemCategory == 'Alcohol' || itemCategory == 'Candy' || itemCategory == 'Booster' || itemCategory == 'Supply Pack' || itemCategory == 'Special' || itemCategory == 'Other') { //Donator Packs = 283
-                  if ($(element).find('.re_add_qitem').length > 0) {
-                    return;
+
+                if (qitem_categories.includes(itemCategory)) {
+                  //update item qtys
+                  if (mutation.target.dataset && mutation.target.dataset.info && features?.pages?.item?.quick_items?.enabled) {
+                    //update qty from the mutation with multiple items listed
+                    updateQtyCategory(mutation.target, mutation.target.dataset.info);
                   }
+                  if ($(element).find('.re_add_qitem').length > 0) return; //if quickitem button already exists, ignore
                   let nameWrap = $(element).find('span.name-wrap');
                   let actionWrap = $(element).find('ul.actions-wrap');
                   actionWrap.parent('.actions').addClass("re_qitemWrap");
                   nameWrap.addClass("re_qitemWrap");
-  
   
                   let itemName = nameWrap.find('.name').text();
                   let itemQty = nameWrap.find('.qty.t-hide').text().replace('x', '');
@@ -43,18 +50,31 @@
                         </span>
                       </span>
                     </li>
-                    `
-                    const exceptionItemList = ["403", "283"]; //tissues, donator packs
+                    `;
                     if ((itemCategory == "Special" || itemCategory == "Other") && !exceptionItemList.includes(itemID)) { // Keep buttons consistent so add-button for donator pack doesn't look odd
                       actionWrap.find('li').first().after(`<li class="left re_add_qitem"></li>`);
                     } else {
                       actionWrap.find('li').first().after(qitemButton);
                     }
                 }
-  
-              }//for
-  
-            }
+              }
+
+              if (features?.pages?.item?.item_values?.enabled) {
+                if ($(element).find('.re_value').length > 0) return;
+
+                let nameWrap = $(element).find('span.name-wrap');
+                let itemQty = nameWrap.find('.qty.t-hide').text().replace('x', '');
+                if (itemQty === "") {itemQty = 1;}
+
+                if (typeof items[itemID] != "undefined") {
+                  let value = parseInt(itemQty * items[itemID].market_value);
+                  
+                  let title = `${itemQty.toLocaleString('en-US')} x $${items[itemID].market_value.toLocaleString('en-US')}`;
+
+                  nameWrap.append(`<span class="re_value" title="${title}">$${value.toLocaleString('en-US')}</span>`)
+                }
+              }
+            }//for
           }
         }
       }
@@ -63,7 +83,10 @@
 
   var orderMain = 1;
   var tornRFC;
-  if ($('div.captcha').length == 0 && $('#body').attr('data-traveling') != "true" && features?.pages?.item?.quick_items?.enabled) { //Check for captcha and traveling  
+  if ($('div.captcha').length != 0 && $('#body').attr('data-traveling') == "true") {//Check for captcha and traveling  
+    return;
+  }
+  if (features?.pages?.item?.quick_items?.enabled) {
     document.addEventListener("RFCtoReTorn", function(e) {
       tornRFC = e.detail;
     }, false);
@@ -76,13 +99,13 @@
         "feature": `${QUICK_ITEMS}`,
         "insertLocation": "before",
         "elementClasses": "after",
-        "bar": false
+        "bar": false,
+        "info": `Click the Add to Quick Items <span class='option-equip wai-btn qitem-btn re_info'></span> button on an item to add it to this quick items list.`
     }
     insertContainer($("div.equipped-items-wrap"), containerObject);
     const RE_CONTAINER = $(`.re_container[data-feature="${QUICK_ITEMS}"]`);
 
     RE_CONTAINER.find('.re_content').html(`
-      <p>Click the <span class="option-equip wai-btn qitem-btn"></span> button on an item to add it to this quick items list.</p>
       <div class="re_row" id="re_quick_items"></div>
       <div class="re_row action-wrap use-act use-action" id="re_quick_items_response" style="display: none;"></div>
       `);
@@ -93,7 +116,7 @@
 
       loadItems();
 
-      $(document).on('click', '.re_add_qitem', function(event){
+      $(document).on('click', '.re_add_qitem', function(event){ //click event for add quick item buttons next to items
         event.stopPropagation();
         event.preventDefault();
         
@@ -123,45 +146,57 @@
           .catch((e) => console.error(e))
         }
       });
+  }
+
+  if (features?.pages?.item?.quick_items?.enabled || features?.pages?.item?.item_values?.enabled) {
+    sendMessage({name: "get_local", value: "re_items"})
+    .then((r) => {
+        if (r.status) {
+            items = r?.data?.items;
+        }
+
+        var target = document.querySelector('div.items-wrap');
+        if (target) {
+          observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+        } else {
+          console.log("[ReTorn][Items Features] Could not find items wrap.");
+        }
+    })
+    .catch((e) => console.error(e))
+
+  }
 
 
-    var target = document.querySelector('div.items-wrap');
-    if (target) {
-      observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
-    } else {
-      console.log("[ReTorn][Quick Items] Could not find items wrap.");
-    }
-  } //if captcha
-
-  function updateQtyCategory(target, category) {
+  function updateQtyCategory(target, category) { //update qty based on observed change on Torn item page
     if ($('#re_quick_items').find('div[data-category="'+category+'"]').length > 0 && $(target).children(`li[data-item]`).length != 0) {
+      var obj = {quick_items: {}}
       $('#re_quick_items').find('div[data-category="'+category+'"]').each(function() {
         let itemQty;
-        let itemID = $(this).attr('data-itemid');
-        let lastQty = $(this).attr("data-qty");
+        let itemID = $(this).data('itemid');
+        let lastQty = $(this).data("qty");
 
-        if ($(target).children(`li[data-item='${itemID}']`).length == 0) {
+        if ($(target).children(`li[data-item='${itemID}']`).length == 0) { //check if Torn item node exists
           itemQty = 0;
         } else {
-          itemQty = $(target).children(`li[data-item='${itemID}']`).attr("data-qty");
+          itemQty = $(target).children(`li[data-item='${itemID}']`).attr("data-qty"); //set qty from Torn item node qty
         }
 
         if (lastQty != itemQty) {
-            const obj = {
-              quick_items: {
-                [itemID]: {
-                  itemQty: itemQty
-                }
-              }
+            obj["quick_items"][itemID] = {
+              itemQty: itemQty
             }
-            sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
-            .then((r) => {
-              $(this).attr("data-qty", itemQty);
-              $(this).find('.re_qty').text(`x${itemQty}`);
-            })
-            .catch((e) => console.error(e))
+            //update visuals and data
+            $(this).attr("data-qty", itemQty);
+            $(this).data("qty", itemQty);
+            $(this).find('.re_qty').text(`x${itemQty}`);
         }
       });
+
+      //after all quick items in category are checked, check if obj has any new qty, if so, send
+      if (!jQuery.isEmptyObject(obj["quick_items"])) {
+        sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+        .catch((e) => console.error(e))
+      }
     }
   }
 
@@ -240,7 +275,8 @@
                   }
 
                   sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
-                  item.attr("data-qty", itemQty);
+                  item.attr("data-qty", itemQty);//set attribute data
+                  item.data("qty", itemQty);//set object data
                   item.find('.re_qty').text(`x${itemQty}`);
 
                   if (msg.items && msg.items.itemAppear) {

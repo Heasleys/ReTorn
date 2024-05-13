@@ -1,26 +1,18 @@
 #re_loot_time {
   text-transform: capitalize;
+  line-height: 32px;
+  margin-left: 5px;
 }
 
 .re_lootwrap {
-  display: flex;
-  justify-content: space-between;
+  position: absolute;
+  background: transparent linear-gradient(0deg, rgba(0, 0, 0, .302), rgba(140, 93, 93, .702)) 0 0 no-repeat padding-box;
   width: 100%;
+  height: 32px;
+  z-index: 2;
 }
 
-
-@media screen and (max-width: 1000px) {
-  #re_loot_time {
-    margin-top: 2px;
-    display: none;
-  }
-}
-
-@media screen and (min-width: 1001px) {
-  #defender [class^="topWrap_"] [class^="textEntries_"] [class^="entry_"] {
-      margin-left: 10px;
-  }
-
+@media screen and (min-width: 785px) {
   /*fix tooltip on left align only on desktop */
 .re_leftalign #\#react-tooltip-attacker_strength {
   left: 101px !important;
@@ -32,4 +24,11 @@
 .re_leftalign .d.without-sidebar .container, .re_leftalign .d.without-sidebar .content-wrapper, .re_leftalign .d .anonymous .content-wrapper {
   margin-left:20px;
 }
+}
+
+@media screen and (max-width: 784px) {
+  /* small screens */
+  #re_loot_time {
+    margin-left: 18px;
+  }
 }

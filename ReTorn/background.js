@@ -1,5 +1,5 @@
-var browser = browser || chrome;
 import { deepExtend } from "/lib/modules/deep-extend/deep-extend.js";
+var browser = browser || chrome;
 
 //event listener for message passing
 browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
@@ -1218,7 +1218,7 @@ async function handleMessage(msg) {
     break;
 
     case "force_torn_items":
-      checkItemAPI(true);
+      await checkItemAPI(true);
       return;
     break;
 
@@ -1264,7 +1264,6 @@ async function logout() {
       removeValue("re_user", "local"),
       removeValue("re_user_data", "local"),
       removeValue("re_tornstats_apikey", "local"),
-      //setValue({re_settings: {tornstats: {enabled: false}}}, "local")
       ]);
       console.log("[ReTorn][logout] Removed user data from storage", messages);
       browser.action.setPopup({popup: "pages/popup_start.html"});
@@ -1282,13 +1281,19 @@ async function logout() {
 async function checkItemAPI(force = false) {
   try {
     const i = await getValue("re_items", "local");
-    if ((Math.floor(Date.now() / 1000) - parseInt(i?.timestamp)) > 86400 || force) { //has items been updated in 1 day?
+    if (!i?.timestamp || (Math.floor(Date.now() / 1000) - parseInt(i?.timestamp)) > 43200 || force) { //has items been updated in 12 hours?
       try {
+        console.log("[ReTorn][Items API] Attempting to update items API...");
         const key = await getValue("re_apikey", "local");
         const r = await fetchAPI(key, 'torn', 'items,timestamp');
-        setValue({"re_items": r}, "local")
+        setValue({"re_items": r}, "local");
+        console.log("[ReTorn][Items API] Items updated via API.");
       }
       catch (error) { //API key hasn't been set yet or some issue with fetching, so get old list of Torn items from file
+        if (i?.timestamp && force == false) {
+          console.log("[ReTorn][Items API] Item timestampe exists, do no overwrite item data.")
+          return;
+        } //do not overwrite items data if timestamp exists. Timestamp only exists if API has been contacted before.
         await setItemsFromFile();
       }
     }
@@ -1296,8 +1301,14 @@ async function checkItemAPI(force = false) {
   catch (e) {
     await setItemsFromFile();
   }
+}
 
-  //.finally(logger("api", "torn", "Torn item data", {type: "torn", id: "", selection: "items,timestamp&comment=ReTorn", timestamp: Date.now()}))
+async function setItemsFromFile() {
+  const url = browser.runtime.getURL('/files/items.json');
+  const f = await fetch(url);
+  const json = await f.json();
+  await setValue({"re_items": json}, "local");
+  console.log("[ReTorn][Items API] Items API updating from local storage.")
 }
 
 async function clearTornStats() {
@@ -1323,14 +1334,6 @@ async function clearTornStats() {
     } 
   }
 }
-
-async function setItemsFromFile() {
-  const url = browser.runtime.getURL('/files/items.json');
-  const f = await fetch(url);
-  const json = await f.json();
-  await setValue({"re_items": json}, "local");
-}
-
 
 async function startup() {
   browser.action.setBadgeBackgroundColor({color: "#8ABEEF"}); //set badge color
@@ -1531,16 +1534,20 @@ async function validate_sync_data() {
   const features_merged = deepExtend({}, features_file, features_sync);
   const notifications_merged = deepExtend({}, notifications_file, notifications_sync);
 
-  validate_features_descriptions(features_merged, features_file);
+  validate_features(features_merged, features_file);
 
   await Promise.all([setValue({"settings": settings_merged}, "sync"), setValue({"features": features_merged}, "sync"), setValue({"notifications": notifications_merged}, "sync")])
 }
 
 
-function validate_features_descriptions(object1, object2) {
+function validate_features(object1, object2) {
   for (const key in object1) {
+    if (typeof object2[key] === 'undefined') {
+      delete object1[key];
+      continue;
+    }
     if (typeof object1[key] === 'object') {
-      validate_features_descriptions(object1[key], object2[key]);
+      validate_features(object1[key], object2[key]);
     } else {
       if (key === "description" && object1[key] !== object2[key]) {
         object1[key] = object2[key];

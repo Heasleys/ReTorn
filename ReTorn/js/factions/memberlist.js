@@ -228,9 +228,9 @@ function checkMemberListFilters() {
 
 
 //select elements to variables based on statuses
-const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="online"]').closest('li.table-row');
-const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="idle"]').closest('li.table-row');
-const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="offline"]').closest('li.table-row');
+const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"]  [fill*="online"]').closest('li.table-row');
+const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"]  [fill*="idle"]').closest('li.table-row');
+const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"]  [fill*="offline"]').closest('li.table-row');
 
 const okayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.ok').closest('li.table-row');
 //const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.traveling, .faction-info-wrap.another-faction .members-list .table-body .status > span.abroad').closest('li.table-row');
@@ -405,9 +405,9 @@ function getMemberListStats(forced = false) {
 }
 
 function getCounts() {
-  const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="online"]');
-  const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="idle"]');
-  const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"][id*="offline"]');
+  const onlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"] [fill*="online"]');
+  const idleDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"] [fill*="idle"]');
+  const offlineDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .member [class*="userStatusWrap_"] [fill*="offline"]');
 
   const okayDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .status > span.ok');
   const travelDOMs = $('.faction-info-wrap.another-faction .members-list .table-body .table-row .member-icons ul').find('li[id*="icon71_"]').closest('li.table-row');

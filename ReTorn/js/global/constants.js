@@ -1,8 +1,12 @@
-const RE_ITEM_CATEGORIES = ["Alcohol","Artifact", "Book", "Booster", "Candy", "Car", "Clothing", "Collectible", "Defensive", "Drug", "Electronic", "Energy Drink", "Enhancer", "Flower", "Jewelry", "Medical", "Melee", "Other", "Plushie", "Primary", "Secondary", "Special", "Supply Pack", "Temporary", "Unused", "Virus"];
+const RE_ITEM_CATEGORIES = ["Alcohol","Artifact", "Book", "Booster", "Candy", "Car", "Clothing", "Collectible", "Defensive", "Drug", "Energy Drink", "Enhancer", "Flower", "Jewelry", "Materials", "Medical", "Melee", "Other", "Plushie", "Primary", "Secondary", "Special", "Supply Pack", "Temporary", "Tools", "Unused", "Virus"];
+
+const RE_WEAPON_CATEGORIES = ["Primary", "Secondary", "Melee", "Temporary"];
+
+const RE_WEAPON_TYPES = ["Clubbing", "Heavy Artillery", "Machine Gun", "Mechanical", "Piercing", "Pistol", "Rifle", "Shotgun", "Slashing", "SMG"];
 
 const RE_WEAPON_BONUSES = ["Achilles","Assassinate","Backstab","Berserk","Bleed","Blindfire","Blindside","Bloodlust","Burning","Comeback","Conserve","Cripple","Crusher","Cupid","Deadeye","Deadly","Demoralized","Disarm","Double Tap","Double-edged","Emasculate","Empower","Eviscerate","Execute","Expose","Finale","Focus","Freeze","Frenzy","Fury","Grace","Hazardous","Home Run","Irradiate","Laceration","Motivation","Paralyzed","Parry","Penetrate","Plunder","Poisoned","Powerful","Proficience","Puncture","Quicken","Rage","Revitalize","Roshambo","Severe Burning","Shock","Sleep","Slow","Smurf","Specialist","Spray","Storage","Stricken","Stun","Suppress","Sure Shot","Throttle","Toxin","Warlord","Weaken","Wind-up","Wither"]
 
-const RE_ADVANCED_ARMOR = ["Riot","Assault","Dune","Delta","Marauder","Sentinel","EOD"];
+const RE_ADVANCED_ARMOR = ["Riot","Assault","Dune","Delta","Marauder","Sentinel","Vanguard","EOD"];
 
 
 const onlineIcon = `<svg xmlns="http://www.w3.org/2000/svg" filter="" fill="url(&quot;#svg_status_online&quot;)" stroke="#fff" stroke-width="0" width="13" height="13" viewBox="-1.5 -1.2 14 14"><path d="M0,6a6,6,0,1,1,6,6A6,6,0,0,1,0,6Z"></path></svg>`;
@@ -36,6 +40,15 @@ const SI_PREFIXES = [
     { value: 1e21, symbol: 's' },
     { value: 1e24, symbol: 'S' }
   ]
+
+
+const CACHE_NAMES_TO_ID = {
+  "Armor Cache": "1118",
+  "Melee Cache": "1119",
+  "Small Arms Cache": "1120",
+  "Medium Arms Cache": "1121",
+  "Heavy Arms Cache": "1122"
+}
 
 const OUTDATED_TIMESTAMP = 25920000000; // 9 months
 

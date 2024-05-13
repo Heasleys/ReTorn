@@ -1,6 +1,6 @@
 {
     "name": "ReTorn",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "description": "Its the return of a great Torn extension",
     "manifest_version": 3,
     "icons": {
@@ -193,6 +193,11 @@
       {
         "matches": ["https://*.torn.com/displaycase.php*"],
         "js": ["js/displaycase/displaycase.js"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://*.torn.com/war.php?step=rankreport*"],
+        "js": ["js/war/rankreport.js"],
         "run_at": "document_end"
       }
     ]

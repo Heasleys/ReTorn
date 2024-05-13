@@ -68,9 +68,12 @@ function interceptFetch(url,q, callback) {
 }
 
 interceptFetch("torn.com","torn.com", (response, url) => {
- console.log("[ReTorn][InterceptFetch] Found a fetch from: " + url, response);
+  if (ReTorn?.settings?.interceptFetch_logs) {
+    console.log("[ReTorn][InterceptFetch] Found a fetch from: " + url, response);
+  }
+
 /* Mini Profiles */
- if (url.includes('step=getUserNameContextMenu') || url.includes('step=getMiniProfile')) {
+ if (url.includes('step=getUserNameContextMenu') || url.includes('step=getMiniProfile') || url.includes('sid=UserMiniProfile')) {
   if (ReTorn?.features?.general?.last_action_mini_profile?.enabled) {
     miniProfiles(response);
   }
@@ -122,7 +125,7 @@ function miniProfiles(response) {
             subdesc.text(message);
           }
 
-          if (response?.user?.userID === "1468764") {
+          if (response?.user?.userID.toString() == "1468764") {
             $('#profile-mini-root').find('.icons').prepend(`<span class="right" style="font-size: 17px;" title="King of ReTorn">👑</span>`);
             $('#profile-mini-root .box-info .box-value .digit .two-row>span:first-child').text('Epic');
           }

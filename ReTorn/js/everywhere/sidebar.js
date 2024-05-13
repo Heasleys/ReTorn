@@ -86,6 +86,11 @@
             }
         }
         if ((screenType == "mobile") || (screenType == "tablet")) {
+            if ($('div#nav-npcs').length) {
+              $('div#nav-npcs').remove();
+              npclistComplete = false;
+            }
+          
             if (!document.getElementById('nav-npcs')) {
                 npclistComplete = false;
                 insertNPCList();

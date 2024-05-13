@@ -1,6 +1,8 @@
+var browser = browser || chrome;
+
 const sendMessage = (msg) => {
   return new Promise((resolve) => {
-    chrome.runtime.sendMessage(msg, (data) => {
+    browser.runtime.sendMessage(msg, (data) => {
       resolve(data);
     });
   });

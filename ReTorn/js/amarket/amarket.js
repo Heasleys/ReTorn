@@ -89,6 +89,8 @@ function insertAMarketFilter() {
     <div id="re_ah_weapons" class="re_filter" style="display: none;">
     <input type="text" class="re_name" placeholder="Weapon name" list="re_ah_weapons_list" id="re_ah_weapons_list_textbox">
     <datalist id="re_ah_weapons_list"></datalist>
+    <select class="re_category" id="re_ah_weapons_category" required></select>
+    <select class="re_category" id="re_ah_weapons_type" required></select>
     <input class="re_stats" type="number" placeholder="Dmg" id="re_ah_weapons_damage" min="0" title="Weapon damage">
     <input class="re_stats" type="number" placeholder="Acc" id="re_ah_weapons_accuracy" min="0" title="Weapon accuracy">
 
@@ -109,6 +111,7 @@ function insertAMarketFilter() {
     <option data-name="Delta" value="Delta">Invulnerable</option>
     <option data-name="Marauder" value="Marauder">Imperviable</option>
     <option data-name="Sentinel" value="Sentinel">Immutable</option>
+    <option data-name="Vanguard" value="Vanguard">Irrepressible</option>
     <option data-name="EOD" value="EOD">Impassable</option>
     <option data-name="Welding Helmet" value="Welding Helmet"></option>
     <option data-name="Hazmat Suit" value="Hazmat Suit">Radiation</option>
@@ -135,6 +138,20 @@ function insertAMarketFilter() {
     });
     $('#re_ah_weapons_bonuses_1').html(weaponBonusesList);
     $('#re_ah_weapons_bonuses_2').html(weaponBonusesList);
+
+    //fill select for Weapon Categories
+    var weaponCategoriesList = `<option value="" selected>Weapon category</option>`
+    $.each(RE_WEAPON_CATEGORIES, function(n,e) {
+        weaponCategoriesList += '<option data-name="'+e+'">'+e+'</option>';
+    });
+    $('#re_ah_weapons_category').html(weaponCategoriesList);
+
+    //fill select for Weapon Types
+    var weaponTypesList = `<option value="" selected>Weapon type</option>`
+    $.each(RE_WEAPON_TYPES, function(n,e) {
+        weaponTypesList += '<option data-name="'+e+'">'+e+'</option>';
+    });
+    $('#re_ah_weapons_type').html(weaponTypesList);
 
     //fill select for Item Categories
     var itemCategoriesList = `<option value="" selected>Item category</option>`
@@ -165,6 +182,8 @@ function insertAMarketFilter() {
             let w = af.weapons;
             //textboxese
             w?.name && $('#re_ah_weapons_list_textbox').val(w?.name);
+            w?.category && $('#re_ah_weapons_category').find(`option[data-name="${w?.category}"]`).prop('selected', true);
+            w?.weapon_type && $('#re_ah_weapons_type').find(`option[data-name="${w?.weapon_type}"]`).prop('selected', true);
             w?.damage && $('#re_ah_weapons_damage').val(w?.damage);
             w?.accuracy && $('#re_ah_weapons_accuracy').val(w?.accuracy);
             (w?.bonus_1 && w?.bonus_1?.percentage) && $('#re_ah_weapons_bonuses_1_perc').val(w?.bonus_1?.percentage);
@@ -229,7 +248,7 @@ function initShowFilter() {
 //add event listeners to search elements
 function initSearchElements() {
     //Weapon Filters
-    $('#re_ah_weapons_bonuses_1, #re_ah_weapons_bonuses_2, #re_ah_weapons_color').on('change', function() {
+    $('#re_ah_weapons_bonuses_1, #re_ah_weapons_bonuses_2, #re_ah_weapons_color, #re_ah_weapons_category, #re_ah_weapons_type').on('change', function() {
         filter('#types-tab-1');
     });
     $('#re_ah_weapons_list_textbox, #re_ah_weapons_damage, #re_ah_weapons_accuracy, #re_ah_weapons_bonuses_1_perc, #re_ah_weapons_bonuses_2_perc').on('input', function() {
@@ -550,7 +569,7 @@ function armorBonusPercFilter(element, perc) {
 
 }
 
-//filter by category (items only)
+//filter by category (items and weapons)
 function categoryFilter(element, category) {
     if (!category) {
         $(element).closest("li").removeClass(`re_category_hide`);
@@ -565,7 +584,24 @@ function categoryFilter(element, category) {
     } else {
         $(element).closest("li").addClass(`re_category_hide`);
     }
-    
+}
+
+
+//filter by category (items and weapons)
+function weaponTypeFilter(element, type) {
+    if (!type) {
+        $(element).closest("li").removeClass(`re_weapons_type_hide`);
+        return;
+    }
+
+    const regex = /\d+/; // matches one or more digits
+    const itemID = $(element).find('.item.torn-item').attr('src').match(regex);
+
+    if (re_items[itemID] && re_items[itemID]["weapon_type"] == type) {
+        $(element).closest("li").removeClass(`re_weapons_type_hide`);
+    } else {
+        $(element).closest("li").addClass(`re_weapons_type_hide`);
+    }
 }
 
 //main filter function, checks for each filter
@@ -593,7 +629,10 @@ function filter(tab) {
     const bonus_2_name = $('#re_ah_weapons_bonuses_2 option:selected').attr('data-name') ? $('#re_ah_weapons_bonuses_2 option:selected').attr('data-name') : "";
     const b1 = bonus_1_name ? `<b>${bonus_1_name.toLowerCase()}</b>` : '';
     const b2 = bonus_2_name ? `<b>${bonus_2_name.toLowerCase()}</b>` : '';
-
+    //category
+    const categoryWeapon = $('#re_ah_weapons_category').find('option:selected').val() ? $('#re_ah_weapons_category').find('option:selected').val() : "";
+    //weapon type
+    const typeWeapon = $('#re_ah_weapons_type').find('option:selected').val() ? $('#re_ah_weapons_type').find('option:selected').val() : "";
 
     /* Armor */
     const colorArmor = $('#re_ah_armor_color').find('option:selected').val() ? $('#re_ah_armor_color').find('option:selected').val() : "";
@@ -624,6 +663,8 @@ function filter(tab) {
         elements.each(function(index, element) {
             colorFilter($(element).find('.img-wrap .item-plate'), colorWeapon);
             nameFilter($(element).find('.title > .item-name'), nameWeapon);
+            categoryFilter($(element), categoryWeapon);
+            weaponTypeFilter($(element), typeWeapon);
             bonusFilter($(element).find('.item-bonuses'), b1, b2, perc1, perc2);
             //damage
             statFilter($(element).find('.item-bonuses .infobonuses i[class="bonus-attachment-item-damage-bonus"]').siblings('span.label-value'), damage);
@@ -678,6 +719,8 @@ function filter(tab) {
                 },
                 "color": colorWeapon,
                 "damage": damage,
+                "category": categoryWeapon,
+                "weapon_type": typeWeapon,
                 "name": nameWeapon
             }
         }
