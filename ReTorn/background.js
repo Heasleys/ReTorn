@@ -431,24 +431,24 @@ browser.storage.onChanged.addListener(async (changes, areaName) => {
 
     // COOLDOWNS - DRUGS
     if (n?.drug_cooldown?.enabled && oldValue?.cooldowns?.drug != 0 && newValue?.cooldowns?.drug == 0) {
-      await createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#drugs-items", tts);
+      await createNotification("cooldown_drugs", "ReTorn: Drug Cooldown", "Your drug cooldown has expired.", {action: 'Open', title: "View Drugs"}, "https://www.torn.com/item.php#drugs-items", tts);
     }
 
     //COOLDOWNS - BOOSTERS
     if (n?.boosters?.enabled && oldValue?.cooldowns?.booster != 0 && newValue?.cooldowns?.booster == 0) {
-      await createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#boosters-items", tts);
+      await createNotification("cooldown_boosters", "ReTorn: Booster Cooldown", "Your booster cooldown has expired.", {action: 'Open', title: "View Boosters"}, "https://www.torn.com/item.php#boosters-items", tts);
     }
 
     // COOLDOWNS - MEDICAL
     if (n?.medical?.enabled && oldValue?.cooldowns?.medical != 0 && newValue?.cooldowns?.medical == 0) {
-      await createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", {action: 'Open', title: "View Items"}, "https://www.torn.com/item.php#medical-items", tts);
+      await createNotification("cooldown_medical", "ReTorn: Medical Cooldown", "Your medical cooldown has expired.", {action: 'Open', title: "View Meds"}, "https://www.torn.com/item.php#medical-items", tts);
     }
 
     // ENERGY
     if (n?.energy?.enabled && newValue?.energy?.current != oldValue?.energy?.current) {
       let data = checkNotifyBars('energy', n, newValue, oldValue);
       if (data.notify == true) {
-        await createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Visit Gym"}, "https://www.torn.com/gym.php", tts);
+        await createNotification("energy", "ReTorn: Energy", data.message, {action: 'Open', title: "Go to Gym"}, "https://www.torn.com/gym.php", tts);
       }
     }
 
@@ -456,7 +456,7 @@ browser.storage.onChanged.addListener(async (changes, areaName) => {
     if (n?.nerve?.enabled && newValue?.nerve?.current != oldValue?.nerve?.current) {
       let data = checkNotifyBars('nerve', n, newValue, oldValue);
       if (data.notify == true) {
-        await createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Commit Crimes"}, "https://www.torn.com/crimes.php", tts);
+        await createNotification("nerve", "ReTorn: Nerve", data.message, {action: 'Open', title: "Go to Crimes"}, "https://www.torn.com/crimes.php", tts);
       }
     }
 
@@ -464,7 +464,7 @@ browser.storage.onChanged.addListener(async (changes, areaName) => {
     if (n?.happy?.enabled && newValue?.happy?.current != oldValue?.happy?.current) {
       let data = checkNotifyBars('happy', n, newValue, oldValue);
       if (data.notify == true) {
-        await createNotification("happy", "ReTorn: Happy", data.message, {action: 'Open', title: "Get Happy"}, "https://www.torn.com/item.php#candy-items", tts);
+        await createNotification("happy", "ReTorn: Happy", data.message, {action: 'Open', title: "View Candy"}, "https://www.torn.com/item.php#candy-items", tts);
       }
     }
 
@@ -472,7 +472,7 @@ browser.storage.onChanged.addListener(async (changes, areaName) => {
     if (n?.life?.enabled && newValue?.life?.current != oldValue?.life?.current) {
       let data = checkNotifyBars('life', n, newValue, oldValue);
       if (data.notify == true) {
-        await createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "Get a Life"}, "https://www.torn.com/item.php#medical-items", tts);
+        await createNotification("life", "ReTorn: Life", data.message, {action: 'Open', title: "View Meds"}, "https://www.torn.com/item.php#medical-items", tts);
       }
     }
 
@@ -483,7 +483,7 @@ browser.storage.onChanged.addListener(async (changes, areaName) => {
 
     // TRAVEL
     if (n?.travel?.enabled && newValue?.travel?.time_left == 0 && newValue?.travel?.time_left != oldValue?.travel?.time_left) {
-      await createNotification("new_message", "ReTorn: Travel Notification", "You have landed in "+newValue.travel.destination+".", {action: 'Open', title: newValue.travel.destination}, "https://www.torn.com/index.php", tts);
+      await createNotification("travel", "ReTorn: Travel Notification", "You have landed in "+newValue.travel.destination+".", {action: 'Open', title: newValue.travel.destination}, "https://www.torn.com/index.php", tts);
     }
 
     // CHAINS
@@ -581,15 +581,17 @@ function checkNotifyBars(type, notifications, newValue, oldValue) {
 
 // Function for creating Notifications (Chrome/Firefox?)
 async function createNotification(name, title, message, actions, openURL = "https://www.torn.com/", tts = false) {
-    //await logger("notifications", "history", title, {title: title, message: message, timestamp: Date.now()});
+  var buttons; //browser.notifications buttons.  actions is for service worker API buttons
+  //if actions parameter is passed, add close button to end of action buttons, else default to single close button
+  if (actions) {
+    buttons = [{"title": actions.title}, {"title": "Close"}]
+    actions = [actions, { action: 'Close', title: 'Close' }]
+  } else {
+    buttons = [{"title": "Close"}]
+    actions = [{ action: 'Close', title: 'Close' }]
+  }
 
-    //if actions parameter is passed, add close button to end of action buttons, else default to single close button
-    if (actions) {
-      actions = [actions, { action: 'Close', title: 'Close' }]
-    } else {
-      actions = [{ action: 'Close', title: 'Close' }]
-    }
-
+  if (typeof registration != "undefined") {
     registration.showNotification(title, {
       body: message,
       data: {name: name, url: openURL},
@@ -600,7 +602,7 @@ async function createNotification(name, title, message, actions, openURL = "http
     });
 
     //if TTS is enabled, speak message body
-    if (tts) {
+    if (tts && typeof browser.tts != "undefined") {
       browser.tts.speak(
         message,
         {'rate': 0.8},
@@ -611,14 +613,94 @@ async function createNotification(name, title, message, actions, openURL = "http
         }
       );
     }
+  } else {
+    browser.notifications.create(
+      name,
+      {
+        type: "basic",
+        iconUrl: "images/ReTorn@Default.png",
+        "title": title,
+        "message": message,
+      }
+    );
+  }
 }
-// Event Listener for Notification Button Clicks
+// Event Listener for Notification Button Clicks for registration buttons (service workers)
 self.addEventListener('notificationclick', function (event) {
   if (event.action === 'Open' && event.notification.data.url) {
     browser.tabs.create({'url': event.notification.data.url});
   }
   event.notification.close();
   browser.tts.stop();
+});
+
+// Event Listener for notification buttons from the browser notifications API
+  browser.notifications.onClicked.addListener(function(id) {
+
+    if (id.includes("chain_time_")) {
+      browser.tabs.create({'url': "https://www.torn.com/blacklist.php"});
+      return;
+    }
+
+    if (id.includes("chain_hit_")) {
+      browser.tabs.create({'url': "https://www.torn.com/factions.php?step=your#/war/chain"});
+      return;
+    }
+
+    switch (id) {
+      case "new_message":
+          browser.tabs.create({'url': "https://www.torn.com/messages.php"});
+      break;
+
+      case "new_event":
+        browser.tabs.create({'url': "https://www.torn.com/events.php"});
+      break;
+
+      case "cooldown_drugs":
+        browser.tabs.create({'url': "https://www.torn.com/item.php#drugs-items"});
+      break;
+
+      case "cooldown_boosters":
+        browser.tabs.create({'url': "https://www.torn.com/item.php#boosters-items"});
+      break;
+
+      case "cooldown_medical":
+        browser.tabs.create({'url': "https://www.torn.com/item.php#medical-items"});
+      break;
+
+      case "energy":
+        browser.tabs.create({'url': "https://www.torn.com/gym.php"});
+      break;
+
+      case "nerve":
+        browser.tabs.create({'url': "https://www.torn.com/crimes.php"});
+      break;
+
+      case "happy":
+        browser.tabs.create({'url': "https://www.torn.com/item.php#candy-items"});
+      break;
+
+      case "life":
+        browser.tabs.create({'url': "https://www.torn.com/item.php#medical-items"});
+      break;
+
+      case "education":
+        browser.tabs.create({'url': "https://www.torn.com/education.php"});
+      break;
+
+      case "travel":
+        browser.tabs.create({'url': "https://www.torn.com/index.php"});
+      break;
+
+      case "test_not":
+        browser.notifications.clear(id);
+      break;
+    
+      default:
+        browser.notifications.clear(id);
+      break;
+    }
+ 
 });
 
 //get value
