@@ -1,4 +1,5 @@
 var browser = browser || chrome;
+const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 
 const manifestData = browser.runtime.getManifest();
 const default_quick_links = {
@@ -82,7 +83,9 @@ $(document).ready(function() {
   $('.version').text('ReTorn v'+manifestData.version);
 
   Promise.all([initSidebar(), initTornStatsTab(), createNotificationsList(), createFeaturesList(), initSettings()])
-  initInputs();
+  .then(() => {
+    initInputs();
+  })
 });
 
 
@@ -100,6 +103,14 @@ async function createNotificationsList() {
           $('#notifications_card .category').append(switchWrap(key, val.tooltip, val.enabled, val.order))
         }
       }
+    }
+
+    
+    //Disabled buttons due to FireFox Compatiblity
+    if (isFirefox) {
+      $(`#text_to_speech`).prop('disabled', true);
+      $(`#text_to_speech`).parent().find('span[data-tooltip]').prop('disabled', true).attr('data-tooltip', "Text to speech feature not compatible with Firefox");
+      $(`#text_to_speech`).parent().css('color', "red");
     }
   })
   .catch((e) => {
@@ -449,7 +460,7 @@ function initInputs() {
       sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
       .catch((e) => console.error(e))
     }
-  })
+  });
 }
 
 function initSettings() {
