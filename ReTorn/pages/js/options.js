@@ -140,7 +140,7 @@ async function createFeaturesList() {
 
   sendMessage({name: "get_sync", value: "features"})
   .then((f) => {
-    const d = f.data;
+    const d = sortObject(f.data);
     Object.keys(d).forEach(key => {
       $('#features_card').append(`<div class="category" data-category="${key}"><h4 class="capitalize">${key}:</h4></div>`)
       iterateFeatures(d[key]);
@@ -855,4 +855,21 @@ function timeDifference(current, previous) {
   else {
       return '' + Math.round(elapsed/msPerYear ) + ' years ago';
   }
+}
+
+
+function sortObject(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+      return obj;
+  }
+
+  if (Array.isArray(obj)) {
+      return obj.map(sortObject);
+  }
+
+  const sorted = {};
+  Object.keys(obj).sort().forEach(key => {
+      sorted[key] = sortObject(obj[key]);
+  });
+  return sorted;
 }
