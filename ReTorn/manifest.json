@@ -37,7 +37,7 @@
   	},
     "browser_specific_settings": {
       "gecko": {
-        "id": "retorn@retorn.rocks",
+        "id": "ReTorn@retorn.rocks",
         "strict_min_version": "121.0"
       }
     },    
@@ -104,7 +104,7 @@
       },
       {
         "matches": ["https://*.torn.com/gym.php"],
-        "js": ["/lib/highcharts.js", "js/gym/gym.js"],
+        "js": ["/lib/chartjs.js", "js/gym/gym.js"],
         "css": ["css/gym/gym.css"],
         "run_at": "document_end"
       },

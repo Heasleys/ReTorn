@@ -104,7 +104,7 @@
       console.log(data);
 
       $('div#graph').html(`
-      <div id="stats" style="height: 250px; width: 100%;"></div>
+      <canvas id="stats" style="height: 250px; width: 100%;"></canvas>
       `);
       insertGraph(data.data);
     })
@@ -171,119 +171,101 @@
   }
 
   function insertGraph(data) {
-    let strength = `[`;
-    let speed = `[`;
-    let defense = `[`;
-    let dexterity = `[`;
-    let total = `[`;
+    const statsChart = document.getElementById('stats');
+    let timestamps = Object.values(data).map(item => formatDate(new Date(item.timestamp * 1000)));
+    let strengthValues = Object.values(data).map(item => item.strength);
+    let defenseValues = Object.values(data).map(item => item.defense);
+    let dexterityValues = Object.values(data).map(item => item.dexterity);
+    let speedValues = Object.values(data).map(item => item.speed);
+    let totalValues = Object.values(data).map(item => item.total);
 
-    $.each(data,function(index, value){
+    var style = getComputedStyle(document.body);
+    var defaultColor = style.getPropertyValue('--default-color');
 
-      strength += `{"x": ` +value.timestamp * 1000+ `, "y": ` +value.strength+ `},`;
-      speed += `{"x": ` +value.timestamp * 1000+ `, "y": ` +value.speed+ `},`;
-      defense += `{"x": ` +value.timestamp * 1000+ `, "y": ` +value.defense+ `},`;
-      dexterity += `{"x": ` +value.timestamp * 1000+ `, "y": ` +value.dexterity+ `},`;
-      total += `{"x": ` +value.timestamp * 1000+ `, "y": ` +value.total+ `},`;
+    Chart.defaults.borderColor = defaultColor;
+    Chart.defaults.color = defaultColor;
 
-    });
-    strength = strength.replace(/,\s*$/, "]");
-    speed = speed.replace(/,\s*$/, "]");
-    defense = defense.replace(/,\s*$/, "]");
-    dexterity = dexterity.replace(/,\s*$/, "]");
-    total = total.replace(/,\s*$/, "]");
-
-
-    strength = JSON.parse(strength);
-    speed = JSON.parse(speed);
-    defense = JSON.parse(defense);
-    dexterity = JSON.parse(dexterity);
-    total = JSON.parse(total);
-
-
-
-
-      Highcharts.theme = {
-        "colors": ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477" ,"#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300"],
-      };
-
-      Highcharts.setOptions({
-        lang: {
-          decimalPoint: '.',
-          thousandsSep: ',',
-          numericSymbols: ['K', 'M', 'B', 'T']
-        }
-      });
-
-      Highcharts.setOptions(Highcharts.theme);
-
-
-      Highcharts.chart('stats', {
-      title:{
-        text:''
-      },
-      xAxis: {
-            type: 'datetime',
-            labels: {
-              formatter: function() {
-                return Highcharts.dateFormat("%d %b %Y", this.value);
-              }
-            },
-      },
-      yAxis: {
-          title: {
-              text: "Stats"
+    new Chart(statsChart, {
+      type: 'line',
+      data: {
+        labels: timestamps,
+        datasets: [
+          {
+            label: 'Strength',
+            data: strengthValues,
+            borderColor: '#3366cc',
+            fill: false,
+            pointStyle: "circle"
+          }, 
+          {
+            label: 'Defense',
+            data: defenseValues,
+            borderColor: '#dc3912',
+            fill: false,
+            pointStyle: 'rectRot'
+          },
+          {
+            label: 'Speed',
+            data: speedValues,
+            borderColor: '#ff9900',
+            fill: false,
+            pointStyle: "rectRounded"
+          },
+          {
+            label: 'Dexterity',
+            data: dexterityValues,
+            borderColor: '#109618',
+            fill: false,
+            pointStyle: "triangle"
+          },
+          {
+            label: 'Total',
+            data: totalValues,
+            borderColor: '#990099',
+            fill: false,
+            pointStyle: "star",
+            hidden: true
           }
+        ]
       },
-          chart: {
-              backgroundColor: 'transparent'
+      options: {
+        scales: {
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              autoSkip: true,
+              maxTicksLimit: 6
+            }
           },
-          series : [{
-                  name: 'Strength',
-                  type : 'line',
-                  color: '#3366cc',
-                  data : strength,
-                  showInNavigator: false,
-              }, {
-                  name: 'Defense',
-                  type : 'line',
-                  color: '#dc3912',
-                  data: defense,
-              }, {
-                  name: 'Speed',
-                  type : 'line',
-                  color: '#ff9900',
-                  data: speed,
-              }, {
-                  name: 'Dexterity',
-                  type : 'line',
-                  color: '#109618',
-                  data: dexterity,
-              }, {
-                  name: 'Total',
-                  type : 'line',
-                  color: '#990099',
-                  data: total,
-                  showInNavigator: true,
-                  showInLegend: true,
-                  navigatorOptions: {
-                      visible: true,
-                  },
-                  visible: false,
+          y: {
+            title: "Stats",
+            beginAtZero: true,
+            grid: {
+              display: false
+            },
+            ticks: {
+              callback: function(value, index, ticks) {
+                return abbreviateNumber(value);
               }
-          ],
-          legend: {
-              enabled: true,
-              layout: 'vertical',
-              align: 'right',
-              verticalAlign: 'middle'
-          },
-          tooltip: {
-        shared: true
-      },
-      credits: false
-      });
+            }
+          }
+        },
+        elements: {
+          point:{
+              radius: 0.5,
+              hoverRadius: 6
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        }
+      }
+    });
 
-      $('div#stats').addClass("loaded");
+    $('div#stats').addClass("loaded");
   }
 
 

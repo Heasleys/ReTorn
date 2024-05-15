@@ -339,3 +339,13 @@ function getStringFromDays(numberOfDays) {
 const getCookieValue = (name) => ( //https://stackoverflow.com/a/25490531/22230696
     document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
   )
+
+function formatDate(date) {
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const day = date.getDate();
+const month = months[date.getMonth()];
+const year = date.getFullYear();
+
+return `${day} ${month} ${year}`;
+}
