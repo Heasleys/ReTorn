@@ -22,11 +22,17 @@ li.re_add_qitem {
   height: 20px !important;
   width: 17px !important;
 }
+#re_quick_items .qitem-btn.re_info {
+  margin-left: 3px;
+  margin-right: 3px;
+  margin-top: 2px;
+}
 
 #re_quick_items {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
 }
 
 #re_quick_items .re_button {
