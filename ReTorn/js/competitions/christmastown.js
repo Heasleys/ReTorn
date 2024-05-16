@@ -398,7 +398,7 @@ window.addEventListener('hashchange', function() {
 /* Intercept Fetch Requests */
 /* Christmas Town */
 document.addEventListener('re_christmastown', function (r) {
-  if (features?.pages?.last_action_mini_profile?.enabled) {
+  if (features?.pages?.christmas_town?.christmas_town_helper?.enabled) {
     christmas_town(r?.detail?.response);
   }
 });
