@@ -2,6 +2,7 @@
     "name": "ReTorn",
     "version": "1.6.0",
     "description": "Its the return of a great Torn extension",
+    "author": "Heasley",
     "manifest_version": 3,
     "icons": {
       "16": "images/ReTorn@16px.png",
@@ -13,7 +14,8 @@
     },
     "action": {
       "default_title": "ReTorn",
-      "default_popup": "pages/popup_start.html"
+      "default_popup": "pages/popup_start.html",
+      "default_icon": "images/ReTorn@Default.png"
     },
     "permissions": [
       "storage",
@@ -24,7 +26,7 @@
     ],
     "host_permissions": [
       "https://www.tornstats.com/api/",
-      "https://api.torn.com/"
+      "https://*.torn.com/*"
     ],
     "options_ui": {
   		"page": "/pages/options.html",

@@ -1,6 +1,23 @@
 import { deepExtend } from "/lib/modules/deep-extend/deep-extend.js";
 var browser = browser || chrome;
 
+
+const requiredPermissions = {
+  origins: ["https://*.torn.com/*"]
+}
+
+function checkPermissions() {
+  browser.permissions.contains(requiredPermissions, (hasPermissions) => {
+      if (!hasPermissions) {
+          // Open a tab that tells the user to click on the extension
+          browser.tabs.create({url: "/pages/missing_permissions.html", active: true});
+      }
+  });
+}
+
+// Register event listeners for permissions
+browser.permissions.onRemoved.addListener(checkPermissions);
+
 //event listener for message passing
 browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   handleMessage(msg).then((data) => {
@@ -1660,6 +1677,7 @@ async function newInstallation() {
 */
 async function serviceWorkerStart() {
   try {
+    checkPermissions();
     const z = await getValue("re_startup", "session");
     createAPIAlarm();
   }
