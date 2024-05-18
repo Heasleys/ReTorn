@@ -46,7 +46,7 @@
   	},
     "browser_specific_settings": {
       "gecko": {
-        "id": "ReTorn@retorn.rocks",
+        "id": "public@retorn.rocks",
         "strict_min_version": "121.0"
       }
     },    
