@@ -988,7 +988,7 @@ body.dark-mode .re_button button .close:hover {
   width: 14px;
   margin: 16px 0px 0px 10px;
   filter: drop-shadow(0 1px 0 #fff);
-  background: url(/images/v2/mobile/arrows_expand.svg) left top no-repeat;
+  background: url(https://www.torn.com/images/v2/mobile/arrows_expand.svg) left top no-repeat;
 }
 
 .re_move_up > i {
@@ -1006,7 +1006,7 @@ body.dark-mode .re_button button .close:hover {
 }
 
 .dark-mode .re_move_down > i, .dark-mode .re_move_up > i {
-  background: url(/images/v2/mobile/arrows_expand.svg) left bottom no-repeat;
+  background: url(https://www.torn.com/images/v2/mobile/arrows_expand.svg) left bottom no-repeat;
   filter: drop-shadow(0 1px 1px #111111b5);
 }
 .dark-mode .re_move_up > i {

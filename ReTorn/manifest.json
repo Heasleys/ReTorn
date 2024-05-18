@@ -32,12 +32,19 @@
   	},
     "background": {
     	"service_worker": "background.js",
-      "type": "module"
+      "type": "module",
+      "scripts": ["background.js"]
   	},
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "ReTorn@retorn.rocks",
+        "strict_min_version": "121.0"
+      }
+    },    
     "web_accessible_resources": [
       {
         "resources": [
-          "/js/everywhere/interceptFetch.js",
+          "/inject/inject_interceptFetch.js",
           "/js/api/apiAjaxComplete.js",
           "/js/everywhere/torn3d.js",
           "/lib/fontawesome/webfonts/fa-brands-400.ttf",
@@ -62,7 +69,7 @@
                 "https://wiki.torn.com/*"
             ],
         "css": ["/lib/fontawesome/css/all.min.css","css/everywhere/everywhere.css", "css/everywhere/quicklinks.css", "css/everywhere/npclist.css", "css/everywhere/refills.css", "css/everywhere/features.css"],
-        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/global/constants.js","js/global/globalFunctions.js" , "js/everywhere/sidebar.js","js/everywhere/refills.js", "js/everywhere/tornstats_events.js"],
+        "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/global/constants.js","js/global/globalFunctions.js","js/global/miniprofiles.js","js/global/interceptFetch.js","js/everywhere/sidebar.js","js/everywhere/refills.js","js/everywhere/tornstats_events.js"],
         "run_at": "document_start"
       },
       {
@@ -97,7 +104,7 @@
       },
       {
         "matches": ["https://*.torn.com/gym.php"],
-        "js": ["/lib/highcharts.js", "js/gym/gym.js"],
+        "js": ["/lib/chartjs.js", "js/gym/gym.js"],
         "css": ["css/gym/gym.css"],
         "run_at": "document_end"
       },

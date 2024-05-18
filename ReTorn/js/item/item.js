@@ -203,7 +203,8 @@
   function loadItems() {
     sendMessage({name: "get_sync", value: "settings"})
     .then((r) => {
-      if (r?.status && r?.data?.quick_items) {
+      if (!r?.status) throw r;
+      if (!jQuery.isEmptyObject(r?.data?.quick_items)) {
           let x = 0;
           $('#re_quick_items').empty();
           var items = r.data.quick_items;
@@ -240,8 +241,11 @@
             $("#re_quick_items_response").show();
 
           });    
+      } else {
+        $('#re_quick_items').html(`Click the Add to Quick Items <span class='option-equip wai-btn qitem-btn re_info'></span> button on an item to add it to this quick items list.`);
       }
     })
+    .catch((e) => console.error("[ReTorn][Quick Items][Error]", e))
   }
 
   function sendItemUseRequest(itemID) {

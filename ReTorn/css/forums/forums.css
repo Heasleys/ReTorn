@@ -277,7 +277,7 @@ body .content .container .content-wrapper.re_discord_copy .forums-thread-wrap .t
 }
 
 #blocked_list li i {
-  background: url(/images/v2/forums/delete_from_subscribed.svg) left top no-repeat;
+  background: url(https://www.torn.com/images/v2/forums/delete_from_subscribed.svg) left top no-repeat;
   width: 10px;
   height: 10px;
   display: inline-block;

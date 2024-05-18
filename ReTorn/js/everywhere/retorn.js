@@ -31,7 +31,6 @@ var browser = browser || chrome;
 $(document).on('click', '#re_options', function(event){
   event.stopPropagation();
   event.preventDefault();
-  
   sendMessage({"name": "open_options"})
   .catch((e) => console.error(e))
 });
@@ -50,23 +49,12 @@ $(document).on('click', '#re_options', function(event){
     }
     settings = r[0].data;
     features = r[1].data;
-    /* Create customEvent to communicate with interceptFetch.js/extension */
-    /* Inject FetchIntercept via js/everywhere/interceptFetch.js into Torn page */
+
+    /* Inject FetchIntercept via inject/inject_interceptFetch.js into Torn page */
     var ss = document.createElement("script");
     ss.setAttribute("type", "text/javascript");       
-    ss.setAttribute("src", browser.runtime.getURL("/js/everywhere/interceptFetch.js"));
+    ss.setAttribute("src", browser.runtime.getURL("/inject/inject_interceptFetch.js"));
     (document.head || document.documentElement).appendChild(ss);
-    ss.onload = function() {
-      document.dispatchEvent(new CustomEvent('re_fetchInject', 
-      {
-        "detail": 
-        {
-          "settings": settings,
-          "features": features
-        }
-      }
-      ));
-    };
 
     init();
   })
@@ -108,10 +96,6 @@ $(document).on('click', '#re_options', function(event){
       root.classList.add("re_hide_level_up");
     }
   } 
-
-
-
-
 
 
 async function getTornStats(selection, cacheHours = 8, forced = false) { //default cached time to 8 hours
