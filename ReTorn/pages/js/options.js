@@ -1,4 +1,5 @@
 var browser = browser || chrome;
+const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 
 const manifestData = browser.runtime.getManifest();
 const default_quick_links = {
@@ -82,7 +83,9 @@ $(document).ready(function() {
   $('.version').text('ReTorn v'+manifestData.version);
 
   Promise.all([initSidebar(), initTornStatsTab(), createNotificationsList(), createFeaturesList(), initSettings()])
-  initInputs();
+  .then(() => {
+    initInputs();
+  })
 });
 
 
@@ -100,6 +103,14 @@ async function createNotificationsList() {
           $('#notifications_card .category').append(switchWrap(key, val.tooltip, val.enabled, val.order))
         }
       }
+    }
+
+    
+    //Disabled buttons due to FireFox Compatiblity
+    if (isFirefox) {
+      $(`#text_to_speech`).prop('disabled', true);
+      $(`#text_to_speech`).parent().find('span[data-tooltip]').prop('disabled', true).attr('data-tooltip', "Text to speech feature not compatible with Firefox");
+      $(`#text_to_speech`).parent().css('color', "red");
     }
   })
   .catch((e) => {
@@ -129,7 +140,7 @@ async function createFeaturesList() {
 
   sendMessage({name: "get_sync", value: "features"})
   .then((f) => {
-    const d = f.data;
+    const d = sortObject(f.data);
     Object.keys(d).forEach(key => {
       $('#features_card').append(`<div class="category" data-category="${key}"><h4 class="capitalize">${key}:</h4></div>`)
       iterateFeatures(d[key]);
@@ -449,7 +460,7 @@ function initInputs() {
       sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
       .catch((e) => console.error(e))
     }
-  })
+  });
 }
 
 function initSettings() {
@@ -844,4 +855,21 @@ function timeDifference(current, previous) {
   else {
       return '' + Math.round(elapsed/msPerYear ) + ' years ago';
   }
+}
+
+
+function sortObject(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+      return obj;
+  }
+
+  if (Array.isArray(obj)) {
+      return obj.map(sortObject);
+  }
+
+  const sorted = {};
+  Object.keys(obj).sort().forEach(key => {
+      sorted[key] = sortObject(obj[key]);
+  });
+  return sorted;
 }

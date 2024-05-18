@@ -41,10 +41,10 @@
 
 /* hide snow and/or grid */
 .d .re_ct_snow .substrate-layer {
-  background: url(/images/v2/christmas_town/map_grid.png) 0 0 repeat;
+  background: url(https://www.torn.com/images/v2/christmas_town/map_grid.png) 0 0 repeat;
 }
 .d .re_ct_grid .substrate-layer {
-  background: url(/images/v2/christmas_town/snow.jpg) 0 0 repeat;
+  background: url(https://www.torn.com/images/v2/christmas_town/snow.jpg) 0 0 repeat;
 }
 .d .re_ct_snow.re_ct_grid .substrate-layer {
   background: unset;

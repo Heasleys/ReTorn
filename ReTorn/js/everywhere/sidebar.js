@@ -107,7 +107,6 @@
         const target = document.getElementById("sidebar");
         if (target) {
           iconWrapObserver.observe(target, observerParams);
-          hideThoseIcons();
         }
     });
 
@@ -514,12 +513,10 @@
       if (iconString) {
           const icons = iconString.split(',');
           icons.forEach(i => {
-              $(`#${i}-sidebar`).parent('li').addClass("re_hide");
+            if ($(`#re_hide_${i}`).length == 0) {
+              $(`#sidebar ul[class*="status-icons_"] li[class*="${i}_"]`).wrap(`<span class="re_hide" id="re_hide_${i}">`);
+            }
           });
       }
-      $('#sidebar ul[class*="status-icons_"] li').removeClass('re_six_icon');
-      $('#sidebar ul[class*="status-icons_"] li:not(.re_hide)').filter(function(i) {
-        return (i + 1) % 6 == 0 //select every 6th element, that does not have re_hide class
-      }).addClass('re_six_icon');
     }
 })();

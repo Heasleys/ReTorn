@@ -1,11 +1,11 @@
 html {
-    width: 288px;
     background-color: var(--re-background);
 }
 
 body {
     text-align: center;
     margin: 10px;
+    width: 288px;
 }
 
 .title {

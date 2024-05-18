@@ -1,5 +1,5 @@
-html {
-    width: 384px;
+body {
+    width: 384px !important;
     height: auto;
 }
 

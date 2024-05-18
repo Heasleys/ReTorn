@@ -1,3 +1,11 @@
 .re_hide_level_up #sidebar a[href*="level2.php"] {
     display:none;
 }
+
+#sidebar [class*="status-icons_"][class*="big_"] li, #sidebar [class*="status-icons_"][class*="mobile_"][class*="big_"] li:nth-of-type(6n) {
+    margin-right: 10px;
+}
+
+#sidebar [class*="status-icons_"][class*="big_"] li:nth-of-type(6n) {
+    margin-right: 0;
+}
