@@ -15,7 +15,14 @@
     "action": {
       "default_title": "ReTorn",
       "default_popup": "pages/popup_start.html",
-      "default_icon": "images/ReTorn@Default.png"
+      "default_icon": {
+        "16": "images/ReTorn@16px.png",
+        "32": "images/ReTorn@32px.png",
+        "48": "images/ReTorn@48px.png",
+        "64": "images/ReTorn@64px.png",
+        "96": "images/ReTorn@96px.png",
+        "128": "images/ReTorn@128px.png"
+      }
     },
     "permissions": [
       "storage",
