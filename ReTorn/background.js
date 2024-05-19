@@ -969,6 +969,7 @@ async function handleMessage(msg) {
         await validateKey(m.apikey); //validate if the apikey is real and working
         await Promise.all([pullRequiredAPI(m.apikey), createAPIAlarm()]); //pull api data and create chrome.alarm to periodically pull api data
         browser.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
+        checkItemAPI(); //update items api cache when settings API key
         return {status: true, message: "Your apikey has been saved."}
       } else {
         throw {status: false, message: "The apikey was not passed correctly."}
