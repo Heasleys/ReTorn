@@ -340,29 +340,35 @@ function initInputs() {
 
   //button to integrate tornstats
   ///*
-  $("button#tornstats").click(function() {
+  const tornstatsPermission = {
+    origins: ["https://www.tornstats.com/api/"]
+  }
+  $("button#tornstats").click(async function() {
     // Enable Tornstats
     if ($(this).val() == 0) {
       const key = $("#ts_apikey").val();
 
       if (key && key.length >= 16 && key.length <= 19) {
         if (confirm('By accepting, you agree to allow the api key you entered to be transmitted to tornstats.com.')) {
-          sendMessage({name: "set_torn_stats_api", apikey: key})
-          .then((r) => {
-            if (r.status) {
-              $('#ts_status').text("Enabled");
-              $(this).html("Unlink account");
-              $('button#tornstats').val(1);
-              $('#ts_link_wrap').hide();
-            } else {
-              $('#ts_status').text("Disabled");
-              $(this).html("Link account");
-              $('button#tornstats').val(0);
-              $('#ts_link_wrap').show();
-            }
-            TornStatsMessage(r); 
-          })
-          .catch((error) => TornStatsMessage(error));
+          var isGranted = await browser.permissions.request(tornstatsPermission);
+          if (isGranted) {
+            sendMessage({name: "set_torn_stats_api", apikey: key})
+            .then((r) => {
+              if (r.status) {
+                $('#ts_status').text("Enabled");
+                $(this).html("Unlink account");
+                $('button#tornstats').val(1);
+                $('#ts_link_wrap').hide();
+              } else {
+                $('#ts_status').text("Disabled");
+                $(this).html("Link account");
+                $('button#tornstats').val(0);
+                $('#ts_link_wrap').show();
+              }
+              TornStatsMessage(r); 
+            })
+            .catch((error) => TornStatsMessage(error));
+          }
         }
       } else {
         TornStatsMessage({status: false, message: "Torn Stats api key is invalid."});
