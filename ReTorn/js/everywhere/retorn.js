@@ -23,6 +23,7 @@ var browser = browser || chrome;
   };
   var settings;
   var features;
+  var re_items;
   const href = window.location.href;   //locationURL is the page name of url (ex: jailview, factions, newspaper, stocks, missions)
   const locationURL = (href.includes('page.php') || href.includes('loader.php')) ? href.split('.com/').pop().split('sid=').pop().split(/[&#]+/).shift().trim().toLowerCase() : window.location.href.split('.com/').pop().split('.php').shift().trim().toLowerCase();
 
@@ -37,65 +38,76 @@ $(document).on('click', '#re_options', function(event){
 
 
 
-  Promise.all([sendMessage({name: "get_sync", value: "settings"}),sendMessage({name: "get_sync", value: "features"})])
-  .then((r) =>  {
-    if (!r[0].status) {
-      console.error('[ReTorn]: Error | ', r[0].message);
-      return;
-    }
-    if (!r[1].status) {
-      console.error('[ReTorn]: Error | ', r[1].message);
-      return;
-    }
-    settings = r[0].data;
-    features = r[1].data;
+Promise.all([sendMessage({name: "get_sync", value: "settings"}),sendMessage({name: "get_sync", value: "features"})])
+.then((r) =>  {
+  if (!r[0].status) {
+    console.error('[ReTorn]: Error | ', r[0].message);
+    return;
+  }
+  if (!r[1].status) {
+    console.error('[ReTorn]: Error | ', r[1].message);
+    return;
+  }
+  settings = r[0].data;
+  features = r[1].data;
 
-    /* Inject FetchIntercept via inject/inject_interceptFetch.js into Torn page */
-    var ss = document.createElement("script");
-    ss.setAttribute("type", "text/javascript");       
-    ss.setAttribute("src", browser.runtime.getURL("/inject/inject_interceptFetch.js"));
-    (document.head || document.documentElement).appendChild(ss);
+  /* Inject FetchIntercept via inject/inject_interceptFetch.js into Torn page */
+  var ss = document.createElement("script");
+  ss.setAttribute("type", "text/javascript");       
+  ss.setAttribute("src", browser.runtime.getURL("/inject/inject_interceptFetch.js"));
+  (document.head || document.documentElement).appendChild(ss);
 
-    init();
-  })
-  .catch((e) => console.error('[ReTorn]: Error | ', e));
-
-
-  function init() {
-    const root = document.documentElement;
-    if (settings.header_color) {
-      const color = settings.header_color;
-      let color_lighter;
-      let color_darker;
-      if (wc_hex_is_light(color)) {
-        color_lighter = color;
-        color_darker = pSBC(-0.64, color);
-      } else {
-        color_lighter = pSBC(0.13, color);
-        color_darker = color;
+  init();
+})
+.then(() => {
+  if (locationURL == "item" && features?.pages?.item?.item_values?.enabled) {//only pre-load items data if on item page and features enabled
+    sendMessage({name: "get_local", value: "re_items"})
+    .then((r) => {
+      if (r.status) {
+          re_items = r?.data?.items;
       }
-      root.style.setProperty('--re-header-color', color_lighter);
-      root.style.setProperty('--re-header-color-two', color_darker);
-    }
+    })
+    .catch((e) => console.error(e));
+  }
+})
+.catch((e) => console.error('[ReTorn]: Error | ', e));
 
-    if (features?.general?.left_align?.enabled) {
-      root.style.setProperty('--re-leftalign', "20px");
-      root.style.setProperty('--re-leftalign-flex', "flex-start");
-      document.documentElement.classList.add("re_leftalign");
-    }
 
-    if (settings.torn3d) {
-      $( document ).ready(function() {
-        var ss = document.createElement("script");
-        ss.src = browser.runtime.getURL("/js/everywhere/torn3d.js");
-        (document.head || document.documentElement).appendChild(ss);
-      });
+function init() {
+  const root = document.documentElement;
+  if (settings.header_color) {
+    const color = settings.header_color;
+    let color_lighter;
+    let color_darker;
+    if (wc_hex_is_light(color)) {
+      color_lighter = color;
+      color_darker = pSBC(-0.64, color);
+    } else {
+      color_lighter = pSBC(0.13, color);
+      color_darker = color;
     }
+    root.style.setProperty('--re-header-color', color_lighter);
+    root.style.setProperty('--re-header-color-two', color_darker);
+  }
 
-    if (features?.general?.hide_level_up?.enabled) {
-      root.classList.add("re_hide_level_up");
-    }
-  } 
+  if (features?.general?.left_align?.enabled) {
+    root.style.setProperty('--re-leftalign', "20px");
+    root.style.setProperty('--re-leftalign-flex', "flex-start");
+    document.documentElement.classList.add("re_leftalign");
+  }
+
+  if (settings.torn3d) {
+    $( document ).ready(function() {
+      var ss = document.createElement("script");
+      ss.src = browser.runtime.getURL("/js/everywhere/torn3d.js");
+      (document.head || document.documentElement).appendChild(ss);
+    });
+  }
+
+  if (features?.general?.hide_level_up?.enabled) {
+    root.classList.add("re_hide_level_up");
+  }
+} 
 
 
 async function getTornStats(selection, cacheHours = 8, forced = false) { //default cached time to 8 hours

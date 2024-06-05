@@ -1,91 +1,115 @@
-(function() {
-  var items;
-  const qitem_categories = ['Medical', 'Drug', 'Energy Drink', 'Alcohol', 'Candy', 'Booster', 'Supply Pack', 'Special']
-  const exceptionItemList = ["403", "283"]; //tissues, donator packs
+var items;
+var orderMain = 1;
+var tornRFC;
 
-  const observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-      if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-        if (mutation.target && mutation.target.nodeName && mutation.target.nodeName === "UL") {
-          if (mutation.target.parentElement && mutation.target.parentElement.id && mutation.target.parentElement.id == "category-wrap") {
-            //if (mutation.previousSibling != null) return;
+if (re_items) items = re_items;
 
-            if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-placeholder")) return;
-              
-            if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-item-loader")) return;
+const qitem_categories = ['Medical', 'Drug', 'Energy Drink', 'Alcohol', 'Candy', 'Booster', 'Supply Pack', 'Special']
+const exceptionItemList = ["403", "283"]; //tissues, donator packs
 
-            if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-preloader")) return;
+const observer = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+      if (mutation.target && mutation.target.nodeName && mutation.target.nodeName === "UL") {
+        if (mutation.target.parentElement && mutation.target.parentElement.id && mutation.target.parentElement.id == "category-wrap") {
+          //if (mutation.previousSibling != null) return;
 
-            if (mutation.addedNodes[0] && mutation.addedNodes[0].className && mutation.addedNodes[0].className.includes("ajax-item-loader")) return;
+          if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-placeholder")) return;
+            
+          if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-item-loader")) return;
 
-            for (const element of mutation.addedNodes) {
-              let itemID = element.dataset.item;
+          if (mutation.addedNodes[0].firstChild && mutation.addedNodes[0].firstChild.className && mutation.addedNodes[0].firstChild.className.includes("ajax-preloader")) return;
 
-              if (features?.pages?.item?.quick_items?.enabled) {
-                let itemCategory = element.dataset.category;
+          if (mutation.addedNodes[0] && mutation.addedNodes[0].className && mutation.addedNodes[0].className.includes("ajax-item-loader")) return;
 
-                if (qitem_categories.includes(itemCategory)) {
-                  //update item qtys
-                  if (mutation.target.dataset && mutation.target.dataset.info && features?.pages?.item?.quick_items?.enabled) {
-                    //update qty from the mutation with multiple items listed
-                    updateQtyCategory(mutation.target, mutation.target.dataset.info);
-                  }
-                  if ($(element).find('.re_add_qitem').length > 0) return; //if quickitem button already exists, ignore
-                  let nameWrap = $(element).find('span.name-wrap');
-                  let actionWrap = $(element).find('ul.actions-wrap');
-                  actionWrap.parent('.actions').addClass("re_qitemWrap");
-                  nameWrap.addClass("re_qitemWrap");
-  
-                  let itemName = nameWrap.find('.name').text();
-                  let itemQty = nameWrap.find('.qty.t-hide').text().replace('x', '');
-                  if (itemQty === "") {itemQty = 1;}
-  
-                    let qitemButton = `
-                    <li class="re_add_qitem" data-itemname="${itemName}" data-itemqty="${itemQty}" data-itemid="${itemID}" data-itemcategory="${itemCategory}">
-                      <span class="icon-h" title="Add to Quick Items">
-                        <button aria-label="Add ${itemName} to Quick Items" class="option-equip wai-btn qitem-btn"></button>
-                        <span class="opt-name">
-                            Add
-                            <span class="t-hide">to Quick Items</span>
-                        </span>
-                      </span>
-                    </li>
-                    `;
-                    if ((itemCategory == "Special" || itemCategory == "Other") && !exceptionItemList.includes(itemID)) { // Keep buttons consistent so add-button for donator pack doesn't look odd
-                      actionWrap.find('li').first().after(`<li class="left re_add_qitem"></li>`);
-                    } else {
-                      actionWrap.find('li').first().after(qitemButton);
-                    }
+          for (const element of mutation.addedNodes) {
+            let itemID = element.dataset.item;
+
+            if (features?.pages?.item?.quick_items?.enabled) {
+              let itemCategory = element.dataset.category;
+
+              if (qitem_categories.includes(itemCategory)) {
+                //update item qtys
+                if (mutation.target.dataset && mutation.target.dataset.info && features?.pages?.item?.quick_items?.enabled) {
+                  //update qty from the mutation with multiple items listed
+                  updateQtyCategory(mutation.target, mutation.target.dataset.info);
                 }
-              }
-
-              if (features?.pages?.item?.item_values?.enabled) {
-                if ($(element).find('.re_value').length > 0) return;
-
+                if ($(element).find('.re_add_qitem').length > 0) return; //if quickitem button already exists, ignore
                 let nameWrap = $(element).find('span.name-wrap');
+                let actionWrap = $(element).find('ul.actions-wrap');
+                actionWrap.parent('.actions').addClass("re_qitemWrap");
+                nameWrap.addClass("re_qitemWrap");
+
+                let itemName = nameWrap.find('.name').text();
                 let itemQty = nameWrap.find('.qty.t-hide').text().replace('x', '');
                 if (itemQty === "") {itemQty = 1;}
 
-                if (typeof items[itemID] != "undefined") {
-                  let value = parseInt(itemQty * items[itemID].market_value);
-                  
-                  let title = `${itemQty.toLocaleString('en-US')} x $${items[itemID].market_value.toLocaleString('en-US')}`;
-
-                  nameWrap.append(`<span class="re_value" title="${title}">$${value.toLocaleString('en-US')}</span>`)
-                }
+                  let qitemButton = `
+                  <li class="re_add_qitem" data-itemname="${itemName}" data-itemqty="${itemQty}" data-itemid="${itemID}" data-itemcategory="${itemCategory}">
+                    <span class="icon-h" title="Add to Quick Items">
+                      <button aria-label="Add ${itemName} to Quick Items" class="option-equip wai-btn qitem-btn"></button>
+                      <span class="opt-name">
+                          Add
+                          <span class="t-hide">to Quick Items</span>
+                      </span>
+                    </span>
+                  </li>
+                  `;
+                  if ((itemCategory == "Special" || itemCategory == "Other") && !exceptionItemList.includes(itemID)) { // Keep buttons consistent so add-button for donator pack doesn't look odd
+                    actionWrap.find('li').first().after(`<li class="left re_add_qitem"></li>`);
+                  } else {
+                    actionWrap.find('li').first().after(qitemButton);
+                  }
               }
-            }//for
-          }
+            }
+
+            if (features?.pages?.item?.item_values?.enabled) {
+              if ($(element).find('.re_value').length > 0) return;
+              if (jQuery.isEmptyObject(items)) return;
+
+              let nameWrap = $(element).find('span.name-wrap');
+              let itemQty = nameWrap.find('.qty.t-hide').text().replace('x', '');
+              if (itemQty === "") {itemQty = 1;}
+
+              if (typeof items[itemID] != "undefined") {
+                let value = parseInt(itemQty * items[itemID].market_value);
+                
+                let title = `${itemQty.toLocaleString('en-US')} x $${items[itemID].market_value.toLocaleString('en-US')}`;
+
+                nameWrap.append(`<span class="re_value" title="${title}">$${value.toLocaleString('en-US')}</span>`)
+              }
+            }
+
+            if (features?.pages?.item && features?.pages?.item?.quick_items?.enabled == false && features?.pages?.item?.item_values?.enabled == false) observer.disconnect();
+          }//for
         }
       }
-    })
-  });
+    }
+  })
+});
 
-  var orderMain = 1;
-  var tornRFC;
+if (jQuery.isEmptyObject(items)) {
+  sendMessage({name: "get_local", value: "re_items"})
+  .then((r) => {
+      if (r.status) {
+          items = r?.data?.items;
+      }
+      initObserver();
+  })
+  .catch((e) => console.error(e));
+} else {
+  initObserver();
+}
+
+(function() {
   if ($('div.captcha').length != 0 && $('#body').attr('data-traveling') == "true") {//Check for captcha and traveling  
     return;
   }
+  init_quick_items();
+})();
+
+
+function init_quick_items() {
   if (features?.pages?.item?.quick_items?.enabled) {
     document.addEventListener("RFCtoReTorn", function(e) {
       tornRFC = e.detail;
@@ -147,251 +171,241 @@
         }
       });
   }
+}
 
-  if (features?.pages?.item?.quick_items?.enabled || features?.pages?.item?.item_values?.enabled) {
-    sendMessage({name: "get_local", value: "re_items"})
-    .then((r) => {
-        if (r.status) {
-            items = r?.data?.items;
-        }
-
-        var target = document.querySelector('div.items-wrap');
-        if (target) {
-          observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
-        } else {
-          console.log("[ReTorn][Items Features] Could not find items wrap.");
-        }
-    })
-    .catch((e) => console.error(e))
-
+function initObserver() {
+  var target = document.querySelector('div.items-wrap');
+  if (target && !target.classList.contains("re_obsinit")) {
+    target.classList.add("re_obsinit");
+    observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
+  } else {
+    console.log("[ReTorn][Items Features] Could not find items wrap.");
   }
+}
 
+function updateQtyCategory(target, category) { //update qty based on observed change on Torn item page
+  if ($('#re_quick_items').find('div[data-category="'+category+'"]').length > 0 && $(target).children(`li[data-item]`).length != 0) {
+    var obj = {quick_items: {}}
+    $('#re_quick_items').find('div[data-category="'+category+'"]').each(function() {
+      let itemQty;
+      let itemID = $(this).data('itemid');
+      let lastQty = $(this).data("qty");
 
-  function updateQtyCategory(target, category) { //update qty based on observed change on Torn item page
-    if ($('#re_quick_items').find('div[data-category="'+category+'"]').length > 0 && $(target).children(`li[data-item]`).length != 0) {
-      var obj = {quick_items: {}}
-      $('#re_quick_items').find('div[data-category="'+category+'"]').each(function() {
-        let itemQty;
-        let itemID = $(this).data('itemid');
-        let lastQty = $(this).data("qty");
-
-        if ($(target).children(`li[data-item='${itemID}']`).length == 0) { //check if Torn item node exists
-          itemQty = 0;
-        } else {
-          itemQty = $(target).children(`li[data-item='${itemID}']`).attr("data-qty"); //set qty from Torn item node qty
-        }
-
-        if (lastQty != itemQty) {
-            obj["quick_items"][itemID] = {
-              itemQty: itemQty
-            }
-            //update visuals and data
-            $(this).attr("data-qty", itemQty);
-            $(this).data("qty", itemQty);
-            $(this).find('.re_qty').text(`x${itemQty}`);
-        }
-      });
-
-      //after all quick items in category are checked, check if obj has any new qty, if so, send
-      if (!jQuery.isEmptyObject(obj["quick_items"])) {
-        sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
-        .catch((e) => console.error(e))
+      if ($(target).children(`li[data-item='${itemID}']`).length == 0) { //check if Torn item node exists
+        itemQty = 0;
+      } else {
+        itemQty = $(target).children(`li[data-item='${itemID}']`).attr("data-qty"); //set qty from Torn item node qty
       }
+
+      if (lastQty != itemQty) {
+          obj["quick_items"][itemID] = {
+            itemQty: itemQty
+          }
+          //update visuals and data
+          $(this).attr("data-qty", itemQty);
+          $(this).data("qty", itemQty);
+          $(this).find('.re_qty').text(`x${itemQty}`);
+      }
+    });
+
+    //after all quick items in category are checked, check if obj has any new qty, if so, send
+    if (!jQuery.isEmptyObject(obj["quick_items"])) {
+      sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+      .catch((e) => console.error(e))
     }
   }
+}
 
-  function loadItems() {
-    sendMessage({name: "get_sync", value: "settings"})
-    .then((r) => {
-      if (!r?.status) throw r;
-      if (!jQuery.isEmptyObject(r?.data?.quick_items)) {
-          let x = 0;
-          $('#re_quick_items').empty();
-          var items = r.data.quick_items;
-          $.each(items, (index, item) => {
-            x++;
-            $('#re_quick_items').prepend(`
-              <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/large@4x.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="close"></span></button></div>
-            `);
-          });
-          orderMain = x;
-          orderMain++;
+function loadItems() {
+  sendMessage({name: "get_sync", value: "settings"})
+  .then((r) => {
+    if (!r?.status) throw r;
+    if (!jQuery.isEmptyObject(r?.data?.quick_items)) {
+        let x = 0;
+        $('#re_quick_items').empty();
+        var items = r.data.quick_items;
+        $.each(items, (index, item) => {
+          x++;
+          $('#re_quick_items').prepend(`
+            <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/large@4x.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="close"></span></button></div>
+          `);
+        });
+        orderMain = x;
+        orderMain++;
 
-          $(".close").off('click').click(function (event) {
-            event.stopPropagation();
-            event.preventDefault();
+        $(".close").off('click').click(function (event) {
+          event.stopPropagation();
+          event.preventDefault();
 
-            let itemID = $(this).parent().parent().data('itemid');
+          let itemID = $(this).parent().parent().data('itemid');
 
-            sendMessage({"name": "delete_settings_key", "item": "quick_items", "key": itemID})
-            .then((r) => {
-              loadItems();
-            })
-            .catch((e) => console.error(e))
+          sendMessage({"name": "delete_settings_key", "item": "quick_items", "key": itemID})
+          .then((r) => {
+            loadItems();
+          })
+          .catch((e) => console.error(e))
 
-          });
+        });
 
-          $(".re_quse").off('click').click(function (event) {
-            event.preventDefault();
-            let parent = $(this).parent();
-            let itemID = parent.data('itemid');
+        $(".re_quse").off('click').click(function (event) {
+          event.preventDefault();
+          let parent = $(this).parent();
+          let itemID = parent.data('itemid');
 
-            sendItemUseRequest(itemID);
+          sendItemUseRequest(itemID);
 
-            $("#re_quick_items_response").show();
+          $("#re_quick_items_response").show();
 
-          });    
-      } else {
-        $('#re_quick_items').html(`Click the Add to Quick Items <span class='option-equip wai-btn qitem-btn re_info'></span> button on an item to add it to this quick items list.`);
-      }
-    })
-    .catch((e) => console.error("[ReTorn][Quick Items][Error]", e))
-  }
+        });    
+    } else {
+      $('#re_quick_items').html(`Click the Add to Quick Items <span class='option-equip wai-btn qitem-btn re_info'></span> button on an item to add it to this quick items list.`);
+    }
+  })
+  .catch((e) => console.error("[ReTorn][Quick Items][Error]", e))
+}
 
-  function sendItemUseRequest(itemID) {
-    var options = {
-        url: "item.php?rfcv="+tornRFC,
-        type: "post",
-        data: { step: "useItem", itemID: itemID, item: itemID },
-        beforeSend: function(xhr) {
-          $("#re_quick_items_response").html('<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10">');
-        },
-        success: function(str) {
-          $("#re_quick_items_response").empty();
-          try {
-              var msg = JSON.parse(str);
-              let itemsHTML;
-              if (msg.success) {
-                  let item = $('#re_quick_items').find(`[data-itemid="${itemID}"]`);
-                  let itemQty = parseInt(item.data("qty"));
-                  itemQty--;
-                  if (itemQty < 0) {
-                    itemQty = 0;
-                  }
+function sendItemUseRequest(itemID) {
+  var options = {
+      url: "item.php?rfcv="+tornRFC,
+      type: "post",
+      data: { step: "useItem", itemID: itemID, item: itemID },
+      beforeSend: function(xhr) {
+        $("#re_quick_items_response").html('<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10">');
+      },
+      success: function(str) {
+        $("#re_quick_items_response").empty();
+        try {
+            var msg = JSON.parse(str);
+            let itemsHTML;
+            if (msg.success) {
+                let item = $('#re_quick_items').find(`[data-itemid="${itemID}"]`);
+                let itemQty = parseInt(item.data("qty"));
+                itemQty--;
+                if (itemQty < 0) {
+                  itemQty = 0;
+                }
 
-                  const obj = {
-                    quick_items: {
-                      [itemID]: {
-                        itemID: itemID,  
-                        itemQty: itemQty
-                      }
+                const obj = {
+                  quick_items: {
+                    [itemID]: {
+                      itemID: itemID,  
+                      itemQty: itemQty
                     }
                   }
-
-                  sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
-                  item.attr("data-qty", itemQty);//set attribute data
-                  item.data("qty", itemQty);//set object data
-                  item.find('.re_qty').text(`x${itemQty}`);
-
-                  if (msg.items && msg.items.itemAppear) {
-                    itemsHTML = `<div><div class="re-pack-open-result">`;
-                    for (const [key, item] of Object.entries(msg.items.itemAppear)) {
-
-                      if (item.type) {
-                        if (item.type == "Armor" || item.type == "Weapon") {
-                        itemsHTML += `
-                        <div class="re-pack-open-content expanded"><div class="re-pack-open-result">
-
-                                    <div class="cache-item single-unique">`;
-                                    if (item.bonuses) {
-                                      itemsHTML += `<div class="item-bonuses m-top3"><div class="bonuses-holder">`;
-                                      for (const [key, bonus] of Object.entries(item.bonuses)) {
-                                        itemsHTML += `<i class="bonus-attachment-${bonus.icon}" title="${bonus.hoverover}"></i>`;
-                                      }
-                                      itemsHTML += `</div></div>`;
-                                    }
-
-                                    //Item Image Start
-                                      itemsHTML += `<div><img class="torn-item" data-size="large" src="/images/items/${item.ID}/large.png"`;
-
-                                      if (item.glow) {
-                                        itemsHTML += `${item.glow}`;
-                                      }
-
-                                      itemsHTML += `></div>`;
-                                    //Item Image End
-
-                                    if (item.stats) {
-                                      itemsHTML += `<div class="item-bonuses m-bottom3">`;
-                                      for (const [key, stat] of Object.entries(item.stats)) {
-                                        itemsHTML += `<div class="stats-holder"><i class="bonus-attachment-${stat.icon}"></i><span>${stat.value}</span></div>`;
-                                      }
-                                      itemsHTML += `</div>`;
-                                    }
-
-                                    itemsHTML += `</div>`;
-
-                        itemsHTML += `</div></div>`;
-                      }
-                      }
-
-                      if (item.type && item.ID) {
-                        itemsHTML += `<div class="item-image-container">
-                              <div`;
-                              if (item.name) {
-                                itemsHTML += ` title="${item.name}"`;
-                              }
-                              itemsHTML += `>
-                                  <img width="100" height="50" src="/images/items/${item.ID}/large.png" class="cache-item">
-                              </div>
-                              `;
-                        if (parseInt(item.qty) > 1) {
-                          itemsHTML += `<div class="item-amount">${item.qty}</div></div>`;
-                        } else {
-                          itemsHTML += `</div>`;
-                        }
-                      }
-
-                    } //for loop
-                    itemsHTML += `</div></div>`;
-                  }
-
-              }
-
-              let linksHTML = `<p><a class="close-act t-blue h">Close</a>`;
-              if (msg.links) {
-                for (const [key, link] of Object.entries(msg.links)) {
-                  linksHTML+= `<a class="t-blue h m-left10 ${link.class}" href="${link.url}" ${link.attr}>${link.title}</a>`
                 }
+
+                sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+                item.attr("data-qty", itemQty);//set attribute data
+                item.data("qty", itemQty);//set object data
+                item.find('.re_qty').text(`x${itemQty}`);
+
+                if (msg.items && msg.items.itemAppear) {
+                  itemsHTML = `<div><div class="re-pack-open-result">`;
+                  for (const [key, item] of Object.entries(msg.items.itemAppear)) {
+
+                    if (item.type) {
+                      if (item.type == "Armor" || item.type == "Weapon") {
+                      itemsHTML += `
+                      <div class="re-pack-open-content expanded"><div class="re-pack-open-result">
+
+                                  <div class="cache-item single-unique">`;
+                                  if (item.bonuses) {
+                                    itemsHTML += `<div class="item-bonuses m-top3"><div class="bonuses-holder">`;
+                                    for (const [key, bonus] of Object.entries(item.bonuses)) {
+                                      itemsHTML += `<i class="bonus-attachment-${bonus.icon}" title="${bonus.hoverover}"></i>`;
+                                    }
+                                    itemsHTML += `</div></div>`;
+                                  }
+
+                                  //Item Image Start
+                                    itemsHTML += `<div><img class="torn-item" data-size="large" src="/images/items/${item.ID}/large.png"`;
+
+                                    if (item.glow) {
+                                      itemsHTML += `${item.glow}`;
+                                    }
+
+                                    itemsHTML += `></div>`;
+                                  //Item Image End
+
+                                  if (item.stats) {
+                                    itemsHTML += `<div class="item-bonuses m-bottom3">`;
+                                    for (const [key, stat] of Object.entries(item.stats)) {
+                                      itemsHTML += `<div class="stats-holder"><i class="bonus-attachment-${stat.icon}"></i><span>${stat.value}</span></div>`;
+                                    }
+                                    itemsHTML += `</div>`;
+                                  }
+
+                                  itemsHTML += `</div>`;
+
+                      itemsHTML += `</div></div>`;
+                    }
+                    }
+
+                    if (item.type && item.ID) {
+                      itemsHTML += `<div class="item-image-container">
+                            <div`;
+                            if (item.name) {
+                              itemsHTML += ` title="${item.name}"`;
+                            }
+                            itemsHTML += `>
+                                <img width="100" height="50" src="/images/items/${item.ID}/large.png" class="cache-item">
+                            </div>
+                            `;
+                      if (parseInt(item.qty) > 1) {
+                        itemsHTML += `<div class="item-amount">${item.qty}</div></div>`;
+                      } else {
+                        itemsHTML += `</div>`;
+                      }
+                    }
+
+                  } //for loop
+                  itemsHTML += `</div></div>`;
+                }
+
+            }
+
+            let linksHTML = `<p><a class="close-act t-blue h">Close</a>`;
+            if (msg.links) {
+              for (const [key, link] of Object.entries(msg.links)) {
+                linksHTML+= `<a class="t-blue h m-left10 ${link.class}" href="${link.url}" ${link.attr}>${link.title}</a>`
               }
-              linksHTML += `</p>`;
+            }
+            linksHTML += `</p>`;
 
-              let responseHTML = `<div>`;
-              if (itemsHTML) {
-                responseHTML += itemsHTML;
-              }
-              responseHTML += `<p>${msg.text}</p>${linksHTML}</div>`;
+            let responseHTML = `<div>`;
+            if (itemsHTML) {
+              responseHTML += itemsHTML;
+            }
+            responseHTML += `<p>${msg.text}</p>${linksHTML}</div>`;
 
-              $("#re_quick_items_response").append(responseHTML);
-              convertImageToCanvas($('#re_quick_items_response img.torn-item'), true);
+            $("#re_quick_items_response").append(responseHTML);
+            convertImageToCanvas($('#re_quick_items_response img.torn-item'), true);
 
 
 
-              // If response includes a countdown
-              if ($("#re_quick_items_response").find('.counter-wrap').length > 0) {
-                $("#re_quick_items_response").find('.counter-wrap').each(function() {
-                  let seconds = $(this).data('time');
-                  var date = new Date().getTime() + (seconds*1000);
-                  //using jquery.countdown plugin
-                  $(this)
-                  .countdown(date, function(event) {
-                    var totalHours = event.offset.totalDays * 24 + event.offset.hours;
-                    $(this).text(
-                      event.strftime(`${totalHours}:%M:%S`)
-                    );
-                  })
+            // If response includes a countdown
+            if ($("#re_quick_items_response").find('.counter-wrap').length > 0) {
+              $("#re_quick_items_response").find('.counter-wrap').each(function() {
+                let seconds = $(this).data('time');
+                var date = new Date().getTime() + (seconds*1000);
+                //using jquery.countdown plugin
+                $(this)
+                .countdown(date, function(event) {
+                  var totalHours = event.offset.totalDays * 24 + event.offset.hours;
+                  $(this).text(
+                    event.strftime(`${totalHours}:%M:%S`)
+                  );
                 })
-              }
-          } catch (e) {
-              console.error(e);
-          }
+              })
+            }
+        } catch (e) {
+            console.error(e);
         }
-    };
+      }
+  };
 
-    $.ajax(options);
-  }
-})();
-
+  $.ajax(options);
+}
 
 
 function isCanvasSupported() {
