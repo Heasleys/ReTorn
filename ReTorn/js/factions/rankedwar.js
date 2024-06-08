@@ -85,7 +85,7 @@ function rankedWar() {
     .then((warID) => getTornStats("wars/"+warID))
     //add data to members lists
     .then((data) => {
-      if (data.status) {
+      if (data?.status) {
         if (data.faction_a && data.faction_a.members) {
           for (const [id, member] of Object.entries(data.faction_a.members)) {
             allMembers[id] = member;
@@ -96,6 +96,8 @@ function rankedWar() {
             allMembers[id] = member;
           }
         }
+      } else {
+        throw data;
       }
     })
     .then(() => {
