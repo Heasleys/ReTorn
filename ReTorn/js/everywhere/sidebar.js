@@ -514,9 +514,19 @@
           const icons = iconString.split(',');
           icons.forEach(i => {
             if ($(`#re_hide_${i}`).length == 0) {
-              $(`#sidebar ul[class*="status-icons_"] li[class*="${i}_"]`).wrap(`<span class="re_hide" id="re_hide_${i}">`);
+              $(`#sidebar ul[class*="status-icons_"] li[class*="${i}_"]`).addClass('re_hide').attr('id', `re_hide_${i}`);
+              //$(`#sidebar ul[class*="status-icons_"] li[class*="${i}_"]`).wrap(`<span class="re_hide" id="re_hide_${i}">`);
             }
           });
+          let sidebar_icons = $(`#sidebar ul[class*="status-icons_"]`);
+          sidebar_icons.addClass('re_hide_icons');
+          
+          $('.re_hide_icons_six').removeClass('re_hide_icons_six');
+
+          sidebar_icons.find('li:not(".re_hide")')
+          .filter(function(index) {
+              return (index + 1) % 6 == 0;    
+          }).addClass('re_hide_icons_six')
       }
     }
 })();

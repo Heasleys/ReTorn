@@ -2,10 +2,16 @@
     display:none;
 }
 
-#sidebar [class*="status-icons_"][class*="big_"] li, #sidebar [class*="status-icons_"][class*="mobile_"][class*="big_"] li:nth-of-type(6n) {
+#sidebar [class*="status-icons_"][class*="big_"].re_hide_icons li, #sidebar [class*="status-icons_"][class*="mobile_"][class*="big_"].re_hide_icons li.re_hide_icons_six {
     margin-right: 10px;
 }
 
+#sidebar [class*="status-icons_"][class*="big_"].re_hide_icons li.re_hide_icons_six {
+    margin-right: 0;
+}
+
+/*
 #sidebar [class*="status-icons_"][class*="big_"] li:nth-of-type(6n) {
     margin-right: 0;
 }
+*/
