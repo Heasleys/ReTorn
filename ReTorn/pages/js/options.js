@@ -1,5 +1,7 @@
 var browser = browser || chrome;
 const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
+const isAndroidChromium = (navigator.userAgent.toLowerCase().includes('chrome') && navigator.userAgent.toLowerCase().includes('android'));
+
 
 const manifestData = browser.runtime.getManifest();
 const default_quick_links = {
@@ -350,7 +352,11 @@ function initInputs() {
 
       if (key && key.length >= 16 && key.length <= 19) {
         if (confirm('By accepting, you agree to allow the api key you entered to be transmitted to tornstats.com.')) {
-          var isGranted = await browser.permissions.request(tornstatsPermission);
+          if (isAndroidChromium) {
+            var isGranted = true; //skip checking if kiwi browser
+          } else {
+            var isGranted = await browser.permissions.request(tornstatsPermission);
+          }
           if (isGranted) {
             sendMessage({name: "set_torn_stats_api", apikey: key})
             .then((r) => {
