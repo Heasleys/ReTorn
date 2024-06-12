@@ -1,7 +1,7 @@
 {
     "name": "ReTorn",
-    "version": "1.6.1",
-    "description": "Its the return of a great Torn extension",
+    "version": "1.6.2",
+    "description": "The return of a great Torn extension.",
     "author": "Heasley",
     "manifest_version": 3,
     "icons": {

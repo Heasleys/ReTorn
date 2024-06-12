@@ -60,7 +60,7 @@ var factionPageOtherFactionObserver = new MutationObserver(function(mutations, o
 
 //faction page member battle stats
 var factionPageMemberStatsObserver = new MutationObserver(function(mutations, observer) {
-  if ($('.faction-info-wrap.another-faction .members-list .table-header .member').length == 1 && $('.re_faction_stats').length == 0) {
+  if ($('.faction-info-wrap.another-faction .members-list .table-header .member').length == 1 && $('.re_faction_stats').length == 0 && $(`.re_container[data-feature="${FACTION_FILTER}"]`).length) {
     factionPageMemberStatsObserver.disconnect();
     initMemberListSpies();
   }

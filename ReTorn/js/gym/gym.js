@@ -241,7 +241,6 @@
           },
           y: {
             title: "Stats",
-            beginAtZero: true,
             grid: {
               display: false
             },

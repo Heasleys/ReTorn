@@ -35,8 +35,8 @@
 }
 
 /* ranked war Faction Tag (hide because not needed) */
-.faction-war.re_rankedwar .members-list [class*="factionWrap"] {
-  display: none;
+.faction-war.re_rankedwar .members-list [class*="factionWrap_"] {
+  display: none !important;
 }
 
 .faction-war.re_rankedwar .members-list [class*="userWrap"] {

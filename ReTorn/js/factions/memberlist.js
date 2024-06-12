@@ -354,7 +354,7 @@ function getMemberListStats(forced = false) {
   
     const membersElements = $('.re_faction_stats ul.table-body li.table-row');
 
-    return genericSpyFunction(membersElements, `[class*='userWrap'] [class*='linkWrap']`)
+    return genericSpyFunction(membersElements, `[class*='honorWrap_'] [class*='linkWrap_']`)
   })
   .then(function() {
       //Sorting for spy column

@@ -176,10 +176,20 @@
 
         function hideLocalIcons(id) {
             if ($(`#re_hide_${id}`).length > 0) {
-                $(`#re_hide_${id} > li`).unwrap();
+                $(`#sidebar ul[class*="status-icons_"] li[class*="${id}_"]`).removeClass('re_hide').attr('id', ``);
             } else {
-                $(`#sidebar ul[class*="status-icons_"] li[class*="${id}_"]`).wrap(`<span class="re_hide" id="re_hide_${id}">`);
+                $(`#sidebar ul[class*="status-icons_"] li[class*="${id}_"]`).addClass('re_hide').attr('id', `re_hide_${id}`);
             }
-          }
+
+            let sidebar_icons = $(`#sidebar ul[class*="status-icons_"]`);
+            sidebar_icons.addClass('re_hide_icons');
+
+            $('.re_hide_icons_six').removeClass('re_hide_icons_six');
+
+            sidebar_icons.find('li:not(".re_hide")')
+            .filter(function(index) {
+                return (index + 1) % 6 == 0;    
+            }).addClass('re_hide_icons_six')
+        }
     }
 })();
