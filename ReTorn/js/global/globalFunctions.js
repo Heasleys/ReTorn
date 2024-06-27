@@ -129,6 +129,11 @@ function insertContainer(element, object) {
                 let expanded = $(this).hasClass("expanded");
                 const obj = {"headers": {[locationURL]: {[feature]: {"expanded": expanded}}}}
                 sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+                .then((r) => {
+                    if (r?.status) {
+                        settings["headers"][locationURL][feature]["expanded"] = expanded;
+                    }
+                })
                 .catch((e) => console.error(e)) 
             }
         });
