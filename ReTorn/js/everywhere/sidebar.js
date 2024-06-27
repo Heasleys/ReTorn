@@ -182,6 +182,7 @@
           if (target) {
             iconWrapObserver.observe(target, observerParams);
             hideThoseIcons();
+            bar_links();
             sidebarrootObserver.disconnect();
           }
         }
@@ -506,7 +507,6 @@
       
         return icon;
     }
-
     //function for hiding side bar icons
     function hideThoseIcons() {
       const iconString = settings?.hide_sidebar_icons;
@@ -527,6 +527,18 @@
           .filter(function(index) {
               return (index + 1) % 6 == 0;    
           }).addClass('re_hide_icons_six')
+      }
+    }
+    //function for making the sidebar bars into URLs
+    function bar_links() {
+      if (features?.sidebar?.bar_links?.enabled && !$('#sidebar.re_bar_links').length) {
+        $('#sidebar').addClass('re_bar_links');
+          $(`#sidebar [class*="bar_"][class*="energy_"] [class^='progress_']`).click(function() {
+            window.location.href = '/gym.php';
+          }); 
+          $(`#sidebar [class*="bar_"][class*="nerve_"] [class^='progress_']`).click(function() {
+            window.location.href = '/loader.php?sid=crimes';
+          }); 
       }
     }
 })();

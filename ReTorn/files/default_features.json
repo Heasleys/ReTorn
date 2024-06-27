@@ -157,10 +157,14 @@
         "quick_links": {
             "enabled": true,
             "description": "Adds custom links to the sidebar."
+        },
         "refill_reminder": {
             "enabled": true,
             "description": "Adds a subtle highlight to Energy and Nerve bars when refills are available."
         },
+        "bar_links": {
+            "enabled": true,
+            "description": "Makes the Energy and Nerve bars clickable links to their respective pages."
         }
     },
     "general": {
