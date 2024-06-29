@@ -197,6 +197,10 @@
         "trade_search": {
             "enabled": true,
             "description": "Adds a search input on trade chat."
+        },
+        "tab_autocomplete": {
+            "enabled": true,
+            "description": "Adds the ability to autocomplete names in chat using the tab key."
         }
     }
 }

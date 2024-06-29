@@ -90,7 +90,7 @@
                 "https://wiki.torn.com/*",
                 "https://api.torn.com/*"
             ],
-        "js": ["js/everywhere/other.js"],
+        "js": ["js/everywhere/other.js", "js/chat/chat.js"],
         "run_at": "document_end"
       },
       {
