@@ -6,7 +6,7 @@ if ($('div.captcha').length == 0) {
 
 const observer = new MutationObserver(function(mutations) {
     if ($('div.leaflet-map-pane[style="transform: translate3d(0px, 0px, 0px);"]').length != 0) {
-        //spawnItems();
+        //spawnItems(2500, 337);
         cityHeader();
         startCityItems();
         observer.disconnect();
@@ -107,12 +107,12 @@ function startCityItems() {
     });
 }
 
-function spawnItems() { //testing function or for possible future april fools day pranks
-    let num = 2500;
+function spawnItems(num, itemID = null) { //testing function or for possible future april fools day pranks
     var zndx = 300;
+
   
     for (let step = 0; step < num; step++) {
-        const item = randomIntFromInterval(1, 1294);
+        const item = !itemID ? randomIntFromInterval(1, 1383) : itemID;
         const x = randomIntFromInterval(10, 776);
         const y = randomIntFromInterval(10, 448);
         $('.leaflet-marker-pane').append(`
