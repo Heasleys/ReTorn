@@ -1,13 +1,13 @@
 (function() {
   if ($('div.captcha').length == 0) {
-    if (features?.pages?.gym?.faction_gym_gains?.enabled) {
       const observer = new MutationObserver(function(mutations) {
-        if ($('ul[class*="properties_"]').length != 0 && $('.re_gym_gains').length == 0) {
-          insertGymGains();
+        if ($('ul[class*="properties_"]').length != 0) {
+          if (features?.pages?.gym?.faction_gym_gains?.enabled && $('.re_gym_gains').length == 0) insertGymGains();
+          if (features?.pages?.gym?.disable_stats?.enabled && $('.re_lock_button').length == 0) insertDisablers();
         }
       });
       observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
-    }
+    
 
     if (features?.pages?.gym?.torn_stats_graph?.enabled) {
       //Torn Stats Graph
@@ -46,6 +46,43 @@
     }
   }
 
+  //Button events for disabling gyms
+  function insertDisablers() {
+    let titles = $('[class*="gymContent_"] ul[class*="properties_"] li [class*="propertyTitle_"]');
+    let span =  `<span class="re_lock_button"></span>`;
+
+    titles.each(function() {
+      $(this).before(span);
+    });
+
+    if (settings?.gym?.disabled) {
+      for (const [stat, disabled] of Object.entries(settings?.gym?.disabled)) {
+        if (disabled) {
+          $(`[class*="gymContent_"] ul[class*="properties_"] li[class*="${stat}"]`).addClass('re_locked');
+        }
+      }
+    }
+
+    $('.re_lock_button').click(function() {
+      $(this).parent().toggleClass('re_locked');
+
+      const disabled = $(this).parent().hasClass('re_locked');
+      const stat = $(this).parent().find('h3[class*="title__"]').text().toLowerCase();
+
+      const obj = {
+        "gym": {
+          "disabled": {
+            [stat]: disabled
+          }
+        }
+      }
+      sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+      .then((r) => {
+        settings["gym"]["disabled"][stat] = disabled;
+      })
+      .catch((e) => console.error(e))
+    });
+  }
 
   //Faction Gym Gains on training area
   function insertGymGains() {
@@ -101,8 +138,6 @@
       return data;
     })
     .then((data) => {
-      console.log(data);
-
       $('div#graph').html(`
       <canvas id="stats" style="height: 250px; width: 100%;"></canvas>
       `);

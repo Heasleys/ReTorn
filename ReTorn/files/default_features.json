@@ -54,6 +54,10 @@
             "faction_gym_gains": {
                 "enabled": true,
                 "description": "Adds text to easily know what Steadfast gym gains your factions has set for each stat."
+            },
+            "disable_stats": {
+                "enabled": true,
+                "description": "Sets the gym stat icons to buttons that can disabled specific gym stats."
             }
         },
         "index": {

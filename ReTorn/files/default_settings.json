@@ -157,5 +157,13 @@
             "expanded": false
         }
     },
-    "interceptFetch_logs": false
+    "interceptFetch_logs": false,
+    "gym": {
+        "disabled": {
+            "strength": false,
+            "defense": false,
+            "speed": false,
+            "dexterity": false
+        }
+    }
 }
