@@ -368,7 +368,7 @@ function waitForElm(selector) {
             }
         });
 
-        observer.observe(document.body, {
+        observer.observe(document, {
             childList: true,
             subtree: true
         });
