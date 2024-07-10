@@ -224,3 +224,5 @@ const PERSONALSTATS = [
     {key: "networthitemmarket", name: "Networth Item Market"},
     {key: "networthenlistedcars", name: "Networth Enlisted Cars"}
 ]
+
+const OBS_OPTIONS = {attributes: false, childList: true, characterData: false, subtree:true};
