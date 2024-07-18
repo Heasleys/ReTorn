@@ -99,6 +99,7 @@ function insertAMarketFilter() {
     <input class="re_stats" type="number" id="re_ah_weapons_bonuses_1_perc" min="0" placeholder="Perc" title="Bonus percent" disabled>
     <select id="re_ah_weapons_bonuses_2" class="re_bonus" required></select>
     <input class="re_stats" type="number" id="re_ah_weapons_bonuses_2_perc" min="0" placeholder="Perc" title="Bonus percent" disabled>
+    <input type="text" class="re_seller_name" placeholder="Seller name" id="re_ah_weapons_seller_textbox">
     </div>
 
     <!-- Armor -->
@@ -119,13 +120,16 @@ function insertAMarketFilter() {
     <input class="re_stats" type="number" id="re_ah_armor_defense" min="0" placeholder="Def" title="Armor defense">
     <select class="re_color" id="re_ah_armor_color" required><option value="" selected>Armor color</option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option><option value="orangered">Orange & Red</option></select>
     <input class="re_stats" type="number" id="re_ah_armor_bonus_perc" min="0" placeholder="Perc" title="Bonus percent">
+    <input type="text" class="re_seller_name" placeholder="Seller name" id="re_ah_armor_seller_textbox">
     </div>
 
     <!-- Items -->
     <div id="re_ah_items" class="re_filter" style="display: none;">
     <input type="text" id="re_ah_items_textbox" class="re_name" placeholder="Item name">
-    <select class="re_category" id="re_ah_item_category" required></select>
+    <select class="re_category" id="re_ah_items_category" required></select>
+    <input type="text" class="re_seller_name" placeholder="Seller name" id="re_ah_items_seller_textbox">
     </div>
+
     <div class="re_row re_message">
     <p>Showing <b><span id="shown">10</span></b> out of <b><span id="total">10</span></b>
     </div>
@@ -158,7 +162,7 @@ function insertAMarketFilter() {
     $.each(RE_ITEM_CATEGORIES, function(n,e) {
         itemCategoriesList += '<option data-name="'+e+'">'+e+'</option>';
     });
-    $('#re_ah_item_category').html(itemCategoriesList);
+    $('#re_ah_items_category').html(itemCategoriesList);
 
     //pull item data from retorn, fill lists for weapons, items
     sendMessage({name: "get_local", value: "re_items"})
@@ -176,11 +180,12 @@ function insertAMarketFilter() {
     })
     .catch((e) => showError(A_FILTER, e));
 
+    //Set the inputs based on auction_filter saved settings
     if (settings?.auction_filter) {
         let af = settings.auction_filter;
         if (af?.weapons) {
             let w = af.weapons;
-            //textboxese
+            //textboxes
             w?.name && $('#re_ah_weapons_list_textbox').val(w?.name);
             w?.category && $('#re_ah_weapons_category').find(`option[data-name="${w?.category}"]`).prop('selected', true);
             w?.weapon_type && $('#re_ah_weapons_type').find(`option[data-name="${w?.weapon_type}"]`).prop('selected', true);
@@ -188,6 +193,7 @@ function insertAMarketFilter() {
             w?.accuracy && $('#re_ah_weapons_accuracy').val(w?.accuracy);
             (w?.bonus_1 && w?.bonus_1?.percentage) && $('#re_ah_weapons_bonuses_1_perc').val(w?.bonus_1?.percentage);
             (w?.bonus_2 && w?.bonus_2?.percentage) && $('#re_ah_weapons_bonuses_2_perc').val(w?.bonus_2?.percentage);
+            w?.seller_name && $('#re_ah_weapons_seller_textbox').val(w?.seller_name);
 
             //selects
             w?.color && $('#re_ah_weapons_color').find(`option[value="${w?.color}"]`).prop('selected', true);
@@ -200,11 +206,13 @@ function insertAMarketFilter() {
             ar?.defense && $('#re_ah_armor_defense').val(ar?.defense);
             ar?.name && $('#re_ah_armor_types_textbox').val(ar?.name);
             ar?.percentage && $('#re_ah_armor_bonus_perc').val(ar?.percentage);
+            ar?.seller_name && $('#re_ah_armor_seller_textbox').val(ar?.seller_name);
         }
         if (af?.items) {
             let it = af.items;
-            it?.category && $('#re_ah_item_category').find(`option[data-name="${it?.category}"]`).prop('selected', true);
+            it?.category && $('#re_ah_items_category').find(`option[data-name="${it?.category}"]`).prop('selected', true);
             it?.name && $('#re_ah_items_textbox').val(it?.name);
+            it?.seller_name && $('#re_ah_items_seller_textbox').val(it?.seller_name);
         }
         
     }
@@ -251,7 +259,7 @@ function initSearchElements() {
     $('#re_ah_weapons_bonuses_1, #re_ah_weapons_bonuses_2, #re_ah_weapons_color, #re_ah_weapons_category, #re_ah_weapons_type').on('change', function() {
         filter('#types-tab-1');
     });
-    $('#re_ah_weapons_list_textbox, #re_ah_weapons_damage, #re_ah_weapons_accuracy, #re_ah_weapons_bonuses_1_perc, #re_ah_weapons_bonuses_2_perc').on('input', function() {
+    $('#re_ah_weapons_list_textbox, #re_ah_weapons_damage, #re_ah_weapons_accuracy, #re_ah_weapons_bonuses_1_perc, #re_ah_weapons_bonuses_2_perc, #re_ah_weapons_seller_textbox').on('input', function() {
         filter('#types-tab-1');
     });
 
@@ -259,7 +267,7 @@ function initSearchElements() {
     $('#re_ah_armor_color').on('change', function() {
         filter('#types-tab-2');
     });
-    $('#re_ah_armor_types_textbox, #re_ah_armor_defense, #re_ah_armor_bonus_perc').on('input', function() {
+    $('#re_ah_armor_types_textbox, #re_ah_armor_defense, #re_ah_armor_bonus_perc, #re_ah_armor_seller_textbox').on('input', function() {
         filter('#types-tab-2');
     });
 
@@ -267,7 +275,7 @@ function initSearchElements() {
     $('#re_ah_items_textbox').on('input', function() {
         filter('#types-tab-3');
     });
-    $('#re_ah_item_category').on('change', function() {
+    $('#re_ah_items_category, #re_ah_items_seller_textbox').on('change', function() {
         filter('#types-tab-3');
     })
 
@@ -290,7 +298,6 @@ function nameFilter(element, searchTerm) {
     } else {
         $(element).closest("li").removeClass('re_name_hide');
     }
-
 }
 
 //filter by bonus and bonus perc (weapon only)
@@ -586,8 +593,7 @@ function categoryFilter(element, category) {
     }
 }
 
-
-//filter by category (items and weapons)
+//filter by weapon type (weapons only)
 function weaponTypeFilter(element, type) {
     if (!type) {
         $(element).closest("li").removeClass(`re_weapons_type_hide`);
@@ -604,11 +610,25 @@ function weaponTypeFilter(element, type) {
     }
 }
 
+//filter by seller name (weapon/armor/items)
+function sellerNameFilter(element, searchTerm) {
+    var s1 = $(element).text().toLowerCase();//seller name
+    if (searchTerm) {
+        searchTerm = searchTerm.toLowerCase();
+        if(s1.indexOf(searchTerm) !== -1) {
+            $(element).closest("li").removeClass('re_seller_name_hide');
+        } else {
+            $(element).closest("li").addClass('re_seller_name_hide');
+        }
+    } else {
+        $(element).closest("li").removeClass('re_seller_name_hide');
+    }
+}
+
 //main filter function, checks for each filter
 function filter(tab) {
     const elements = $(`${tab} ul.items-list > li:not(.bg-blue,.bg-green,.clear) .item-cont-wrap`); //ignore selling, highest bid, and empty list items
 
-    
     /* Weapons */
     //name
     const nameWeapon = $('#re_ah_weapons_list_textbox').val() ? $('#re_ah_weapons_list_textbox').val() : "";
@@ -633,17 +653,22 @@ function filter(tab) {
     const categoryWeapon = $('#re_ah_weapons_category').find('option:selected').val() ? $('#re_ah_weapons_category').find('option:selected').val() : "";
     //weapon type
     const typeWeapon = $('#re_ah_weapons_type').find('option:selected').val() ? $('#re_ah_weapons_type').find('option:selected').val() : "";
+    //seller name
+    const sellerNameWeapon = $('#re_ah_weapons_seller_textbox').val() ? $('#re_ah_weapons_seller_textbox').val() : "";
+
 
     /* Armor */
     const colorArmor = $('#re_ah_armor_color').find('option:selected').val() ? $('#re_ah_armor_color').find('option:selected').val() : "";
     const nameArmor = $('#re_ah_armor_types_textbox').val() ? $('#re_ah_armor_types_textbox').val() : "";
     const defense = $('#re_ah_armor_defense').val() ? parseFloat($('#re_ah_armor_defense').val()) : "";
     const percArmor = $('#re_ah_armor_bonus_perc').val() ? parseInt($('#re_ah_armor_bonus_perc').val()) : "";
+    const sellerNameArmor = $('#re_ah_armor_seller_textbox').val() ? $('#re_ah_armor_seller_textbox').val() : "";
 
 
     /* Items */
     const nameItem = $('#re_ah_items_textbox').val() ? $('#re_ah_items_textbox').val() : "";
-    const category = $('#re_ah_item_category').find('option:selected').val() ? $('#re_ah_item_category').find('option:selected').val() : "";
+    const category = $('#re_ah_items_category').find('option:selected').val() ? $('#re_ah_items_category').find('option:selected').val() : "";
+    const sellerNameItem = $('#re_ah_items_seller_textbox').val() ? $('#re_ah_items_seller_textbox').val() : "";
 
 
     switch (tab) {
@@ -670,6 +695,7 @@ function filter(tab) {
             statFilter($(element).find('.item-bonuses .infobonuses i[class="bonus-attachment-item-damage-bonus"]').siblings('span.label-value'), damage);
             //accuracy
             statFilter($(element).find('.item-bonuses .infobonuses i[class="bonus-attachment-item-accuracy-bonus"]').siblings('span.label-value'), accuracy);
+            sellerNameFilter($(element).siblings('.seller-wrap').find('.name > a'), sellerNameWeapon);
         });
         break;
 
@@ -679,6 +705,7 @@ function filter(tab) {
             nameFilter($(element).find('.title > .item-name'), nameArmor);
             statFilter($(element).find('.item-bonuses .infobonuses i[class="bonus-attachment-item-defence-bonus"]').siblings('span.label-value'), defense);
             armorBonusPercFilter($(element).find('.item-bonuses'), percArmor);
+            sellerNameFilter($(element).siblings('.seller-wrap').find('.name > a'), sellerNameArmor);
         });
         break;
 
@@ -686,6 +713,7 @@ function filter(tab) {
         elements.each(function(index, element) {
             nameFilter($(element).find('.title > .item-name'), nameItem);
             categoryFilter($(element), category);
+            sellerNameFilter($(element).siblings('.seller-wrap').find('.name > a'), sellerNameItem);
         });
         break;
     
@@ -701,11 +729,13 @@ function filter(tab) {
                 "color": colorArmor,
                 "defense": defense,
                 "name": nameArmor,
-                "percentage": percArmor
+                "percentage": percArmor,
+                "seller_name": sellerNameArmor
             },
             "items": {
                 "category": category,
-                "name": nameItem
+                "name": nameItem,
+                "seller_name": sellerNameItem
             },
             "weapons": {
                 "accuracy": accuracy,
@@ -721,7 +751,8 @@ function filter(tab) {
                 "damage": damage,
                 "category": categoryWeapon,
                 "weapon_type": typeWeapon,
-                "name": nameWeapon
+                "name": nameWeapon,
+                "seller_name": sellerNameWeapon
             }
         }
     }

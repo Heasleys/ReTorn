@@ -1,4 +1,4 @@
-.re_color_hide, .re_bonus_hide, .re_name_hide, .re_damage_hide, .re_accuracy_hide, .re_defence_hide, .re_bonus_perc_hide, .re_category_hide, .re_weapons_type_hide {
+.re_color_hide, .re_bonus_hide, .re_name_hide, .re_damage_hide, .re_accuracy_hide, .re_defence_hide, .re_bonus_perc_hide, .re_category_hide, .re_weapons_type_hide, .re_seller_name_hide {
     display: none;
 }
 
@@ -36,7 +36,7 @@ html div#re_ah_weapons > :not(datalist):nth-child(-n+7) {
 }  
 /* small screen, add margin below first 6 filter elements */
 @media screen and (max-width: 784px) {
-    html:not(.html-manual-desktop) div#re_ah_weapons > :not(datalist):nth-child(-n+7) {
+    html:not(.html-manual-desktop) div#re_ah_weapons > :not(datalist):nth-child(-n+11) {
         margin-bottom: 5px;
     }  
 }
@@ -47,7 +47,7 @@ html div#re_ah_weapons > :not(datalist):nth-child(-n+7) {
     width: 40px;
 }
 
-.re_filter select.re_color, .re_filter input.re_name, .re_filter select.re_bonus, .re_filter select.re_category {
+.re_filter select.re_color, .re_filter input.re_name, .re_filter select.re_bonus, .re_filter select.re_category, .re_filter input.re_seller_name {
     width: 130px;
 }
 

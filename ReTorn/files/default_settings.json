@@ -127,17 +127,20 @@
             "bonus_2": {
                 "name": "",
                 "percentage": ""
-            }
+            },
+            "seller_name": ""
         },
         "armor": {
             "name": "",
             "defense": "",
             "color": "",
-            "percentage": ""
+            "percentage": "",
+            "seller_name": ""
         },
         "items": {
             "name": "",
-            "category": ""
+            "category": "",
+            "seller_name": ""
         }
     },
     "faction_profile_filter": {
