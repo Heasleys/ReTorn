@@ -270,6 +270,14 @@ p.re_playercounts > span {
 
 
 
+
+/* hide description fix for desktop */
+.r .contToggle___vg4rB.active___qf6ZC {
+  display: block;
+  overflow-x: hidden;
+}
+
+
 @media screen and (max-width: 784px) {
   html:not(.html-manual-desktop)  #tornstats-roster th.rank, html:not(.html-manual-desktop) #tornstats-roster td.rank, html:not(.html-manual-desktop) #tornstats-roster td a span.userid {
     display: none;
@@ -501,8 +509,16 @@ body.dark-mode #re_filterbuttons input:checked ~ label {
   display: none !important;
 }
 
-
-
+.faction-title[data-title="description"], .title-black[data-title="announcement"] {
+  cursor: pointer;
+}
+.faction-title[data-title="description"].re_hide_desc:before, .title-black[data-title="announcement"].re_hide_anno:before {
+  display: none;
+}
+.faction-title[data-title="description"].re_hide_desc, .title-black[data-title="announcement"].re_hide_anno {
+  border-bottom-left-radius: 5px !important;
+  border-bottom-right-radius: 5px !important;
+}
 
 
 

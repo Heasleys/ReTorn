@@ -168,5 +168,13 @@
             "speed": false,
             "dexterity": false
         }
+    },
+    "factions": {
+        "hide_description": {
+            "enabled": false
+        },
+        "hide_announcement": {
+            "enabled": false
+        }
     }
 }

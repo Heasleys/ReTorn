@@ -28,7 +28,15 @@
             "faction_name_in_tab": {
                 "enabled": true,
                 "description": "Adds the name of the faction in the browser tab."
-              }
+            },
+            "faction_hide_description": {
+                "enabled": true,
+                "description": "Adds a toggle to hide the faction description of other factions."
+            },
+            "faction_hide_announcement": {
+                "enabled": true,
+                "description": "Adds a toggle to hide your own faction's announcement box."
+            }
         },
         "forums": {
             "discord_copy": {

@@ -73,6 +73,22 @@ var factionMembersFilterObserver = new MutationObserver(function(mutations, obse
   }
 });
 
+var factionHideDescObserver = new MutationObserver(function(mutations, observer) {
+    //Faction hide description
+    if ($('.faction-title[data-title="description"]').length) {
+      add_toggle_description();
+      factionHideDescObserver.disconnect();
+    }
+});
+
+var factionHideAnnouncementObserver = new MutationObserver(function(mutations, observer) {
+  //Faction hide announcement
+  if ($('.title-black[data-title="announcement"]').length) {
+    add_toggle_announcement();
+    factionHideAnnouncementObserver.disconnect();
+  }
+})
+
 
 urlHandler();
 window.addEventListener('hashchange', hashHandler, false);
@@ -80,7 +96,7 @@ window.addEventListener('hashchange', hashHandler, false);
 
 function hashHandler() {
   var hash = location.hash;
-  if (hash.includes('tab=crimes') || hash.includes('tab=controls') || hash.includes('war/rank') || hash.match(terrRegex) || hash.includes('tab=info')) {
+  if (hash.includes('tab=crimes') || hash.includes('tab=controls') || hash.includes('tab=armoury') || hash.includes('war/rank') || hash.match(terrRegex) || hash.includes('tab=info') || hash === "#/") {
      urlHandler();
   }
 }
@@ -119,14 +135,24 @@ function urlHandler() {
     if (features?.pages?.factions?.faction_profile_spies?.enabled) {
       factionPageMemberStatsObserver.observe(target, obsOptions);
     }
+
+    if (features?.pages?.factions?.faction_hide_description?.enabled) {
+      factionHideDescObserver.observe(target, obsOptions);
+    }
+    
   } else {
     factionPageMemberStatsObserver.disconnect();
     factionMembersFilterObserver.disconnect();
+    factionHideDescObserver.disconnect();
   }
 
   if (url.includes('step=profile')) {
     if (features?.pages?.factions?.faction_name_in_tab?.enabled) {
       factionPageOtherFactionObserver.observe(target, obsOptions);
+    }
+
+    if (features?.pages?.factions?.faction_hide_description?.enabled) {
+      factionHideDescObserver.observe(target, obsOptions);
     }
 
     if (features?.pages?.factions?.faction_profile_filter?.enabled) {
@@ -136,13 +162,19 @@ function urlHandler() {
     if (features?.pages?.factions?.faction_profile_spies?.enabled) {
       factionPageMemberStatsObserver.observe(target, obsOptions);
     }
-
   } else {
     factionPageOtherFactionObserver.disconnect();
     if (!url.includes('tab=info')) {
       factionPageMemberStatsObserver.disconnect();
       factionMembersFilterObserver.disconnect();
+      factionHideDescObserver.disconnect();
     }
+  }
+
+  if (url.includes('step=your') && !url.includes('tab=')) {
+    factionHideAnnouncementObserver.observe(target, obsOptions);
+  } else {
+    factionHideAnnouncementObserver.disconnect();
   }
 
 }
@@ -545,6 +577,39 @@ function genericSpyFunction(membersElements, useridSelection) {
 
   return psList;
 }
+
+
+
+function add_toggle_announcement() {
+  $('.title-black[data-title="announcement"]').click(function() {
+    $(this).toggleClass('re_hide_anno');
+    $(this).siblings('div.announcement').toggleClass('re_hide');
+
+    const enabled = $(this).hasClass('re_hide_anno');
+
+    const obj = {
+      "factions": {
+        "hide_announcement": {
+          "enabled": enabled
+        }
+      }
+    }
+    sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+    .then((r) => {
+      settings.factions.hide_announcement.enabled = enabled;
+    })
+    .catch((e) => console.error(e))
+
+  });
+
+  if (settings?.factions?.hide_announcement?.enabled) {
+    let desc_title = $('.title-black[data-title="announcement"]');
+    desc_title.addClass('re_hide_anno');
+    desc_title.siblings('div.announcement').addClass('re_hide');
+  }
+}
+
+
 
 function featureCleanup(feature) {
   if (feature === `ranked_war_filter`) {
