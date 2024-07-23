@@ -28,6 +28,7 @@
   });
   
 
+  //If hash changes, call URL handler
   function hash_handler() {
     var hash = location.hash;
     if (hash) {
@@ -35,6 +36,7 @@
     }
   }
 
+  //Handles when changing the url, usually when on the main forum page
   function url_handler() {
     let url = location.href;
 
@@ -57,6 +59,7 @@
 
 
 function insert_discord_buttons() {
+  //Check for forum posts > action buttons
   if (!$('ul.thread-list > li ul.action-wrap').length) return;
 
   $('ul.thread-list > li ul.action-wrap').each(function() {
@@ -98,7 +101,8 @@ function insert_discord_buttons() {
     author = author.replace(/\s\s+/g, ' ');
 
     let post_container = forum_wrap.find(".post-container");
-    let text = post_container.children('.origin-post-content').text();
+    let post = post_container.find('.post');
+    let text = post.text();
 
     let formattedText = text.replace(/\[\/?(?:quote|code|img|color|size|li|ul|center|right|left|justify|background|b|i|s)+?.*?\]|\[\/?(?:u)\]/img, "");
 
@@ -119,7 +123,7 @@ function insert_discord_buttons() {
 
     //if text is too big, cut it off
     if (formattedText.length > (1700 - quote.length)) {
-      let max = (1700 - quote.length);
+      let max = (1400 - quote.length);
       formattedText = formattedText.substring(0, max) + "...";
     }
 
@@ -129,8 +133,11 @@ function insert_discord_buttons() {
     //Title for discord format
     discordFormat = `:speech_left: **${forum_title}** <${forum_url}>\n${codeblock}diff\n--- ${timestamp}\n+ ${likes} upvotes\n- ${dislikes} downvotes\n${codeblock}\n`;
 
+    //Author of post
+    discordFormat += `**${author}**:\n`;
+
     //content
-    discordFormat += `**${author}**:\n${codeblock}md\n${quote}${formattedText}\n${codeblock}`;
+    discordFormat += `${codeblock}md\n${quote}${formattedText}\n${codeblock}`;
 
     if (urls && urls.length > 0) {
       discordFormat += `\n`;
