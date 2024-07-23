@@ -79,10 +79,6 @@
   width: 65px;
 }
 
-.re_modify_active li {
-  order: unset !important;
-}
-
 .re_infotable li .re_grip, .re_infotable li .re_delete {
   min-width: 20px;
   max-width: 20px;

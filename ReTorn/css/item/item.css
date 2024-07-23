@@ -62,8 +62,14 @@ li.re_add_qitem {
   max-width: 100px;
 }
 
-#re_quick_items div img:hover {
-  cursor: pointer;
+#re_quick_items.re_disabled button:hover {
+  cursor: default;
+}
+#re_quick_items.re_disabled.re_modify_active button:hover {
+  cursor: grab;
+}
+#re_quick_items.re_disabled .re_button:hover {
+  background-color: transparent;
 }
 
 #re_quick_items button > img {
@@ -93,6 +99,22 @@ li.re_add_qitem {
   cursor: pointer;
   font-size: 15px;
 }
+
+.re_handle:before {
+  content: '≡';
+}
+.re_handle {
+  position: absolute;
+  top: 0px;
+  left: 4px;
+  cursor: grab;
+  font-size: 20px;
+}
+
+.re_sortable_placeholder {
+  background-color: var(--items-cont-bg-color);
+}
+
 
 .re-pack-open-result {
   display: flex;

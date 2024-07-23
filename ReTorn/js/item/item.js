@@ -129,6 +129,60 @@ function init_quick_items() {
     insertContainer($("div.equipped-items-wrap"), containerObject);
     const RE_CONTAINER = $(`.re_container[data-feature="${QUICK_ITEMS}"]`);
 
+
+    //insert button to toggle removing items
+    const element = `
+    <li class="re_modify_quick_items">
+        <span class="re_menu_item">
+            <i class="fa-regular fa-pen-to-square"></i>
+            <span class="re_menu_item_text">Modify quick items</span>
+        </span>
+    </li>
+    `;
+    RE_CONTAINER.find('#re_features_settings_view').prepend(element);
+    RE_CONTAINER.find('.re_modify_quick_items').click(function() {
+      let qi_container = $('#re_quick_items');
+      qi_container.find('.re_quse .close').toggleClass("re_hide");
+      qi_container.find('.re_quse .re_handle').toggleClass("re_hide");
+      qi_container.toggleClass('re_disabled');
+
+      if (qi_container.hasClass('re_modify_active')) {
+        qi_container.sortable('destroy');
+      } else {
+        qi_container.sortable({
+          items: '> .re_button',
+          cancel: '',
+          placeholder: 're_button re_sortable_placeholder',
+          tolerance: "pointer"
+        });
+        qi_container.on("sortdeactivate", function(event,ui) {
+          var obj = {
+            quick_items: {
+            }
+          }
+
+          qi_container.find('.re_button[data-itemid]').each(function(i) {
+            const itemID = $(this).attr('data-itemid');
+            $(this).css('order', i+1);
+            obj["quick_items"][itemID] = {
+              order: i+1
+            }
+          });
+
+          sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+          .then((r) => {
+            //loadItems();
+          })
+          .catch((e) => console.error(e))
+
+        })
+      }
+
+      qi_container.toggleClass('re_modify_active');
+    });
+
+
+    //Add divs for quick items content
     RE_CONTAINER.find('.re_content').html(`
       <div class="re_row" id="re_quick_items"></div>
       <div class="re_row action-wrap use-act use-action" id="re_quick_items_response" style="display: none;"></div>
@@ -151,7 +205,7 @@ function init_quick_items() {
         var itemID = thisButton.data("itemid");
         var itemCategory = thisButton.data("itemcategory");
 
-        if ($('#re_quick_items').find('div[data-itemID='+itemID+']').length == 0) {
+        if ($('#re_quick_items').find('[data-itemID='+itemID+']').length == 0) {
           const obj = {
             quick_items: {
               [itemID]: {
@@ -184,9 +238,9 @@ function initObserver() {
 }
 
 function updateQtyCategory(target, category) { //update qty based on observed change on Torn item page
-  if ($('#re_quick_items').find('div[data-category="'+category+'"]').length > 0 && $(target).children(`li[data-item]`).length != 0) {
+  if ($('#re_quick_items').find('[data-category="'+category+'"]').length > 0 && $(target).children(`li[data-item]`).length != 0) {
     var obj = {quick_items: {}}
-    $('#re_quick_items').find('div[data-category="'+category+'"]').each(function() {
+    $('#re_quick_items').find('[data-category="'+category+'"]').each(function() {
       let itemQty;
       let itemID = $(this).data('itemid');
       let lastQty = $(this).data("qty");
@@ -224,10 +278,23 @@ function loadItems() {
         let x = 0;
         $('#re_quick_items').empty();
         var items = r.data.quick_items;
-        $.each(items, (index, item) => {
+        var sorted = [];
+
+        Object
+        .keys(items).sort(function(a, b){
+            return items[a].order - items[b].order;
+        })
+        .forEach(function(key) {
+            sorted.push({[key]: items[key]});
+        });
+
+        sorted.reverse();
+        sorted.forEach((e) => {
+          const index = Object.keys(e)[0];
+          const item = Object.values(e)[0];
           x++;
           $('#re_quick_items').prepend(`
-            <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/large@4x.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="close"></span></button></div>
+            <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/large@4x.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="re_handle re_hide"></span><span class="close re_hide"></span></button></div>
           `);
         });
         orderMain = x;
@@ -236,12 +303,12 @@ function loadItems() {
         $(".close").off('click').click(function (event) {
           event.stopPropagation();
           event.preventDefault();
-
-          let itemID = $(this).parent().parent().data('itemid');
+          let qi_button = $(this).parent().parent();
+          let itemID = qi_button.data('itemid');
 
           sendMessage({"name": "delete_settings_key", "item": "quick_items", "key": itemID})
           .then((r) => {
-            loadItems();
+            qi_button.remove();
           })
           .catch((e) => console.error(e))
 
@@ -250,12 +317,13 @@ function loadItems() {
         $(".re_quse").off('click').click(function (event) {
           event.preventDefault();
           let parent = $(this).parent();
+          let qi_container = parent.parent('#re_quick_items');
+          //Do not send use request if we are modifying the buttons. Prevent accidental clicks
+          if (qi_container.hasClass('re_disabled')) return;
+
           let itemID = parent.data('itemid');
-
           sendItemUseRequest(itemID);
-
           $("#re_quick_items_response").show();
-
         });    
     } else {
       $('#re_quick_items').html(`Click the Add to Quick Items <span class='option-equip wai-btn qitem-btn re_info'></span> button on an item to add it to this quick items list.`);

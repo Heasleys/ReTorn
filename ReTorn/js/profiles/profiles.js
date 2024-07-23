@@ -361,7 +361,7 @@
       stat_list.push(t);
     });
 
-    //fill datalist for Weapon Bonuses
+    //fill datalist
     var new_stat_input = `<input type="text" id="new_stat_input" list="new_stat_datalist" placeholder="Add personal stat">
     <datalist id="new_stat_datalist">`;
     $.each(PERSONALSTATS, function(n,e) {

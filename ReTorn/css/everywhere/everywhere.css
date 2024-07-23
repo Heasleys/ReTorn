@@ -387,10 +387,6 @@ div.re_button_wrap .re_button {
   height: 26px;
 }
 
-div.re_button_wrap input[type="text"] ~ .re_button {
-
-}
-
 div.re_button_wrap input[type="text"] {
   margin-right: 8px;
 }
@@ -409,7 +405,7 @@ div.re_button_wrap input[type="text"] {
     border-bottom: 1px solid rgb(235, 235, 235);
 }
 
-.re_row .re_button:active {
+.re_row:not(.re_disabled) .re_button:active {
   position:relative;
 	top:1px;
 }
@@ -603,6 +599,11 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
     border-color: #444;
 }
 
+
+
+.re_modify_active li, .re_modify_active div {
+  order: unset !important;
+}
 
 
 
