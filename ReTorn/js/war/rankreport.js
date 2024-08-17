@@ -32,12 +32,14 @@ function insertCacheValue() {
         const text = $(this).text();
         const result = getCaches(text);
         let value = 0;
-
+        let title = `<ul>`;
         for (const [cache, qty] of Object.entries(result)) {
-            value += qty * items[CACHE_NAMES_TO_ID[cache]]["market_value"];
+            let market_value = items[CACHE_NAMES_TO_ID[cache]]["market_value"];
+            value += qty * market_value;
+            title += `<li>${cache.replace(' Cache', '')}: ${qty} x ${market_value.toLocaleString("en-US")} = ${(qty * market_value).toLocaleString("en-US")}</li>`
         }
-
-        $(this).after(`<div class="re_cache_value mt1">Cache value: <span class="t-green bold">$${value.toLocaleString("en-US")}</span></div>`)
+        title += `</ul>`;
+        $(this).after(`<div class="re_cache_value mt1">Cache value: <span class="t-green bold" title="${title}" style="cursor: pointer;">$${value.toLocaleString("en-US")}</span></div>`)
     });
 }
 
