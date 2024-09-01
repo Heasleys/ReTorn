@@ -49,11 +49,11 @@
         <div class="re_qlinks_block">
         <div class="re_qlinks_head">
             <span class="re_title noselect"><span>Quick Links</span></span>
-            <div class="re_icon_wrap">
+            <span class="re_icon_wrap">
             <span class="re_icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>
             </span>
-            </div>
+            </span>
         </div>
         <div class="re_qlinks_content" id="re_qlinks_content" style="display: none;">
 
@@ -397,7 +397,7 @@
             $(".re_qlinks_head").click(function() {
                 $(this).toggleClass("expanded");
                 $(this).next("div.re_qlinks_content").slideToggle("fast");
-                $(this).find("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
+                $(this).find(".re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
                 let expanded = $(this).hasClass("expanded");
     
                 const obj = {"headers": {"quicklinks": {"expanded": expanded}}}

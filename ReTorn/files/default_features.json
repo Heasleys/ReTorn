@@ -85,7 +85,7 @@
         "item": {
             "quick_items": {
                 "enabled": true,
-                "description": "Adds a window that allows you to quickly use items."
+                "description": "Adds a window that allows you to quickly use items and equipment."
             },
             "item_values": {
                 "enabled": false,

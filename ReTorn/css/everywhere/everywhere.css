@@ -235,6 +235,11 @@ border-top-left-radius: 0px;
 border-top-right-radius: 0px;
 }
 
+div.re_head > span {
+  display: flex;
+  align-items: center;
+}
+
 .re_title {
   font-size: 13px;
   letter-spacing: 1px;
@@ -349,13 +354,13 @@ div.re_input_wrap input[type='number'] {
 }
 
 
-div.re_icon_wrap {
+.re_icon_wrap {
 align-items: center;
 justify-content: center;
 width: 16px;
 }
 
-.re_checkbox+div.re_icon_wrap, .re_checkbox+.re_settings_icon, .re_settings_icon+div.re_icon_wrap {
+.re_checkbox+.re_icon_wrap, .re_checkbox+.re_settings_icon, .re_settings_icon+.re_icon_wrap {
   margin-left: 15px;
 }
  

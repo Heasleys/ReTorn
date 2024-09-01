@@ -87,6 +87,8 @@
     },
     "quick_items": {
     },
+    "quick_equip": {
+    },
     "bounty": {
         "hide": {
             "unavailable": false

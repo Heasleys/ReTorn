@@ -1,7 +1,8 @@
-button.re_add_qitem:hover {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAeCAYAAABwmH1PAAADJklEQVRYhZ2ZAY7jIAxFnYS5/B5qr7QHmAZWlcLIefm26SBZpG0Af/9vB9Ltz99/Zmabme1mdlx9u659H5n/3Y853Jxz/tmzdTMbrj+v6/Oyl+t5rYxj5ly9XQvTIW9HYV8iKAdA727+abMNZ/2y43KQ48z1o7D3uEff4ATBRuAJrgE4g6RAE3B3dorgcIwaT3894LdtBOyZPhZYbg6sCkIk6wjwlPPh5KjGqHEdwN9zzOs+5/CSJsNbIeUqz+d3O4JHxw0M3xxM5J8B9sCHn7MFcvOfmduK4aygUdaVpHdImoGJ0iDyt7vPgwxHecyqW0lcgf4EsFIC2WPOH2KOR7FsbmLmWFSxowqeSZu5rACfkHKVryf8IFDieP9uLQCq8jkCn4FWz2WyN4SUFdhxzcHClvn5wESGI8vAknkl8UjWlLNi38t0MnkUoCMzn8MGdtV1xvxKRV8BTFaZqxWTke+mctg3fyMroGJ9dZcWSfoU+VrNT2A7iCMei6p0Je8s36sCtzvHTDCbFaJo7WV/m+XtJgfB/spiUSCmpBXYT0AY/FPs/jTmMAGxRVJhYFYD0CHrsNiIz7/ytWXRyAYWY7LxG2Q9kntX5q58vbWGBVUb4p5qDO/l6WYy28Vvn86drfVo7cOBEXj/fXZOVY+e7oBHptb5la9V0SIQfl85yj3vJubiPSsB6AIQAyNbw02rICpgfpPQxXO2Ox/8c5jjVwLxkb8+hzOp8KypQEanmA3MZjut09nK/ATVhe83BTCHVVQYwciJbE/rwa4CVhaBjxil9B8Mr+biKTbwB4Bz+0jAlLQH/ArYPoN+Nfd/Hkv+dUjFpAK9BS/eCGrlPOxB85XrKUBnfj6II8OZfDuYJJuvBOxwBSwCrFiuQGcFTsk8rNJRxd1xzZNMxGwX+VsBVqCz3FaBeIBviPqOxVkBCT46XCggKn+jPO4L/zAotpW/Nz/IcHcBmHm1CRaj0wzBUsoVw8zl6C8WJXGazOcG53wBm2B7Arxi9RCvYSpJq8fTBPe9IHE/R7jx8ItOkLOnI9E5dDqvakL0bM7qR5bLStoqd+8Mm43/K1vuzLF5yPUAAAAASUVORK5CYII=');
-}
-
+/*
+##
+## Add to Quick Items Button
+##
+*/
 li.re_add_qitem {
   font-size: 12px;
   top: 0;
@@ -13,82 +14,146 @@ li.re_add_qitem {
   text-align: center;
   float: left;
 }
-
-.qitem-btn {
+.qitem-btn { /* Color flip for default + button for quick items blue */
   filter: sepia(50%) hue-rotate(144deg) saturate(100%) !important;
 }
-.qitem-btn.re_info {
+.qitem-btn.re_info { /* Less margin and size for the Quick Items Header info circle */
   background-position: -8px -42px !important;
   height: 20px !important;
   width: 17px !important;
 }
-#re_quick_items .qitem-btn.re_info {
+#re_quick_items .qitem-btn.re_info, #re_quick_equip .qitem-btn.re_info { /* Info button for the main quick items container should be normal margins */
   margin-left: 3px;
   margin-right: 3px;
   margin-top: 2px;
 }
 
-#re_quick_items {
+
+#re_quick_items, #re_quick_equip {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
 }
 
-#re_quick_items .re_button {
-  margin: 5px;
-  border-radius: 5px;
+#re_quick_items div, #re_quick_equip div {
+  padding: 0px;
+  align-self: stretch;
+  flex: 0 0 30%;
+  display: flex;
+  justify-content: center;
+  max-width: 105px;
 }
 
-#re_quick_items_response {
+#re_quick_items_response, #re_quick_equip_response {
   justify-content: center;
 }
 
-#re_quick_items_response > img.ajax-placeholder {
+#re_quick_items_response > img.ajax-placeholder, #re_quick_equip_response > img.ajax-placeholder {
   left: 0;
   margin-left: 0px;
 }
 
-#re_quick_items_response .close-act {
+/* Pointer for close or cancel button/links in response area */
+#re_quick_items_response .close-act, #re_quick_equip_response .close-act {
   cursor: pointer;
 }
 
-#re_quick_items div {
-  padding: 0px;
-  align-self: stretch;
-  flex: 0 0 26%;
-  display: flex;
-  justify-content: center;
-  max-width: 100px;
+
+#re_quick_items div.re_button, #re_quick_equip div.re_button { /* button container */
+  margin: 5px;
+  border-radius: 5px;
 }
 
-#re_quick_items.re_disabled button:hover {
+#re_quick_items div.re_button button, #re_quick_equip div.re_button button {
+  padding: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+div.re_button .re_name, div.re_button .re_qty{
+  font-size: 12px;
+}
+
+#re_quick_equip div.re_button .re_name {
+  font-size: 11px;
+}
+
+#re_quick_items div.re_button button > img, #re_quick_equip div.re_button button > img {
+  vertical-align: middle;
+  width: 50px;
+}
+
+#re_quick_items.re_disabled button:hover, #re_quick_equip.re_disabled button:hover {
   cursor: default;
 }
-#re_quick_items.re_disabled.re_modify_active button:hover {
+#re_quick_items.re_disabled.re_modify_active button:hover, #re_quick_equip.re_disabled.re_modify_active button:hover {
   cursor: grab;
 }
-#re_quick_items.re_disabled .re_button:hover {
+#re_quick_items.re_disabled .re_button:hover, #re_quick_equip.re_disabled .re_button:hover {
   background-color: transparent;
 }
 
-#re_quick_items button > img {
-  vertical-align: middle;
-  width: 60px;
+.re_quick_items:not(:has(#re_quick_items > *)) + .re_quick_equip .re_hr {
+  display: none;
 }
 
-#re_quick_items button {
-    padding: 5px;
-    display: flex;
-    flex-wrap: wrap;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    width: 100%;
+.re_quick_equip .re_hr {
+  border-bottom-color:#999;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+body.dark-mode .re_quick_equip .re_hr {
+  border-bottom-color:#222;
 }
 
+/* Quick Equip > stats and stat icons */
+#re_quick_equip .re_bonuses, #re_quick_equip .re_stats {
+  width: 100%;
+  font-size: 11px;
+}
+
+#re_quick_equip .re_bonuses {
+  display: flex;
+  flex-direction: column;
+}
+
+#re_quick_equip .re_stats, #re_quick_equip .re_stats > span {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+}
+
+#re_quick_equip .re_stats {
+  justify-content: space-around;
+}
+
+#re_quick_equip .re_stats [class^="bonus-attachment-"] {
+  height: 14px;
+  width: 14px;
+}
+
+#re_quick_equip .re_stats .bonus-attachment-item-damage-bonus {
+  background-position: -117px -11px;
+}
+
+#re_quick_equip .re_stats .bonus-attachment-item-accuracy-bonus {
+  background-position: -115px -80.5px;
+}
+
+#re_quick_equip .re_stats .bonus-attachment-item-defence-bonus {
+  background-position: -117px -185.5px;
+}
+
+
+/* Modify Quick Items close and handle buttons */
 .close:before {
   content: '✕';
 }
@@ -99,7 +164,6 @@ li.re_add_qitem {
   cursor: pointer;
   font-size: 15px;
 }
-
 .re_handle:before {
   content: '≡';
 }
@@ -110,19 +174,18 @@ li.re_add_qitem {
   cursor: grab;
   font-size: 20px;
 }
-
 .re_sortable_placeholder {
   background-color: var(--items-cont-bg-color);
 }
 
 
+/* quick items Supply Pack css handling */
 .re-pack-open-result {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
 }
-
 .re-pack-open-result .cache-item {
   margin: 5px;
   display: block;
@@ -138,11 +201,9 @@ li.re_add_qitem {
   border-color: var(--items-plate-border-color);
   box-shadow: var(--items-plate-box-shadow);
 }
-
 .re-pack-open-result .item-image-container {
     position: relative;
 }
-
 .re-pack-open-result .item-amount {
     position: absolute;
     right: 10px;
@@ -156,8 +217,6 @@ li.re_add_qitem {
     animation: fadeIn 1ms;
     animation-fill-mode: forwards;
 }
-
-
 .re-pack-open-result .cache-item.single-unique {
   background: url(https://www.torn.com/images/v2/items/gentleman/weapon_box.svg) left top no-repeat;
   background-size: 100% 100%;
@@ -166,7 +225,6 @@ li.re_add_qitem {
   width: 110px;
   height: 88px;
 }
-
 .re-pack-open-result .item-bonuses {
     display: flex;
     flex-direction: row;
@@ -174,7 +232,6 @@ li.re_add_qitem {
     margin-left: 3px;
     margin-right: 3px;
 }
-
 .re-pack-open-result .item-bonuses {
     display: flex;
     flex-direction: row;
@@ -182,18 +239,18 @@ li.re_add_qitem {
     margin-left: 3px;
     margin-right: 3px;
 }
-
 .re-pack-open-result .cache-item .bonuses-holder {
     display: flex;
     justify-content: end;
     width: 100%;
     align-items: center;
 }
-
 .re-pack-open-result .cache-item .bonuses-holder>* {
     margin-left: 3px;
 }
 
+
+/* ReTorn's Value on each item */
 .re_value {
   color: #999;
   font-size: 10px;
@@ -203,13 +260,49 @@ li.re_add_qitem {
 
 
 /* Modified Torn CSS */
-.d .items-cont .re_qitemWrap.actions {
+.d .items-cont .re_qitemWrap.actions { /* equippable items has weirdness with action buttons, so need to shrinks */
 width: 172px !important;
 }
-
-.d .re_qitemWrap.name-wrap {
+.d .re_qitemWrap.name-wrap { /* Name wrap should only be as wide as needed */
     width: auto !important;
 }
+
+/* Quick Equip */
+#re_quick_equip_response.re_row.items-cont {
+  flex-direction: column;
+  align-content: center;
+}
+
+#re_quick_equip_response.re_row.items-cont > li {
+  line-height: unset;
+  border: 0;
+  display: unset;
+  text-align: left;
+}
+#re_quick_equip_response.re_row.items-cont > li:hover {
+  background-color: unset;
+}
+
+/*  CSS hack to prevent Torn from hiding element automatically after re-equip */
+.re_quick_equip .action-wrap {
+  display: flex !important;
+  justify-content: center;
+  margin: 0.75em;
+}
+
+#re_quick_equip_response.re_row.items-cont > li .actions {
+  height: auto;
+  width: auto;
+}
+
+
+.d .items-cont .bonuses.re_qitemWrap {
+  right: 172px;
+}
+
+
+
+
 
 @media screen and (max-width: 784px) {
   html:not(.html-manual-desktop) .r .items-cont .re_qitemWrap.actions {
@@ -256,9 +349,9 @@ width: 172px !important;
 }
 
 /* Color CSS */
-#re_quick_items button {
+#re_quick_items button, #re_quick_equip button  {
   color: #000;
 }
-body.dark-mode #re_quick_items button {
+body.dark-mode #re_quick_items button, body.dark-mode #re_quick_equip button {
   color: #DDD;
 }
