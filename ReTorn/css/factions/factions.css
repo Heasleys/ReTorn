@@ -309,7 +309,16 @@ p.re_playercounts > span {
   }
 }
 
+/* armory filter */
+.d .pagination-wrap.re_pager {
+  padding-bottom: 1px;
+  margin-top: -10px;
+  padding-top: 0px;
+}
 
+.d .pagination-wrap.re_pager .pagination {
+  border-radius: 0px;
+}
 
 @media screen and (max-width: 1000px) {
   /* Planning OCs columns */
@@ -522,7 +531,16 @@ body.dark-mode #re_filterbuttons input:checked ~ label {
 
 
 
+html div.re_filter > :not(datalist) {
+  margin-bottom: 5px;
+}  
+html div.re_filter {
+  padding-bottom: 5px;
+}
 
+.re_filter .re_checkbox > label {
+  margin-top: 1px;
+}
 
 
 

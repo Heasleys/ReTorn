@@ -28,6 +28,7 @@ const QUICK_JAIL = "quick_jail";
 const PROFILE_STATS = "profile_stats";
 const CONNECT = "connect";
 const QUICK_CRIMES = "quick_crimes";
+const ARMORY_FILTER = "armory_filter";
 
 const SI_PREFIXES = [
     { value: 1, symbol: '' },

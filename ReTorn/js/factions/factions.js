@@ -1,4 +1,5 @@
 var allMembers = {}; //global spy data for faction scripts
+var items;
 
 (function() {
 const target = document.querySelector('.content-wrapper');
@@ -20,6 +21,29 @@ var rosterObserver = new MutationObserver(function(mutations, observer) {
   if (hash.includes('tab=controls') && $('ul.control-tabs').length == 1 && $('#tornstats-roster').length == 0) {
     rosterTab();
     rosterObserver.disconnect();
+  }
+});
+
+var armoryObserver = new MutationObserver(function(mutations, observer) {
+  let hash = location.hash;
+  if (hash.includes('tab=armoury') && $('#faction-armoury-tabs').length == 1) {
+    armoryFilter();
+    armoryObserver.disconnect();
+  }
+});
+var armoryTabObserver = new MutationObserver(function(mutations, observer) {
+  console.log($('.pagination-wrap').length, $('.re_pager').length)
+  const armoryTabs = $('#faction-armoury-tabs > div.armoury-tabs');
+  const visibleTab = armoryTabs.filter(`:visible`);
+  const id = visibleTab.attr('id');
+  console.log(visibleTab);
+  console.log($('.re_pager'));
+  
+  if (visibleTab.find('.pagination-wrap').length == 1 && visibleTab.find('.re_pager').length == 0) {
+    duplicatePager();
+    armoryTabs.not(`:visible`).find('.re_pager').remove();
+
+    insertArmoryFilter(id);
   }
 });
 
@@ -113,6 +137,14 @@ function urlHandler() {
     rosterObserver.observe(target, obsOptions);
   } else {
     rosterObserver.disconnect();
+  }
+
+  if (url.includes('tab=armoury') && features?.pages?.factions?.armory_filter?.enabled) {
+    armoryObserver.observe(target, obsOptions);
+    getItems();
+  } else {
+    armoryObserver.disconnect();
+    armoryTabObserver.disconnect();
   }
 
   if (url.includes('war/rank') && features?.pages?.factions?.ranked_war_filter?.enabled) {
@@ -375,8 +407,156 @@ function rosterClick(active) {
   }
 }
 
+
+//Armory Tab
+function armoryFilter() {
+  const target = document.getElementById('faction-armoury-tabs');
+  armoryTabObserver.observe(target, obsOptions);
+}
+
+function insertArmoryFilter(tab_id) {
+  if(["armoury-weapons", "armoury-armour", "armoury-temporary"].indexOf(tab_id) +1){
+    let tab_name = tab_id.replace("armoury-", "").replace('armour', "armor");
+    
+    //Insert container
+    if ($(`.re_container[data-feature="${ARMORY_FILTER}"][data-subfeature="${tab_name}"]`).length == 0) {
+      const containerObject = {
+          "feature": `${ARMORY_FILTER}`,
+          "insertLocation": "prepend",
+          "elementClasses": `flat-top mt0`,
+          "bar": false,
+          "subFeature": tab_name
+      }
+      insertContainer($(`#${tab_id}`), containerObject);
+      const RE_CONTAINER = $(`.re_container[data-feature="${ARMORY_FILTER}"][data-subfeature="${tab_name}"]`);
+      disableFilterCheckbox(ARMORY_FILTER);
+      $(RE_CONTAINER.find('#re_disable_filters input[type=checkbox]')).change(function() {
+        //Call thing to check filter
+        //whateverfunction(RE_CONTAINER);
+      });
+      
+      const RE_CONTENT = RE_CONTAINER.find('.re_content');
+
+      var content;
+
+      switch (tab_name) {
+        case "weapons":
+          content = `
+          <!-- Weapons -->
+          <div id="re_armoury-weapons" class="re_filter">
+          <input type="text" class="re_name" placeholder="Weapon name" list="re_f_weapons_list" id="re_f_weapons_list_textbox">
+          <datalist id="re_f_weapons_list"></datalist>
+          <select class="re_category" id="re_f_weapons_category" required></select>
+          <select class="re_category" id="re_f_weapons_type" required></select>
+          <input class="re_stats" type="number" placeholder="Dmg" id="re_f_weapons_damage" min="0" title="Weapon damage">
+          <input class="re_stats" type="number" placeholder="Acc" id="re_f_weapons_accuracy" min="0" title="Weapon accuracy">
+          <select class="re_color" id="re_f_weapons_color" required><option value="" selected>Weapon color</option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option><option value="orangered">Orange & Red</option></select>
+          <select id="re_f_weapons_bonuses_1" class="re_bonus" required></select>
+          <input class="re_stats" type="number" id="re_f_weapons_bonuses_1_perc" min="0" placeholder="Perc" title="Bonus percent" disabled>
+          <select id="re_f_weapons_bonuses_2" class="re_bonus" required></select>
+          <input class="re_stats" type="number" id="re_f_weapons_bonuses_2_perc" min="0" placeholder="Perc" title="Bonus percent" disabled>
+          </div>
+          `;
+          break;
+
+        case "armor":
+          content = `
+          <!-- Armor -->
+          <div id="re_armoury-armour" class="re_filter">
+          <input type="text" class="re_name" list="re_f_armor_types" id="re_f_armor_types_textbox" placeholder="Armor name">
+          <datalist id="re_f_armor_types">
+          <option data-name="Riot" value="Riot">Impregnable</option>
+          <option data-name="Assault" value="Assault">Impenetrable</option>
+          <option data-name="Dune" value="Dune">Insurmountable</option>
+          <option data-name="Delta" value="Delta">Invulnerable</option>
+          <option data-name="Marauder" value="Marauder">Imperviable</option>
+          <option data-name="Sentinel" value="Sentinel">Immutable</option>
+          <option data-name="Vanguard" value="Vanguard">Irrepressible</option>
+          <option data-name="EOD" value="EOD">Impassable</option>
+          <option data-name="Welding Helmet" value="Welding Helmet"></option>
+          <option data-name="Hazmat Suit" value="Hazmat Suit">Radiation</option>
+          </datalist>
+          <input class="re_stats" type="number" id="re_f_armor_defense" min="0" placeholder="Def" title="Armor defense">
+          <select class="re_color" id="re_f_armor_color" required><option value="" selected>Armor color</option><option value="none">None</option><option value="yellow">Yellow</option><option value="orange">Orange</option><option value="red">Red</option><option value="orangered">Orange & Red</option></select>
+          <input class="re_stats" type="number" id="re_f_armor_bonus_perc" min="0" placeholder="Perc" title="Bonus percent">
+          </div>
+          `;
+          break;
+        case "temporary":
+          content = `
+          <!-- Temp -->
+          <div id="re_armoury-temporary" class="re_filter">
+          <input type="text" id="re_f_temp_textbox" class="re_name" placeholder="Item name" list="re_f_temp_list" id="re_f_temp_list_textbox">
+          <datalist id="re_f_temp_list"></datalist>
+          
+          <select class="re_category" id="re_f_temp_category" required></select>
+          <div class="re_checkbox">
+          <input type="checkbox" id="re_f_temp_hide_loaned">
+          <label class="noselect" title="Hide loaned temporary weapons">Hide loaned temps</label>
+          </div>
+          </div>
+          `;
+          break;
+        default:
+          content = `<p>Armory Filter failed to load. Please refresh or report this error.</p>`;
+        break;
+      }
+
+      RE_CONTENT.append(content);
+
+      var weaponsList = '<option></option>';
+      var armorList = '<option></option';
+      var tempList = '<option></option';
+
+      $.each(items, function(n,e) {
+          if (e?.weapon_type && e?.weapon_type != "Temporary") {
+              weaponsList += '<option data-name="'+e?.name+'">'+e?.name+'</option>';
+          }
+          if (e?.type === "Defensive") {
+            armorList += '<option data-name="'+e?.name+'">'+e?.name+'</option>';
+          }
+          if (e?.type === "Temporary") {
+            tempList += '<option data-name="'+e?.name+'">'+e?.name+'</option>';
+          }
+      });
+      $('#re_f_weapons_list').html(weaponsList);
+      $('#re_f_armor_types').html(armorList);
+      $('#re_f_temp_list').html(tempList);
+
+
+      
+      
+      RE_CONTAINER.find('.re_checkbox > label').off('click').click(function() {
+        let checkbox = $(this).parent('.re_checkbox').find('input[type="checkbox"]');
+        checkbox.prop("checked", !checkbox.prop("checked"));
+        checkbox.trigger("change");
+      });
+    }
+  } 
+}
+
+function getItems() {
+  if (!items) {
+    sendMessage({name: "get_local", value: "re_items"})
+    .then((r) => {
+        if (r.status) {
+          items = r?.data?.items;
+        }
+    })
+    .catch((e) => showError(A_FILTER, e));
+  }
+}
+
+
+
 })();
 
+function duplicatePager() {
+  //duplicate pagination
+  $('.pagination-wrap').each(function(i, obj) {
+      $(this).clone().css("border-top","0").addClass('re_pager').prependTo($(this).parent());
+  });
+}
 function showReadyOCs(checked) {
   $('ul.crimes-list > li.item-wrap').each(function() {
     if ($(this).find('ul.item li.status:contains("Ready")').length > 0) {

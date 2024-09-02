@@ -18,14 +18,21 @@ function insertContainer(element, object) {
     const elementClasses = object?.elementClasses;
     const barOnly = object?.bar;
     const infoText = object?.info;
+    const subFeature = object?.subFeature;
 
     //if header already exists, ignore
-    if ($(`div.re_container[data-feature="${feature}"]`).length) return;       
+    if (!subFeature) {
+        if ($(`div.re_container[data-feature="${feature}"]`).length) return;       
+    } else {
+        if ($(`div.re_container[data-feature="${feature}"][data-subfeature="${subFeature}"]`).length) return;
+    }
 
-    const title = feature.replaceAll('_', ' ');
+    var title = feature.replaceAll('_', ' ');
+
+    if (subFeature) title += `: ${subFeature.replaceAll('_', ' ')}`;
 
     var headerElement = `
-    <div class="re_container ${elementClasses}" data-feature="${feature}">
+    <div class="re_container ${elementClasses}" data-feature="${feature}" data-subfeature="${subFeature}">
         <div class="re_head">
             <span class="re_title noselect">
                 <span id="re_title">${title}</span>`;

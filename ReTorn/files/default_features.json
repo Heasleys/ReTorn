@@ -36,6 +36,10 @@
             "faction_hide_announcement": {
                 "enabled": true,
                 "description": "Adds a toggle to hide your own faction's announcement box."
+            },
+            "armory_filter": {
+                "enabled": true,
+                "description": "Adds filters for the faction armory page."
             }
         },
         "forums": {
