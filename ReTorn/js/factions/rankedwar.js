@@ -182,6 +182,16 @@ function rankedWar() {
       RE_CONTAINER.find('#re_loader').remove();
       RE_CONTAINER.find('.re_content').prepend(`
         <div class="re_row">
+                <div class="re_button"><button><i class="fa-solid fa-user"></i>${onlineIcon}<span class="re_name">Online only</span></button></div>
+                <div class="re_button"><button><i class="fa-solid fa-user"></i>${idleIcon}<span class="re_name">Online and Idle</span></button></div>
+                <div class="re_button"><button><i class="fa-solid fa-user"></i>${offlineIcon}<span class="re_name">Offline only</span></button></div>
+
+
+        </div>
+
+
+
+        <div class="re_row">
         <div>
           ${psStr}
           <div class="switch_wrap switch_row" id="re_ps_wrap" style="display: none;">

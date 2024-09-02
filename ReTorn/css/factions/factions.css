@@ -190,17 +190,37 @@
   text-align: center;
 }
 
-/* ranked war divs should be half and half in desktop view*/
+/* ranked war divs should be half and half in desktop view
 [data-feature="ranked_war_filter"] .re_row > div {
   box-sizing: border-box;
   width: 45%;
   max-width: 45%;
-}
+}*/
 
 /*little paragraph underneath faction names for member counts being shown */
 .re_mem_count {
   font-size: 12px;
   margin-top: 5px;
+}
+
+[data-feature="ranked_war_filter"] .re_row .re_button > button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 45px;
+  justify-content: center;
+}
+
+[data-feature="ranked_war_filter"] .re_row .re_button > button > i {
+  padding-top: 5px;
+}
+
+[data-feature="ranked_war_filter"] .re_row .re_button > button > svg {
+  width: 6px;
+  height: 6px;
+  position: relative;
+  top: -18px;
+  left: 7px;
 }
 
 
