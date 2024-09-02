@@ -203,7 +203,7 @@ function init_quick_items() {
     <li class="re_modify_quick_items">
         <span class="re_menu_item">
             <i class="fa-regular fa-pen-to-square"></i>
-            <span class="re_menu_item_text">Modify quick items</span>
+            <span class="re_menu_item_text">Edit quick items</span>
         </span>
     </li>
     `;
