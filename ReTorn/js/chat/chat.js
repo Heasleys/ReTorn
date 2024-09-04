@@ -11,7 +11,7 @@
     //Chatbox Observer
     const chatboxObserver = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-            console.log(mutation);
+            //console.log(mutation);
         //new messages
         if (mutation.target && mutation.target.className) {
             const targetClass = mutation.target.className;    
@@ -129,8 +129,6 @@
         });
       
       }
-
-      console.log(namesList);
     }
       
     function getNamesInAllChats() {
