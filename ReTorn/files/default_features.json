@@ -31,11 +31,11 @@
             },
             "faction_hide_description": {
                 "enabled": true,
-                "description": "Adds a toggle to hide the faction description of other factions."
+                "description": "Click to toggle and hide the faction description panel."
             },
             "faction_hide_announcement": {
                 "enabled": true,
-                "description": "Adds a toggle to hide your own faction's announcement box."
+                "description": "Click to toggle and hide your own faction's announcement panel."
             }
         },
         "forums": {
@@ -133,7 +133,7 @@
         "crimes": {
             "quick_crimes": {
                 "enabled": true,
-                "description": "Adds a window that allows you to quickly commit crimes."
+                "description": "Adds a window that allows you to quickly commit crimes. (Crimes 1.0 Only)"
             }
         },
         "christmas_town": {
