@@ -147,6 +147,10 @@ async function createFeaturesList() {
       $('#features_card').append(`<div class="category" data-category="${key}"><h4 class="capitalize">${key}:</h4></div>`)
       iterateFeatures(d[key]);
     })
+
+    $(`#highlights, #trade_search`).prop('disabled', true);
+    $(`#highlights, #trade_search`).parent().find('span[data-tooltip]').prop('disabled', true).attr('data-tooltip', "Disabled until next Torn Chat release.");
+    $(`#highlights, #trade_search`).parent().css('color', "red");
   })
   .catch((e) => {
     console.error(e)
