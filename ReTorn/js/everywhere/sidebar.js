@@ -49,11 +49,11 @@
         <div class="re_qlinks_block">
         <div class="re_qlinks_head">
             <span class="re_title noselect"><span>Quick Links</span></span>
-            <div class="re_icon_wrap">
+            <span class="re_icon_wrap">
             <span class="re_icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>
             </span>
-            </div>
+            </span>
         </div>
         <div class="re_qlinks_content" id="re_qlinks_content" style="display: none;">
 
@@ -182,6 +182,7 @@
           if (target) {
             iconWrapObserver.observe(target, observerParams);
             hideThoseIcons();
+            bar_links();
             sidebarrootObserver.disconnect();
           }
         }
@@ -396,7 +397,7 @@
             $(".re_qlinks_head").click(function() {
                 $(this).toggleClass("expanded");
                 $(this).next("div.re_qlinks_content").slideToggle("fast");
-                $(this).find("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
+                $(this).find(".re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
                 let expanded = $(this).hasClass("expanded");
     
                 const obj = {"headers": {"quicklinks": {"expanded": expanded}}}
@@ -506,7 +507,6 @@
       
         return icon;
     }
-
     //function for hiding side bar icons
     function hideThoseIcons() {
       const iconString = settings?.hide_sidebar_icons;
@@ -527,6 +527,18 @@
           .filter(function(index) {
               return (index + 1) % 6 == 0;    
           }).addClass('re_hide_icons_six')
+      }
+    }
+    //function for making the sidebar bars into URLs
+    function bar_links() {
+      if (features?.sidebar?.bar_links?.enabled && !$('#sidebar.re_bar_links').length) {
+        $('#sidebar').addClass('re_bar_links');
+          $(`#sidebar [class*="bar_"][class*="energy_"] [class^='progress_']`).click(function() {
+            window.location.href = '/gym.php';
+          }); 
+          $(`#sidebar [class*="bar_"][class*="nerve_"] [class^='progress_']`).click(function() {
+            window.location.href = '/loader.php?sid=crimes';
+          }); 
       }
     }
 })();

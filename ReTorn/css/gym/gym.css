@@ -35,3 +35,35 @@ body.dark-mode g.highcharts-label.highcharts-tooltip path.highcharts-label-box {
   color: #678c00;
   color: var(--gym-green-color);
 }
+
+
+/* CSS for disabling gyms  */
+.re_locked {
+  display: flex;
+  flex-direction: column;
+}
+.re_locked [class*="propertyContent_"] {
+  flex: 1;
+  position: relative;
+}
+.re_locked [class*="propertyContent_"]:after {
+  background-color: var(--gym-locked-stat-overlay-bg-color);
+  content: "";
+  display: block;
+  inset: 0;
+  position: absolute;
+  margin-bottom: -12px;
+}
+
+.re_locked [class*="propertyTitle__"]:before {
+  filter: drop-shadow(0 0 1px rgba(238, 238, 238, .7098039216)) invert(100%) hue-rotate(90deg) !important;
+}
+
+.re_lock_button {
+  height: 34px;
+  width: 34px;
+  display: inline-block;
+  position: absolute;
+  z-index: 1;
+  cursor: pointer;
+}

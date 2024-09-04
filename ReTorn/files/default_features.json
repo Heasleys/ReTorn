@@ -28,7 +28,15 @@
             "faction_name_in_tab": {
                 "enabled": true,
                 "description": "Adds the name of the faction in the browser tab."
-              }
+            },
+            "faction_hide_description": {
+                "enabled": true,
+                "description": "Click to toggle and hide the faction description panel."
+            },
+            "faction_hide_announcement": {
+                "enabled": true,
+                "description": "Click to toggle and hide your own faction's announcement panel."
+            }
         },
         "forums": {
             "discord_copy": {
@@ -54,6 +62,10 @@
             "faction_gym_gains": {
                 "enabled": true,
                 "description": "Adds text to easily know what Steadfast gym gains your factions has set for each stat."
+            },
+            "disable_stats": {
+                "enabled": true,
+                "description": "Sets the gym stat icons to buttons that can disabled specific gym stats."
             }
         },
         "index": {
@@ -73,11 +85,15 @@
         "item": {
             "quick_items": {
                 "enabled": true,
-                "description": "Adds a window that allows you to quickly use items."
+                "description": "Adds a window that allows you to quickly use items and equipment."
             },
             "item_values": {
                 "enabled": false,
                 "description": "Adds a value indicator next to each item."
+            },
+            "no_confirm_equip": {
+                "enabled": false,
+                "description": "Skip the confirmation when replacing an equipment slot in the main item menu."
             }
         },
         "attack": {
@@ -117,7 +133,7 @@
         "crimes": {
             "quick_crimes": {
                 "enabled": true,
-                "description": "Adds a window that allows you to quickly commit crimes."
+                "description": "Adds a window that allows you to quickly commit crimes. (Crimes 1.0 Only)"
             }
         },
         "christmas_town": {
@@ -157,6 +173,14 @@
         "quick_links": {
             "enabled": true,
             "description": "Adds custom links to the sidebar."
+        },
+        "refill_reminder": {
+            "enabled": true,
+            "description": "Adds a subtle highlight to Energy and Nerve bars when refills are available."
+        },
+        "bar_links": {
+            "enabled": true,
+            "description": "Makes the Energy and Nerve bars clickable links to their respective pages."
         }
     },
     "general": {
@@ -171,10 +195,6 @@
         "left_align": {
             "enabled": false,
             "description": "Aligns Torn to the left to fit more chats."
-        },
-        "refill_reminder": {
-            "enabled": true,
-            "description": "Adds a subtle highlight to Energy and Nerve bars when refills are available."
         },
         "last_action_mini_profile": {
             "enabled": true,
@@ -193,6 +213,10 @@
         "trade_search": {
             "enabled": true,
             "description": "Adds a search input on trade chat."
+        },
+        "tab_autocomplete": {
+            "enabled": true,
+            "description": "Adds the ability to autocomplete names in chat using the tab key."
         }
     }
 }

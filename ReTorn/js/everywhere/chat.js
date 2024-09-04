@@ -268,51 +268,51 @@ function monitorChats(target) {
     }
 }
   
-//functions for TabComplete in chatboxes
-function addTabComplete(chatbox, title) {
-  // tabComplete using plugin from: https://www.jqueryscript.net/form/Simple-jQuery-Tab-Completion-Plugin-Tab-Complete.html
+// //functions for TabComplete in chatboxes
+// function addTabComplete(chatbox, title) {
+//   // tabComplete using plugin from: https://www.jqueryscript.net/form/Simple-jQuery-Tab-Completion-Plugin-Tab-Complete.html
 
-let textarea = chatbox.find(`[class*="chat-box-input"] textarea`);
-if (textarea.length != 0) {
+// let textarea = chatbox.find(`[class*="chat-box-input"] textarea`);
+// if (textarea.length != 0) {
 
-  //remove previous event listeners and reset tabcomplete list (in case of new names added from chat)
-  textarea.off("keydown");
-  textarea.tabComplete("reset", []);
+//   //remove previous event listeners and reset tabcomplete list (in case of new names added from chat)
+//   textarea.off("keydown");
+//   textarea.tabComplete("reset", []);
 
-  //add tabComplete functionality
-  textarea.tabComplete({
-    getOptions:function() {
-      return namesList[title]; //namesList for specific chatbox
-    },
-    getFormat: function(word, position) {
-      return word.toString();
-    },
-  select: false,
-  preventTabbing: true
-  });
+//   //add tabComplete functionality
+//   textarea.tabComplete({
+//     getOptions:function() {
+//       return namesList[title]; //namesList for specific chatbox
+//     },
+//     getFormat: function(word, position) {
+//       return word.toString();
+//     },
+//   select: false,
+//   preventTabbing: true
+//   });
 
-}
-}
-function getNamesInAllChats() {
-    $(`#chatRoot div[class*="chat-box_"]`).not(`[class*="chat-box-settings"]`).each(function() {
-        getNamesInChatbox($(this));
-    })
-}
-function getNamesInChatbox(chatbox) {
-    let title = chatbox.find(`[class*="chat-box-title"]`).attr("title").toLowerCase();
-    if (!namesList[title]) {
-        namesList[title] = [];
-    }
+// }
+// }
+// function getNamesInAllChats() {
+//     $(`#chatRoot div[class*="chat-box_"]`).not(`[class*="chat-box-settings"]`).each(function() {
+//         getNamesInChatbox($(this));
+//     })
+// }
+// function getNamesInChatbox(chatbox) {
+//     let title = chatbox.find(`[class*="chat-box-title"]`).attr("title").toLowerCase();
+//     if (!namesList[title]) {
+//         namesList[title] = [];
+//     }
 
-    chatbox.find(`div[class*="overview"] div[class*="message_"] > a`).each(function() {
-        let name = $.trim($(this).text()).replace(":", "");
-        if (!namesList[title].includes(name)) {
-        namesList[title].push(name);
-        }
-    });
+//     chatbox.find(`div[class*="overview"] div[class*="message_"] > a`).each(function() {
+//         let name = $.trim($(this).text()).replace(":", "");
+//         if (!namesList[title].includes(name)) {
+//         namesList[title].push(name);
+//         }
+//     });
 
-    addTabComplete(chatbox, title);
-}
+//     addTabComplete(chatbox, title);
+// }
 
 
 })();

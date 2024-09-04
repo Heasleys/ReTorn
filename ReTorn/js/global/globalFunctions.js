@@ -41,11 +41,11 @@ function insertContainer(element, object) {
     `;
     if (!barOnly) {
         headerElement += `
-        <div class="re_icon_wrap">
+        <span class="re_icon_wrap">
             <span class="re_icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32"><path d=""></path></svg>
             </span>
-        </div>
+        </span>
         `;
     }
     headerElement += `</div>`; //End of re_head
@@ -76,7 +76,7 @@ function insertContainer(element, object) {
   
     const remove_me_button = `<li id="re_remove_feature"><span class="re_menu_item"><i class="fa-solid fa-trash-can"></i><span class="re_menu_item_text">Remove feature</span></span></li>`
     const settings_view = `<div class="re_menu_block noselect"><div class="re_menu"><ul id="re_features_settings_view">${remove_me_button}</ul></div></div>`
-    const settings_element = `<span class="re_settings_icon"><i class="fas fa-gear" id="re_feature_settings" title="Feature Settings"></i>${settings_view}</span>`;
+    const settings_element = `<div class="re_settings_icon"><i class="fas fa-gear" id="re_feature_settings" title="Feature Settings"></i>${settings_view}</div>`;
 
     //Insert settings dropdown
     RE_CONTAINER.find('.re_head .re_title').after(settings_element);
@@ -125,10 +125,15 @@ function insertContainer(element, object) {
             if ($(this).parent('.re_container').find('.re_content').length) {
                 $(this).toggleClass("expanded");
                 $(this).next("div.re_content").slideToggle("fast");
-                $(this).find("div.re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
+                $(this).find(".re_icon_wrap > span.re_icon").toggleClass("arrow_right arrow_down");
                 let expanded = $(this).hasClass("expanded");
                 const obj = {"headers": {[locationURL]: {[feature]: {"expanded": expanded}}}}
                 sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+                .then((r) => {
+                    if (r?.status) {
+                        settings["headers"][locationURL][feature]["expanded"] = expanded;
+                    }
+                })
                 .catch((e) => console.error(e)) 
             }
         });
@@ -363,7 +368,7 @@ function waitForElm(selector) {
             }
         });
 
-        observer.observe(document.body, {
+        observer.observe(document, {
             childList: true,
             subtree: true
         });

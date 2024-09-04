@@ -1,6 +1,6 @@
 {
     "name": "ReTorn",
-    "version": "1.6.2",
+    "version": "1.7.0",
     "description": "The return of a great Torn extension.",
     "author": "Heasley",
     "manifest_version": 3,
@@ -77,7 +77,7 @@
                 "https://*.torn.com/api.html*",
                 "https://wiki.torn.com/*"
             ],
-        "css": ["/lib/fontawesome/css/all.min.css","css/everywhere/everywhere.css", "css/everywhere/quicklinks.css", "css/everywhere/npclist.css", "css/everywhere/refills.css", "css/everywhere/features.css"],
+        "css": ["/lib/fontawesome/css/all.min.css","css/everywhere/everywhere.css", "css/everywhere/quicklinks.css", "css/everywhere/npclist.css", "css/everywhere/refills.css", "css/everywhere/sidebar.css", "css/everywhere/features.css"],
         "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/global/constants.js","js/global/globalFunctions.js","js/global/miniprofiles.js","js/global/interceptFetch.js","js/everywhere/sidebar.js","js/everywhere/refills.js","js/everywhere/tornstats_events.js"],
         "run_at": "document_start"
       },
@@ -90,7 +90,7 @@
                 "https://wiki.torn.com/*",
                 "https://api.torn.com/*"
             ],
-        "js": ["js/everywhere/other.js"],
+        "js": ["js/everywhere/other.js", "js/chat/chat.js"],
         "run_at": "document_end"
       },
       {
@@ -125,7 +125,7 @@
       },
       {
         "matches": ["https://*.torn.com/item.php*"],
-        "js": ["/lib/jquery.countdown.min.js","js/item/item.js"],
+        "js": ["/lib/jquery.countdown.min.js", "lib/jqueryui/jquery-ui.min.js", "lib/jqueryui/jquery.ui.touch-punch.min.js", "js/item/item.js"],
         "css": ["css/item/item.css"],
         "run_at": "document_end"
       },

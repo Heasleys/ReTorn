@@ -1,0 +1,8 @@
+/* hover and glow on sidebar bars */
+#sidebar.re_bar_links [class*="bar_"][class*="energy"] [class^='progress_']:hover {
+    box-shadow: inset 0px 0px 2px 1px rgba(85,137,33,.5);
+}
+#sidebar.re_bar_links [class*="bar_"][class*="nerve_"] [class^='progress_']:hover {
+    box-shadow: inset 0px 0px 2px 1px rgba(185, 70, 45, .5);
+}
+

@@ -454,3 +454,32 @@ function getCounts() {
 
   return obj;
 }
+
+function add_toggle_description() {
+  $('.faction-title[data-title="description"]').click(function() {
+    $(this).toggleClass('re_hide_desc');
+    $(this).siblings('div.faction-description').toggleClass('re_hide');
+
+    const enabled = $(this).hasClass('re_hide_desc');
+
+    const obj = {
+      "factions": {
+        "hide_description": {
+          "enabled": enabled
+        }
+      }
+    }
+    sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+    .then((r) => {
+      settings.factions.hide_description.enabled = enabled;
+    })
+    .catch((e) => console.error(e))
+
+  });
+
+  if (settings?.factions?.hide_description?.enabled) {
+    let desc_title = $('.faction-title[data-title="description"]');
+    desc_title.addClass('re_hide_desc');
+    desc_title.siblings('div.faction-description').addClass('re_hide');
+  }
+}
