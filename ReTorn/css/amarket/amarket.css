@@ -2,16 +2,18 @@
     display: none;
 }
 
-.auction-market-main-cont.re_torn_ah .pagination-right {
+.auction-market-main-cont.re_torn_ah .gallery-wrapper.pagination > a:has(.pagination-right) {
     float: right;
     margin: 0;
-    top: 8px;
-    padding-right: 10px;
+    position: relative;
+    top: 6px;
+    margin-right: 10px;
 }
-.auction-market-main-cont.re_torn_ah .pagination-left {
+.auction-market-main-cont.re_torn_ah  .gallery-wrapper.pagination > a:has(> .pagination-left) {
     float: left;
     margin: 0;
-    top: 8px;
+    position: relative;
+    top: 6px;
     margin-left: 10px;
 }
 
