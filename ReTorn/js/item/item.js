@@ -148,7 +148,15 @@ const observer = new MutationObserver(function(mutations) {
               }
             }
 
-            if (features?.pages?.item && features?.pages?.item?.quick_items?.enabled == false && features?.pages?.item?.item_values?.enabled == false) observer.disconnect();
+            if (features?.pages?.item?.no_confirm_equip?.enabled) {
+              let itemCategory = element.dataset.category;
+
+              if (quick_equip_categores.includes(itemCategory) || itemCategory == "Clothing") {
+                $(element).find("ul.actions-wrap > li[data-action='equip']").attr('data-confirm', "1");
+              }
+            }
+
+            if (features?.pages?.item && features?.pages?.item?.quick_items?.enabled == false && features?.pages?.item?.item_values?.enabled == false && features?.pages?.item?.no_confirm_equip?.enabled == false) observer.disconnect();
           }//for
         }
       }

@@ -90,6 +90,10 @@
             "item_values": {
                 "enabled": false,
                 "description": "Adds a value indicator next to each item."
+            },
+            "no_confirm_equip": {
+                "enabled": false,
+                "description": "Skip the confirmation when replacing an equipment slot in the main item menu."
             }
         },
         "attack": {
