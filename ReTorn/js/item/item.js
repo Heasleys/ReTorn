@@ -406,7 +406,7 @@ function init_quick_items() {
             if (bonus_2) equipment_info.bonus_2 = {name: bonus_2, value: num_2 }
           }
 
-          if ($('#re_quick_equip').find('[data-armoryID='+armoryID+']').length != 0) return;
+          if ($('#re_quick_equip').find('[data-armoryID="'+armoryID+'"]').length != 0) return;
 
           obj = {
             quick_equip: {
