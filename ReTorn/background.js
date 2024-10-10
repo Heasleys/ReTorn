@@ -293,7 +293,7 @@ async function updateOldSettings() {
         await setValue(re_apikey, "local");
         pullRequiredAPI(oldAPI);
         createAPIAlarm();
-        browser.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
+        browser.action.setPopup({popup: "/pages/popup.html"}); //set popup to non-startup popup
         removeValue("re_api_key", "sync");
       }
     } catch {}
@@ -985,7 +985,7 @@ async function handleMessage(msg) {
       if (m.apikey) {
         await validateKey(m.apikey); //validate if the apikey is real and working
         await Promise.all([pullRequiredAPI(m.apikey), createAPIAlarm()]); //pull api data and create chrome.alarm to periodically pull api data
-        browser.action.setPopup({popup: "pages/popup.html"}); //set popup to non-startup popup
+        browser.action.setPopup({popup: "/pages/popup.html"}); //set popup to non-startup popup
         checkItemAPI(); //update items api cache when settings API key
         return {status: true, message: "Your apikey has been saved."}
       } else {
@@ -1366,7 +1366,7 @@ async function logout() {
       removeValue("re_tornstats_apikey", "local"),
       ]);
       console.log("[ReTorn][logout] Removed user data from storage", messages);
-      browser.action.setPopup({popup: "pages/popup_start.html"});
+      browser.action.setPopup({popup: "/pages/popup_start.html"});
       browser.action.setBadgeText({text: ""});
       clearAlarm("required_api");
       return {status: true, message: "You have been logged out."};
@@ -1469,7 +1469,7 @@ async function startup() {
 
   try {
     const r = await getValue("re_user_data", "local");
-      browser.action.setPopup({popup: "pages/popup.html"});
+      browser.action.setPopup({popup: "/pages/popup.html"});
       createAPIAlarm();
   }
   catch (e) {
