@@ -1,6 +1,6 @@
 {
     "name": "ReTorn",
-    "version": "1.7.2",
+    "version": "1.7.3",
     "description": "The return of a great Torn extension.",
     "author": "Heasley",
     "manifest_version": 3,
@@ -41,15 +41,8 @@
   	},
     "background": {
     	"service_worker": "background.js",
-      "type": "module",
-      "scripts": ["background.js"]
-  	},
-    "browser_specific_settings": {
-      "gecko": {
-        "id": "public@retorn.rocks",
-        "strict_min_version": "121.0"
-      }
-    },    
+      "type": "module"
+    },   
     "web_accessible_resources": [
       {
         "resources": [
