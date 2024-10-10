@@ -21,7 +21,22 @@
   
   function loadTS(forced = false) {
     if (features?.pages?.profiles?.profile_stats?.enabled) {
-      uid = parseInt($('a[href*="/playerreport.php?step=add&userID="]').attr("href").replace(/\D/g, ""));
+      try {
+        if ($('a[href*="/page.php?sid=report&userID="]')) {
+          uid = parseInt($('a[href*="page.php?sid=report&userID="]').attr("href").replace(/\D/g, ""));
+        } else {
+          if ($('a.profile-image-wrapper[href*="XID="]')) {
+            uid = parseInt($('a.profile-image-wrapper[href*="XID="]').attr("href").replace(/\D/g, ""));
+          }
+        }
+
+      }
+      catch (e) {
+        console.log(e);
+      }
+      
+      
+      
       if (uid) {
         profileHeader();
         getTornStats(`spy/user/${uid}`, 8, forced)
