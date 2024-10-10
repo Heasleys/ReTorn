@@ -41,15 +41,8 @@
   	},
     "background": {
     	"service_worker": "background.js",
-      "type": "module",
-      "scripts": ["background.js"]
-  	},
-    "browser_specific_settings": {
-      "gecko": {
-        "id": "public@retorn.rocks",
-        "strict_min_version": "121.0"
-      }
-    },    
+      "type": "module"
+    },   
     "web_accessible_resources": [
       {
         "resources": [
