@@ -1,4 +1,6 @@
 
+var re_jail_refresh_lock = false;
+
 //Changing jail pages
 var jailPageObserver = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
@@ -38,12 +40,40 @@ function initJail() {
   }
   insertContainer($("div.content-title"), containerObject);
   const RE_CONTAINER = $(`.re_container[data-feature="${QUICK_JAIL}"]`);
+  disableFilterCheckbox(QUICK_JAIL);
+
+  $(RE_CONTAINER.find('#re_disable_filters input[type=checkbox]')).change(function() {
+    filterJail();
+  });
+
+  RE_CONTAINER.find('.re_head > .re_title').after(`
+    <div id="re_jail_refresh" title="Refresh jail view">
+        <i class="fas fa-rotate re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
+    </span>
+  `);
+
+  
+  $("#re_jail_refresh").click(function(e) {
+    if (!re_jail_refresh_lock) {
+      re_jail_refresh_lock = true;
+      var icon = $(this).find('i.fa-rotate');
+      icon.addClass('fa-spin');
+      e.stopPropagation();
+      document.dispatchEvent(new CustomEvent('re_jail_refresh'));
+      setTimeout(() => {
+        icon.removeClass('fa-spin');
+        re_jail_refresh_lock = false;
+      }, 500); 
+    }
+  });
+
+  document.addEventListener("re_jail_refresh_complete", function() {
+    filterJail();
+  });
+
 
   RE_CONTAINER.find('#re_title').text("Jail");
-  RE_CONTAINER.find('.re_head .re_title').after(`<span class="re_checkbox" id="re_disable_filters">
-  <label class="re_title noselect" >Disable filters</label>
-    <input type="checkbox" title="Disable filters">
-  </span>`)
+
   RE_CONTAINER.find('.re_content').addClass('re_jail');
 
   RE_CONTAINER.find('.re_content').html(`
@@ -90,13 +120,6 @@ function initJail() {
       <p>Showing <b><span id="shown">0</span></b> out of <b><span id="total">0</span></b> people.
     </div>
   `);
-
-  RE_CONTAINER.find('#re_disable_filters').click(function(event) {
-    event.stopPropagation();
-    let checkbox = $(this).find('input[type="checkbox"]');
-    checkbox.prop("checked", checkbox.prop("checked"));
-    filterJail();
-  });
 
   //start up - set filters and checkboxes
   const jail_settings = settings?.jail;
@@ -340,3 +363,4 @@ function initJail() {
 
 
 
+ 

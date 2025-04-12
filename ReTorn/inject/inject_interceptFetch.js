@@ -33,6 +33,10 @@ document.addEventListener("initializeTooltip", function() {
     initializeTooltip('.content-wrapper', 'white-tooltip');
 });
 
+document.addEventListener("re_jail_refresh", function() {
+    jail_refresh();
+});
+
 function interceptFetch(url,q, callback) {
     const originalFetch = window.fetch;
     window.fetch = function() {
@@ -99,3 +103,68 @@ interceptFetch("torn.com","torn.com", (response, url) => {
     }
 });
   
+
+function jail_refresh() { // Basically completely copied from native Torn jail function
+    var $user_info_wrap = $(".user-info-list-wrap"),
+          $user_title_wrap = $('.users-list-title'),
+          $msg_info_wrap = $(".msg-info-wrap"),
+          $msg_empty_info_wrap = $('.msg-empty-info-wrap'),
+          $pagination_wrap = $(".pagination-wrap"),
+          $parent = $('.userlist-wrapper');
+  
+          var pathname = location.pathname,
+              hash = queryStringToObj(location.hash.replace(/[#\/]/g, '')),
+              action_name = 'jail',
+              $handelbars_id = 'jail-user-list-item';
+  
+  
+          var template = Handlebars.templates[$handelbars_id];
+  
+          var fetchPath = /jailview/i.test(window.location.pathname) ? 'jailview' : 'hospitalview'
+  
+          var avoidCacheURL = '/' + fetchPath + '.php' + '?' + new Date().getTime() + '=' + Math.random();
+  
+  
+          var options = {
+            action: avoidCacheURL,
+            type: "post",
+            data: {
+                action: action_name,
+                start: hash.start || 0
+            },
+            success: function(str) {
+                try {
+                    var msg = JSON.parse(str);
+                    var data = msg.data;
+  
+                    if (!msg.total) {
+                        $user_title_wrap.hide();
+                    } else {
+                        $parent.find('.total').text(msg.total);
+                        $parent.find('.aux-verb').text(msg.total > 1 ? 'People are' : 'Person is');
+                    }
+  
+                    $msg_info_wrap.html(data.info_text);
+                    
+                    $msg_empty_info_wrap.html(data.info_empty);
+                    $pagination_wrap.html(data.pagination ? data.pagination : "");
+                    $user_info_wrap.empty().append(template(data));
+
+                    const e = new CustomEvent("re_jail_refresh_complete");
+                    document.dispatchEvent(e);
+  
+                } catch (e) {
+                    console.log("[ReTorn][Jail Refresh] Error: ",e);
+                }
+            },
+            before: function() {
+                $user_title_wrap.show();
+                $user_info_wrap.html('<li class="last"><span class="ajax-preloader m-top10 m-bottom10"></span></li>');
+            },
+            complete: function() {
+                $(window).resize();
+            }
+          }
+  
+          $.ajax(options);
+}
