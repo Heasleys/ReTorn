@@ -535,20 +535,32 @@ function colorFilter(element, color) {
     }
 }
 
-//filter by stats (weapon/armor)
+//filter by stats (weapon/armor): damage, accuracy, defence
 function statFilter(element, value) {
-        const type = $(element).siblings('i').attr('class').replace('bonus-attachment-item-', '').replace('-bonus', '')
-        var s1 = parseFloat($(element).text());//item stat
-
-        if (value) {
-            if (s1 < value) {
-                $(element).closest("li").addClass(`re_${type}_hide`);
+        const stat_element = $(element).find('i[class*="bonus-attachment-item-"]').siblings('span.label-value');
+        
+        if (stat_element.length) {
+            const type = $(stat_element).siblings('i').attr('class').replace('bonus-attachment-item-', '').replace('-bonus', '')
+            var s1 = parseFloat($(element).text()); //item stat
+    
+            if (value) {
+                if (s1 < value) {
+                    $(element).closest("li").addClass(`re_${type}_hide`);
+                } else {
+                    $(element).closest("li").removeClass(`re_${type}_hide`);
+                }
             } else {
                 $(element).closest("li").removeClass(`re_${type}_hide`);
             }
         } else {
-            $(element).closest("li").removeClass(`re_${type}_hide`);
+            if (value) {
+
+            } else {
+                 $(element).closest("li").removeClass(`re_damage_hide re_accuracy_hide re_defence_hide`);
+            }
         }
+
+
 }
 
 //filter by armor bonus perc (armor only)
@@ -692,9 +704,9 @@ function filter(tab) {
             weaponTypeFilter($(element), typeWeapon);
             bonusFilter($(element).find('.item-bonuses'), b1, b2, perc1, perc2);
             //damage
-            statFilter($(element).find('.item-bonuses .infobonuses i[class="bonus-attachment-item-damage-bonus"]').siblings('span.label-value'), damage);
+            statFilter($(element).find('.item-bonuses .infobonuses'), damage);
             //accuracy
-            statFilter($(element).find('.item-bonuses .infobonuses i[class="bonus-attachment-item-accuracy-bonus"]').siblings('span.label-value'), accuracy);
+            statFilter($(element).find('.item-bonuses .infobonuses'), accuracy);
             sellerNameFilter($(element).siblings('.seller-wrap').find('.name > a'), sellerNameWeapon);
         });
         break;
@@ -703,7 +715,7 @@ function filter(tab) {
         elements.each(function(index, element) {
             colorFilter($(element).find('.img-wrap .item-plate'), colorArmor);
             nameFilter($(element).find('.title > .item-name'), nameArmor);
-            statFilter($(element).find('.item-bonuses .infobonuses i[class="bonus-attachment-item-defence-bonus"]').siblings('span.label-value'), defense);
+            statFilter($(element).find('.item-bonuses .infobonuses'), defense);
             armorBonusPercFilter($(element).find('.item-bonuses'), percArmor);
             sellerNameFilter($(element).siblings('.seller-wrap').find('.name > a'), sellerNameArmor);
         });
