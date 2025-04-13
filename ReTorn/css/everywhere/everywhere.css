@@ -122,7 +122,8 @@ input[disabled] {
   color: #e0ce00;
 }
 .re_title .re_logo {
-  font-size: 15px;
+  font-size: 14px;
+  margin-right: 2px;
 }
 
 .re_container .re_error {
@@ -360,7 +361,7 @@ justify-content: center;
 width: 16px;
 }
 
-.re_checkbox+.re_icon_wrap, .re_checkbox+.re_settings_icon, .re_settings_icon+.re_icon_wrap {
+.re_checkbox+.re_icon_wrap, .re_checkbox+.re_settings_icon, .re_settings_icon+.re_icon_wrap, .re_header_icon {
   margin-left: 15px;
 }
  
@@ -676,7 +677,7 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   height: 0
 }
 
-#re_feature_settings {
+.re_header_icon {
   padding: 6px 6px;
   margin: -6px -6px;
 }

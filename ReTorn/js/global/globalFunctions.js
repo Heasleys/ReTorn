@@ -76,10 +76,10 @@ function insertContainer(element, object) {
   
     const remove_me_button = `<li id="re_remove_feature"><span class="re_menu_item"><i class="fa-solid fa-trash-can"></i><span class="re_menu_item_text">Remove feature</span></span></li>`
     const settings_view = `<div class="re_menu_block noselect"><div class="re_menu"><ul id="re_features_settings_view">${remove_me_button}</ul></div></div>`
-    const settings_element = `<div class="re_settings_icon"><i class="fas fa-gear" id="re_feature_settings" title="Feature Settings"></i>${settings_view}</div>`;
+    const settings_element = `<div class="re_settings_icon"><i class="fas fa-gear re_header_icon" id="re_feature_settings" title="Feature Settings"></i>${settings_view}</div>`;
 
     //Insert settings dropdown
-    RE_CONTAINER.find('.re_head .re_title').after(settings_element);
+    RE_CONTAINER.find('.re_head > .re_title').after(settings_element);
   
     $(document).on('click', function(e) { //hide feature menu if it's open when clicking anywhere else
         RE_CONTAINER.find('#re_feature_settings').removeClass('re_active');
@@ -162,7 +162,7 @@ function settingsCheckbox(liID, checkboxID, text) {
 function disableFilterCheckbox(FEATURE) {
     const RE_CONTAINER = $(`.re_container[data-feature="${FEATURE}"]`);
     //insert additional buttons to the header
-    RE_CONTAINER.find('.re_head .re_title').after(`
+    RE_CONTAINER.find('.re_head > .re_title').after(`
     <span class="re_checkbox" id="re_disable_filters">
         <label class="re_title noselect">Disable filters</label>
         <input type="checkbox" title="Disable filters">
