@@ -217,72 +217,21 @@ function init_quick_items() {
     `;
     RE_CONTAINER.find('#re_features_settings_view').prepend(element);
     RE_CONTAINER.find('.re_modify_quick_items').off('click').click(function() {
-      let qi_container = $('#re_quick_items, #re_quick_equip');
-      qi_container.find('.re_quse .close').toggleClass("re_hide");
-      qi_container.find('.re_quse .re_handle').toggleClass("re_hide");
-      qi_container.toggleClass('re_disabled');
-
-      if (qi_container.hasClass('re_modify_active')) {
-        qi_container.sortable('destroy');
-      } else {
-        qi_container.sortable({
-          items: '> .re_button',
-          cancel: '',
-          placeholder: 're_button re_sortable_placeholder',
-          tolerance: "pointer"
-        });
-        qi_container.off("sortdeactivate").on("sortdeactivate", function(event,ui) {
-          var obj_qi = {
-            quick_items: {
-            }
-          }
-
-
-          $('#re_quick_items').each(function() {
-            $(this).find('.re_button[data-itemid]').each(function(i) {
-              const itemID = $(this).attr('data-itemid');
-              $(this).css('order', i+1);
-              obj_qi["quick_items"][itemID] = {
-                order: i+1
-              }
-            });
-          })
-
-          sendMessage({"name": "merge_sync", "key": "settings", "object": obj_qi})
-          .then((r) => {
-            //loadItems();
-          })
-          .catch((e) => console.error(e))
-
-
-
-          var obj_qe = {
-            quick_equip: {
-            }
-          }
-
-          $('#re_quick_equip').each(function() {
-            $(this).find('.re_button[data-armoryid]').each(function(i) {
-              const armoryID = $(this).attr('data-armoryid');
-              $(this).css('order', i+1);
-              obj_qe["quick_equip"][armoryID] = {
-                order: i+1
-              }
-            });
-          })
-
-          sendMessage({"name": "merge_sync", "key": "settings", "object": obj_qe})
-          .then((r) => {
-            //loadItems();
-          })
-          .catch((e) => console.error(e))
-
-        })
-      }
-
-      qi_container.toggleClass('re_modify_active');
-      $("#re_quick_equip .re_button").toggleClass("equipped");
+      modify_quick_items();
     });
+
+    RE_CONTAINER.find('.re_head > .re_title').after(`
+      <div id="re_save_quick_items" class="re_header_icon_wrap" title="Save quick items" style="display: none; margin-right: 20px;">
+          <i class="fas fa-save re_header_icon" style="--fa-animation-duration: 0.4s; --fa-animation-iteration-count: 1;"></i>
+      </span>
+    `);
+    RE_CONTAINER.find('#re_save_quick_items').off('click').click(function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      $(this).find('i').addClass("fa-beat");
+      modify_quick_items();
+    });
+    
 
 
     //Add divs for quick items content
@@ -422,6 +371,82 @@ function init_quick_items() {
         .catch((e) => console.error(e))
         
       });
+
+
+      function modify_quick_items() {
+        let qi_container = $('#re_quick_items, #re_quick_equip');
+        qi_container.find('.re_quse .close').toggleClass("re_hide");
+        qi_container.find('.re_quse .re_handle').toggleClass("re_hide");
+        qi_container.toggleClass('re_disabled');
+
+        if (qi_container.hasClass('re_modify_active')) {
+          qi_container.sortable('destroy');
+          
+          $('#re_save_quick_items').fadeOut(500);
+          setTimeout(() => {
+            $('#re_save_quick_items > i').removeClass("fa-beat");
+          }, 500); 
+        } else {
+          qi_container.sortable({
+            items: '> .re_button',
+            cancel: '',
+            placeholder: 're_button re_sortable_placeholder',
+            tolerance: "pointer"
+          });
+          qi_container.off("sortdeactivate").on("sortdeactivate", function(event,ui) {
+            var obj_qi = {
+              quick_items: {
+              }
+            }
+
+
+            $('#re_quick_items').each(function() {
+              $(this).find('.re_button[data-itemid]').each(function(i) {
+                const itemID = $(this).attr('data-itemid');
+                $(this).css('order', i+1);
+                obj_qi["quick_items"][itemID] = {
+                  order: i+1
+                }
+              });
+            })
+
+            sendMessage({"name": "merge_sync", "key": "settings", "object": obj_qi})
+            .then((r) => {
+              //loadItems();
+            })
+            .catch((e) => console.error(e))
+
+
+
+            var obj_qe = {
+              quick_equip: {
+              }
+            }
+
+            $('#re_quick_equip').each(function() {
+              $(this).find('.re_button[data-armoryid]').each(function(i) {
+                const armoryID = $(this).attr('data-armoryid');
+                $(this).css('order', i+1);
+                obj_qe["quick_equip"][armoryID] = {
+                  order: i+1
+                }
+              });
+            })
+
+            sendMessage({"name": "merge_sync", "key": "settings", "object": obj_qe})
+            .then((r) => {
+              //loadItems();
+            })
+            .catch((e) => console.error(e))
+
+          })
+          $('#re_save_quick_items').show();
+        }
+
+        qi_container.toggleClass('re_modify_active');
+        $("#re_quick_equip .re_button").toggleClass("equipped");
+        }
+
   }
 }
 
@@ -484,6 +509,7 @@ function loadItems() {
     let qi_container = $('#re_quick_items, #re_quick_equip');
     if (qi_container.hasClass('re_modify_active')) {
       qi_container.removeClass('re_modify_active re_disabled');
+      $('#re_save_quick_items').hide();
       qi_container.sortable('destroy');
     }
     qi_container.empty();
