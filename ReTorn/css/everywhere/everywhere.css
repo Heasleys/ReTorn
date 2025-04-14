@@ -677,6 +677,10 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   height: 0
 }
 
+.re_header_icon_wrap {
+  margin-right: 15px;
+}
+
 .re_header_icon {
   padding: 6px 6px;
   margin: -6px -6px;
@@ -698,6 +702,11 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
 
 #re_feature_settings.re_active+.re_menu_block > .re_menu {
   display: block;
+}
+
+i#re_feature_settings::before {
+  z-index: 10001;
+  position: relative;
 }
 
 .re_menu {

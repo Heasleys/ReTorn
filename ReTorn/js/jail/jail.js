@@ -47,7 +47,7 @@ function initJail() {
   });
 
   RE_CONTAINER.find('.re_head > .re_title').after(`
-    <div id="re_jail_refresh" title="Refresh jail view">
+    <div id="re_jail_refresh" class="re_header_icon_wrap" title="Refresh jail view">
         <i class="fas fa-rotate re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
     </span>
   `);
