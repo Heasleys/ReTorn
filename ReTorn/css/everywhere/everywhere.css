@@ -1100,6 +1100,7 @@ body.dark-mode .re_button button .close:hover {
   background-color: var(--default-bg-panel-active-color);
   border: 1px solid var(--default-tabs-active-color);
   opacity: 0;
+  padding: 15px;
 }
 .re-modal-header {
   text-shadow: 0 0 2px #000000;
