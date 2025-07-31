@@ -2,9 +2,15 @@
 :root {
   --re-header-background: linear-gradient(180deg, var(--re-header-color) 0%, var(--re-header-color-two) 100%);
 }
+
+@font-face {
+    font-family: "IBMPlexSans";
+    src: url("/lib/fonts/IBMPlexSans-VariableFont_wdth,wght.ttf");
+}
+
 .re_logo {
-  font-family: "impact", "Arial Black";
-  font-weight: normal;
+  font-family: "IBMPlexSans";
+  font-weight: bold;
   letter-spacing: 0.5px;
   text-shadow: rgb(0 0 0 / 95%) 0px 0px 4px;
 }
@@ -33,6 +39,7 @@
   font-weight: 700;
   line-height: 16px;
   color: white;
+  font-family: "IBMPlexSans";
 }
 
 
@@ -140,9 +147,9 @@ button.mobile {
 /* Options Page = Menu Sidebar */
   .title {
     font-size: 28px;
-    font-family: "impact";
+    font-family: "IBMPlexSans";
     letter-spacing: 0.5px;
-    font-weight: normal;
+    font-weight: bold;
     color: #fff;
     border-bottom: 1px solid white;
   }
