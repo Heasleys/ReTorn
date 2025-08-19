@@ -110,6 +110,11 @@ html.html-manual-desktop .re_jail .grid_wrap {
   background-position: -20px -18px !important;
 }
 
+#re_jail_refresh:active {
+  position: relative;
+  top: 1px;
+}
+
 .qbust-icon, .qbye-icon {
     display: inline-block;
     height: 18px;
