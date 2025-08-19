@@ -81,26 +81,26 @@ function initJail() {
       <div class="re_col">
         <div class="grid_wrap">
           <div class="grid_box box1">
-            <div class="re_checkbox">
+            <div class="re_checkbox fancybox">
               <input type="checkbox" id="re_jail_qbust" name='bust'>
               <label class="noselect" title="Instantly bust someone">Quick Bust</label>
             </div>
           </div>
           <div class="grid_box box2">
-            <div class="re_checkbox">
+            <div class="re_checkbox fancybox">
               <input type="checkbox" id="re_jail_sbust" name='bust'>
               <label class="noselect" title="Sets bust icon to quick confirm button after first click">Speed Bust</label>
             </div>
           </div>
           
           <div class="grid_box box3">
-            <div class="re_checkbox">
+            <div class="re_checkbox fancybox">
               <input type="checkbox" id="re_jail_qbail" name='bail'>
               <label class="noselect" title="Instantly bail someone">Quick Bail</label>
             </div>
           </div>
           <div class="grid_box box4">
-            <div class="re_checkbox">
+            <div class="re_checkbox fancybox">
               <input type="checkbox" id="re_jail_sbail" name='bail'>
               <label class="noselect" title="Sets bail icon to quick confirm button after first click">Speed Bail</label>
             </div>

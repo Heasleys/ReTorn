@@ -160,13 +160,23 @@ input[disabled] {
   }
 }
 
+.re_checkbox.fancybox {
+  border-radius: 3px;
+  border: 1px solid var(--input-border-color);
+  padding: 5px;
+}
+.re_checkbox.fancybox:hover {
+  border-color: var(--input-hover-border-color);
+}
+.re_checkbox.fancybox:active {
+  position:relative;
+	top:1px;
+}
+
 
 .re_checkbox {
   display: flex;
   align-items: center;
-}
-
-.re_checkbox {
   float: right;
 }
 

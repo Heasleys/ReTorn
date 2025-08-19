@@ -14,7 +14,8 @@
   width: 90px;
   padding: 0 0 0 3px;
   border-radius: 3px;
-  height: 18px;
+  height: 25px;
+  margin-top: -2px;
 }
 
 .re_row {
@@ -89,10 +90,7 @@ html.html-manual-desktop .re_jail .grid_wrap {
 
 .grid_box .re_checkbox > label {
   margin-top: 0px;
-}
-
-.re_content.re_jail input[type="number"] {
-  margin-top: -2px;
+  white-space: nowrap;
 }
 
 
