@@ -83,6 +83,11 @@
             "walls": {
                 "enabled": false
             }
+        },
+        "overlays": {
+            "items_overlay": {
+                "enabled": true
+            }
         }
     },
     "quick_items": {
