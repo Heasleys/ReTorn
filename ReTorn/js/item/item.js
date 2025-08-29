@@ -206,18 +206,56 @@ function init_quick_items() {
     const RE_CONTAINER = $(`.re_container[data-feature="${QUICK_ITEMS}"]`);
 
 
-    //insert button to toggle removing items
+    //insert quick item menu buttons
     const element = `
-    <li class="re_modify_quick_items">
+    <li id="re_modify_quick_items">
         <span class="re_menu_item">
             <i class="fa-regular fa-pen-to-square"></i>
             <span class="re_menu_item_text">Edit quick items</span>
         </span>
     </li>
+    <li id="re_toggle_quick_items_compact">
+        <span class="re_menu_item">
+            <i class="fa-solid fa-compress"></i>
+            <span class="re_menu_item_text">Set to compact view</span>
+        </span>
+    </li>
     `;
     RE_CONTAINER.find('#re_features_settings_view').prepend(element);
-    RE_CONTAINER.find('.re_modify_quick_items').off('click').click(function() {
+    RE_CONTAINER.find('#re_modify_quick_items').off('click').click(function() {
       modify_quick_items();
+    });
+
+    if (settings?.quick_items?.compact_view?.enabled) {
+      RE_CONTAINER.addClass("re_quick_items_compact");
+      RE_CONTAINER.find('#re_toggle_quick_items_compact .re_menu_item_text').text("Set to default view")
+    }
+    RE_CONTAINER.find('#re_toggle_quick_items_compact').off('click').click(function() {
+      RE_CONTAINER.toggleClass("re_quick_items_compact");
+      let enabled;
+
+      enabled = RE_CONTAINER.hasClass("re_quick_items_compact");
+
+      view_text = RE_CONTAINER.find('#re_toggle_quick_items_compact .re_menu_item_text');
+
+      if (enabled) {
+          view_text.text("Set to default view")
+      } else {
+          view_text.text("Set to compact view")
+      }
+      const obj = {
+        "quick_items": {
+          "compact_view": {
+              "enabled": enabled
+          }
+        }
+      }
+      sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+      .then((r) => {
+        settings["quick_items"]["compact_view"]["enabled"] = enabled;
+      })
+      .catch((e) => console.error(e))
+
     });
 
     RE_CONTAINER.find('.re_head > .re_title').after(`

@@ -91,6 +91,9 @@
         }
     },
     "quick_items": {
+        "compact_view": {
+            "enabled": false
+        }
     },
     "quick_equip": {
     },
