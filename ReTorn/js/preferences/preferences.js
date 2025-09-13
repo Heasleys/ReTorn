@@ -15,7 +15,7 @@
         RE_CONTAINER.find('.re_settings_icon').remove();
         RE_CONTAINER.find('.re_content').html(`
         <div class="re_row">
-            <p id="re_signin_message">You are not signed into ReTorn. Please enter your api key then click connect.</p>
+            <p id="re_signin_message">You are not signed into ReTorn. Please enter your api key then click connect. Click <a href="https://www.retorn.rocks/privacy/">here</a> to view the ReTorn privacy policy.</p>
         </div>
         <div class="re_row">
             <div class="re_button_wrap">
@@ -79,21 +79,21 @@
 
 
         function isSynced(r) {
-        if (r.status) {
-            sendMessage({name: "get_local", value: "re_user"})
-            .then((rr) => {
-                $("#re_signin_message").text(`Welcome ${rr?.data?.name}! You are signed in.`);
-            })
-            .catch((e) => console.error(e))
+            if (r.status) {
+                sendMessage({name: "get_local", value: "re_user"})
+                .then((rr) => {
+                    $("#re_signin_message").text(`Welcome ${rr?.data?.name}! You are signed in.`);
+                })
+                .catch((e) => console.error(e))
 
-            $("#re_sync").text("Connected!");
-            $("#re_sync").attr("disabled", true);
-            $("#re_sync").attr("hidden", false);
-            $("#re_logout").attr("hidden", false);
-            $("#re_apikey").hide();
-        } else {
-            signedOut();
-        }
+                $("#re_sync").text("Connected!");
+                $("#re_sync").attr("disabled", true);
+                $("#re_sync").attr("hidden", false);
+                $("#re_logout").attr("hidden", false);
+                $("#re_apikey").hide();
+            } else {
+                signedOut();
+            }
         }
 
         function signedOut() {
@@ -102,7 +102,7 @@
             $("#re_logout").attr("hidden", true);
             $('#re_apikey').val('');
             $("#re_apikey").show();
-            $("#re_signin_message").text(`You are not signed into ReTorn. Please enter your api key then click connect.`);
+            $("#re_signin_message").html(`You are not signed into ReTorn. Please enter your api key then click connect. Click <a href="https://www.retorn.rocks/privacy/">here</a> to view the ReTorn privacy policy.`);
         }
 
         function errorMessage(error) {
