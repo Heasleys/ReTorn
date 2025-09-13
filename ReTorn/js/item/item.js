@@ -687,10 +687,6 @@ function sendItemUseRequest(itemID, item_category, armoryID) {
   var data, response, parent;
   if (quick_equip_categores.includes(item_category)) {
     return; //quick equip is being done via modified HTML class manipulation instead of an item request
-    data = {step: "actionForm", item_id: itemID, item: itemID, id: 1, type: 5, action: "equip"};
-    if (armoryID) data = {step: "actionForm", confirm: 1, action: "equip", id: armoryID}
-    response = $("#re_quick_equip_response");
-    parent = $("#re_quick_equip");
   }
   if (qitem_categories.includes(item_category)) {
     data = { step: "useItem", itemID: itemID, item: itemID }

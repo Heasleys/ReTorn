@@ -699,10 +699,6 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
   margin-right: 15px;
 }
 
-.re_header_icon_wrap > .re_title:hover {
-  cursor: pointer;
-}
-
 .re_header_icon {
   padding: 6px 6px;
   margin: -6px -6px;
