@@ -164,6 +164,7 @@ input[disabled] {
   border-radius: 3px;
   border: 1px solid var(--input-border-color);
   padding: 5px;
+  box-sizing: border-box;
 }
 .re_checkbox.fancybox:hover {
   border-color: var(--input-hover-border-color);
@@ -696,6 +697,10 @@ body.dark-mode .re_scrollbox::-webkit-scrollbar-thumb {
 
 .re_header_icon_wrap {
   margin-right: 15px;
+}
+
+.re_header_icon_wrap > .re_title:hover {
+  cursor: pointer;
 }
 
 .re_header_icon {

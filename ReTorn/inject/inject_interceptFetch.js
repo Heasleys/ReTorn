@@ -132,6 +132,13 @@ function jail_refresh() { // Basically completely copied from native Torn jail f
                 action: action_name,
                 start: hash.start || 0
             },
+            beforeSend: function() {
+                $user_title_wrap.show();
+                $user_info_wrap.html('<li class="last"><span class="ajax-preloader m-top10 m-bottom10"></span></li>');
+            },
+            complete: function() {
+                $(window).resize();
+            },
             success: function(str) {
                 try {
                     var msg = JSON.parse(str);
@@ -156,13 +163,6 @@ function jail_refresh() { // Basically completely copied from native Torn jail f
                 } catch (e) {
                     console.log("[ReTorn][Jail Refresh] Error: ",e);
                 }
-            },
-            before: function() {
-                $user_title_wrap.show();
-                $user_info_wrap.html('<li class="last"><span class="ajax-preloader m-top10 m-bottom10"></span></li>');
-            },
-            complete: function() {
-                $(window).resize();
             }
           }
   

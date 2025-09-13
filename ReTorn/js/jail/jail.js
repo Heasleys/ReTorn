@@ -1,5 +1,7 @@
 
 var re_jail_refresh_lock = false;
+var re_shown_users = [];
+
 
 //Changing jail pages
 var jailPageObserver = new MutationObserver(function(mutations) {
@@ -49,21 +51,107 @@ function initJail() {
   RE_CONTAINER.find('.re_head > .re_title').after(`
     <div id="re_jail_refresh" class="re_header_icon_wrap" title="Refresh jail view">
         <i class="fas fa-rotate re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
-    </span>
+    </div>
   `);
 
   
   $("#re_jail_refresh").click(function(e) {
+    e.stopPropagation();
     if (!re_jail_refresh_lock) {
       re_jail_refresh_lock = true;
       var icon = $(this).find('i.fa-rotate');
       icon.addClass('fa-spin');
-      e.stopPropagation();
       document.dispatchEvent(new CustomEvent('re_jail_refresh'));
       setTimeout(() => {
         icon.removeClass('fa-spin');
         re_jail_refresh_lock = false;
       }, 500); 
+    }
+  });
+
+  RE_CONTAINER.find('.re_head > .re_title').after(`
+    <div id="re_jail_easy_bust" class="re_header_icon_wrap" title="Bust the easiest shown player or refresh jail">
+      <i class="fas fa-soap re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
+    </div>
+  `);
+
+  $("#re_jail_easy_bust").click(function(e) {
+    e.stopPropagation();
+    var icon = $(this).find('i.fa-soap');
+    icon.addClass('fa-beat');
+    setTimeout(() => {
+      icon.removeClass('fa-beat');
+    }, 500); 
+
+
+    if (!re_shown_users.length) { // No users in filtered list, refresh
+      if (!re_jail_refresh_lock) {
+        re_jail_refresh_lock = true;
+        document.dispatchEvent(new CustomEvent('re_jail_refresh'));
+        setTimeout(() => {
+          re_jail_refresh_lock = false;
+        }, 500); 
+      }
+    } else {
+      //find easiest user (by score) and try to bust
+      var hiddenClassName = 'bye';
+      var selectorClassName = 'bust';
+
+      let lowest = re_shown_users.shift(); //get lowest (first entry) and remove from array
+
+      var action_el = $(`ul.user-info-list-wrap > li > a.${selectorClassName}[href^="jailview.php?XID=${lowest.userid}"]`); //bust button for lowest player
+      if (!action_el) {
+        return; //failed
+      }
+      var $parent = action_el.parents('li');
+      var messagesContainer = $parent.find(".confirm-" + selectorClassName);
+
+      var options = {
+        url: `jailview.php?XID=${lowest.userid}&action=rescue&step=breakout1`,
+        type: "get",
+        beforeSend: function(xhr) {
+          messagesContainer.find('.ajax-preloader').remove();
+          $parent.find('.ajax-action').remove();
+          messagesContainer.append('<span class="ajax-preloader"></span>');
+
+          action_el.prev().removeClass('active')
+          action_el.next().removeClass('active')
+          if (action_el.is('.active')) {
+              action_el.removeClass('active')
+          } else {
+              action_el.addClass('active')
+          }
+
+          action_el.closest('li')
+              .addClass('active')
+              .find('.confirm-' + selectorClassName)
+              .toggle()
+              .end()
+              .find('.confirm-' + hiddenClassName)
+              .hide();
+          if (action_el.parents('li').find('.confirm-' + selectorClassName).is(':hidden')) {
+              action_el.parents('li').removeClass('active');
+          }
+        },
+        success: function(res) {
+          try {
+              var data = JSON.parse(res),
+                  html = '';
+              if(data.msg) html = '<div class="ajax-action">' + data.msg + '</div>';
+              if(data.error) html = '<div class="ajax-action">' + data.text + '</div>';
+              messagesContainer.html("");
+              messagesContainer.append(html);
+              messagesContainer.parents('.info-msg-cont').removeClass("green red blue").addClass(data.color);
+              messagesContainer.parents('.info-msg-cont').attr('tabindex', 0);
+          } catch (e) {
+              data = '<div class="ajax-action">' + data + '</div>';
+              messagesContainer.html("");
+              messagesContainer.append(data);
+          }
+        }
+      };
+
+      $.ajax(options);
     }
   });
 
@@ -238,6 +326,8 @@ function initJail() {
       scoreFilter = 0;
     }
 
+    re_shown_users.length = 0; // empty the shown user array
+
     var total = 0;
     var shown = 0;
     //for each user in list - do filtering
@@ -253,6 +343,10 @@ function initJail() {
         return;
       }
 
+      let href = $(this).find('a.user.name').attr('href');
+      let match = href.match(/XID=(\d+)/);
+      let userid = match ? match[1] : null;
+
       time = info_wrap.find('span.time')[0].textContent.replace(/\s+/g, '').replace('TIME:', '');
       level = parseInt(info_wrap.find('span.level')[0].textContent.replace(/\s+/g, '').replace('LEVEL:', ''));
 
@@ -265,13 +359,20 @@ function initJail() {
       info_wrap.attr("title", "<b>Minutes: </b>" + time.toLocaleString() + "<br><b>Score: </b>"+score.toLocaleString());
 
       if (levelFilter && level > levelFilter && levelFilter != 0) {
-        $(this).hide();
+        $(this).addClass("re_hide")
       } else
 
       if (scoreFilter && score > scoreFilter && scoreFilter != 0) {
-        $(this).hide();
+        $(this).addClass("re_hide")
       } else {
-        $(this).show();
+        $(this).removeClass("re_hide");
+
+        if (userid && score) {
+          re_shown_users.push({
+            userid: userid,
+            score: score
+          });
+        }
         shown++;
       }
 
@@ -280,7 +381,7 @@ function initJail() {
     $('#shown').text(shown);
     $('#total').text(total);
 
-
+    re_shown_users.sort((a, b) => a.score - b.score); //sort by lowest score
   }
 
 
