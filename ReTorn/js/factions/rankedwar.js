@@ -96,71 +96,75 @@ function rankedWar() {
             allMembers[id] = member;
           }
         }
-      } else {
-        throw data;
       }
+
+      return data;
     })
-    .then(() => {
+    .then((data) => {
       $('.f-war-list .faction-war').addClass('re_rankedwar'); //Used for CSS styling for less jumpy pages
       const RW_CONTAINER = $('.re_rankedwar');
-      RW_CONTAINER.find('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
-  
-      //Sorting for spy column
-      RW_CONTAINER.find('.re_spy_title').click(function() {
-        const spyCols = RW_CONTAINER.find('.re_spy_title');
-        
-        //send out a React State Change request to sort by player name first
-        const className = 'faction-war re_rankedwar';
-  
-        const opponentActive = $('.faction-names .enemy').is('[class*=active_]');
-        //opponentActive is needed in case of small screen, we don't want to force switch the faction view
-        const newStateObj = {
-          "opponentActive": opponentActive,
-          "sorting": {
-            "field": "playername",
-            "direction": "desc"
-          }
-        }
-        const e = new CustomEvent("reUpdateState", {detail: {className: className, newState: newStateObj}});
-        document.dispatchEvent(e);
-        //React State Change Request
-  
-        
-        const clickedSpyCol = $(this); //then spyCol that was clicked
-        const clickedIcon = clickedSpyCol.find('.re_sort_icon');
-        let dir = true;  //always sort by largest > smallest first
-        if (clickedIcon.hasClass('re_desc')) dir = false;
-  
-        spyCols.each(function() {//now change icon for both spyCols to the correct direction
-          const spyCol = $(this); 
-          const icon = spyCol.find('.re_sort_icon');
-  
-          const memberCont = spyCol.closest('.members-cont');
-          const memberList = memberCont.find('ul.members-list');
+
+      if (data?.status) {
+        RW_CONTAINER.find('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
+    
+        //Sorting for spy column
+        RW_CONTAINER.find('.re_spy_title').click(function() {
+          const spyCols = RW_CONTAINER.find('.re_spy_title');
           
-          memberCont.find('div[class*="sortIcon_"]').removeClass(function (index, css) {
-            return (css.match (/(^|\s)desc_\S+/g) || []).join(' ');
-          }).removeClass(function (index, css) {
-            return (css.match (/(^|\s)asc_\S+/g) || []).join(' ');
-          });
-  
-          //actually sort the players based on direction
-          if (dir) {
-            icon.removeClass('re_asc').addClass('re_desc');
-            memberList.find('li').sort(sort_li_desc).appendTo(memberList);
-          } else {
-            icon.removeClass('re_desc').addClass('re_asc');
-            memberList.find('li').sort(sort_li_asc).appendTo(memberList);
+          //send out a React State Change request to sort by player name first
+          const className = 'faction-war re_rankedwar';
+    
+          const opponentActive = $('.faction-names .enemy').is('[class*=active_]');
+          //opponentActive is needed in case of small screen, we don't want to force switch the faction view
+          const newStateObj = {
+            "opponentActive": opponentActive,
+            "sorting": {
+              "field": "playername",
+              "direction": "desc"
+            }
           }
+          const e = new CustomEvent("reUpdateState", {detail: {className: className, newState: newStateObj}});
+          document.dispatchEvent(e);
+          //React State Change Request
+    
+          
+          const clickedSpyCol = $(this); //then spyCol that was clicked
+          const clickedIcon = clickedSpyCol.find('.re_sort_icon');
+          let dir = true;  //always sort by largest > smallest first
+          if (clickedIcon.hasClass('re_desc')) dir = false;
+    
+          spyCols.each(function() {//now change icon for both spyCols to the correct direction
+            const spyCol = $(this); 
+            const icon = spyCol.find('.re_sort_icon');
+    
+            const memberCont = spyCol.closest('.members-cont');
+            const memberList = memberCont.find('ul.members-list');
+            
+            memberCont.find('div[class*="sortIcon_"]').removeClass(function (index, css) {
+              return (css.match (/(^|\s)desc_\S+/g) || []).join(' ');
+            }).removeClass(function (index, css) {
+              return (css.match (/(^|\s)asc_\S+/g) || []).join(' ');
+            });
+    
+            //actually sort the players based on direction
+            if (dir) {
+              icon.removeClass('re_asc').addClass('re_desc');
+              memberList.find('li').sort(sort_li_desc).appendTo(memberList);
+            } else {
+              icon.removeClass('re_desc').addClass('re_asc');
+              memberList.find('li').sort(sort_li_asc).appendTo(memberList);
+            }
+          })
+        });
+        //if another column is clicked, then remove the classes from the spy column
+        RW_CONTAINER.find('div.members-cont > div > div[class*="tab_"]').click(function() {
+          $(this).closest('.faction-war').find('.re_spy_title .re_sort_icon').removeClass('re_asc').removeClass('re_desc');
         })
-      });
-      //if another column is clicked, then remove the classes from the spy column
-      RW_CONTAINER.find('div.members-cont > div > div[class*="tab_"]').click(function() {
-        $(this).closest('.faction-war').find('.re_spy_title .re_sort_icon').removeClass('re_asc').removeClass('re_desc');
-      })
-  
-      const membersElements = RW_CONTAINER.find('ul.members-list > li');
-      return genericSpyFunction(membersElements, `div.member div[class*="honorWrap"] a`);
+      }
+    
+        const membersElements = RW_CONTAINER.find('ul.members-list > li');
+        return genericSpyFunction(membersElements, `div.member div[class*="honorWrap"] a`);
+      
     })
     //insert information into header (buttons/text) and input functions
     .then((psList) => {
@@ -168,7 +172,7 @@ function rankedWar() {
       psStr += `<option value="offline">Offline</option><option value="idle">Idle</option><option value="online">Online</option><option value="not okay">Not Okay</option>`;
       
       //psList will be empty if no Torn Stats data is available
-      if (psList.length != 0) psStr += `<option value="strength">Strength</option><option value="defense">Defense</option><option value="speed">Speed</option><option value="dexterity">Dexterity</option><option value="total">Total Stats</option>`;
+      if (psList &&psList.length != 0) psStr += `<option value="strength">Strength</option><option value="defense">Defense</option><option value="speed">Speed</option><option value="dexterity">Dexterity</option><option value="total">Total Stats</option>`;
       
       for (var i = 0; i < psList.length; i++) {
          psStr += `<option value="${psList[i]}">${psList[i]}</option>`;
@@ -346,8 +350,10 @@ function rankedWar() {
     })
     .catch((err) => {
       console.log("[ReTorn][Ranked War Filter] Error: ", err);
+      let error = err;
+      if (err.message) error = err.message;
       RE_CONTAINER.find('#re_loader').remove();
-      RE_CONTAINER.find('#re_message').html(`<span class="re_error">${err}</span>`);
+      RE_CONTAINER.find('#re_message').html(`<span class="re_error">${error}</span>`);
       RE_CONTAINER.find('#re_message').show();
     });
   }
