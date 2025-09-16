@@ -131,6 +131,9 @@ function insertContainer(element, object) {
                 sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
                 .then((r) => {
                     if (r?.status) {
+                        if (!settings.headers[locationURL]) settings.headers[locationURL] = {};
+                        if (!settings.headers[locationURL][feature]) settings.headers[locationURL][feature] = {};
+
                         settings["headers"][locationURL][feature]["expanded"] = expanded;
                     }
                 })
