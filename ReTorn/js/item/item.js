@@ -226,7 +226,7 @@ function init_quick_items() {
       modify_quick_items();
     });
 
-    if (settings?.quick_items?.compact_view?.enabled) {
+    if (settings?.quick_items_compact_view?.enabled) {
       RE_CONTAINER.addClass("re_quick_items_compact");
       RE_CONTAINER.find('#re_toggle_quick_items_compact .re_menu_item_text').text("Set to default view")
     }
@@ -244,15 +244,13 @@ function init_quick_items() {
           view_text.text("Set to compact view")
       }
       const obj = {
-        "quick_items": {
-          "compact_view": {
+        "quick_items_compact_view": {
               "enabled": enabled
-          }
         }
       }
       sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
       .then((r) => {
-        settings["quick_items"]["compact_view"]["enabled"] = enabled;
+        settings["quick_items_compact_view"]["enabled"] = enabled;
       })
       .catch((e) => console.error(e))
 

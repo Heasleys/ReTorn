@@ -91,11 +91,11 @@
         }
     },
     "quick_items": {
-        "compact_view": {
-            "enabled": false
-        }
     },
     "quick_equip": {
+    },
+    "quick_items_compact_view": {
+        "enabled": false
     },
     "bounty": {
         "hide": {
