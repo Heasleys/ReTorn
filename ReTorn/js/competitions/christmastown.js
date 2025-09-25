@@ -16,7 +16,8 @@ $(document).ready(function() {
 function initCT() {
   insertHead();
   updateFriendsList();
-  insertWalls();
+  insertCTWalls();
+  insertItemOverlay();
 
   if (settings?.christmas_town) {
     const ct_settings = settings.christmas_town;
@@ -138,9 +139,17 @@ function insertHead() {
           <label class="noselect" title="List possible solutions">Hangman</label>
         </div>
         <div class="re_checkbox">
-        <input type="checkbox" name='typocalypse'>
-        <label class="noselect" title="Ignore typos">Typocalypse</label>
+          <input type="checkbox" name='typocalypse'>
+          <label class="noselect" title="Ignore typos">Typocalypse</label>
+        </div>
       </div>
+
+      <div class="switch_wrap mb4" name="overlays">
+        <p class="re_ptitle">Overlays</p>
+        <div class="re_checkbox">
+          <input type="checkbox" name='items_overlay'>
+          <label class="noselect" title="Show item coordinates overlay">Item overlay</label>
+        </div>
       </div>
     </div>
 
@@ -245,29 +254,6 @@ function insertHead() {
     checkbox.prop("checked", !checkbox.prop("checked"));
     checkbox.trigger("change");
   });
-}
-
-function insertWalls() {
-  if ($('#re_walls').length == 0) {
-    $('.negative-coordinates').append(`
-      <div>
-        <div id="re_walls">
-          <div class="lefttop"></div>
-          <div class="lefttop2"></div>
-          <div class="top"></div>
-          <div class="righttop"></div>
-          <div class="righttop2"></div>
-          <div class="right"></div>
-          <div class="rightbottom"></div>
-          <div class="rightbottom2"></div>
-          <div class="bottom"></div>
-          <div class="leftbottom"></div>
-          <div class="leftbottom2"></div>
-          <div class="left"></div>
-        </div>
-      </div>
-      `);
-  }
 }
 
 function updateFriendsList() {
@@ -415,6 +401,7 @@ const CT_WORDLIST = ["elf","eve","fir","ham","icy","ivy","joy","pie","toy","gift
 
 function christmas_town(response) {
   insertCTWalls();
+  insertItemOverlay();
   if (response && response.mapData) {
     resetCTMiniGameCheats();
     if (response.mapData.user) {
@@ -446,6 +433,7 @@ function christmas_town(response) {
     if (response.mapData.items) {
       $('ul#nearby_items').empty();
       $('ul#nearby_chests').empty();
+      $(`#re_item_overlay_text`).empty();
       let itemqty = 0;
       let chestqty = 0;
       if (response.mapData.items.length > 0) {
@@ -461,6 +449,7 @@ function christmas_town(response) {
               itemqty++;
               $('ul#nearby_items').append(`<li><div class="re_list_item item">${name} ${pos}</div></li>`);
               $(`.items-layer .ct-item img[src="${item.image.url}"]`).parent('.ct-item').addClass('re_item');
+              $(`#re_item_overlay_text`).append(`<p>${name} ${pos}</p>`);
             }
           }
         }
@@ -764,6 +753,18 @@ function insertCTWalls() {
           <div class="leftbottom"></div>
           <div class="leftbottom2"></div>
           <div class="left"></div>
+        </div>
+      </div>
+      `);
+  }
+}
+
+function insertItemOverlay() {
+  if ($('#re_item_overlay_text').length == 0) {
+    $('#map > .map-overview').prepend(`
+      <div>
+        <div class="re_item_overlay_box">
+          <span id="re_item_overlay_text"></span>
         </div>
       </div>
       `);

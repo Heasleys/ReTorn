@@ -83,11 +83,19 @@
             "walls": {
                 "enabled": false
             }
+        },
+        "overlays": {
+            "items_overlay": {
+                "enabled": true
+            }
         }
     },
     "quick_items": {
     },
     "quick_equip": {
+    },
+    "quick_items_compact_view": {
+        "enabled": false
     },
     "bounty": {
         "hide": {

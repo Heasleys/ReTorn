@@ -12,7 +12,7 @@ const tsobserver = new MutationObserver(function(mutations) {
                     if (value.seen == 0) {
                         var date = new Date(value.timestamp * 1000);
                         var formattedTime = date.toLocaleString('en-GB', {
-                            weekday: 'short', // long, short, narrow
+                            weekday: 'long', // long, short, narrow
                             day: 'numeric', // numeric, 2-digit
                             year: 'numeric', // numeric, 2-digit
                             month: 'long', // numeric, 2-digit, long, short, narrow

@@ -120,6 +120,31 @@ body.dark-mode .re_minigame_cheatwrap {
   font-size: 14px;
 }
 
+/* items overlay */
+.re_ct_items_overlay .re_item_overlay_box {
+  display: block;
+}
+
+.re_item_overlay_box {
+    display: none;
+    max-width: 145px;
+    padding: 3px;
+    position: relative;
+    z-index: 99998;
+    float: right;
+    box-shadow: rgb(95 94 94 / 75%) 0px 0px 0px 40px inset;
+    max-height: 50px;
+    overflow: hidden;
+}
+
+#re_item_overlay_text {
+  font: 10px monospace;
+  color: #fff;
+  z-index: 99999;
+  position: relative;
+  float: right;
+}
+
 
 
 /* Show Walls/Boundaries */

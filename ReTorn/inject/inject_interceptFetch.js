@@ -1,8 +1,8 @@
-//React injection to update State https://stackoverflow.com/questions/57618119/is-it-possible-to-write-a-script-to-inject-props-on-a-react-component
+//React injection to update State https://stackoverflow.com/questions/57618119/is-it-possible-to-write-a-script-to-inject-props-on-a-react-component ; https://stackoverflow.com/questions/44829051/reactjs-object-doesnt-have-key-reactinternalinstance
 function reUpdateState(domElement, newState) {
     var keys = Object.keys(domElement);
     var instanceKey = keys.filter(prop =>
-        /__reactInternalInstance/.test(prop)
+        /__reactFiber/.test(prop)
     )[0];
     var instance = domElement[instanceKey];
 
@@ -31,6 +31,10 @@ document.addEventListener("reUpdateState", function(msg) {
   
 document.addEventListener("initializeTooltip", function() {
     initializeTooltip('.content-wrapper', 'white-tooltip');
+});
+
+document.addEventListener("re_jail_refresh", function() {
+    jail_refresh();
 });
 
 function interceptFetch(url,q, callback) {
@@ -91,6 +95,12 @@ interceptFetch("torn.com","torn.com", (response, url) => {
         const e = new CustomEvent("re_ranked_wars_fetch");
         document.dispatchEvent(e);
     }
+    
+    /* Faction War Filters */
+    if (url.includes('sid=factionsRankedWarProcessBarRefresh')) { //EXAMPLE: https://www.torn.com/page.php?sid=factionsRankedWarProcessBarRefresh&userIds[]=1
+        const e = new CustomEvent("re_ranked_wars_fetch");
+        document.dispatchEvent(e);
+    }
 
 /* Faction Territory Wars */
     if (url.includes('faction_wars.php?') && url.match(/wardescid=\d+/)) { //EXAMPLE: https://www.torn.com/faction_wars.php?redirect=false&step=getwardata&factionID=9533&userID=0&wardescid=31558&update=true 
@@ -99,3 +109,66 @@ interceptFetch("torn.com","torn.com", (response, url) => {
     }
 });
   
+
+function jail_refresh() { // Basically completely copied from native Torn jail function
+    var $user_info_wrap = $(".user-info-list-wrap"),
+          $user_title_wrap = $('.users-list-title'),
+          $msg_info_wrap = $(".msg-info-wrap"),
+          $msg_empty_info_wrap = $('.msg-empty-info-wrap'),
+          $pagination_wrap = $(".pagination-wrap"),
+          $parent = $('.userlist-wrapper');
+  
+          var pathname = location.pathname,
+              hash = queryStringToObj(location.hash.replace(/[#\/]/g, '')),
+              action_name = 'jail',
+              $handelbars_id = 'jail-user-list-item';
+          var template = Handlebars.templates[$handelbars_id];
+  
+          var fetchPath = /jailview/i.test(window.location.pathname) ? 'jailview' : 'hospitalview'
+  
+          var avoidCacheURL = '/' + fetchPath + '.php' + '?' + new Date().getTime() + '=' + Math.random();
+  
+  
+          var options = {
+            action: avoidCacheURL,
+            type: "post",
+            data: {
+                action: action_name,
+                start: hash.start || 0
+            },
+            beforeSend: function() {
+                $user_title_wrap.show();
+                $user_info_wrap.html('<li class="last"><span class="ajax-preloader m-top10 m-bottom10"></span></li>');
+            },
+            complete: function() {
+                $(window).resize();
+            },
+            success: function(str) {
+                try {
+                    var msg = JSON.parse(str);
+                    var data = msg.data;
+  
+                    if (!msg.total) {
+                        $user_title_wrap.hide();
+                    } else {
+                        $parent.find('.total').text(msg.total);
+                        $parent.find('.aux-verb').text(msg.total > 1 ? 'People are' : 'Person is');
+                    }
+  
+                    $msg_info_wrap.html(data.info_text);
+                    
+                    $msg_empty_info_wrap.html(data.info_empty);
+                    $pagination_wrap.html(data.pagination ? data.pagination : "");
+                    $user_info_wrap.empty().append(template(data));
+
+                    const e = new CustomEvent("re_jail_refresh_complete");
+                    document.dispatchEvent(e);
+  
+                } catch (e) {
+                    console.log("[ReTorn][Jail Refresh] Error: ",e);
+                }
+            }
+          }
+  
+          $.ajax(options);
+}

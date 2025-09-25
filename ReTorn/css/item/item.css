@@ -302,6 +302,23 @@ width: 172px !important;
 
 
 
+/* quick items compact view */
+.re_quick_items_compact .re_qty, .re_quick_items_compact .re_bonuses {
+  display: none !important;
+}
+
+.re_quick_items_compact #re_quick_items div.re_button, .re_quick_items_compact #re_quick_equip div.re_button {
+  margin: 2px;
+}
+
+.re_quick_items_compact div.re_button .re_name {
+  font-size: 10px !important;
+}
+
+.re_quick_items_compact .re_hr {
+  display: none;
+}
+
 
 
 @media screen and (max-width: 784px) {
