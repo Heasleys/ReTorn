@@ -108,53 +108,11 @@ function rankedWar() {
         RW_CONTAINER.find('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
     
         //Sorting for spy column
-        RW_CONTAINER.find('.re_spy_title').click(function() {
-          const spyCols = RW_CONTAINER.find('.re_spy_title');
-          
-          //send out a React State Change request to sort by player name first
-          const className = 'faction-war re_rankedwar';
-    
-          const opponentActive = $('.faction-names .enemy').is('[class*=active_]');
-          //opponentActive is needed in case of small screen, we don't want to force switch the faction view
-          const newStateObj = {
-            "opponentActive": opponentActive,
-            "sorting": {
-              "field": "playername",
-              "direction": "desc"
-            }
-          }
-          const e = new CustomEvent("reUpdateState", {detail: {className: className, newState: newStateObj}});
-          document.dispatchEvent(e);
-          //React State Change Request
-    
-          
-          const clickedSpyCol = $(this); //then spyCol that was clicked
-          const clickedIcon = clickedSpyCol.find('.re_sort_icon');
-          let dir = true;  //always sort by largest > smallest first
-          if (clickedIcon.hasClass('re_desc')) dir = false;
-    
-          spyCols.each(function() {//now change icon for both spyCols to the correct direction
-            const spyCol = $(this); 
-            const icon = spyCol.find('.re_sort_icon');
-    
-            const memberCont = spyCol.closest('.members-cont');
-            const memberList = memberCont.find('ul.members-list');
-            
-            memberCont.find('div[class*="sortIcon_"]').removeClass(function (index, css) {
-              return (css.match (/(^|\s)desc_\S+/g) || []).join(' ');
-            }).removeClass(function (index, css) {
-              return (css.match (/(^|\s)asc_\S+/g) || []).join(' ');
-            });
-    
-            //actually sort the players based on direction
-            if (dir) {
-              icon.removeClass('re_asc').addClass('re_desc');
-              memberList.find('li').sort(sort_li_desc).appendTo(memberList);
-            } else {
-              icon.removeClass('re_desc').addClass('re_asc');
-              memberList.find('li').sort(sort_li_asc).appendTo(memberList);
-            }
-          })
+        $(document).on("click", ".re_spy_title", function() {    
+          startSort()
+          setTimeout(function() { // wait for the Torn sort to happen, then sort by spy. This is a hack. Ideally I'd find a way to check for Torn sort to happen first
+            sortSpyColumns();
+          }, 1)
         });
         //if another column is clicked, then remove the classes from the spy column
         RW_CONTAINER.find('div.members-cont > div > div[class*="tab_"]').click(function() {
@@ -260,7 +218,7 @@ function rankedWar() {
   
         /* event listener from interceptFetch for when user status changes */
         document.addEventListener("re_ranked_wars_fetch", re_ranked_wars_fetch_eventListener);
-  
+
         $(document).on('click', '#re_filter_rules .re_list_item.x .remove-link .delete-subscribed-icon', function() {
           const parent = $(this).closest('li');
           const index = parent.attr('data-index');
@@ -452,6 +410,58 @@ function rankedWar() {
     $('#re_ps_wrap').hide();
   }
   
+  function startSort() {
+            //send out a React State Change request to sort by player name first
+            const className = 'faction-war re_rankedwar';
+
+            const opponentActive = $('.faction-names .enemy').is('[class*=active_]');
+            //opponentActive is needed in case of small screen, we don't want to force switch the faction view
+            const newStateObj = {
+              "opponentActive": opponentActive,
+              "sorting": {
+                "field": "playername",
+                "direction": "desc"
+              }
+            }
+            const e = new CustomEvent("reUpdateState", {detail: {className: className, newState: newStateObj}});
+            document.dispatchEvent(e);
+            //React State Change Request
+  }
+
+  function sortSpyColumns() {
+    const RW_CONTAINER = $('.re_rankedwar');
+    const spyCols = RW_CONTAINER.find('.re_spy_title');
+
+    const clickedSpyCol = $(".re_spy_title").first();
+    const clickedIcon = clickedSpyCol.find('.re_sort_icon');
+    let dir = true;  //always sort by largest > smallest first
+    if (clickedIcon && clickedIcon.hasClass('re_desc')) dir = false;
+
+    spyCols.each(function() {//now change icon for both spyCols to the correct direction
+        const spyCol = $(this); 
+        const icon = spyCol.find('.re_sort_icon');
+
+        const memberCont = spyCol.closest('.members-cont');
+        const memberList = memberCont.find('ul.members-list');
+        
+        memberCont.find('div[class*="sortIcon_"]').removeClass(function (index, css) {
+          return (css.match (/(^|\s)desc_\S+/g) || []).join(' ');
+        }).removeClass(function (index, css) {
+          return (css.match (/(^|\s)asc_\S+/g) || []).join(' ');
+        });
+
+        //actually sort the players based on direction
+        if (dir) {
+          icon.removeClass('re_asc').addClass('re_desc');
+          memberList.find('li').sort(sort_li_desc).appendTo(memberList);
+        } else {
+          icon.removeClass('re_desc').addClass('re_asc');
+          memberList.find('li').sort(sort_li_asc).appendTo(memberList);
+        }
+    }) 
+  }
+
+
   function showReadyOCs(checked) {
     $('ul.crimes-list > li.item-wrap').each(function() {
       if ($(this).find('ul.item li.status:contains("Ready")').length > 0) {

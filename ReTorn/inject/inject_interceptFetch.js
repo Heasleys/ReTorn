@@ -1,8 +1,8 @@
-//React injection to update State https://stackoverflow.com/questions/57618119/is-it-possible-to-write-a-script-to-inject-props-on-a-react-component
+//React injection to update State https://stackoverflow.com/questions/57618119/is-it-possible-to-write-a-script-to-inject-props-on-a-react-component ; https://stackoverflow.com/questions/44829051/reactjs-object-doesnt-have-key-reactinternalinstance
 function reUpdateState(domElement, newState) {
     var keys = Object.keys(domElement);
     var instanceKey = keys.filter(prop =>
-        /__reactInternalInstance/.test(prop)
+        /__reactFiber/.test(prop)
     )[0];
     var instance = domElement[instanceKey];
 
@@ -95,6 +95,12 @@ interceptFetch("torn.com","torn.com", (response, url) => {
         const e = new CustomEvent("re_ranked_wars_fetch");
         document.dispatchEvent(e);
     }
+    
+    /* Faction War Filters */
+    if (url.includes('sid=factionsRankedWarProcessBarRefresh')) { //EXAMPLE: https://www.torn.com/page.php?sid=factionsRankedWarProcessBarRefresh&userIds[]=1
+        const e = new CustomEvent("re_ranked_wars_fetch");
+        document.dispatchEvent(e);
+    }
 
 /* Faction Territory Wars */
     if (url.includes('faction_wars.php?') && url.match(/wardescid=\d+/)) { //EXAMPLE: https://www.torn.com/faction_wars.php?redirect=false&step=getwardata&factionID=9533&userID=0&wardescid=31558&update=true 
@@ -116,8 +122,6 @@ function jail_refresh() { // Basically completely copied from native Torn jail f
               hash = queryStringToObj(location.hash.replace(/[#\/]/g, '')),
               action_name = 'jail',
               $handelbars_id = 'jail-user-list-item';
-  
-  
           var template = Handlebars.templates[$handelbars_id];
   
           var fetchPath = /jailview/i.test(window.location.pathname) ? 'jailview' : 'hospitalview'
