@@ -334,14 +334,31 @@ function timeDifference(current, previous) {
 }
 
 function getStringFromDays(numberOfDays) {
-    var years = Math.floor(numberOfDays / 365);
-    var months = Math.floor(numberOfDays % 365 / 30);
-    var days = Math.floor(numberOfDays % 365 % 30);
+    const now = new Date();
+    var pastDate = new Date();
+    pastDate.setDate(now.getDate() - numberOfDays);
 
-    var yearsDisplay = years > 0 ? years + (years == 1 ? " year " : " years ") : "";
-    var monthsDisplay = months > 0 ? months + (months == 1 ? " month " : " months ") : "";
-    var daysDisplay = days > 0 ? days + (days == 1 ? " day" : " days") : "";
-    return yearsDisplay + monthsDisplay + daysDisplay; 
+    let years = now.getFullYear() - pastDate.getFullYear();
+    let months = now.getMonth() - pastDate.getMonth();
+    let days = now.getDate() - pastDate.getDate();
+
+    if (days < 0) {
+        months -= 1;
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+    }
+
+    if (months < 0) {
+        years -= 1;
+        months += 12;
+    }
+
+    let result = "";
+    if (years > 0) result += years + (years === 1 ? " year " : " years ");
+    if (months > 0) result += months + (months === 1 ? " month " : " months ");
+    if (days > 0 || result === "") result += days + (days === 1 ? " day" : " days");
+
+    return result.trim();
 }
 
 const getCookieValue = (name) => ( //https://stackoverflow.com/a/25490531/22230696
