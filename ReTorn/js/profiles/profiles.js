@@ -5,14 +5,28 @@
   var TS_DATA;
   var profileobserver = new MutationObserver(function(mutations) {
     //check if captcha exists or if user is logged out
-    if ($('div.captcha').length == 0 && $('div.content-wrapper.logged-out').not('.travelling').length == 0) {
-      if ($("div.profile-wrapper.medals-wrapper").length == 1 && $('div.re_container').length == 0) {
-        loadTS();
-        insert_age_text();
-        profileobserver.disconnect();
+    if ($('div.captcha').length == 0) {
+      if ($('div.content-wrapper.logged-out').not('.travelling').length == 0) {
+        if ($("div.profile-wrapper.medals-wrapper").length == 1 && $('.profile-container .buttons-wrap').length == 1) {
+          profile_container_observer.observe($('.profile-container')[0], {attributes: false, childList: true, characterData: false, subtree:false})
+          if ($('#re_stakeout_button').length == 0) {
+            insert_stakeout();
+          }
+          if ($('div.re_container').length == 0) {
+            loadTS();
+            insert_age_text();
+            profileobserver.disconnect();
+          }
+        }
       }
+
     }
+
   });
+
+  var profile_container_observer = new MutationObserver(function(mutations) { //watch profile buttons area, send cash removes the button, so we need to reinsert sometimes
+    insert_stakeout();
+  })
   
   
   
@@ -574,4 +588,20 @@
     age_box.after(`<div class="re_age_text">${days_string}</div>`);
   }
   
+  function insert_stakeout() {
+    if ($('.profile-container .buttons-wrap').length == 0 || $('#re_stakeout_button').length) return;
+
+    let stakeout_button = `
+    <a id="re_stakeout_button" class="profile-button" aria-label="Stakeout target" title="Stakeout target">
+        <svg xmlns="http://www.w3.org/2000/svg" class="profileButtonIcon" filter="" viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M192 96L224 96C241.7 96 256 110.3 256 128L256 160L160 160L160 128C160 110.3 174.3 96 192 96zM256 192L256 512C256 529.7 241.7 544 224 544L96 544C78.3 544 64 529.7 64 512L64 452.9C64 418.3 73.4 384.3 91.2 354.6C104.9 331.8 113.7 306.4 117 280L124.5 220C126.5 204 140.1 192 156.3 192L256.1 192zM483.8 192C499.9 192 513.6 204 515.6 220L523 280C526.3 306.4 535.1 331.8 548.8 354.6C566.6 384.3 576 418.3 576 452.9L576 512C576 529.7 561.7 544 544 544L416 544C398.3 544 384 529.7 384 512L384 192L483.8 192zM384 128C384 110.3 398.3 96 416 96L448 96C465.7 96 480 110.3 480 128L480 160L384 160L384 128zM352 192L352 352L288 352L288 192L352 192z"/></svg>
+    </a>
+    `;
+
+    $('.profile-container .buttons-wrap > .buttons-list').append(stakeout_button);
+
+    $('#re_stakeout_button').click(function() {
+      
+    });
+  }
+
   })();

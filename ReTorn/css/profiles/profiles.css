@@ -144,6 +144,20 @@
   display: none;
 }
 
+#re_stakeout_button svg {
+  pointer-events: none;
+  padding-left: 3px;
+  padding-top: 3px;
+  width: 36px;
+  height: 36px;
+  fill: url(#linear-gradient);
+}
+
+.re_stakeout {
+  min-height: 166px;
+  padding: 11px 0 11px 10px;
+}
+
 
 
 @media screen and (min-width: 785px) {  
@@ -293,6 +307,16 @@ body.dark-mode .green {
 .re_crown {
   position: relative;
   display: inline;
+}
+
+body.dark-mode #re_stakeout_button svg {
+  fill: url(#linear-gradient-dark-mode) !important;
+}
+body.dark-mode #re_stakeout_button.re_active svg {
+  fill: url(#linear-gradient-green-dark-mode) !important;
+}
+body #re_stakeout_button.re_active svg {
+  fill: url(#linear-gradient-green) !important;
 }
 
 /* straight up took this from Torn Easter Egg css particles, sorry */
