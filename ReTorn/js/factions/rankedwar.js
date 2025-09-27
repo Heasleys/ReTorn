@@ -108,7 +108,7 @@ function rankedWar() {
         RW_CONTAINER.find('.tab-menu-cont > div.members-cont > div > .member').after(`<div class="re_spy_title left">Spy<div class="re_sort_icon"></div></div>`);
     
         //Sorting for spy column
-        $(document).on("click", ".re_spy_title", function() {    
+        $(".re_spy_title").on("click", function() {    
           startSort()
           setTimeout(function() { // wait for the Torn sort to happen, then sort by spy. This is a hack. Ideally I'd find a way to check for Torn sort to happen first
             sortSpyColumns();
