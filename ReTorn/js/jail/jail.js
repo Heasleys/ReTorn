@@ -1,6 +1,30 @@
 
 var re_jail_refresh_lock = false;
 var re_shown_users = [];
+var re_edu_bail_reduction = 100;
+
+
+sendMessage({name: "get_local", value: "re_user_data"})
+  .then((r) => {
+    const edu_completed = r.data.education_completed;
+
+    // 93:     Gain a 5% discount when buying people out of jail
+    // 98:     Gain a 10% discount when buying people out of jail
+    // 102:    Gain two bonuses: Busting is 50% easier and bailing is 50% cheaper
+
+    if (edu_completed.includes(93)) {
+      re_edu_bail_reduction = re_edu_bail_reduction * 0.95;
+    }
+
+    if (edu_completed.includes(98)) {
+       re_edu_bail_reduction = re_edu_bail_reduction * 0.90;
+    }
+
+    if (edu_completed.includes(102)) {
+        re_edu_bail_reduction = re_edu_bail_reduction * 0.50;
+    }
+  })
+  .catch((e) => console.error(e));
 
 
 //Changing jail pages
@@ -69,7 +93,12 @@ function initJail() {
     }
   });
 
+  // TODO: Implement the easy bail, it's 1am :(
   RE_CONTAINER.find('.re_head > .re_title').after(`
+    <div id="re_jail_easy_bail" class="re_header_icon_wrap" title="Bail the easiest shown player or refresh jail">
+      <i class="fas fa-sack-dollar re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
+    </div>
+
     <div id="re_jail_easy_bust" class="re_header_icon_wrap" title="Bust the easiest shown player or refresh jail">
       <i class="fas fa-soap re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
     </div>
@@ -199,6 +228,9 @@ function initJail() {
           <div class="grid_box box6">
             <input id='re_jail_score' name='score' type='number' min='0' placeholder="Max score" title="Max score">
           </div>
+          <div class="grid_box box7">
+            <input id='re_jail_bail' name='bail' type='number' min='0' placeholder="Max $" title="Max Bail Amount">
+          </div>
         </div>
       </div>
     </div>
@@ -219,6 +251,9 @@ function initJail() {
     }
     if (jail_settings?.filters?.score) {
       $('#re_jail_score').val(jail_settings?.filters?.score);
+    }
+    if (jail_settings?.filters?.bail) {
+      $('#re_jail_bail').val(jail_settings?.filters?.bail);
     }
 
     //quick checkboxes
@@ -242,7 +277,7 @@ function initJail() {
   }
 
 
-  $('#re_jail_level,#re_jail_score').on('input', function() {
+  $('#re_jail_level,#re_jail_score,#re_jail_bail').on('input', function() {
     const input = $(this).val();
     const name = $(this).attr('name');
     const obj = {
@@ -320,6 +355,7 @@ function initJail() {
   function filterJail() {
     var levelFilter = $('#re_jail_level').val();
     var scoreFilter = $('#re_jail_score').val();
+    var bailFilter = $('#re_jail_bail').val();
 
     if ($('#re_disable_filters input[type="checkbox"]').prop("checked")) { //if disable filters checkbox is checked, set levelfilter and score filter to 0
       levelFilter = 0;
@@ -357,12 +393,15 @@ function initJail() {
       score = time * level;
 
       info_wrap.attr("title", "<b>Minutes: </b>" + time.toLocaleString() + "<br><b>Score: </b>"+score.toLocaleString());
+      
+      // 100 * remaining Jail time in minutes * inmate level)
+      const bailAmount = 100 * time * level * re_edu_bail_reduction;
 
-      if (levelFilter && level > levelFilter && levelFilter != 0) {
+      if (bailFilter && bailAmount > bailFilter && bailFilter != 0) {
         $(this).addClass("re_hide")
-      } else
-
-      if (scoreFilter && score > scoreFilter && scoreFilter != 0) {
+      } else if (levelFilter && level > levelFilter && levelFilter != 0) {
+        $(this).addClass("re_hide")
+      } else if (scoreFilter && score > scoreFilter && scoreFilter != 0) {
         $(this).addClass("re_hide")
       } else {
         $(this).removeClass("re_hide");
