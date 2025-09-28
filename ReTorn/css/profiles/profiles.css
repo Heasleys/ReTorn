@@ -158,6 +158,11 @@
   padding: 11px 0 11px 10px;
 }
 
+.re_stakeout .re_stakeout_box, .re_stakeout .re_stakeout_box_footer {
+  line-height: 14px;
+  min-height: 58px;
+  padding-right: 10px;
+}
 
 
 @media screen and (min-width: 785px) {  

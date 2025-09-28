@@ -3,11 +3,13 @@
 (function() {
   var uid;
   var TS_DATA;
+  var player_name;
+
   var profileobserver = new MutationObserver(function(mutations) {
     //check if captcha exists or if user is logged out
     if ($('div.captcha').length == 0) {
       if ($('div.content-wrapper.logged-out').not('.travelling').length == 0) {
-        if ($("div.profile-wrapper.medals-wrapper").length == 1 && $('.profile-container .buttons-wrap').length == 1) {
+        if ($("div.profile-wrapper.medals-wrapper").length == 1 && $('.profile-buttons .profile-container .buttons-wrap').length == 1) {
           profile_container_observer.observe($('.profile-container')[0], {attributes: false, childList: true, characterData: false, subtree:false})
           if ($('#re_stakeout_button').length == 0) {
             insert_stakeout();
@@ -15,6 +17,7 @@
           if ($('div.re_container').length == 0) {
             loadTS();
             insert_age_text();
+            get_player_name();
             profileobserver.disconnect();
           }
         }
@@ -589,7 +592,9 @@
   }
   
   function insert_stakeout() {
-    if ($('.profile-container .buttons-wrap').length == 0 || $('#re_stakeout_button').length) return;
+    if ($('.profile-buttons .profile-container .buttons-wrap').length == 0 || $('#re_stakeout_button').length) return;
+
+    var profile_buttons_container = $('.profile-buttons .profile-container');
 
     let stakeout_button = `
     <a id="re_stakeout_button" class="profile-button" aria-label="Stakeout target" title="Stakeout target">
@@ -597,11 +602,43 @@
     </a>
     `;
 
-    $('.profile-container .buttons-wrap > .buttons-list').append(stakeout_button);
+    let stakeout_box = `
+    <div class="re_stakeout re_hide">
+      <div class="re_stakeout_box">
+        <div>
+              <input type="checkbox">
+              <label class="noselect" title="steak">Stakeout</label>
+        </div>
+      </div>
+      <div class="re_stakeout_box_footer">
+        <button id="re_stakeout_exit" type="button" class="cancel-btn t-blue c-pointer h">Cancel</button>
+      </div>
+    </div>
+    `
+
+    profile_buttons_container.find('.buttons-wrap > .buttons-list').append(stakeout_button);
+    profile_buttons_container.prepend(stakeout_box);
 
     $('#re_stakeout_button').click(function() {
-      
+      $(".profile-buttons .profile-container > div:not([class]), .profile-buttons .profile-container > div[class='']").toggleClass('re_hide');
+      $(".re_stakeout").toggleClass('re_hide');
+    }).hover(function(){
+      $("#profile-container-description").text(`Initiate a stakeout on ${player_name}`); // Function to execute on mouseenter
+    }, function(){
+      setTimeout(() => {
+        $("#profile-container-description").text("What would you like to do?"); // Function to execute on mouseleave
+      }, 2000);
     });
+
+    $('#re_stakeout_exit').click(function() {
+      $(".profile-buttons .profile-container > div[class='re_hide']").toggleClass('re_hide');
+      $(".re_stakeout").toggleClass('re_hide');
+    })
+  }
+
+  function get_player_name() {
+    let text = $('.content-title > #skip-to-content').text();
+    player_name = text.split("'")[0];
   }
 
   })();
