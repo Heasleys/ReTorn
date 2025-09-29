@@ -1,7 +1,7 @@
 
 var re_jail_refresh_lock = false;
 var re_shown_users = [];
-var re_edu_bail_reduction = 100;
+var re_edu_bail_reduction = 1;
 
 
 sendMessage({name: "get_local", value: "re_user_data"})
@@ -93,7 +93,6 @@ function initJail() {
     }
   });
 
-  // TODO: Implement the easy bail, it's 1am :(
   RE_CONTAINER.find('.re_head > .re_title').after(`
     <div id="re_jail_easy_bail" class="re_header_icon_wrap" title="Bail the easiest shown player or refresh jail">
       <i class="fas fa-sack-dollar re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
@@ -103,6 +102,86 @@ function initJail() {
       <i class="fas fa-soap re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
     </div>
   `);
+
+  $("#re_jail_easy_bail").click(function(e) {
+    e.stopPropagation();
+    var icon = $(this).find('i.fa-sack-dollar');
+    icon.addClass('fa-beat');
+    setTimeout(() => {
+      icon.removeClass('fa-beat');
+    }, 500); 
+
+
+    if (!re_shown_users.length) { // No users in filtered list, refresh
+      if (!re_jail_refresh_lock) {
+        re_jail_refresh_lock = true;
+        document.dispatchEvent(new CustomEvent('re_jail_refresh'));
+        setTimeout(() => {
+          re_jail_refresh_lock = false;
+        }, 500); 
+      }
+    } else {
+      //find easiest user (by score) and try to bust
+      var hiddenClassName = 'bye';
+      var selectorClassName = 'bust';
+
+      let lowest = re_shown_users.shift(); //get lowest (first entry) and remove from array
+
+      var action_el = $(`ul.user-info-list-wrap > li > a.${hiddenClassName}[href^="jailview.php?XID=${lowest.userid}&action=rescue&step=buy"]`); //bust button for lowest player
+      if (!action_el) {
+        return; //failed
+      }
+      var $parent = action_el.parents('li');
+      var messagesContainer = $parent.find(".confirm-" + selectorClassName);
+
+      var options = {
+        url: `jailview.php?XID=${lowest.userid}&action=rescue&step=buy1`,
+        type: "get",
+        beforeSend: function(xhr) {
+          messagesContainer.find('.ajax-preloader').remove();
+          $parent.find('.ajax-action').remove();
+          messagesContainer.append('<span class="ajax-preloader"></span>');
+
+          action_el.prev().removeClass('active')
+          action_el.next().removeClass('active')
+          if (action_el.is('.active')) {
+              action_el.removeClass('active')
+          } else {
+              action_el.addClass('active')
+          }
+
+          action_el.closest('li')
+              .addClass('active')
+              .find('.confirm-' + selectorClassName)
+              .toggle()
+              .end()
+              .find('.confirm-' + hiddenClassName)
+              .hide();
+          if (action_el.parents('li').find('.confirm-' + selectorClassName).is(':hidden')) {
+              action_el.parents('li').removeClass('active');
+          }
+        },
+        success: function(res) {
+          try {
+              var data = JSON.parse(res),
+                  html = '';
+              if(data.msg) html = '<div class="ajax-action">' + data.msg + '</div>';
+              if(data.error) html = '<div class="ajax-action">' + data.text + '</div>';
+              messagesContainer.html("");
+              messagesContainer.append(html);
+              messagesContainer.parents('.info-msg-cont').removeClass("green red blue").addClass(data.color);
+              messagesContainer.parents('.info-msg-cont').attr('tabindex', 0);
+          } catch (e) {
+              data = '<div class="ajax-action">' + data + '</div>';
+              messagesContainer.html("");
+              messagesContainer.append(data);
+          }
+        }
+      };
+
+      $.ajax(options);
+    }
+  });
 
   $("#re_jail_easy_bust").click(function(e) {
     e.stopPropagation();
