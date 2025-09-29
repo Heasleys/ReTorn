@@ -1,6 +1,30 @@
 
 var re_jail_refresh_lock = false;
 var re_shown_users = [];
+var re_edu_bail_reduction = 1;
+
+
+sendMessage({name: "get_local", value: "re_user_data"})
+  .then((r) => {
+    const edu_completed = r.data.education_completed;
+
+    // 93:     Gain a 5% discount when buying people out of jail
+    // 98:     Gain a 10% discount when buying people out of jail
+    // 102:    Gain two bonuses: Busting is 50% easier and bailing is 50% cheaper
+
+    if (edu_completed.includes(93)) {
+      re_edu_bail_reduction = re_edu_bail_reduction * 0.95;
+    }
+
+    if (edu_completed.includes(98)) {
+       re_edu_bail_reduction = re_edu_bail_reduction * 0.90;
+    }
+
+    if (edu_completed.includes(102)) {
+        re_edu_bail_reduction = re_edu_bail_reduction * 0.50;
+    }
+  })
+  .catch((e) => console.error(e));
 
 
 //Changing jail pages
@@ -70,10 +94,94 @@ function initJail() {
   });
 
   RE_CONTAINER.find('.re_head > .re_title').after(`
+    <div id="re_jail_easy_bail" class="re_header_icon_wrap" title="Bail the easiest shown player or refresh jail">
+      <i class="fas fa-sack-dollar re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
+    </div>
+
     <div id="re_jail_easy_bust" class="re_header_icon_wrap" title="Bust the easiest shown player or refresh jail">
       <i class="fas fa-soap re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
     </div>
   `);
+
+  $("#re_jail_easy_bail").click(function(e) {
+    e.stopPropagation();
+    var icon = $(this).find('i.fa-sack-dollar');
+    icon.addClass('fa-beat');
+    setTimeout(() => {
+      icon.removeClass('fa-beat');
+    }, 500); 
+
+
+    if (!re_shown_users.length) { // No users in filtered list, refresh
+      if (!re_jail_refresh_lock) {
+        re_jail_refresh_lock = true;
+        document.dispatchEvent(new CustomEvent('re_jail_refresh'));
+        setTimeout(() => {
+          re_jail_refresh_lock = false;
+        }, 500); 
+      }
+    } else {
+      //find easiest user (by score) and try to bust
+      var hiddenClassName = 'bye';
+      var selectorClassName = 'bust';
+
+      let lowest = re_shown_users.shift(); //get lowest (first entry) and remove from array
+
+      var action_el = $(`ul.user-info-list-wrap > li > a.${hiddenClassName}[href^="jailview.php?XID=${lowest.userid}&action=rescue&step=buy"]`); //bust button for lowest player
+      if (!action_el) {
+        return; //failed
+      }
+      var $parent = action_el.parents('li');
+      var messagesContainer = $parent.find(".confirm-" + selectorClassName);
+
+      var options = {
+        url: `jailview.php?XID=${lowest.userid}&action=rescue&step=buy1`,
+        type: "get",
+        beforeSend: function(xhr) {
+          messagesContainer.find('.ajax-preloader').remove();
+          $parent.find('.ajax-action').remove();
+          messagesContainer.append('<span class="ajax-preloader"></span>');
+
+          action_el.prev().removeClass('active')
+          action_el.next().removeClass('active')
+          if (action_el.is('.active')) {
+              action_el.removeClass('active')
+          } else {
+              action_el.addClass('active')
+          }
+
+          action_el.closest('li')
+              .addClass('active')
+              .find('.confirm-' + selectorClassName)
+              .toggle()
+              .end()
+              .find('.confirm-' + hiddenClassName)
+              .hide();
+          if (action_el.parents('li').find('.confirm-' + selectorClassName).is(':hidden')) {
+              action_el.parents('li').removeClass('active');
+          }
+        },
+        success: function(res) {
+          try {
+              var data = JSON.parse(res),
+                  html = '';
+              if(data.msg) html = '<div class="ajax-action">' + data.msg + '</div>';
+              if(data.error) html = '<div class="ajax-action">' + data.text + '</div>';
+              messagesContainer.html("");
+              messagesContainer.append(html);
+              messagesContainer.parents('.info-msg-cont').removeClass("green red blue").addClass(data.color);
+              messagesContainer.parents('.info-msg-cont').attr('tabindex', 0);
+          } catch (e) {
+              data = '<div class="ajax-action">' + data + '</div>';
+              messagesContainer.html("");
+              messagesContainer.append(data);
+          }
+        }
+      };
+
+      $.ajax(options);
+    }
+  });
 
   $("#re_jail_easy_bust").click(function(e) {
     e.stopPropagation();
@@ -199,6 +307,9 @@ function initJail() {
           <div class="grid_box box6">
             <input id='re_jail_score' name='score' type='number' min='0' placeholder="Max score" title="Max score">
           </div>
+          <div class="grid_box box7">
+            <input id='re_jail_bail' name='bail' type='number' min='0' placeholder="Max $" title="Max Bail Amount">
+          </div>
         </div>
       </div>
     </div>
@@ -219,6 +330,9 @@ function initJail() {
     }
     if (jail_settings?.filters?.score) {
       $('#re_jail_score').val(jail_settings?.filters?.score);
+    }
+    if (jail_settings?.filters?.bail) {
+      $('#re_jail_bail').val(jail_settings?.filters?.bail);
     }
 
     //quick checkboxes
@@ -242,7 +356,7 @@ function initJail() {
   }
 
 
-  $('#re_jail_level,#re_jail_score').on('input', function() {
+  $('#re_jail_level,#re_jail_score,#re_jail_bail').on('input', function() {
     const input = $(this).val();
     const name = $(this).attr('name');
     const obj = {
@@ -320,6 +434,7 @@ function initJail() {
   function filterJail() {
     var levelFilter = $('#re_jail_level').val();
     var scoreFilter = $('#re_jail_score').val();
+    var bailFilter = $('#re_jail_bail').val();
 
     if ($('#re_disable_filters input[type="checkbox"]').prop("checked")) { //if disable filters checkbox is checked, set levelfilter and score filter to 0
       levelFilter = 0;
@@ -357,12 +472,15 @@ function initJail() {
       score = time * level;
 
       info_wrap.attr("title", "<b>Minutes: </b>" + time.toLocaleString() + "<br><b>Score: </b>"+score.toLocaleString());
+      
+      // 100 * remaining Jail time in minutes * inmate level)
+      const bailAmount = 100 * time * level * re_edu_bail_reduction;
 
-      if (levelFilter && level > levelFilter && levelFilter != 0) {
+      if (bailFilter && bailAmount > bailFilter && bailFilter != 0) {
         $(this).addClass("re_hide")
-      } else
-
-      if (scoreFilter && score > scoreFilter && scoreFilter != 0) {
+      } else if (levelFilter && level > levelFilter && levelFilter != 0) {
+        $(this).addClass("re_hide")
+      } else if (scoreFilter && score > scoreFilter && scoreFilter != 0) {
         $(this).addClass("re_hide")
       } else {
         $(this).removeClass("re_hide");
