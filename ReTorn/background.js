@@ -1635,6 +1635,7 @@ async function validate_sync_data() {
   const notifications_merged = deepExtend({}, notifications_file, notifications_sync);
 
   validate_features(features_merged, features_file);
+  validate_features(notifications_merged, notifications_file);
 
   await Promise.all([setValue({"settings": settings_merged}, "sync"), setValue({"features": features_merged}, "sync"), setValue({"notifications": notifications_merged}, "sync")])
 }
@@ -1650,6 +1651,10 @@ function validate_features(object1, object2) {
       validate_features(object1[key], object2[key]);
     } else {
       if (key === "description" && object1[key] !== object2[key]) {
+        object1[key] = object2[key];
+        continue;
+      }
+      if (key === "tooltip" && object1[key] !== object2[key]) {
         object1[key] = object2[key];
         continue;
       }
