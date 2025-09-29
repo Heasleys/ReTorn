@@ -308,7 +308,7 @@ function initJail() {
             <input id='re_jail_score' name='score' type='number' min='0' placeholder="Max score" title="Max score">
           </div>
           <div class="grid_box box7">
-            <input id='re_jail_bail' name='bail' type='number' min='0' placeholder="Max $" title="Max Bail Amount">
+            <input id='re_jail_bail' name='bail' type='number' min='0' placeholder="Max $" title="Max bail amount">
           </div>
         </div>
       </div>
@@ -439,6 +439,7 @@ function initJail() {
     if ($('#re_disable_filters input[type="checkbox"]').prop("checked")) { //if disable filters checkbox is checked, set levelfilter and score filter to 0
       levelFilter = 0;
       scoreFilter = 0;
+      bailFilter = 0;
     }
 
     re_shown_users.length = 0; // empty the shown user array
@@ -471,10 +472,11 @@ function initJail() {
       time = ((hours * 60) + mins);
       score = time * level;
 
-      info_wrap.attr("title", "<b>Minutes: </b>" + time.toLocaleString() + "<br><b>Score: </b>"+score.toLocaleString());
-      
       // 100 * remaining Jail time in minutes * inmate level)
-      const bailAmount = 100 * time * level * re_edu_bail_reduction;
+      const bailAmount = Math.round(100 * time * level * re_edu_bail_reduction);
+
+      info_wrap.attr("title", "<b>Minutes: </b>" + time.toLocaleString() + "<br><b>Score: </b>"+score.toLocaleString() + "<br><b>Bail: $</b>" + bailAmount.toLocaleString());
+      
 
       if (bailFilter && bailAmount > bailFilter && bailFilter != 0) {
         $(this).addClass("re_hide")

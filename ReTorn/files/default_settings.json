@@ -14,7 +14,8 @@
     "jail": {
         "filters": {
             "level": null,
-            "score": null
+            "score": null,
+            "bail": null
         },
         "quick": {
             "bust": false,
