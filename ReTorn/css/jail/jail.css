@@ -35,13 +35,13 @@
 
 /* forced desktop */
 html.html-manual-desktop .re_jail .grid_wrap {
-    grid-template-columns: repeat(6, 90px);
+    grid-template-columns: repeat(7, 90px);
 }
 
 /* desktop view */
 @media screen and (min-width: 785px) {
   .re_jail .grid_wrap {
-    grid-template-columns: repeat(6, 90px);
+    grid-template-columns: repeat(7, 90px);
   }
 }
 
