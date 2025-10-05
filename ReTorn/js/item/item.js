@@ -488,8 +488,7 @@ function init_quick_items() {
 
 function initObserver() {
   var target = document.querySelector('div.items-wrap');
-  if (target && !target.classList.contains("re_obsinit")) {
-    target.classList.add("re_obsinit");
+  if (target) {
     observer.observe(target, {attributes: false, childList: true, characterData: false, subtree:true});
   } else {
     console.log("[ReTorn][Items Features] Could not find items wrap.");
