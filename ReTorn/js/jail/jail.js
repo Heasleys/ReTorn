@@ -74,7 +74,7 @@ function initJail() {
 
   RE_CONTAINER.find('.re_head > .re_title').after(`
     <div id="re_jail_refresh" class="re_header_icon_wrap" title="Refresh jail view">
-        <i class="fas fa-rotate re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
+        <i class="fas fa-rotate re_header_icon" style="--fa-animation-duration: 0.4s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
     </div>
   `);
 
@@ -95,21 +95,23 @@ function initJail() {
 
   RE_CONTAINER.find('.re_head > .re_title').after(`
     <div id="re_jail_easy_bail" class="re_header_icon_wrap" title="Bail the easiest shown player or refresh jail">
-      <i class="fas fa-sack-dollar re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
+      <i class="fas fa-sack-dollar re_header_icon" style="--fa-animation-duration: 0.4s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
     </div>
 
     <div id="re_jail_easy_bust" class="re_header_icon_wrap" title="Bust the easiest shown player or refresh jail">
-      <i class="fas fa-soap re_header_icon" style="--fa-animation-duration: 0.5s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
+      <i class="fas fa-soap re_header_icon" style="--fa-animation-duration: 0.4s; --fa-animation-iteration-count: 1;--fa-animation-timing: ease-in-out;"></i>
     </div>
   `);
 
   $("#re_jail_easy_bail").click(function(e) {
     e.stopPropagation();
-    var icon = $(this).find('i.fa-sack-dollar');
-    icon.addClass('fa-beat');
-    setTimeout(() => {
-      icon.removeClass('fa-beat');
-    }, 500); 
+    if (!re_jail_refresh_lock) {
+      var icon = $(this).find('i.fa-sack-dollar');
+      icon.addClass('fa-beat');
+      setTimeout(() => {
+        icon.removeClass('fa-beat');
+      }, 500);
+    }
 
 
     if (!re_shown_users.length) { // No users in filtered list, refresh
@@ -185,11 +187,13 @@ function initJail() {
 
   $("#re_jail_easy_bust").click(function(e) {
     e.stopPropagation();
-    var icon = $(this).find('i.fa-soap');
-    icon.addClass('fa-beat');
-    setTimeout(() => {
-      icon.removeClass('fa-beat');
-    }, 500); 
+    if (!re_jail_refresh_lock) {
+      var icon = $(this).find('i.fa-soap');
+      icon.addClass('fa-beat');
+      setTimeout(() => {
+        icon.removeClass('fa-beat');
+      }, 500);
+    }
 
 
     if (!re_shown_users.length) { // No users in filtered list, refresh
