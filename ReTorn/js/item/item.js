@@ -27,6 +27,7 @@ const observer = new MutationObserver(function(mutations) {
             if (!element) return;
             if (element.className && element.className.includes("item-group")) return; //Ignore grouped weapons from the ALL list
 
+            if (!element || !element.dataset || !element.dataset.item) return;
 
             let itemID = element.dataset.item;
             let armoryID = element.dataset.armoryid;
