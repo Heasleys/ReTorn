@@ -86,9 +86,24 @@ div.re_button .re_name, div.re_button .re_qty{
   font-size: 11px;
 }
 
-#re_quick_items div.re_button button > img, #re_quick_equip div.re_button button > img {
+.re_quick_items div.re_button button .re_image_container {
+    position: relative;
+    width: 50px;
+    max-width: 50px;
+}
+
+#re_quick_items div.re_button button .re_image_container img.re_item_img, #re_quick_equip div.re_button button .re_image_container img.re_item_img {
   vertical-align: middle;
   width: 50px;
+  display: block
+}
+
+div.re_button button .re_image_container .re_overlay_icon {
+    position: absolute;
+    top: 0px;
+    left: -11px;
+    z-index: 2;
+    fill: url(#top_header_svg_gradient__regular);
 }
 
 #re_quick_items.re_disabled button:hover, #re_quick_equip.re_disabled button:hover {
@@ -371,4 +386,26 @@ width: 172px !important;
 }
 body.dark-mode #re_quick_items button, body.dark-mode #re_quick_equip button {
   color: #DDD;
+}
+
+
+
+
+/* right click context menu */
+#re_context_menu {
+  position: absolute;
+  background: var(--default-bg-panel-color);
+  border: var(--btn-border);
+  display: none;
+  z-index: 1000;
+}
+
+.re_context_menu_item {
+  padding: 8px 12px;
+  color: var(--default-color);
+  cursor: pointer;
+}
+
+.re_context_menu_item:hover {
+  background: var(--default-bg-panel-active-color);
 }

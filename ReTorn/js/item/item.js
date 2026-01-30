@@ -194,6 +194,11 @@ function init_quick_items() {
     var rfcEv = new CustomEvent("getTornRFC");
     document.dispatchEvent(rfcEv);
 
+    //hide quick items context menu when clicking anywhere else on page
+    document.addEventListener("click", () => {
+      $('#re_context_menu').hide();
+    });
+
     //Insert container
     if ($(`.re_container[data-feature="${QUICK_ITEMS}"]`).length != 0) return;
     const containerObject = {
@@ -322,7 +327,8 @@ function init_quick_items() {
                 order: item_order, 
                 itemName: itemName, 
                 itemQty: itemQty, 
-                itemCategory: itemCategory
+                itemCategory: itemCategory,
+                useFaction: false
               }
             }
           }
@@ -482,8 +488,67 @@ function init_quick_items() {
 
         qi_container.toggleClass('re_modify_active');
         $("#re_quick_equip .re_button").toggleClass("equipped");
-        }
+      }
 
+      // Insert right-click context menu for editing items (faction use or not)
+      $(body).append(`
+        <div id="re_context_menu">
+          <div class="re_context_menu_item" id="re_toggle_faction">
+            Toggle use from faction
+          </div>
+        </div>
+        `);
+      //right click context menu
+      $(document).on('contextmenu', '#re_quick_items.re_modify_active .re_button', function(e){ 
+        e.preventDefault();
+
+        var q_item_button = $(this);
+
+        var item_id = q_item_button.data("itemid");
+        var useFaction = q_item_button.data("usefaction");
+
+        let menu = $('#re_context_menu');
+
+        menu.css('left', `${e.pageX}px`);
+        menu.css('top', `${e.pageY}px`);
+        menu.show();
+
+
+        $('#re_toggle_faction').off().on("click", () => {
+          if (!item_id) return;
+          let fac;
+          if (useFaction) {
+            fac = false;
+          } else {
+            fac = true;
+          }
+
+          obj = {
+            quick_items: {
+              [item_id]: {
+                itemID: item_id,
+                useFaction: fac
+              }
+            }
+          }
+
+
+          sendMessage({"name": "merge_sync", "key": "settings", "object": obj})
+          .then((r) => {
+            //update button data, so if item is used it uses from faction
+            q_item_button.data("usefaction", fac);
+            //Update useFaction icon on item
+            if (!fac) {
+              q_item_button.find(".re_overlay_icon").hide();
+            } else {
+              q_item_button.find(".re_overlay_icon").show();
+            }
+          })
+          .catch((e) => console.error(e))
+
+          menu.hide();
+        });
+      });
   }
 }
 
@@ -594,8 +659,13 @@ function loadItems() {
 
       let itemID = parent.data('itemid');
       let item_category = parent.data('category');
-      let armoryID = parent.data('armoryID')
-      sendItemUseRequest(itemID, item_category, armoryID);
+      let armoryID = parent.data('armoryID');
+      
+      let useFaction = false;
+      if (parent.data('usefaction') !== undefined) {
+        useFaction = parent.data('usefaction');
+      }
+      sendItemUseRequest(itemID, item_category, armoryID, useFaction);
 
       if (qitem_categories.includes(item_category)) {
         $("#re_quick_items_response").show();
@@ -626,12 +696,35 @@ function sort_reverse_and_prepend_items(items) {
     const index = Object.keys(e)[0];
     const item = Object.values(e)[0];
     let parent;
+
+    // Check if item is Quick Item (not equippable)
     if (qitem_categories.includes(item.itemCategory)) {
       parent = $("#re_quick_items");
+      if (item.useFaction == undefined) item.useFaction = false;
+
+      //check for useFaction, setup if icon is hidden or not
+      let useFactionIcon = ` style="display: none;"`;
+      if (item.useFaction) {
+        useFactionIcon = "";
+      }
+
       parent.prepend(`
-        <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" style="order: `+item.order+`"><button class="re_quse"><img src="/images/items/`+item.itemID+`/large@4x.png" alt="`+item.itemName+`"><span class="re_name">`+item.itemName+`</span><span class="re_qty">x`+item.itemQty+`</span><span class="re_handle re_hide"></span><span class="close re_hide"></span></button></div>
+        <div class="re_button" data-itemID="`+item.itemID+`" data-qty="`+item.itemQty+`" data-category="`+item.itemCategory+`" data-usefaction="`+item.useFaction+`" style="order: `+item.order+`">
+          <button class="re_quse">
+            <span class="re_image_container">
+                <img class="re_item_img" src="/images/items/`+item.itemID+`/large@4x.png" alt="`+item.itemName+`">
+                <svg class="re_overlay_icon"${useFactionIcon} title="Use from faction" xmlns="http://www.w3.org/2000/svg" stroke="transparent" stroke-width="0" width="12.47" height="17" viewBox="0 1 11.47 16"><path d="M3.46,17H9.12V12.29A6,6,0,0,0,10.59,9L9,9.06,6.61,8v1.1H5.44l2.34,1.11L6.61,13.49,6,10.79,2.32,8.46V7.83L5.44,8,6.61,6.85l-4.5-2L0,8.08l3.46,4.3Zm6.66-9,1.61-1.42-.58-1.63L9.46,7.61ZM9,6.85,10.43,4,8.81,3.21l-1,3.64ZM6.61,5.74,8.25,2.63,6.46,1.87l-.77,3ZM2.73,3.84l2,.9L5.8,1.62,4.41,1Z"></path></svg>
+            </span>
+            <span class="re_name">`+item.itemName+`</span>
+            <span class="re_qty">x`+item.itemQty+`</span>
+            <span class="re_handle re_hide"></span>
+            <span class="close re_hide"></span>
+          </button>
+        </div>
       `);
     }
+
+    // check if item category is equippable (armor/weapons; not clothing)
     if (quick_equip_categores.includes(item.itemCategory)) {
       parent = $("#re_quick_equip");
       let id = item.itemCategory == "Temporary" ? 1 : item.armoryID;
@@ -663,7 +756,15 @@ function sort_reverse_and_prepend_items(items) {
 
 
       parent.prepend(`
-        <div class="re_button equipped"${confirm} data-id="${id}" data-action="equip" data-armoryID="${item.armoryID}" data-item="${item.itemID}" data-itemID="${item.itemID}" data-qty="${item.itemQty}" data-category="${item.itemCategory}" style="order: ${item.order};${color_string}"><button class="re_quse"><span class="re_name">${item.itemName}</span><img src="/images/items/${item.itemID}/large@4x.png" alt="${item.itemName}"><i></i>${stats_string}<span class="re_handle re_hide"></span><span class="close re_hide"></span></button></div>
+        <div class="re_button equipped"${confirm} data-id="${id}" data-action="equip" data-armoryID="${item.armoryID}" data-item="${item.itemID}" data-itemID="${item.itemID}" data-qty="${item.itemQty}" data-category="${item.itemCategory}" style="order: ${item.order};${color_string}">
+          <button class="re_quse">
+          <span class="re_name">${item.itemName}</span>
+          <span class="re_image_container">
+            <img class="re_item_img" src="/images/items/${item.itemID}/large@4x.png" alt="${item.itemName}">
+            <i></i>${stats_string}
+          </span>
+          <span class="re_handle re_hide">
+          </span><span class="close re_hide"></span></button></div>
       `);
     }
   });
@@ -680,7 +781,7 @@ function bonus_text(bonus) {
   return `<span>${v} ${bonus.name}</span>`;
 }
 
-function sendItemUseRequest(itemID, item_category, armoryID) {
+function sendItemUseRequest(itemID, item_category, armoryID, useFaction) {
   const ajax_loader = `<img src="/images/v2/main/ajax-loader.gif" class="ajax-placeholder m-top10 m-bottom10">`;
   var data, response, parent;
   if (quick_equip_categores.includes(item_category)) {
@@ -690,6 +791,9 @@ function sendItemUseRequest(itemID, item_category, armoryID) {
     data = { step: "useItem", itemID: itemID, item: itemID }
     response = $("#re_quick_items_response");
     parent = $("#re_quick_items");
+  }
+  if (useFaction) {
+    data.fac = 1;
   }
 
   var options = {
