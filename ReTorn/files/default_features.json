@@ -76,10 +76,6 @@
             "live_networth": {
                 "enabled": true,
                 "description": "Adds a bar below your daily networth that shows your live networth."
-            },
-            "max_buy_abroad": {
-                "enabled": true,
-                "description": "Adds a button to the shops while abroad to max all item quantity fields."
             }
         },
         "item": {

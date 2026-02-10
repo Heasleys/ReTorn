@@ -51,32 +51,6 @@ const live_networth_observer = new MutationObserver(function(mutations, observer
 });
 live_networth_observer.observe(document, obsOptions);
 
-//Max button abroad
-const max_abroad_observer = new MutationObserver(function(mutations, observer) {
-  if (typeof features?.pages?.index?.max_buy_abroad?.enabled == "undefined") return;
-  if (!features?.pages?.index?.max_buy_abroad?.enabled) {
-    max_abroad_observer.disconnect();
-    return;
-  }
-  if ($('#body').attr('data-traveling') == "true" || $('#body').attr('data-abroad') == "false") {
-    max_abroad_observer.disconnect();
-    return;
-  }
-
-  mutations.forEach(function(mutation) {
-    if ($('#re_max').length != 0 && $('#re_trav_wrap').length != 0) {
-      return;
-    }
-    if (mutation?.target?.className) {
-      const mutation_class_name = mutation.target.className;
-      if (typeof mutation_class_name == "string" && mutation_class_name.indexOf('msg') > -1) {
-        insert_max_abroad_button();
-      }
-    }
-  });
-});
-max_abroad_observer.observe(document, obsOptions);
-
 function insert_effective_stats() {
   if ($('#re_title:contains("Effective Stats")').length) return;
 
@@ -205,24 +179,6 @@ function insert_live_networth() {
 
   })
   .catch((e) => console.error(e))
-}
-
-function insert_max_abroad_button() {
-  $('.user-info .delimiter .msg').wrapInner("<span id='re_trav_wrap'>");
-  $('.user-info .delimiter .msg').append(`<button class="re_torn_button" id="re_max" title="Fill item amount to max">Max</button>`);
-  $('.user-info .delimiter .msg').addClass("re_trav");
-
-  $('#re_max').off("click").click(function() {
-    var available = $('input.availableItemsAmount').val();
-    var money = parseInt($('.delimiter > .msg').find('span.bold:contains("$")').text().replaceAll("$", "").replaceAll(",",""));
-
-    $('.travel-agency-market ul.users-list > li').each(function() {
-      let cost = parseInt($(this).find('.cost .c-price').text().replaceAll("$", "").replaceAll(",",""));
-      let max = (money/cost) >= available ? available : Math.trunc((money/cost));
-
-      $(this).find("input[name=amount]").val(max);
-    })
-  });
 }
 
 function hide_level_up() {
