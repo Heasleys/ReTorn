@@ -6,7 +6,7 @@ if ($('div.captcha').length == 0) {
 
 const observer = new MutationObserver(function(mutations) {
     if ($('div.leaflet-map-pane[style="transform: translate3d(0px, 0px, 0px);"]').length != 0) {
-        //spawnItems(2500, 337);
+        if(ifAprilFoolsDay()) spawnItems(1, 337);
         cityHeader();
         startCityItems();
         observer.disconnect();
@@ -76,13 +76,14 @@ function startCityItems() {
       if (typeof items[itemID] != "undefined") { //check if item is in the Torn item list
         $(this).attr("title", items[itemID].name);
         value += items[itemID].market_value;
+        let item_html = "<a href='https://www.torn.com/page.php?sid=ItemMarket#/market/view=search&itemID=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: $"+items[itemID].market_value.toLocaleString('en-US')+"'>" + items[itemID].name + "</a>";
         if (items[itemID].market_value >= 10000000) {
-          itemList += "<b><a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: $"+items[itemID].market_value.toLocaleString('en-US')+"'>" + items[itemID].name + "</a></b>, ";
+          itemList += `<b>${item_html}</b>, `;
         } else {
-          itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: $"+items[itemID].market_value.toLocaleString('en-US')+"'>" + items[itemID].name + "</a>, ";
+          itemList += `${item_html}, `;
         }
       } else {
-        itemList += "<a href='https://www.torn.com/imarket.php#/p=shop&type=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: N/A'>UNKNOWN_ITEM_"+itemID+"</a>, ";
+        itemList += "<a href='https://www.torn.com/page.php?sid=ItemMarket#/market/view=search&itemID=" + itemID + "' target='_blank' data-cfid='"+i+"' title='Worth: N/A'>UNKNOWN_ITEM_"+itemID+"</a>, ";
       }
     });
   
@@ -105,9 +106,18 @@ function startCityItems() {
       let item = $('.leaflet-marker-pane img[src*="torn.com/images/items/"][data-cfid="'+id+'"]');
       item.toggleClass("hovered");
     });
+
+    $('.re_aprilfools').click(function() {
+      alert(`APRIL FOOLS! GOTCHA! HEE HAWW HEE HAWWW!
+        
+Brought to you by ReTorn. The most epic Torn extension.`);
+      
+      $(this).remove();
+    })
+    
 }
 
-function spawnItems(num, itemID = null) { //testing function or for possible future april fools day pranks
+function spawnItems(num, itemID = null) { // Spawn fake items
     var zndx = 300;
 
   
@@ -116,7 +126,7 @@ function spawnItems(num, itemID = null) { //testing function or for possible fut
         const x = randomIntFromInterval(10, 776);
         const y = randomIntFromInterval(10, 448);
         $('.leaflet-marker-pane').append(`
-        <img src="https://www.torn.com/images/items/${item}/small.png" class="leaflet-marker-icon map-user-item-icon leaflet-zoom-hide leaflet-clickable" tabindex="0" style="transform: translate3d(${x}px, ${y}px, 0px); z-index: ${zndx}; display: none;">
+        <img src="https://www.torn.com/images/items/${item}/small.png" class="leaflet-marker-icon map-user-item-icon leaflet-zoom-hide leaflet-clickable re_aprilfools" tabindex="0" style="transform: translate3d(${x}px, ${y}px, 0px); z-index: ${zndx}; display: none;">
         `);
         zndx++;
     }
@@ -130,4 +140,16 @@ return Math.floor(Math.random() * (max - min + 1) + min)
 
 function featureCleanup() {
   $('#map').removeClass('re_city_finds');
+}
+
+function ifAprilFoolsDay() {
+    const today = new Date();
+    const currentMonth = today.getMonth(); 
+    const currentDay = today.getDate(); 
+
+    if (currentMonth === 3 && currentDay === 1) {
+        return true;
+    } else {
+        return false;
+    }
 }
