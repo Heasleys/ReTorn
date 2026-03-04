@@ -1,0 +1,10 @@
+.re_auth_wrapper {
+    position: absolute;
+    right: 3%;
+    top: 15%;
+}
+
+.confirmation {
+    left: 75%;
+    transform: translateY(-40%);
+}
