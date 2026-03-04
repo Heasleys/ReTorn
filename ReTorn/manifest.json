@@ -56,7 +56,7 @@
           "/lib/fontawesome/webfonts/fa-regular-400.ttf",
           "/lib/fontawesome/webfonts/fa-regular-400.woff2",
           "/lib/fontawesome/webfonts/fa-v4compatibility.ttf",
-          "/lib/fontawesome/webfonts/fa-v4compatibility.woff2"
+          "/lib/fontawesome/webfonts/fa-v4compatibility.woff2"          
          ],
         "matches": [ "https://*.torn.com/*" ]
       }
@@ -68,7 +68,8 @@
         ],
         "exclude_matches": [
                 "https://*.torn.com/api.html*",
-                "https://wiki.torn.com/*"
+                "https://wiki.torn.com/*",
+                "https://*.torn.com/swagger.php*"
             ],
         "css": ["/lib/fontawesome/css/all.min.css","css/everywhere/everywhere.css", "css/everywhere/quicklinks.css", "css/everywhere/npclist.css", "css/everywhere/refills.css", "css/everywhere/sidebar.css", "css/everywhere/features.css"],
         "js": ["/lib/jquery-3.6.0.min.js","/lib/trie.min.js","/lib/jquery.tab-complete.min.js","js/everywhere/retorn.js","js/global/constants.js","js/global/globalFunctions.js","js/global/miniprofiles.js","js/global/interceptFetch.js","js/everywhere/sidebar.js","js/everywhere/refills.js","js/everywhere/tornstats_events.js"],
@@ -81,7 +82,8 @@
         "exclude_matches": [
                 "https://www.torn.com/api.html*",
                 "https://wiki.torn.com/*",
-                "https://api.torn.com/*"
+                "https://api.torn.com/*",
+                "https://www.torn.com/swagger.php*"
             ],
         "js": ["js/everywhere/other.js", "js/chat/chat.js"],
         "run_at": "document_end"
@@ -208,6 +210,12 @@
         "matches": ["https://*.torn.com/war.php?step=rankreport*"],
         "js": ["js/war/rankreport.js"],
         "run_at": "document_end"
+      },
+      {
+        "matches": ["https://*.torn.com/swagger.php"],
+        "css": ["css/everywhere/everywhere.css", "css/swagger/swagger.css"],
+        "js": ["/lib/jquery-3.6.0.min.js","js/everywhere/retorn.js","js/global/constants.js","js/swagger/swagger.js"],
+        "run_at": "document_start"
       }
     ]
   }
