@@ -1,7 +1,9 @@
 var itemCount = 0;
 var observer = new MutationObserver(function(mutations) {
   if ($("#ct-wrap").length == 1 && $('div.re_container').length == 0) {
-    initCT();
+
+    if (features?.pages?.christmas_town?.christmas_town_helper?.enabled) initCT();
+    
     observer.disconnect();
   }
 });

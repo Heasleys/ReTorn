@@ -827,6 +827,62 @@ i#re_feature_settings::before {
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
+.confirmation {
+  z-index: 2147483647;
+  display: none;
+  position: relative;
+  background: var(--default-panel-gradient);
+  border: 1px solid var(--default-panel-divider-outer-side-color);
+  padding: 5px;
+  border-radius: 5px;
+  width: 46px;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  /*Prevent selecting text*/
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+}
+
+.confirmation.copied {
+  display: block;
+  pointer-events: none;
+}
+
+/*
+.confirmation.copied:after {
+  z-index: 2147483647;
+  content:'';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-top: solid 5px var(--default-bg-panel-color);
+  border-left: solid 5px transparent;
+  border-right: solid 5px transparent;
+}
+*/
+
+.confirmation.copied, .confirmation.copied:after {
+-webkit-animation: fadeinout 2s; /* Safari, Chrome and Opera > 12.1 */
+   -moz-animation: fadeinout 2s; /* Firefox < 16 */
+    -ms-animation: fadeinout 2s; /* Internet Explorer */
+     -o-animation: fadeinout 2s; /* Opera < 12.1 */
+        animation: fadeinout 2s;
+}
+
+@keyframes fadeinout {
+  0%   { opacity:0; }
+  50%  { opacity:1; }
+  100% { opacity:0; }
+}
 
 .re_rounded_button {
   border-radius: 100px;

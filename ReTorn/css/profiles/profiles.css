@@ -153,6 +153,22 @@
   fill: url(#linear-gradient);
 }
 
+#re_stakeout_button i.fa-solid {
+  pointer-events: none;
+  font-size: 24px;
+  color: #999;
+}
+#re_stakeout_button:hover i.fa-solid {
+  color: #65aacc;
+}
+
+body.dark-mode #re_stakeout_button i.fa-solid {
+  color: #888;
+}
+body.dark-mode #re_stakeout_button:hover i.fa-solid {
+  color: #AFD2E4;
+}
+
 .re_stakeout {
   min-height: 166px;
   padding: 11px 0 11px 10px;

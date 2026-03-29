@@ -981,6 +981,14 @@ async function handleMessage(msg) {
       }
     break;
 
+    case "request_tornstats_permissions":
+      const tornstatsPermission = {
+            origins: ["https://www.tornstats.com/api/"]
+      }
+      var isGranted = await browser.permissions.request(tornstatsPermission);
+      return isGranted;
+    break;
+
     case "set_api":
       if (m.apikey) {
         await validateKey(m.apikey); //validate if the apikey is real and working
