@@ -84,8 +84,11 @@ function territoryWar() {
     return genericSpyFunction(membersElements, `.user.name`);
     })
     .then(function() {
-    /* event listener from interceptFetch for when user status changes */
-    document.addEventListener("re_territory_wars_fetch", re_territory_wars_fetch_eventListener);
+        /* event listener from interceptFetch for when user status changes */
+        document.addEventListener("re_territory_wars_fetch", re_territory_wars_fetch_eventListener);
+        window.addEventListener('focus', () => {
+            re_territory_wars_fetch_eventListener();
+        });
     })
     .then(function() {
         clearError(TT_STATS, true);
@@ -96,7 +99,10 @@ function territoryWar() {
   }
 
   function re_territory_wars_fetch_eventListener() {
-    const membersElements = $('.re_territorywar .tab-menu-cont .members-list > li:not(.join,.timer-wrap)');
-    return genericSpyFunction(membersElements, `.user.name`);
+    if (document.hasFocus() && !document.hidden) { //check for window focus and window not hidden
+        //Add spies to territory page as players are getting added and removed
+        const membersElements = $('.re_territorywar .tab-menu-cont .members-list > li:not(.join,.timer-wrap)');
+        return genericSpyFunction(membersElements, `.user.name`);
+    }
   }
 

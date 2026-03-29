@@ -493,7 +493,15 @@ function rankedWar() {
   function re_ranked_wars_fetch_eventListener() {
     const filters = settings?.ranked_war_filters;
     if (features?.pages?.factions?.ranked_war_filter?.enabled) {
-      countPlayerStatus();
-      filterUsers(filters);
+      if (document.hasFocus() && !document.hidden) { //check for window focus and window not hidden
+        countPlayerStatus();
+        filterUsers(filters);
+      }
     }
   }
+
+  window.addEventListener('focus', () => {
+    const filters = settings?.ranked_war_filters;
+    countPlayerStatus();
+    filterUsers(filters);
+  });
