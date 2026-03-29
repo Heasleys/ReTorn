@@ -10,14 +10,14 @@
     if ($('div.captcha').length == 0) {
       if ($('div.content-wrapper.logged-out').not('.travelling').length == 0) {
         if ($("div.profile-wrapper.medals-wrapper").length == 1 && $('.profile-buttons .profile-container .buttons-wrap').length == 1) {
-          profile_container_observer.observe($('.profile-container')[0], {attributes: false, childList: true, characterData: false, subtree:false})
+          //profile_container_observer.observe($('.profile-container')[0], {attributes: false, childList: true, characterData: false, subtree:false});
+          get_player_name();
           if ($('#re_stakeout_button').length == 0) {
-            insert_stakeout();
+            //insert_stakeout();
           }
           if ($('div.re_container').length == 0) {
             loadTS();
             insert_age_text();
-            get_player_name();
             profileobserver.disconnect();
           }
         }
@@ -597,7 +597,7 @@
     var profile_buttons_container = $('.profile-buttons .profile-container');
 
     let stakeout_button = `
-    <a id="re_stakeout_button" class="profile-button" aria-label="Stakeout target">
+    <a id="re_stakeout_button" class="profile-button" aria-label="Initiate a stakeout on ${player_name}" title="Initiate a stakeout on ${player_name}">
         <i class="fa-solid fa-binoculars"></i>
     </a>
     `;
@@ -622,12 +622,6 @@
     $('#re_stakeout_button').click(function() {
       $(".profile-buttons .profile-container > div:not([class]), .profile-buttons .profile-container > div[class='']").toggleClass('re_hide');
       $(".re_stakeout").toggleClass('re_hide');
-    }).hover(function(){
-      $("#profile-container-description").text(`Initiate a stakeout on ${player_name}`); // Function to execute on mouseenter
-    }, function(){
-      setTimeout(() => {
-        $("#profile-container-description").text("What would you like to do?"); // Function to execute on mouseleave
-      }, 2000);
     });
 
     $('#re_stakeout_exit').click(function() {
