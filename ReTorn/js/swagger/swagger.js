@@ -8,7 +8,7 @@ sendMessage({name: "get_local", value: "re_apikey"}).then((r) => {
 var authorizationObserver = new MutationObserver(function(mutations, observer) {
   if ( $(`#api_key_value`).length == 1 && $(`#api_key_value`).val() == "" && apikey != "" && $(`#re_apikey_holder`).length == 0) {
     $(`.auth-container > form > div > div`).append(`
-      <div class="re_auth_wrapper"><label>ReTorn API Key (copy and paste to the textbox below):</label><section class=""><input id="re_apikey_holder" type="text"><span class="confirmation">Copied!</span></section></div>
+      <div class="re_auth_wrapper"><label>ReTorn API Key (copy and paste to the textbox below):</label><section class=""><input id="re_apikey_holder" type="text"><span class="re_confirmation">Copied!</span></section></div>
       `)  
     
     
@@ -17,7 +17,7 @@ var authorizationObserver = new MutationObserver(function(mutations, observer) {
       $(`#re_apikey_holder`).on('focus', function() {
         $(this).select();
         navigator.clipboard.writeText($(`#re_apikey_holder`).val());
-        var confirmation = $(this).parent().find('.confirmation');
+        var confirmation = $(this).parent().find('.re_confirmation');
 
         if (!confirmation.is(":visible")) {
           confirmation.toggleClass("copied");

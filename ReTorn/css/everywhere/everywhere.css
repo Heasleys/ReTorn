@@ -827,7 +827,7 @@ i#re_feature_settings::before {
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
-.confirmation {
+.re_confirmation {
   z-index: 2147483647;
   display: none;
   position: relative;
@@ -849,13 +849,13 @@ i#re_feature_settings::before {
                                 supported by Chrome, Edge, Opera and Firefox */
 }
 
-.confirmation.copied {
+.re_confirmation.copied {
   display: block;
   pointer-events: none;
 }
 
 /*
-.confirmation.copied:after {
+.re_confirmation.copied:after {
   z-index: 2147483647;
   content:'';
   position: absolute;
@@ -870,7 +870,7 @@ i#re_feature_settings::before {
 }
 */
 
-.confirmation.copied, .confirmation.copied:after {
+.re_confirmation.copied, .re_confirmation.copied:after {
 -webkit-animation: fadeinout 2s; /* Safari, Chrome and Opera > 12.1 */
    -moz-animation: fadeinout 2s; /* Firefox < 16 */
     -ms-animation: fadeinout 2s; /* Internet Explorer */
