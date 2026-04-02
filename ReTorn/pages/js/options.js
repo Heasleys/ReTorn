@@ -100,9 +100,9 @@ async function createNotificationsList() {
     for (const [key, val] of Object.entries(d)) {
       if (key != 'tooltip' && key != 'enabled' && key != 'order' && key != 'value') {
         if (val.value) {
-          $('#notifications_card .category').append(switchWrap(key, val.tooltip, val.enabled, val.order, val.value))
+          $('#notifications_card .category').append(switchWrap(val.name, val.tooltip, val.enabled, val.order, val.value))
         } else {
-          $('#notifications_card .category').append(switchWrap(key, val.tooltip, val.enabled, val.order))
+          $('#notifications_card .category').append(switchWrap(val.name, val.tooltip, val.enabled, val.order))
         }
       }
     }
@@ -161,14 +161,16 @@ async function createFeaturesList() {
 function switchWrap(key,desc,toggle,order=0,value=0) {
   let checked = "", inputElement = "", orderText = "";
 
+  let label_text = fix_case_acronyms(titleCase(key.replaceAll('_'," ")));
+
   if (toggle) checked = "checked";
-  if (value) inputElement = `<input type="text" id="${key}_value" value="${value}">`;
-  if (order) orderText = `style="order: ${order}"`
+  if (value) inputElement = `<input type="text" id="${key}_value" value="${value}" aria-label="Value for ${label_text} notification.">`;
+  //if (order) orderText = `style="order: ${order}"`
 
   return `
-  <div class="switch-holder" ${orderText}>
-    <input type="checkbox" id="${key}" ${checked}/><label class="switch-label" for="${key}">Toggle</label>
-    <span for="${key}" class="tooltip-right" data-tooltip="${desc}">${fix_case_acronyms(titleCase(key.replaceAll('_'," ")))}</span>
+  <div class="switch-holder">
+    <input class="switch-label" type="checkbox" id="${key}" ${checked} aria-label="${label_text}"/>
+    <span for="${key}" class="tooltip-right" tabindex="0" aria-label="${desc}" data-tooltip="${desc}">${label_text}</span>
     ${inputElement}
   </div>
   `;
