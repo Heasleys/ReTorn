@@ -83,8 +83,10 @@
                 "https://www.torn.com/api.html*",
                 "https://wiki.torn.com/*",
                 "https://api.torn.com/*",
-                "https://www.torn.com/swagger.php*"
+                "https://www.torn.com/swagger.php*",
+                "https://*.torn.com/admin*"
             ],
+        "css": ["css/everywhere/left-align.css"],
         "js": ["js/everywhere/other.js", "js/chat/chat.js"],
         "run_at": "document_end"
       },
