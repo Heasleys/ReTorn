@@ -260,12 +260,22 @@
   padding-top: 2px;
 }
 
-p.re_playercounts > svg {
-  vertical-align: middle;
-  margin-right: 2px;
+p.re_playercounts {
+  display: flex;
+  justify-content: center;
+}
+
+p.re_playercounts > img {
+  align-self: center;
+  width: 1em;
+  height: 1em; 
+  margin: 1px;
+  margin-left: 10px;
+  margin-right: 3px;
+  font-size: 11px;
 }
 p.re_playercounts > span {
-  vertical-align: bottom;
+  align-self: flex-end;
 }
 
 
@@ -416,9 +426,7 @@ p.re_playercounts > span {
   html:not(.html-manual-desktop) .re_mem_count .re_showing {
     display: none;
   }
-  html:not(.html-manual-desktop) .re_mem_count .re_playercounts {
-    display: inherit;
-  }
+
   html:not(.html-manual-desktop) .re_mem_count {
     display: inline-block;
     margin: 0;
