@@ -144,13 +144,7 @@ input[disabled] {
   margin-left: 20px;
 }
 
-/* Torn Left Align only on large screen (not mobile view)*/
-@media screen and (min-width: 1001px) {
-  .d .container {
-    margin-left: var(--re-leftalign) !important;
-    justify-content: var(--re-leftalign-flex) !important;
-  }
-}
+
 
 
 @media screen and (max-width: 784px) {

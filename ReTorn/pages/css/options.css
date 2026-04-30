@@ -315,13 +315,20 @@ html.light .category h4 {
 }
 
 .switch-holder input[type=checkbox] {
-	height: 0;
+/*	height: 0;
 	width: 0;
-	visibility: hidden;
+	visibility: hidden; */
 }
 
-label.switch-label {
-	cursor: pointer;
+.switch-label {
+	  background-color: unset;
+  appearance: unset;
+  box-sizing: unset;
+  margin: unset;
+  padding: unset;
+  border: unset;
+  
+  cursor: pointer;
 	text-indent: -9999px;
 	width: 34px;
 	height: 16px;
@@ -332,7 +339,7 @@ label.switch-label {
   margin-right: 5px;
 }
 
-label.switch-label:after {
+.switch-label:after {
 	content: '';
 	position: absolute;
 	top: 1px;
@@ -344,20 +351,20 @@ label.switch-label:after {
 	transition: 0.3s;
 }
 
-.switch-holder input[type=checkbox]:checked + label.switch-label {
+.switch-holder .switch-label:checked {
 	background: #00b33c;
 }
 
-.switch-holder input[type=checkbox]:checked + label.switch-label:after {
+.switch-holder .switch-label:checked:after {
 	left: calc(100% - 1px);
 	transform: translateX(-100%);
 }
 
-label.switch-label:active:after {
+.switch-label:active:after {
 	width: 18px;
 }
 
-.switch-holder input[type=checkbox]+label+span+input[type=text] {
+.switch-holder input[type=checkbox]+span+input[type=text] {
   margin-left: auto;
   width: 120px;
 }

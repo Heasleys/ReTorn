@@ -1,0 +1,10 @@
+/* Torn Left Align only on large screen (not mobile view)*/
+@media screen and (min-width: 1001px) {
+  .re_leftalign .d .container {
+    margin-left: var(--re-leftalign) !important;
+    justify-content: var(--re-leftalign-flex) !important;
+  }
+  .re_leftalign #mainContainer .content-wrapper, .re_leftalign .without-sidebar #mainContainer .content-wrapper {
+    margin-left: var(--re-leftalign) !important;
+  }
+}

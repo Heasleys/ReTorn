@@ -377,8 +377,14 @@ function rankedWar() {
   
           //user activity (offline, idle, online)
           if (data.option == "offline" || data.option == "idle" || data.option == "online") {
-            const domID = $(this).find('[class*="userStatusWrap_"]').find('svg').attr('fill');
-            if (domID.includes(data.option)) $(this).hide().removeClass("re_show");
+            const domID = $(this).find('[class*="userStatusWrap_"]').find('img').attr('alt');
+            if (domID) {
+              if (domID.includes(data.option)) $(this).hide().removeClass("re_show");
+            } else {
+              //Show error that icons can't be found
+              RE_CONTAINER.find('#re_message').html(`<span class="re_error">Error finding online status icons. Filter may be broken.</span>`);
+              RE_CONTAINER.find('#re_message').show();
+            }
           }
   
           // hide user if Status is not okay
