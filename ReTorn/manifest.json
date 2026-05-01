@@ -91,6 +91,20 @@
         "run_at": "document_end"
       },
       {
+        "matches": [
+          "https://*.torn.com/*"
+        ],
+        "exclude_matches": [
+                "https://www.torn.com/api.html*",
+                "https://wiki.torn.com/*",
+                "https://api.torn.com/*",
+                "https://www.torn.com/swagger.php*",
+                "https://*.torn.com/admin*"
+            ],
+        "css": ["css/everywhere/left-align.css"],
+        "run_at": "document_start"
+      },
+      {
         "matches": ["https://*.torn.com/api.html*"],
         "js": ["/lib/jquery-3.6.0.min.js","js/api/api.js"],
         "css": ["css/api/api.css"],
