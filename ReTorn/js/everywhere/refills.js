@@ -40,13 +40,13 @@
   function setRefills() {
     if (features?.sidebar?.refill_reminder?.enabled) {
       if (data?.energy_refill_used == false) {
-        $(`#sidebar [class*="bar_"][class*="energy_"]`).find("p[class^='bar-name']").wrap('<a class="re_refill" id="re_energy" href="/points.php"></a>');
-        $(`div[class*="bars-mobile"] [class*="bar_"][class*="energy_"]`).find("p[class*='bar-value']").wrap('<a class="re_refill" id="re_energy" href="/points.php"></a>');
+        $(`#sidebar [class*="bar_"][class*="energy_"]`).find("p[class^='barName']").wrap('<a class="re_refill" id="re_energy" href="/points.php"></a>');
+        $(`div[class*="bars-mobile"] [class*="bar_"][class*="energy_"]`).find("p[class*='barValue']").wrap('<a class="re_refill" id="re_energy" href="/points.php"></a>');
       }
 
       if (data?.nerve_refill_used == false) {
-        $(`#sidebar [class*="bar_"][class*="nerve_"]`).find("p[class^='bar-name']").wrap('<a class="re_refill" id="re_nerve" href="/points.php"></a>');
-        $(`div[class^='bars-mobile'] [class*="bar_"][class*="nerve_"]`).find("p[class^='bar-value']").wrap('<a class="re_refill" id="re_nerve" href="/points.php"></a>');
+        $(`#sidebar [class*="bar_"][class*="nerve_"]`).find("p[class^='barName']").wrap('<a class="re_refill" id="re_nerve" href="/points.php"></a>');
+        $(`div[class^='bars-mobile'] [class*="bar_"][class*="nerve_"]`).find("p[class^='barValue']").wrap('<a class="re_refill" id="re_nerve" href="/points.php"></a>');
       }
     }
   }
